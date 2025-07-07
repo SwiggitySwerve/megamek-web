@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "target": "es5", // Changed to es5 as per common Next.js practice, though ES2017 was also fine.
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true, // Enabled strict mode
+    "forceConsistentCasingInFileNames": true, // Added
+    "noEmit": true,
+    "incremental": true, // Retained from original
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler", // Changed from "node" to "bundler" as recommended for modern TS/Next.js
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "baseUrl": ".", // Added
+    "plugins": [ // Added from a common Next.js setup, can be adjusted
+      {
+        "name": "next"
+      }
+    ],
+    "paths": { // Added common alias example, can be removed if not used
+      "@/*": ["./*"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts" // Added for Next.js 13+ type generation
+  ],
+  "exclude": [
+    "node_modules",
+    "scripts/unused/**/*"
+  ]
+}
