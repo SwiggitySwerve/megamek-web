@@ -7,14 +7,14 @@
  * @see IMPLEMENTATION_REFERENCE.md for architectural patterns
  */
 
-import { UnitConfiguration } from './UnitCriticalManager';
+import { UnitConfiguration } from './UnitCriticalManagerTypes';
 import { ComponentConfiguration, TechBase } from '../../types/componentConfiguration';
 import { ComponentDatabaseService } from '../../services/ComponentDatabaseService';
 import { STRUCTURE_DATA, ARMOR_DATA } from '../../services/ComponentDatabaseService';
 import { SlotCalculationManager, SlotRequirements, AvailableSlots, SlotUtilization } from './SlotCalculationManager';
 import { SlotAllocationManager, AllocationResult, OptimizationResult, SlotConflict, ConflictResolution, ReorganizationSuggestion } from './SlotAllocationManager';
 import { SlotValidationManager, ValidationResult, EfficiencyAnalysis, SlotReport, AvailableSlotLocation, ValidationError, ValidationWarning } from './SlotValidationManager';
-import { SpecialComponentManager, SpecialComponentAllocation, EndoSteelSlotAllocation, FerroFibrousSlotAllocation } from './SpecialComponentManager';
+import { SpecialComponentCalculator, SpecialComponentAllocation, EndoSteelSlotAllocation, FerroFibrousSlotAllocation } from './SpecialComponentCalculator';
 import {
   CompleteCriticalSlotBreakdown,
   SimplifiedCriticalSlotBreakdown,
@@ -73,7 +73,7 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
   private readonly slotCalculationManager: SlotCalculationManager;
   private readonly slotAllocationManager: SlotAllocationManager;
   private readonly slotValidationManager: SlotValidationManager;
-  private readonly specialComponentManager: SpecialComponentManager;
+  private readonly specialComponentManager: SpecialComponentCalculator;
   private readonly componentDatabaseService: ComponentDatabaseService;
 
   // Standard slot counts for different locations
@@ -92,7 +92,7 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
     this.slotCalculationManager = new SlotCalculationManager();
     this.slotAllocationManager = new SlotAllocationManager();
     this.slotValidationManager = new SlotValidationManager();
-    this.specialComponentManager = new SpecialComponentManager();
+    this.specialComponentManager = new SpecialComponentCalculator();
     this.componentDatabaseService = ComponentDatabaseService.getInstance();
   }
 

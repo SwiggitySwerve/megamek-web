@@ -1,10 +1,11 @@
 /**
- * SpecialComponentManager
- * Handles special component allocation including Endo Steel, Ferro Fibrous, and other special components.
+ * SpecialComponentCalculator
+ * Handles special component allocation calculations including Endo Steel, Ferro Fibrous, and other special components.
+ * This is a STATIC calculation service - it does not manage component lifecycle, only calculates requirements.
  * Extracted from CriticalSlotCalculator for modularity and SOLID compliance.
  */
 
-import { UnitConfiguration } from './UnitCriticalManager';
+import { UnitConfiguration } from './UnitCriticalManagerTypes';
 import { ComponentConfiguration } from '../../types/componentConfiguration';
 
 export interface SpecialComponentAllocation {
@@ -49,7 +50,7 @@ export interface FerroFibrousSlotAllocation {
   remainingSlots: number;
 }
 
-export class SpecialComponentManager {
+export class SpecialComponentCalculator {
   /**
    * Extract type string from ComponentConfiguration or return string as-is
    */
@@ -201,19 +202,18 @@ export class SpecialComponentManager {
    */
   private detectEndoSteelConflicts(config: UnitConfiguration, allocation: EndoSteelSlotAllocation): string[] {
     const conflicts: string[] = [];
-
+    
+    // Check if Endo Steel conflicts with other structure types
+    const structureType = this.extractComponentType(config.structureType);
+    if (structureType !== 'Endo Steel' && structureType !== 'Endo Steel (Clan)') {
+      conflicts.push(`Endo Steel conflicts with ${structureType} structure`);
+    }
+    
     // Check if allocation is complete
     if (!allocation.isComplete) {
       conflicts.push(`Incomplete Endo Steel allocation: ${allocation.remainingSlots} slots remaining`);
     }
-
-    // Check for invalid locations
-    Object.entries(allocation.allocations).forEach(([location, data]) => {
-      if (data.count > 0 && !this.isValidEndoSteelLocation(location)) {
-        conflicts.push(`Invalid Endo Steel location: ${location}`);
-      }
-    });
-
+    
     return conflicts;
   }
 
@@ -222,19 +222,19 @@ export class SpecialComponentManager {
    */
   private detectFerroFibrousConflicts(config: UnitConfiguration, allocation: FerroFibrousSlotAllocation): string[] {
     const conflicts: string[] = [];
-
+    
+    // Check if Ferro Fibrous conflicts with other armor types
+    const armorType = this.extractComponentType(config.armorType);
+    if (armorType !== 'Ferro-Fibrous' && armorType !== 'Ferro-Fibrous (Clan)' && 
+        armorType !== 'Light Ferro-Fibrous' && armorType !== 'Heavy Ferro-Fibrous') {
+      conflicts.push(`Ferro Fibrous conflicts with ${armorType} armor`);
+    }
+    
     // Check if allocation is complete
     if (!allocation.isComplete) {
       conflicts.push(`Incomplete Ferro Fibrous allocation: ${allocation.remainingSlots} slots remaining`);
     }
-
-    // Check for invalid locations
-    Object.entries(allocation.allocations).forEach(([location, data]) => {
-      if (data.count > 0 && !this.isValidFerroFibrousLocation(location)) {
-        conflicts.push(`Invalid Ferro Fibrous location: ${location}`);
-      }
-    });
-
+    
     return conflicts;
   }
 
@@ -242,81 +242,69 @@ export class SpecialComponentManager {
    * Detect other special conflicts
    */
   private detectOtherSpecialConflicts(config: UnitConfiguration, allocation: { [location: string]: number[] }): string[] {
-    // Simplified conflict detection for other special components
+    // Simplified - in practice this would check for other special component conflicts
     return [];
   }
 
   /**
-   * Distribute Endo Steel slots
+   * Distribute Endo Steel slots across locations
    */
   private distributeEndoSteelSlots(requiredSlots: number, config: UnitConfiguration): { [location: string]: { slots: number[], count: number } } {
     const allocations: { [location: string]: { slots: number[], count: number } } = {};
-    let remainingSlots = requiredSlots;
-
-    // Priority locations for Endo Steel
-    const priorityLocations = ['centerTorso', 'leftTorso', 'rightTorso', 'leftArm', 'rightArm', 'leftLeg', 'rightLeg'];
-    const maxSlotsPerLocation = {
-      centerTorso: 6,
-      leftTorso: 6,
-      rightTorso: 6,
-      leftArm: 4,
-      rightArm: 4,
-      leftLeg: 3,
-      rightLeg: 3
-    };
-
-    for (const location of priorityLocations) {
-      if (remainingSlots <= 0) break;
-
-      const maxSlots = maxSlotsPerLocation[location as keyof typeof maxSlotsPerLocation] || 3;
-      const slotsToAllocate = Math.min(remainingSlots, maxSlots);
+    const tonnage = config.tonnage;
+    
+    // Standard distribution pattern for Endo Steel
+    const distribution = this.getEndoSteelDistribution(tonnage);
+    
+    let slotIndex = 0;
+    for (const [location, count] of Object.entries(distribution)) {
+      if (slotIndex >= requiredSlots) break;
       
-      if (slotsToAllocate > 0) {
+      const slots = [];
+      for (let i = 0; i < count && slotIndex < requiredSlots; i++) {
+        slots.push(slotIndex + i);
+      }
+      
+      if (slots.length > 0) {
         allocations[location] = {
-          slots: Array.from({ length: slotsToAllocate }, (_, i) => i),
-          count: slotsToAllocate
+          slots,
+          count: slots.length
         };
-        remainingSlots -= slotsToAllocate;
+        slotIndex += slots.length;
       }
     }
-
+    
     return allocations;
   }
 
   /**
-   * Distribute Ferro Fibrous slots
+   * Distribute Ferro Fibrous slots across locations
    */
   private distributeFerroFibrousSlots(requiredSlots: number, config: UnitConfiguration): { [location: string]: { slots: number[], count: number } } {
     const allocations: { [location: string]: { slots: number[], count: number } } = {};
-    let remainingSlots = requiredSlots;
-
-    // Priority locations for Ferro Fibrous
-    const priorityLocations = ['centerTorso', 'leftTorso', 'rightTorso', 'leftArm', 'rightArm', 'leftLeg', 'rightLeg'];
-    const maxSlotsPerLocation = {
-      centerTorso: 6,
-      leftTorso: 6,
-      rightTorso: 6,
-      leftArm: 4,
-      rightArm: 4,
-      leftLeg: 3,
-      rightLeg: 3
-    };
-
-    for (const location of priorityLocations) {
-      if (remainingSlots <= 0) break;
-
-      const maxSlots = maxSlotsPerLocation[location as keyof typeof maxSlotsPerLocation] || 3;
-      const slotsToAllocate = Math.min(remainingSlots, maxSlots);
+    const tonnage = config.tonnage;
+    
+    // Standard distribution pattern for Ferro Fibrous
+    const distribution = this.getFerroFibrousDistribution(tonnage);
+    
+    let slotIndex = 0;
+    for (const [location, count] of Object.entries(distribution)) {
+      if (slotIndex >= requiredSlots) break;
       
-      if (slotsToAllocate > 0) {
+      const slots = [];
+      for (let i = 0; i < count && slotIndex < requiredSlots; i++) {
+        slots.push(slotIndex + i);
+      }
+      
+      if (slots.length > 0) {
         allocations[location] = {
-          slots: Array.from({ length: slotsToAllocate }, (_, i) => i),
-          count: slotsToAllocate
+          slots,
+          count: slots.length
         };
-        remainingSlots -= slotsToAllocate;
+        slotIndex += slots.length;
       }
     }
-
+    
     return allocations;
   }
 
@@ -324,20 +312,75 @@ export class SpecialComponentManager {
    * Distribute other special slots
    */
   private distributeOtherSpecialSlots(requiredSlots: number, config: UnitConfiguration): { [location: string]: number[] } {
-    // Simplified distribution for other special components
-    if (requiredSlots > 0) {
+    // Simplified - in practice this would distribute other special components
+    return {};
+  }
+
+  /**
+   * Get Endo Steel distribution pattern
+   */
+  private getEndoSteelDistribution(tonnage: number): { [location: string]: number } {
+    // Standard Endo Steel distribution pattern
+    if (tonnage <= 30) {
       return {
-        centerTorso: Array.from({ length: Math.min(requiredSlots, 6) }, (_, i) => i)
+        'Center Torso': 2,
+        'Left Torso': 1,
+        'Right Torso': 1
+      };
+    } else if (tonnage <= 50) {
+      return {
+        'Center Torso': 3,
+        'Left Torso': 2,
+        'Right Torso': 2,
+        'Left Arm': 1,
+        'Right Arm': 1
+      };
+    } else {
+      return {
+        'Center Torso': 4,
+        'Left Torso': 3,
+        'Right Torso': 3,
+        'Left Arm': 2,
+        'Right Arm': 2
       };
     }
-    return {};
+  }
+
+  /**
+   * Get Ferro Fibrous distribution pattern
+   */
+  private getFerroFibrousDistribution(tonnage: number): { [location: string]: number } {
+    // Standard Ferro Fibrous distribution pattern
+    if (tonnage <= 30) {
+      return {
+        'Center Torso': 2,
+        'Left Torso': 1,
+        'Right Torso': 1
+      };
+    } else if (tonnage <= 50) {
+      return {
+        'Center Torso': 3,
+        'Left Torso': 2,
+        'Right Torso': 2,
+        'Left Arm': 1,
+        'Right Arm': 1
+      };
+    } else {
+      return {
+        'Center Torso': 4,
+        'Left Torso': 3,
+        'Right Torso': 3,
+        'Left Arm': 2,
+        'Right Arm': 2
+      };
+    }
   }
 
   /**
    * Check if location is valid for Endo Steel
    */
   private isValidEndoSteelLocation(location: string): boolean {
-    const validLocations = ['centerTorso', 'leftTorso', 'rightTorso', 'leftArm', 'rightArm', 'leftLeg', 'rightLeg'];
+    const validLocations = ['Center Torso', 'Left Torso', 'Right Torso', 'Left Arm', 'Right Arm'];
     return validLocations.includes(location);
   }
 
@@ -345,33 +388,19 @@ export class SpecialComponentManager {
    * Check if location is valid for Ferro Fibrous
    */
   private isValidFerroFibrousLocation(location: string): boolean {
-    const validLocations = ['centerTorso', 'leftTorso', 'rightTorso', 'leftArm', 'rightArm', 'leftLeg', 'rightLeg'];
+    const validLocations = ['Center Torso', 'Left Torso', 'Right Torso', 'Left Arm', 'Right Arm'];
     return validLocations.includes(location);
   }
 
   /**
-   * Get special component slots for configuration
+   * Calculate total special component slots
    */
   public calculateSpecialComponentSlots(config: UnitConfiguration): number {
-    let slots = 0;
-
-    // Endo Steel slots
-    const structureType = this.extractComponentType(config.structureType);
-    if (structureType === 'Endo Steel' || structureType === 'Endo Steel (Clan)') {
-      slots += this.getEndoSteelRequirement(config);
-    }
-
-    // Ferro Fibrous slots
-    const armorType = this.extractComponentType(config.armorType);
-    if (armorType === 'Ferro-Fibrous' || armorType === 'Ferro-Fibrous (Clan)' || 
-        armorType === 'Light Ferro-Fibrous' || armorType === 'Heavy Ferro-Fibrous') {
-      slots += this.getFerroFibrousRequirement(config);
-    }
-
-    // Other special components
-    slots += this.getOtherSpecialRequirements(config);
-
-    return slots;
+    const endoSteelSlots = this.getEndoSteelRequirement(config);
+    const ferroFibrousSlots = this.getFerroFibrousRequirement(config);
+    const otherSlots = this.getOtherSpecialRequirements(config);
+    
+    return endoSteelSlots + ferroFibrousSlots + otherSlots;
   }
 
   /**
@@ -379,34 +408,19 @@ export class SpecialComponentManager {
    */
   public validateSpecialComponentPlacement(config: UnitConfiguration, allocations: any[]): string[] {
     const errors: string[] = [];
-
+    
     // Validate Endo Steel placement
-    const structureType = this.extractComponentType(config.structureType);
-    if (structureType === 'Endo Steel' || structureType === 'Endo Steel (Clan)') {
-      const endoAllocations = allocations.filter(a => a.equipment.type === 'structure' && 
-        (a.equipment.id === 'endo_steel'));
-      
-      endoAllocations.forEach(allocation => {
-        if (!this.isValidEndoSteelLocation(allocation.location)) {
-          errors.push(`Invalid Endo Steel placement in ${allocation.location}`);
-        }
-      });
+    const endoSteelAllocation = this.calculateEndoSteelSlots(config);
+    if (!endoSteelAllocation.isComplete) {
+      errors.push(`Incomplete Endo Steel allocation: ${endoSteelAllocation.remainingSlots} slots remaining`);
     }
-
+    
     // Validate Ferro Fibrous placement
-    const armorType = this.extractComponentType(config.armorType);
-    if (armorType === 'Ferro-Fibrous' || armorType === 'Ferro-Fibrous (Clan)' || 
-        armorType === 'Light Ferro-Fibrous' || armorType === 'Heavy Ferro-Fibrous') {
-      const ferroAllocations = allocations.filter(a => a.equipment.type === 'armor' && 
-        (a.equipment.id === 'ferro_fibrous'));
-      
-      ferroAllocations.forEach(allocation => {
-        if (!this.isValidFerroFibrousLocation(allocation.location)) {
-          errors.push(`Invalid Ferro Fibrous placement in ${allocation.location}`);
-        }
-      });
+    const ferroFibrousAllocation = this.calculateFerroFibrousSlots(config);
+    if (!ferroFibrousAllocation.isComplete) {
+      errors.push(`Incomplete Ferro Fibrous allocation: ${ferroFibrousAllocation.remainingSlots} slots remaining`);
     }
-
+    
     return errors;
   }
 
@@ -415,24 +429,19 @@ export class SpecialComponentManager {
    */
   public getSpecialComponentRecommendations(config: UnitConfiguration): string[] {
     const recommendations: string[] = [];
-
-    // Endo Steel recommendations
+    
+    // Check if Endo Steel would be beneficial
     const structureType = this.extractComponentType(config.structureType);
-    if (structureType === 'Endo Steel' || structureType === 'Endo Steel (Clan)') {
-      const requiredSlots = this.getEndoSteelRequirement(config);
-      recommendations.push(`Endo Steel requires ${requiredSlots} critical slots`);
-      recommendations.push('Distribute Endo Steel slots across multiple locations for better protection');
+    if (structureType === 'Standard' && config.tonnage >= 40) {
+      recommendations.push('Consider Endo Steel for weight savings on this heavy unit');
     }
-
-    // Ferro Fibrous recommendations
+    
+    // Check if Ferro Fibrous would be beneficial
     const armorType = this.extractComponentType(config.armorType);
-    if (armorType === 'Ferro-Fibrous' || armorType === 'Ferro-Fibrous (Clan)' || 
-        armorType === 'Light Ferro-Fibrous' || armorType === 'Heavy Ferro-Fibrous') {
-      const requiredSlots = this.getFerroFibrousRequirement(config);
-      recommendations.push(`Ferro Fibrous requires ${requiredSlots} critical slots`);
-      recommendations.push('Consider armor distribution for optimal protection');
+    if (armorType === 'Standard' && config.tonnage >= 40) {
+      recommendations.push('Consider Ferro Fibrous for additional armor protection');
     }
-
+    
     return recommendations;
   }
 } 

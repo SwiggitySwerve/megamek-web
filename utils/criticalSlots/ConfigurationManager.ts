@@ -64,7 +64,9 @@ export class ConfigurationManager {
       oldStructureType: oldConfig.structureType,
       newStructureType: newConfiguration.structureType,
       oldArmorType: oldConfig.armorType,
-      newArmorType: newConfiguration.armorType
+      newArmorType: newConfiguration.armorType,
+      oldTechBase: oldConfig.techBase,
+      newTechBase: newConfiguration.techBase
     })
     
     // Detect what changed
@@ -81,7 +83,20 @@ export class ConfigurationManager {
       ? { ...newConfiguration, engineRating: undefined }
       : newConfiguration
     
+    console.log('[CONFIG_DEBUG] 🔧 configForBuilder before buildConfiguration:', {
+      structureType: configForBuilder.structureType,
+      armorType: configForBuilder.armorType,
+      techBase: configForBuilder.techBase,
+      hasEngineRating: 'engineRating' in configForBuilder
+    })
+    
     let validatedConfig = UnitConfigurationBuilder.buildConfiguration(configForBuilder)
+    
+    console.log('[CONFIG_DEBUG] 🔧 validatedConfig after buildConfiguration:', {
+      structureType: validatedConfig.structureType,
+      armorType: validatedConfig.armorType,
+      techBase: validatedConfig.techBase
+    })
     
     // Enforce BattleTech construction rules
     validatedConfig = this.enforceConstructionRules(validatedConfig)

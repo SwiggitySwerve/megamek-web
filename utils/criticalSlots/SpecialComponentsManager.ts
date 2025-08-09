@@ -369,25 +369,33 @@ export class SpecialComponentsManager {
     type: ComponentConfiguration,
     componentType: 'structure' | 'armor',
     requiredSlots: number
-  ): ComponentConfiguration[] {
-    const components: ComponentConfiguration[] = []
+  ): SpecialEquipmentObject[] {
+    const components: SpecialEquipmentObject[] = []
     
-    // Create individual components, one per slot (like UnitCriticalManager does)
     for (let i = 0; i < requiredSlots; i++) {
-      // Create canonical ID for the component type
-      const canonicalId = this.getCanonicalComponentId(type, componentType)
+      const componentId = this.getCanonicalComponentId(type, componentType)
+      const componentName = this.createSpecialComponentName(type, componentType)
+      const componentDescription = this.createSpecialComponentDescription(type, componentType)
       
-      const component: ComponentConfiguration = {
-        id: canonicalId,
-        instanceId: `${canonicalId}_${i + 1}`, // Unique instance ID for this specific component
-        name: this.createSpecialComponentName(type, componentType),
+      // Calculate weight based on component type and configuration
+      let weight = 0
+      if (componentType === 'structure') {
+        weight = this.getStructureWeight(type, this.configuration.tonnage)
+      } else {
+        // For armor, we need to calculate based on total armor weight
+        const maxArmorTonnage = this.configuration.tonnage * 0.2 // Assume 20% of tonnage for armor
+        weight = this.getArmorWeight(type, maxArmorTonnage)
+      }
+      
+      const component: SpecialEquipmentObject = {
+        id: `${componentId}_${i + 1}`,
+        name: componentName,
         type: 'equipment',
-        techBase: 'Inner Sphere',
-        requiredSlots: 1, // Each component takes 1 slot
-        weight: componentType === 'structure' 
-          ? this.getStructureWeight(type as ComponentConfiguration, this.configuration.tonnage) / requiredSlots
-          : this.getArmorWeight(type as ComponentConfiguration, this.configuration.armorTonnage) / requiredSlots,
-        componentType: componentType
+        requiredSlots: 1,
+        weight: weight,
+        techBase: type.techBase,
+        componentType: componentType,
+        allowedLocations: ['Center Torso', 'Left Torso', 'Right Torso', 'Left Arm', 'Right Arm', 'Left Leg', 'Right Leg']
       }
       
       components.push(component)
@@ -401,7 +409,7 @@ export class SpecialComponentsManager {
    */
   private getCanonicalComponentId(type: ComponentConfiguration, componentType: 'structure' | 'armor'): string {
     if (componentType === 'structure') {
-      switch (type.name) {
+      switch (type.type) {
         case 'Endo Steel':
         case 'Endo Steel (Clan)':
           return 'endo_steel'
@@ -413,7 +421,7 @@ export class SpecialComponentsManager {
           return 'standard_structure'
       }
     } else {
-      switch (type.name) {
+      switch (type.type) {
         case 'Ferro-Fibrous':
         case 'Ferro-Fibrous (Clan)':
           return 'ferro_fibrous'
@@ -440,9 +448,9 @@ export class SpecialComponentsManager {
    */
   private createSpecialComponentName(type: ComponentConfiguration, componentType: 'structure' | 'armor'): string {
     if (componentType === 'structure') {
-      return `${type.name} Structure`
+      return `${type.type} Structure`
     } else {
-      return `${type.name} Armor`
+      return `${type.type} Armor`
     }
   }
 
@@ -451,9 +459,9 @@ export class SpecialComponentsManager {
    */
   private createSpecialComponentDescription(type: ComponentConfiguration, componentType: 'structure' | 'armor'): string {
     if (componentType === 'structure') {
-      return `${type.name} internal structure component`
+      return `${type.type} internal structure component`
     } else {
-      return `${type.name} armor component`
+      return `${type.type} armor component`
     }
   }
 
@@ -461,7 +469,7 @@ export class SpecialComponentsManager {
    * Get structure weight based on type and tonnage
    */
   private getStructureWeight(type: ComponentConfiguration, tonnage: number): number {
-    switch (type.name) {
+    switch (type.type) {
       case 'Endo Steel':
       case 'Endo Steel (Clan)':
         return Math.ceil(tonnage / 2) / 2 // Half weight, rounded up to nearest 0.5
@@ -478,7 +486,7 @@ export class SpecialComponentsManager {
    * Get armor weight based on type and armor tonnage
    */
   private getArmorWeight(type: ComponentConfiguration, armorTonnage: number): number {
-    switch (type.name) {
+    switch (type.type) {
       case 'Ferro-Fibrous':
       case 'Ferro-Fibrous (Clan)':
       case 'Light Ferro-Fibrous':
@@ -505,10 +513,10 @@ export class SpecialComponentsManager {
     const techBase = config.structureType?.techBase || 'Inner Sphere'
     
     if (structureType === 'Endo Steel') {
-      return techBase === 'Clan' ? 'Endo Steel (Clan)' : 'Endo Steel'
+      return { type: techBase === 'Clan' ? 'Endo Steel (Clan)' : 'Endo Steel', techBase }
     }
     
-    return structureType as ComponentConfiguration
+    return { type: structureType, techBase }
   }
 
   /**
@@ -523,10 +531,10 @@ export class SpecialComponentsManager {
     const techBase = config.armorType?.techBase || 'Inner Sphere'
     
     if (armorType === 'Ferro-Fibrous') {
-      return techBase === 'Clan' ? 'Ferro-Fibrous (Clan)' : 'Ferro-Fibrous'
+      return { type: techBase === 'Clan' ? 'Ferro-Fibrous (Clan)' : 'Ferro-Fibrous', techBase }
     }
     
-    return armorType as ComponentConfiguration
+    return { type: armorType, techBase }
   }
 
   /**

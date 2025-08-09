@@ -6,11 +6,14 @@
 
 import React, { createContext, useContext, useReducer, useEffect, useCallback, useState } from 'react'
 import { UnitStateManager } from '../../utils/criticalSlots/UnitStateManager'
-import { UnitCriticalManager, UnitConfiguration, CompleteUnitState } from '../../utils/criticalSlots/UnitCriticalManager'
-import { EngineType, GyroType } from '../../utils/criticalSlots/SystemComponentRules'
+import { UnitCriticalManager } from '../../utils/criticalSlots/UnitCriticalManager'
+import { UnitConfiguration, CompleteUnitState } from '../../utils/criticalSlots/UnitCriticalManagerTypes'
+import { EngineType } from '../../utils/criticalSlots/SystemComponentRules'
+import { ComponentConfiguration } from '../../types/componentConfiguration'
 import { EquipmentAllocation } from '../../utils/criticalSlots/CriticalSlot'
 import { MultiTabDebouncedSaveManager, SaveManagerBrowserHandlers } from '../../utils/DebouncedSaveManager'
 import { createComponentConfiguration, createDefaultComponentConfiguration } from '../../types/componentConfiguration'
+import { componentUpdateAdapter } from '../../services/ComponentUpdateAdapter'
 
 // Tab unit interface
 export interface TabUnit {
@@ -58,7 +61,7 @@ interface MultiUnitContextValue {
   // Active tab unit operations (proxy to current tab's unit)
   unit: UnitCriticalManager | null
   engineType: EngineType | null
-  gyroType: GyroType | null
+  gyroType: any | null // Removed GyroType import, so it's any for now
   unallocatedEquipment: EquipmentAllocation[]
   validation: any
   summary: any
@@ -68,7 +71,11 @@ interface MultiUnitContextValue {
   
   // Active tab action functions
   changeEngine: (engineType: EngineType) => void
-  changeGyro: (gyroType: GyroType) => void
+  changeGyro: (gyroType: any) => void // Removed GyroType import, so it's any for now
+  changeStructure: (structureType: ComponentConfiguration | string) => void
+  changeArmor: (armorType: ComponentConfiguration | string) => void
+  changeHeatSink: (heatSinkType: ComponentConfiguration | string) => void
+  changeJumpJet: (jumpJetType: ComponentConfiguration | string) => void
   updateConfiguration: (config: UnitConfiguration) => void
   addTestEquipment: (equipment: any, location: string, startSlot?: number) => boolean
   addEquipmentToUnit: (equipment: any) => void
@@ -916,7 +923,7 @@ export function MultiUnitProvider({ children }: MultiUnitProviderProps) {
     // PROPER ARCHITECTURE: Fresh data from unit each render
     unit: activeTab?.unitManager || null,
     engineType: activeTab?.unitManager.getEngineType() || null,
-    gyroType: (activeTab?.unitManager.getGyroType() as GyroType) || null,
+    gyroType: (activeTab?.unitManager.getGyroType() as any) || null, // Removed GyroType import, so it's any for now
     unallocatedEquipment: activeTab?.unitManager.getUnallocatedEquipment() || [],
     validation: activeTab?.stateManager.getUnitSummary().validation || null,
     summary: activeTab?.stateManager.getUnitSummary().summary || null,
@@ -941,7 +948,7 @@ export function MultiUnitProvider({ children }: MultiUnitProviderProps) {
       // Save complete state with debouncing (configuration changes are significant)
       saveCompleteStateImmediately(activeTab.id, activeTab.unitManager)
     },
-    changeGyro: (gyroType: GyroType) => {
+    changeGyro: (gyroType: any) => { // Removed GyroType import, so it's any for now
       if (!activeTab) return
       activeTab.stateManager.handleGyroChange(gyroType)
       activeTab.isModified = true
@@ -956,6 +963,122 @@ export function MultiUnitProvider({ children }: MultiUnitProviderProps) {
       
       // Save complete state with debouncing (configuration changes are significant)
       saveCompleteStateImmediately(activeTab.id, activeTab.unitManager)
+    },
+    changeStructure: (structureType: ComponentConfiguration | string) => {
+      console.log('[MultiUnitProvider] changeStructure called with:', structureType)
+      
+      if (!activeTab) {
+        console.warn('[MultiUnitProvider] No active tab available for structure change')
+        return
+      }
+      
+      const currentConfig = activeTab.unitManager.getConfiguration()
+      const result = componentUpdateAdapter.updateStructure(structureType, currentConfig)
+      
+      if (result.success) {
+        console.log('[MultiUnitProvider] Structure update successful, applying new configuration')
+        activeTab.unitManager.updateConfiguration(result.newConfiguration)
+        activeTab.isModified = true
+        activeTab.modified = new Date()
+        dispatch({
+          type: 'UPDATE_TAB_CONFIG',
+          payload: { 
+            tabId: activeTab.id, 
+            config: activeTab.unitManager.getConfiguration() 
+          }
+        })
+        saveCompleteStateImmediately(activeTab.id, activeTab.unitManager)
+      } else {
+        console.error('[MultiUnitProvider] Structure update failed:', result.errors)
+        // TODO: Show error to user
+      }
+    },
+    changeArmor: (armorType: ComponentConfiguration | string) => {
+      console.log('[MultiUnitProvider] changeArmor called with:', armorType)
+      
+      if (!activeTab) {
+        console.warn('[MultiUnitProvider] No active tab available for armor change')
+        return
+      }
+      
+      const currentConfig = activeTab.unitManager.getConfiguration()
+      const result = componentUpdateAdapter.updateArmor(armorType, currentConfig)
+      
+      if (result.success) {
+        console.log('[MultiUnitProvider] Armor update successful, applying new configuration')
+        activeTab.unitManager.updateConfiguration(result.newConfiguration)
+        activeTab.isModified = true
+        activeTab.modified = new Date()
+        dispatch({
+          type: 'UPDATE_TAB_CONFIG',
+          payload: { 
+            tabId: activeTab.id, 
+            config: activeTab.unitManager.getConfiguration() 
+          }
+        })
+        saveCompleteStateImmediately(activeTab.id, activeTab.unitManager)
+      } else {
+        console.error('[MultiUnitProvider] Armor update failed:', result.errors)
+        // TODO: Show error to user
+      }
+    },
+    changeHeatSink: (heatSinkType: ComponentConfiguration | string) => {
+      console.log('[MultiUnitProvider] changeHeatSink called with:', heatSinkType)
+      
+      if (!activeTab) {
+        console.warn('[MultiUnitProvider] No active tab available for heat sink change')
+        return
+      }
+      
+      const currentConfig = activeTab.unitManager.getConfiguration()
+      const result = componentUpdateAdapter.updateHeatSink(heatSinkType, currentConfig)
+      
+      if (result.success) {
+        console.log('[MultiUnitProvider] Heat sink update successful, applying new configuration')
+        activeTab.unitManager.updateConfiguration(result.newConfiguration)
+        activeTab.isModified = true
+        activeTab.modified = new Date()
+        dispatch({
+          type: 'UPDATE_TAB_CONFIG',
+          payload: { 
+            tabId: activeTab.id, 
+            config: activeTab.unitManager.getConfiguration() 
+          }
+        })
+        saveCompleteStateImmediately(activeTab.id, activeTab.unitManager)
+      } else {
+        console.error('[MultiUnitProvider] Heat sink update failed:', result.errors)
+        // TODO: Show error to user
+      }
+    },
+    changeJumpJet: (jumpJetType: ComponentConfiguration | string) => {
+      console.log('[MultiUnitProvider] changeJumpJet called with:', jumpJetType)
+      
+      if (!activeTab) {
+        console.warn('[MultiUnitProvider] No active tab available for jump jet change')
+        return
+      }
+      
+      const currentConfig = activeTab.unitManager.getConfiguration()
+      const result = componentUpdateAdapter.updateJumpJet(jumpJetType, currentConfig)
+      
+      if (result.success) {
+        console.log('[MultiUnitProvider] Jump jet update successful, applying new configuration')
+        activeTab.unitManager.updateConfiguration(result.newConfiguration)
+        activeTab.isModified = true
+        activeTab.modified = new Date()
+        dispatch({
+          type: 'UPDATE_TAB_CONFIG',
+          payload: { 
+            tabId: activeTab.id, 
+            config: activeTab.unitManager.getConfiguration() 
+          }
+        })
+        saveCompleteStateImmediately(activeTab.id, activeTab.unitManager)
+      } else {
+        console.error('[MultiUnitProvider] Jump jet update failed:', result.errors)
+        // TODO: Show error to user
+      }
     },
     updateConfiguration: updateActiveTabConfiguration,
     addTestEquipment: (equipment: any, location: string, startSlot?: number) => {

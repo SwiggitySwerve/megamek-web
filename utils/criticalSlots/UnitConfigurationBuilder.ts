@@ -3,14 +3,12 @@
  * Extracted from UnitCriticalManager.ts for better organization
  */
 
-import { EngineType } from './SystemComponentRules'
 import { 
   UnitConfiguration, 
-  LegacyUnitConfiguration, 
-  StructureType, 
-  ArmorType, 
-  HeatSinkType 
+  LegacyUnitConfiguration 
 } from './UnitCriticalManagerTypes'
+import { ComponentConfiguration } from '../../types/componentConfiguration'
+import { EngineType } from './SystemComponentRules'
 // Import heat sink calculations
 const heatSinkCalculations = require('../heatSinkCalculations');
 const { calculateInternalHeatSinks, calculateInternalHeatSinksForEngine } = heatSinkCalculations;
@@ -36,16 +34,28 @@ export class UnitConfigurationBuilder {
       return this.getDefaultConfiguration()
     }
     
-    // Handle legacy configuration
+    // Handle legacy configuration format
     if ('mass' in input && !('tonnage' in input)) {
-      return this.fromLegacyConfiguration(input as LegacyUnitConfiguration)
+      console.log('[BUILDER_DEBUG] 🔨 Converting legacy configuration')
+      const config = this.fromLegacyConfiguration(input as LegacyUnitConfiguration)
+      console.log('[BUILDER_DEBUG] 🔨 Legacy conversion result:', {
+        structureType: config.structureType,
+        armorType: config.armorType,
+        techBase: config.techBase
+      })
+      return config
     }
     
-    // Handle partial configuration
-    const defaults = this.getDefaultConfiguration()
-    const config = { ...defaults, ...input } as UnitConfiguration
+    // Merge with defaults, preserving all provided values
+    const config = { ...this.getDefaultConfiguration(), ...input } as UnitConfiguration
     
-    // CRITICAL FIX: Convert string component types to ComponentConfiguration objects
+    console.log('[BUILDER_DEBUG] 🔨 After merging with defaults:', {
+      structureType: config.structureType,
+      armorType: config.armorType,
+      techBase: config.techBase
+    })
+    
+    // Handle string-to-object conversions for component types
     if (typeof config.structureType === 'string') {
       config.structureType = { type: config.structureType, techBase: config.techBase }
       console.log('[BUILDER_DEBUG] 🔨 Converted structureType string to object:', config.structureType)
@@ -71,44 +81,24 @@ export class UnitConfigurationBuilder {
       console.log('[BUILDER_DEBUG] 🔨 Converted jumpJetType string to object:', config.jumpJetType)
     }
     
-    console.log('[BUILDER_DEBUG] 🔨 After merging with defaults and conversions:', {
+    // Auto-calculate dependent values
+    config.engineRating = config.tonnage * config.walkMP
+    config.runMP = Math.floor(config.walkMP * 1.5)
+    config.mass = config.tonnage // Alias for tonnage
+    
+    // Calculate internal heat sinks (engine rating / 25, rounded down)
+    config.internalHeatSinks = Math.floor(config.engineRating / 25)
+    
+    // Calculate external heat sinks (total - internal, minimum 0)
+    config.externalHeatSinks = Math.max(0, config.totalHeatSinks - config.internalHeatSinks)
+    
+    console.log('[BUILDER_DEBUG] 🔨 Final configuration:', {
       structureType: config.structureType,
       armorType: config.armorType,
-      techBase: config.techBase,
-      structureTypeType: typeof config.structureType,
-      armorTypeType: typeof config.armorType
+      techBase: config.techBase
     })
     
-    // Ensure armorAllocation is properly merged if provided in input
-    if (input && 'armorAllocation' in input && input.armorAllocation) {
-      const mergedArmorAllocation = { ...defaults.armorAllocation };
-      (Object.keys(defaults.armorAllocation) as (keyof typeof defaults.armorAllocation)[]).forEach(loc => {
-        if (input.armorAllocation![loc]) {
-          mergedArmorAllocation[loc] = {
-            ...defaults.armorAllocation[loc],
-            ...input.armorAllocation![loc]
-          };
-        }
-      });
-      config.armorAllocation = mergedArmorAllocation;
-    }
-    
-    // Always recalculate engineRating unless explicitly set in the input
-    if (!Object.prototype.hasOwnProperty.call(input, 'engineRating')) {
-      config.engineRating = config.tonnage * config.walkMP
-    }
-
-    // Ensure enhancements is always an array
-    if (!Array.isArray(config.enhancements)) {
-      config.enhancements = [];
-    }
-
-    // Calculate dependent values
-    const result = this.calculateDependentValues(config)
-    if (process.env.NODE_ENV === 'test') {
-      console.log('[DEBUG] buildConfiguration output armorAllocation:', JSON.stringify(result.armorAllocation));
-    }
-    return result
+    return config
   }
   
   /**
@@ -129,7 +119,7 @@ export class UnitConfigurationBuilder {
       engineRating: tonnage * walkMP,
       runMP: Math.floor(walkMP * 1.5),
       engineType: legacy.engineType,
-      gyroType: { type: legacy.gyroType, techBase: 'Inner Sphere' },
+      gyroType: { type: legacy.gyroType.type, techBase: 'Inner Sphere' },
       structureType: { type: 'Standard', techBase: 'Inner Sphere' },
       armorType: { type: 'Standard', techBase: 'Inner Sphere' },
       // Default armor allocation (minimal)
@@ -311,5 +301,14 @@ export class UnitConfigurationBuilder {
       maxWalkMP: Math.floor(maxEngineRating / tonnage),
       errors
     }
+  }
+
+  /**
+   * Check if the input is a complete configuration or partial update
+   */
+  private static isCompleteConfiguration(input: Partial<UnitConfiguration> | LegacyUnitConfiguration): boolean {
+    // Check for required fields that indicate a complete configuration
+    const requiredFields = ['chassis', 'model', 'tonnage', 'unitType', 'techBase', 'walkMP']
+    return requiredFields.every(field => field in input)
   }
 } 
