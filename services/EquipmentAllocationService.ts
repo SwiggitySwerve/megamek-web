@@ -675,17 +675,43 @@ export class EquipmentAllocationServiceImpl implements EquipmentAllocationServic
     const warnings: PlacementWarning[] = [];
     const restrictions: string[] = [];
     const suggestions: string[] = [];
-    
+ 
+    const normalizeLoc = (loc: string): string => {
+      const key = loc.replace(/\s+/g, '').toLowerCase()
+      switch (key) {
+        case 'head': return 'head'
+        case 'centertorso': return 'centerTorso'
+        case 'lefttorso': return 'leftTorso'
+        case 'righttorso': return 'rightTorso'
+        case 'leftarm': return 'leftArm'
+        case 'rightarm': return 'rightArm'
+        case 'leftleg': return 'leftLeg'
+        case 'rightleg': return 'rightLeg'
+        default: return loc
+      }
+    }
+
     const constraints = this.getEquipmentConstraints(equipment);
+    const locKey = normalizeLoc(location)
+ 
     
     // Check location restrictions
-    if (constraints.forbiddenLocations.includes(location)) {
+    if (constraints.forbiddenLocations.includes(locKey)) {
       errors.push({
         type: 'location_invalid',
         message: `${equipment.equipmentData?.name} cannot be mounted in ${location}`,
         severity: 'critical',
         suggestedFix: `Try mounting in: ${constraints.allowedLocations.join(', ')}`
       });
+    }
+    // Enforce allowed locations
+    if (!constraints.allowedLocations.includes(locKey)) {
+      errors.push({
+        type: 'location_invalid',
+        message: `${equipment.equipmentData?.name} cannot be mounted in ${location}`,
+        severity: 'critical',
+        suggestedFix: `Allowed locations: ${constraints.allowedLocations.join(', ')}`
+      })
     }
     
     // Special rule: Supercharger must be placed in a torso location that contains engine slots
@@ -717,9 +743,9 @@ export class EquipmentAllocationServiceImpl implements EquipmentAllocationServic
         });
       }
     }
-
-    // Check weight restrictions
-    if (location === 'head' && (equipment.equipmentData?.tonnage || 0) > 1) {
+ 
+     // Check weight restrictions
+    if (locKey === 'head' && (equipment.equipmentData?.tonnage || 0) > 1) {
       errors.push({
         type: 'weight_exceeded',
         message: 'Head location limited to 1 ton equipment',
@@ -740,7 +766,7 @@ export class EquipmentAllocationServiceImpl implements EquipmentAllocationServic
     }
     
     // Generate warnings for suboptimal placement
-    if (equipment.equipmentData?.type === 'ammunition' && location === 'head') {
+    if (equipment.equipmentData?.type === 'ammunition' && locKey === 'head') {
       warnings.push({
         type: 'vulnerability',
         message: 'Ammunition in head location is highly vulnerable',
@@ -948,6 +974,17 @@ export class EquipmentAllocationServiceImpl implements EquipmentAllocationServic
     // Prototype Artemis IV: torso-only and requires compatible missile weapons (LRM/SRM/MRM/Streak)
     if (baseType === 'prototype artemis iv' || baseType === 'artemis iv') {
       allowedLocations = ['centerTorso', 'leftTorso', 'rightTorso'];
+    }
+
+    // Partial Wing: LT/RT only
+    if (baseType === 'partial wing') {
+      allowedLocations = ['leftTorso', 'rightTorso']
+      forbiddenLocations.push('centerTorso')
+      forbiddenLocations.push('head')
+      forbiddenLocations.push('leftArm')
+      forbiddenLocations.push('rightArm')
+      forbiddenLocations.push('leftLeg')
+      forbiddenLocations.push('rightLeg')
     }
     
     return {
