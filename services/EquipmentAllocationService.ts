@@ -911,6 +911,22 @@ export class EquipmentAllocationServiceImpl implements EquipmentAllocationServic
     if (baseType === 'targeting computer') {
       allowedLocations = ['centerTorso', 'leftTorso', 'rightTorso'];
     }
+
+    // Common EW systems typically mount in torsos: ECM, Active Probe, TAG, C3
+    if (
+      baseType === 'guardian ecm' ||
+      baseType === 'angel ecm' ||
+      baseType === 'clan ecm suite' ||
+      baseType === 'beagle active probe' ||
+      baseType === 'clan active probe' ||
+      baseType === 'bloodhound active probe' ||
+      baseType === 'target acquisition gear' ||
+      baseType === 'light target acquisition gear' ||
+      baseType === 'c3 master computer' ||
+      baseType === 'c3 slave unit'
+    ) {
+      allowedLocations = ['centerTorso', 'leftTorso', 'rightTorso'];
+    }
     
     return {
       allowedLocations: allowedLocations.filter(loc => !forbiddenLocations.includes(loc)),
