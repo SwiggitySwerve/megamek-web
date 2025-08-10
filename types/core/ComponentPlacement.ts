@@ -217,5 +217,11 @@ export const COMPONENT_PLACEMENTS = {
     placementType: 'restricted' as const,
     totalSlots: 6, // 3 per torso in most implementations; adjust as needed elsewhere
     allowedLocations: ['Left Torso', 'Right Torso']
+  },
+
+  TORSO_ELECTRONICS: {
+    placementType: 'restricted' as const,
+    totalSlots: 1,
+    allowedLocations: ['Center Torso', 'Left Torso', 'Right Torso']
   }
 } as const 
