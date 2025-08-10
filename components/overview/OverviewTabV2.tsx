@@ -41,9 +41,7 @@ import {
   saveMemoryToStorage,
   loadMemoryFromStorage
 } from '../../utils/memoryPersistence'
-import { isComponentAvailable } from '../../utils/componentDatabaseHelpers'
-import { getArmorType } from '../../utils/armorTypes';
-import { calculateMaxArmorTonnage } from '../../utils/armorAllocation';
+import { switchSubsystemOnUnit } from '../../services/editor/UnitSwitchCoordinator'
 
 // Import extracted components
 import TechProgressionPanel from './TechProgressionPanel'
@@ -162,7 +160,7 @@ export const OverviewTabV2: React.FC<OverviewTabV2Props> = ({ readOnly = false }
   }, [getConfigPropertyForSubsystem])
 
   // Handle tech progression changes with memory-first component resolution
-  const handleTechProgressionChange = useCallback((
+  const handleTechProgressionChange = useCallback(async (
     subsystem: keyof TechProgression, 
     newTechBase: 'Inner Sphere' | 'Clan'
   ) => {
@@ -177,92 +175,28 @@ export const OverviewTabV2: React.FC<OverviewTabV2Props> = ({ readOnly = false }
         console.error('[OverviewTab] No current configuration available')
         return
       }
-      const oldTechBase = (currentConfig as any).techProgression?.[subsystem] || 'Inner Sphere'
-      const currentComponent = getCurrentComponentForSubsystem(subsystem, currentConfig)
-      console.log(`[OverviewTab] Current state: ${subsystem} = ${currentComponent} (${oldTechBase})`)
-      let componentToApply = currentComponent
-      let updatedMemoryState = memoryState
-      if (memoryState && oldTechBase !== newTechBase) {
-        console.log(`[OverviewTab] 🔄 Tech base change detected, resolving component with memory`)
-        const resolution = validateAndResolveComponentWithMemory(
-          currentComponent,
-          subsystem as ComponentCategory,
-          oldTechBase,
-          newTechBase,
-          memoryState.techBaseMemory,
-          (currentConfig as any).rulesLevel || 'Standard'
-        )
-        console.log(`[OverviewTab] Memory resolution: ${resolution.resolutionReason}`)
-        console.log(`[OverviewTab] Component change: ${currentComponent} → ${resolution.resolvedComponent}`)
-        updatedMemoryState = updateMemoryState(memoryState, resolution.updatedMemory)
-        componentToApply = resolution.resolvedComponent
-      } else {
-        console.log(`[OverviewTab] No tech base change or no memory state, keeping current component`)
-      }
-      const currentProgression = (currentConfig as any).techProgression || {
-        chassis: 'Inner Sphere',
-        gyro: 'Inner Sphere',
-        engine: 'Inner Sphere',
-        heatsink: 'Inner Sphere',
-        targeting: 'Inner Sphere',
-        myomer: 'Inner Sphere',
-        movement: 'Inner Sphere',
-        armor: 'Inner Sphere'
-      }
-      const newProgression = {
-        ...currentProgression,
-        [subsystem]: newTechBase
-      }
-      const newTechRating = autoUpdateTechRating(
-        (currentConfig as any).introductionYear || 3025, 
-        newProgression, 
-        currentConfig
-      )
-      let componentConfig = {}
-      if (componentToApply !== currentComponent) {
-        const configProperty = getConfigPropertyForSubsystem(subsystem)
-        if (configProperty) {
-          componentConfig = { [configProperty]: componentToApply }
-          console.log(`[OverviewTab] 🔧 Component change detected: ${configProperty} = ${componentToApply}`)
-          if (subsystem === 'armor' && 'armorTonnage' in currentConfig) {
-            const currentArmorTonnage = (currentConfig as any).armorTonnage || 0
-            const armorUnit = {
-              mass: currentConfig.tonnage,
-              data: {
-                structure: { type: (currentConfig as any).structureType || 'Standard' },
-                engine: { 
-                  type: (currentConfig as any).engineType || 'Standard',
-                  rating: (currentConfig as any).engineRating || 200
-                }
-              }
-            } as any
-            const newMaxArmorTonnage = calculateMaxArmorTonnage(armorUnit, componentToApply)
-            const preservedArmorTonnage = Math.min(currentArmorTonnage, newMaxArmorTonnage)
-            componentConfig = { ...componentConfig, armorTonnage: preservedArmorTonnage }
-            console.log(`[OverviewTab] 🛡️ Armor tonnage preserved: ${currentArmorTonnage} → ${preservedArmorTonnage} (max: ${newMaxArmorTonnage})`)
-          }
-        }
-      }
-      const finalConfig = { 
-        ...currentConfig,
-        techProgression: newProgression,
-        techRating: newTechRating,
-        ...componentConfig
-      }
-      console.log(`[OverviewTab] 🚀 Applying final configuration:`, {
+      // Use coordinator to perform the switch with displacement tracking
+      const switchResult = await switchSubsystemOnUnit(
+        unit as any,
         subsystem,
         newTechBase,
-        componentChange: componentToApply !== currentComponent,
-        techRating: newTechRating
-      })
-      updateConfiguration(finalConfig)
-      if (updatedMemoryState !== memoryState && updatedMemoryState) {
-        setMemoryState(updatedMemoryState)
-        saveMemoryToStorage(updatedMemoryState)
-        console.log(`[OverviewTab] 💾 Memory state updated and persisted`)
+        memoryState,
+        { unitType: 'BattleMech' }
+      )
+
+      // Persist memory updates if present
+      if (switchResult.updatedMemoryState && switchResult.updatedMemoryState !== memoryState) {
+        setMemoryState(switchResult.updatedMemoryState)
+        saveMemoryToStorage(switchResult.updatedMemoryState)
       }
+
       setRenderKey(prev => prev + 1)
-      console.log(`[OverviewTab] ✅ Tech progression update completed`)
+      console.log(`[OverviewTab] ✅ Switch complete`, {
+        subsystem,
+        newTechBase,
+        displaced: switchResult.displacedEquipmentIds.length,
+        retained: switchResult.retainedEquipmentIds.length
+      })
     } catch (error) {
       console.error('[OverviewTab] Error updating tech progression:', error)
     }

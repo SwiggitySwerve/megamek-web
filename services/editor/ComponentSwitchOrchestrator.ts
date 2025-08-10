@@ -1,9 +1,11 @@
 import { CatalogGateway } from '../catalog/CatalogGateway'
 import { ComponentCategory as CatalogComponentCategory, TechContext } from '../catalog/types'
-import { ComponentMemoryState, TechBaseMemory } from '../../types/componentDatabase'
-import { validateAndResolveComponentWithMemory, updateMemory } from '../../utils/techBaseMemory'
+import { ComponentMemoryState } from '../../types/componentDatabase'
+import { validateAndResolveComponentWithMemory, createDefaultMemory } from '../../utils/techBaseMemory'
+import { ComponentCategory as DbComponentCategory, TechBase, } from '../../types/componentDatabase'
+import { COMPONENT_CATEGORIES, TECH_BASES } from '../../types/componentDatabase'
 
-// Map overview subsystem → component category and config property
+// Map overview subsystem → catalog component category (for searching)
 const SubsystemToCategory: Record<string, CatalogComponentCategory> = {
   chassis: 'structure',
   gyro: 'gyro',
@@ -13,6 +15,34 @@ const SubsystemToCategory: Record<string, CatalogComponentCategory> = {
   myomer: 'enhancement',
   movement: 'jumpJet',
   armor: 'armor'
+}
+
+// Map overview subsystem → database component category (for memory)
+const SubsystemToDbCategory: Record<string, DbComponentCategory> = {
+  chassis: 'chassis',
+  gyro: 'gyro',
+  engine: 'engine',
+  heatsink: 'heatsink',
+  targeting: 'targeting',
+  myomer: 'myomer',
+  movement: 'movement',
+  armor: 'armor'
+}
+
+function normalizeMemory(state: ComponentMemoryState | null): ComponentMemoryState {
+  const base = createDefaultMemory()
+  if (!state || !state.techBaseMemory) {
+    return { techBaseMemory: base, lastUpdated: Date.now(), version: '1.0.0' }
+  }
+  const merged: any = { ...base }
+  COMPONENT_CATEGORIES.forEach((cat: any) => {
+    merged[cat] = { ...(base as any)[cat] }
+    const provided = (state.techBaseMemory as any)[cat] || {}
+    TECH_BASES.forEach((tb: TechBase) => {
+      if (provided[tb] !== undefined) merged[cat][tb] = provided[tb]
+    })
+  })
+  return { techBaseMemory: merged, lastUpdated: Date.now(), version: '1.0.0' }
 }
 
 const SubsystemToConfigProp: Record<string, string> = {
@@ -51,27 +81,24 @@ export class ComponentSwitchOrchestrator {
     await CatalogGateway.setContext({ techBase: newTechBase, unitType: context.unitType || 'BattleMech' })
 
     let resolvedName = typeof currentComponent === 'object' && currentComponent?.type ? currentComponent.type : currentComponent
-    let updatedMemoryState = memoryState || undefined
+    let updatedMemoryState = normalizeMemory(memoryState)
     let wasRestoredFromMemory = false
     let resolutionReason = 'No change'
 
-    if (memoryState && oldTechBase !== newTechBase) {
+    if (updatedMemoryState && oldTechBase !== newTechBase) {
       const resolution = validateAndResolveComponentWithMemory(
         resolvedName,
-        SubsystemToCategory[subsystem] as any,
+        SubsystemToDbCategory[subsystem] as any,
         oldTechBase as any,
         newTechBase as any,
-        memoryState.techBaseMemory,
+        updatedMemoryState.techBaseMemory,
         (currentConfiguration as any).rulesLevel || 'Standard'
       )
       wasRestoredFromMemory = resolution.wasRestored
       resolutionReason = resolution.resolutionReason
 
       // update memory container
-      updatedMemoryState = {
-        ...memoryState,
-        techBaseMemory: resolution.updatedMemory
-      }
+      updatedMemoryState = { techBaseMemory: resolution.updatedMemory, lastUpdated: Date.now(), version: '1.0.0' }
 
       resolvedName = resolution.resolvedComponent
     }
