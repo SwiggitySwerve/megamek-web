@@ -693,6 +693,10 @@ export class EquipmentAllocationServiceImpl implements EquipmentAllocationServic
     const eqBaseType = (equipment.equipmentData?.baseType || equipment.baseType || '').toString().toLowerCase();
     const isSupercharger = eqName === 'supercharger' || eqBaseType === 'supercharger';
     if (isSupercharger) {
+      const locNorm = location.replace(/\s+/g, '').toLowerCase();
+      const inCenter = locNorm === 'centertorso';
+      const inLeft = locNorm === 'lefttorso';
+      const inRight = locNorm === 'righttorso';
       const engineType = (config as any)?.engineType || 'Standard';
       const gyroValue = (config as any)?.gyroType || 'Standard';
       const gyroType: ComponentConfiguration = typeof gyroValue === 'string'
@@ -700,9 +704,9 @@ export class EquipmentAllocationServiceImpl implements EquipmentAllocationServic
         : gyroValue as ComponentConfiguration;
       const engineSlots = SystemComponentRules.getEngineAllocation(engineType as any, gyroType);
       const hasEngineSlots = (
-        (location === 'Center Torso' && engineSlots.centerTorso.length > 0) ||
-        (location === 'Left Torso' && engineSlots.leftTorso.length > 0) ||
-        (location === 'Right Torso' && engineSlots.rightTorso.length > 0)
+        (inCenter && engineSlots.centerTorso.length > 0) ||
+        (inLeft && engineSlots.leftTorso.length > 0) ||
+        (inRight && engineSlots.rightTorso.length > 0)
       );
       if (!hasEngineSlots) {
         errors.push({
@@ -890,7 +894,7 @@ export class EquipmentAllocationServiceImpl implements EquipmentAllocationServic
   // Utility methods
   getEquipmentConstraints(equipment: any): EquipmentConstraints {
     const type = equipment.equipmentData?.type || 'equipment';
-    const allowedLocations = ['head', 'centerTorso', 'leftTorso', 'rightTorso', 'leftArm', 'rightArm', 'leftLeg', 'rightLeg'];
+    let allowedLocations = ['head', 'centerTorso', 'leftTorso', 'rightTorso', 'leftArm', 'rightArm', 'leftLeg', 'rightLeg'];
     const forbiddenLocations: string[] = [];
     
     // Apply type-specific restrictions
@@ -900,6 +904,12 @@ export class EquipmentAllocationServiceImpl implements EquipmentAllocationServic
     
     if (equipment.equipmentData?.tonnage > 1) {
       forbiddenLocations.push('head'); // No heavy equipment in head
+    }
+
+    // Targeting Computer: torso-only restriction
+    const baseType = (equipment.equipmentData?.baseType || equipment.baseType || '').toString().toLowerCase();
+    if (baseType === 'targeting computer') {
+      allowedLocations = ['centerTorso', 'leftTorso', 'rightTorso'];
     }
     
     return {
