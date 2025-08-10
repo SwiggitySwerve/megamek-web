@@ -9,6 +9,7 @@
 
 import { UnitConfiguration } from '../utils/criticalSlots/UnitCriticalManager';
 import { ComponentConfiguration } from '../types/componentConfiguration';
+import { SystemComponentRules } from '../utils/criticalSlots/SystemComponentRules';
 import { AutoAllocationManager } from './allocation/AutoAllocationManager';
 import { ValidationManager } from './allocation/ValidationManager';
 import { AnalysisManager } from './allocation/AnalysisManager';
@@ -687,6 +688,32 @@ export class EquipmentAllocationServiceImpl implements EquipmentAllocationServic
       });
     }
     
+    // Special rule: Supercharger must be placed in a torso location that contains engine slots
+    const eqName = (equipment.equipmentData?.name || equipment.name || '').toString().toLowerCase();
+    const eqBaseType = (equipment.equipmentData?.baseType || equipment.baseType || '').toString().toLowerCase();
+    const isSupercharger = eqName === 'supercharger' || eqBaseType === 'supercharger';
+    if (isSupercharger) {
+      const engineType = (config as any)?.engineType || 'Standard';
+      const gyroValue = (config as any)?.gyroType || 'Standard';
+      const gyroType: ComponentConfiguration = typeof gyroValue === 'string'
+        ? { type: gyroValue, techBase: (config as any)?.techBase || 'Inner Sphere' }
+        : gyroValue as ComponentConfiguration;
+      const engineSlots = SystemComponentRules.getEngineAllocation(engineType as any, gyroType);
+      const hasEngineSlots = (
+        (location === 'Center Torso' && engineSlots.centerTorso.length > 0) ||
+        (location === 'Left Torso' && engineSlots.leftTorso.length > 0) ||
+        (location === 'Right Torso' && engineSlots.rightTorso.length > 0)
+      );
+      if (!hasEngineSlots) {
+        errors.push({
+          type: 'rule_violation',
+          message: 'Supercharger must be placed in a torso location that contains engine slots',
+          severity: 'critical',
+          suggestedFix: 'Move Supercharger to Center, Left, or Right Torso containing engine slots for the current engine/gyro'
+        });
+      }
+    }
+
     // Check weight restrictions
     if (location === 'head' && (equipment.equipmentData?.tonnage || 0) > 1) {
       errors.push({
