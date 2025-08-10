@@ -211,5 +211,11 @@ export const COMPONENT_PLACEMENTS = {
     validationRules: {
       requiresEngineSlots: true
     }
+  },
+
+  PARTIAL_WING: {
+    placementType: 'restricted' as const,
+    totalSlots: 6, // 3 per torso in most implementations; adjust as needed elsewhere
+    allowedLocations: ['Left Torso', 'Right Torso']
   }
 } as const 

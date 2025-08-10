@@ -299,7 +299,8 @@ export class ComponentPlacementService implements IComponentPlacementService {
       'standard_jump_jet': COMPONENT_PLACEMENTS.JUMP_JETS,
       'case': COMPONENT_PLACEMENTS.CASE,
       'case_ii': COMPONENT_PLACEMENTS.CASE_II,
-      'supercharger': COMPONENT_PLACEMENTS.SUPERCHARGER
+      'supercharger': COMPONENT_PLACEMENTS.SUPERCHARGER,
+      'partial_wing': COMPONENT_PLACEMENTS.PARTIAL_WING
     }
     
     return configMap[componentId] || null
