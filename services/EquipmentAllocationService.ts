@@ -748,6 +748,23 @@ export class EquipmentAllocationServiceImpl implements EquipmentAllocationServic
         impact: 'high'
       });
     }
+
+    // Artemis dependency: warn if no compatible missile weapons present
+    const baseType = (equipment.equipmentData?.baseType || equipment.baseType || '').toString().toLowerCase();
+    if (baseType.includes('artemis')) {
+      const hasMissile = ((config as any)?.weapons || []).some((w: any) => {
+        const n = (w?.name || '').toString().toLowerCase();
+        return n.includes('lrm') || n.includes('srm') || n.includes('mrm') || n.includes('streak');
+      });
+      if (!hasMissile) {
+        warnings.push({
+          type: 'dependency',
+          message: 'Artemis installed without compatible missile weapons',
+          recommendation: 'Add LRM/SRM/MRM/Streak missiles to benefit from Artemis',
+          impact: 'low'
+        } as any);
+      }
+    }
     
     return {
       isValid: errors.length === 0,
@@ -925,6 +942,11 @@ export class EquipmentAllocationServiceImpl implements EquipmentAllocationServic
       baseType === 'c3 master computer' ||
       baseType === 'c3 slave unit'
     ) {
+      allowedLocations = ['centerTorso', 'leftTorso', 'rightTorso'];
+    }
+
+    // Prototype Artemis IV: torso-only and requires compatible missile weapons (LRM/SRM/MRM/Streak)
+    if (baseType === 'prototype artemis iv' || baseType === 'artemis iv') {
       allowedLocations = ['centerTorso', 'leftTorso', 'rightTorso'];
     }
     
