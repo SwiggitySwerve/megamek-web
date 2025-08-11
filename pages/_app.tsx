@@ -1,6 +1,7 @@
 import type { AppProps } from 'next/app'
 import { useState, useEffect } from 'react'
 import '../styles/globals.css'
+import 'reactflow/dist/style.css'
 import Layout from '../components/common/Layout'
 import Sidebar from '../components/common/Sidebar'
 import { initializeWeaponRangeValidation } from '../utils/weaponRangeValidation'
