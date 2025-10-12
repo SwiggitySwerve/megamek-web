@@ -5,7 +5,7 @@
  * Separated from the main service for better modularity and testability.
  */
 
-import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManager';
+import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes';
 import { ComponentConfiguration } from '../../types/componentConfiguration';
 import { 
   WeightSummary, 
@@ -361,3 +361,7 @@ export class WeightCalculationService {
     }, 0);
   }
 }
+
+
+
+

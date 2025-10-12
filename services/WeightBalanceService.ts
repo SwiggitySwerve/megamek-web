@@ -10,7 +10,7 @@
 import { UnitConfiguration, ArmorAllocation } from '../utils/criticalSlots/UnitCriticalManagerTypes';
 import { ComponentConfiguration } from '../types/componentConfiguration';
 import { SystemComponentsGateway } from './systemComponents/SystemComponentsGateway';
-import { GyroType } from '../utils/criticalSlots/SystemComponentRules';
+import { GyroType } from '../types/components';
 
 // Import focused service interfaces and types
 import { 
@@ -1039,3 +1039,8 @@ export class WeightBalanceServiceImpl implements WeightBalanceService {
 export const createWeightBalanceService = (): WeightBalanceService => {
   return new WeightBalanceServiceImpl();
 };
+
+
+
+
+

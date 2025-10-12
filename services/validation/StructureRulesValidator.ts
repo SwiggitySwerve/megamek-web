@@ -7,7 +7,7 @@
  * @see IMPLEMENTATION_REFERENCE.md for architectural patterns
  */
 
-import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManager';
+import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes';
 import { ComponentConfiguration } from '../../types/componentConfiguration';
 import { getTotalInternalStructure } from '../../utils/internalStructureTable';
 
@@ -36,7 +36,7 @@ export class StructureRulesValidator {
     const violations: StructureViolation[] = [];
     const recommendations: string[] = [];
     
-    const structureType = this.extractComponentType(config.structureType);
+    const structureType = this.extractComponentType(config.structureType as any);
     const tonnage = config.tonnage || 100;
     const structureWeight = this.calculateStructureWeight(tonnage, structureType);
     const internalStructure = this.calculateInternalStructure(tonnage);
@@ -186,7 +186,7 @@ export class StructureRulesValidator {
     recommendations: string[];
   } {
     const tonnage = config.tonnage || 100;
-    const structureType = this.extractComponentType(config.structureType);
+    const structureType = this.extractComponentType(config.structureType as any);
     const baseStructure = this.calculateInternalStructure(tonnage);
     const multiplier = this.getStructureProtectionMultiplier(structureType);
     const modifiedStructure = Math.floor(baseStructure * multiplier);
@@ -322,7 +322,7 @@ export class StructureRulesValidator {
     issues: string[];
     recommendations: string[];
   } {
-    const structureType = this.extractComponentType(config.structureType);
+    const structureType = this.extractComponentType(config.structureType as any);
     const tonnage = config.tonnage || 100;
     const techBase = config.techBase || 'Inner Sphere';
     
@@ -416,3 +416,9 @@ export class StructureRulesValidator {
 }
 
 export default StructureRulesValidator;
+
+
+
+
+
+

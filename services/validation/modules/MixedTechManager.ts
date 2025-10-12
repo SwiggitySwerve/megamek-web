@@ -12,7 +12,7 @@ import {
   ComponentInfo,
   TechLevelValidationContext
 } from '../types/TechLevelTypes';
-import { UnitConfiguration } from '../../../utils/criticalSlots/UnitCriticalManager';
+import { UnitConfiguration } from '../../../utils/criticalSlots/UnitCriticalManagerTypes';
 import { TechBaseManager } from './TechBaseManager';
 
 export class MixedTechManager {
@@ -169,3 +169,7 @@ export class MixedTechManager {
     ];
   }
 }
+
+
+
+

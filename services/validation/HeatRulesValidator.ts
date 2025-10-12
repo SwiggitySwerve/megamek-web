@@ -7,7 +7,7 @@
  * @see TECHNICAL_ARCHITECTURE.md for service architecture patterns
  */
 
-import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManager';
+import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes';
 import { ComponentConfiguration } from '../../types/componentConfiguration';
 import { calculateInternalHeatSinks, calculateInternalHeatSinksForEngine } from '../../utils/heatSinkCalculations';
 
@@ -523,3 +523,8 @@ export class HeatRulesValidator {
     return component?.type || 'Standard';
   }
 }
+
+
+
+
+

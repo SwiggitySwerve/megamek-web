@@ -7,7 +7,7 @@
  * @see TECHNICAL_ARCHITECTURE.md for service architecture patterns
  */
 
-import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManager';
+import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes';
 import { ComponentConfiguration } from '../../types/componentConfiguration';
 import { calculateGyroWeight } from '../../utils/gyroCalculations';
 
@@ -466,3 +466,8 @@ export class WeightRulesValidator {
     ];
   }
 }
+
+
+
+
+

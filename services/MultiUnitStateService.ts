@@ -9,7 +9,8 @@
  */
 
 import { UnitStateManager } from '../utils/criticalSlots/UnitStateManager'
-import { UnitCriticalManager, UnitConfiguration, CompleteUnitState } from '../utils/criticalSlots/UnitCriticalManager'
+import { UnitCriticalManager } from '../utils/criticalSlots/UnitCriticalManager'
+import { UnitConfiguration, CompleteUnitState } from '../utils/criticalSlots/UnitCriticalManagerTypes'
 import { ComponentConfiguration, createComponentConfiguration } from '../types/componentConfiguration'
 
 export interface TabUnit {
@@ -82,9 +83,9 @@ export class MultiUnitStateService {
       engineRating: 200,
       runMP: 6,
       engineType: 'Standard',
-      gyroType: createComponentConfiguration('gyro', 'Standard')!,
-      structureType: createComponentConfiguration('structure', 'Standard')!,
-      armorType: createComponentConfiguration('armor', 'Standard')!,
+      gyroType: createComponentConfiguration('gyro', 'Standard')! as any,
+      structureType: createComponentConfiguration('structure', 'Standard')! as any,
+      armorType: createComponentConfiguration('armor', 'Standard')! as any,
       armorAllocation: {
         HD: { front: 9, rear: 0 },
         CT: { front: 20, rear: 6 },
@@ -96,13 +97,13 @@ export class MultiUnitStateService {
         RL: { front: 20, rear: 0 }
       },
       armorTonnage: 8.0,
-      heatSinkType: createComponentConfiguration('heatSink', 'Single')!,
+      heatSinkType: createComponentConfiguration('heatSink', 'Single')! as any,
       totalHeatSinks: 10,
       internalHeatSinks: 8,
       externalHeatSinks: 2,
       enhancements: [],
       jumpMP: 0,
-      jumpJetType: createComponentConfiguration('jumpJet', 'Standard Jump Jet')!,
+      jumpJetType: createComponentConfiguration('jumpJet', 'Standard Jump Jet')! as any,
       jumpJetCounts: {},
       hasPartialWing: false,
       mass: 50
@@ -568,3 +569,8 @@ export class MultiUnitStateService {
     }
   }
 }
+
+
+
+
+

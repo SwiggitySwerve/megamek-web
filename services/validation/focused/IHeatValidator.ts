@@ -114,3 +114,7 @@ export interface HeatCompatibilityViolation {
   suggestedFix: string;
   alternatives: string[];
 }
+
+
+
+

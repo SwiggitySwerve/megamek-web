@@ -137,3 +137,7 @@ export function createWeightCalculationService(): IWeightCalculationService {
   const factory = getWeightCalculationServiceFactory();
   return factory.createWeightCalculationService();
 }
+
+
+
+

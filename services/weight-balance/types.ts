@@ -5,7 +5,7 @@
  * Contains all type definitions used across weight balance calculations.
  */
 
-import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManager';
+import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes';
 
 export interface WeightSummary {
   totalWeight: number;
@@ -220,3 +220,7 @@ export interface LocationWeights {
   leftLeg: number;
   rightLeg: number;
 }
+
+
+
+

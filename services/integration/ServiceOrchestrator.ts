@@ -19,7 +19,6 @@ import {
   IEquipmentInstance,
   ICompleteUnitState,
   IServiceEvent,
-  ICalculationContext,
   Result,
   success,
   failure,
@@ -188,7 +187,7 @@ export class ServiceOrchestrator implements IServiceOrchestrator {
     
     try {
       // Initialize service registry
-      await this.serviceRegistry.initialize();
+      await this.serviceRegistry.initializeAll();
       
       // Register and initialize core services
       await this.registerServices();
@@ -568,13 +567,7 @@ export class ServiceOrchestrator implements IServiceOrchestrator {
       const equipment = this.extractEquipmentAllocations(unitResult.data);
       
       // Calculate heat
-      const context: ICalculationContext = {
-        unitConfiguration: unitConfig,
-        equipmentAllocations: equipment,
-        calculationType: 'heat'
-      };
-      
-      const heatResult = await this.calculationOrchestrator.calculateHeatBalance(context);
+      const heatResult = await this.calculationOrchestrator.calculateHeat(unitConfig, equipment);
       
       if (heatResult.success) {
         const summary = this.createHeatSummary(heatResult.data);
@@ -610,13 +603,7 @@ export class ServiceOrchestrator implements IServiceOrchestrator {
       const equipment = this.extractEquipmentAllocations(unitResult.data);
       
       // Calculate weight
-      const context: ICalculationContext = {
-        unitConfiguration: unitConfig,
-        equipmentAllocations: equipment,
-        calculationType: 'weight'
-      };
-      
-      const weightResult = await this.calculationOrchestrator.calculateWeight(context);
+      const weightResult = await this.calculationOrchestrator.calculateWeight(unitConfig, equipment);
       
       if (weightResult.success) {
         const summary = this.createWeightSummary(weightResult.data);
@@ -749,10 +736,10 @@ export class ServiceOrchestrator implements IServiceOrchestrator {
 
   private async initializeServices(): Promise<void> {
     // Get service references
-    this.equipmentService = await this.serviceRegistry.get('EquipmentService') as EquipmentService;
-    this.unitStateManager = await this.serviceRegistry.get('UnitStateManager') as UnitStateManager;
-    this.validationService = await this.serviceRegistry.get('ValidationService') as ValidationService;
-    this.calculationOrchestrator = await this.serviceRegistry.get('CalculationOrchestrator') as CalculationOrchestrator;
+    this.equipmentService = this.serviceRegistry.resolve<EquipmentService>('EquipmentService') ?? undefined;
+    this.unitStateManager = this.serviceRegistry.resolve<UnitStateManager>('UnitStateManager') ?? undefined;
+    this.validationService = this.serviceRegistry.resolve<ValidationService>('ValidationService') ?? undefined;
+    this.calculationOrchestrator = this.serviceRegistry.resolve<CalculationOrchestrator>('CalculationOrchestrator') ?? undefined;
     
     // Initialize services
     await Promise.all([
@@ -1024,3 +1011,7 @@ export class ServiceOrchestrator implements IServiceOrchestrator {
     return messageLevel >= configLevel;
   }
 }
+
+
+
+

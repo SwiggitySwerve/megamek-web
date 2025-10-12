@@ -4,7 +4,7 @@
  * Extracted from ConstructionRulesValidator.ts for better organization
  */
 
-import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManager'
+import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes'
 import { ComponentConfiguration } from '../../types/componentConfiguration'
 import { calculateGyroWeight } from '../../utils/gyroCalculations';
 import { GyroType } from '../../types/systemComponents';
@@ -668,3 +668,7 @@ export class ComponentValidationManager {
     return typeof component === 'string' ? component : component.type
   }
 } 
+
+
+
+

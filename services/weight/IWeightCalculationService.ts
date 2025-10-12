@@ -5,7 +5,7 @@
  * This interface ensures consistent behavior across all weight calculation implementations.
  */
 
-import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManager';
+import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes';
 
 export interface WeightSummary {
   totalWeight: number;
@@ -149,3 +149,7 @@ export function isValidEquipmentItem(item: unknown): item is EquipmentItem {
 export function isValidEquipmentArray(equipment: unknown): equipment is EquipmentItem[] {
   return Array.isArray(equipment) && equipment.every(isValidEquipmentItem);
 }
+
+
+
+

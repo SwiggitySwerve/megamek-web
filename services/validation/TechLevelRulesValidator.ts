@@ -7,7 +7,7 @@
  * @see TECHNICAL_ARCHITECTURE.md for service architecture patterns
  */
 
-import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManager';
+import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes';
 import { 
   TechLevelValidation, 
   TechLevelValidationContext,
@@ -433,3 +433,8 @@ export { TechBaseManager } from './modules/TechBaseManager';
 export { AvailabilityManager } from './modules/AvailabilityManager';
 export { MixedTechManager } from './modules/MixedTechManager';
 export { ComponentManager } from './utils/ComponentManager';
+
+
+
+
+

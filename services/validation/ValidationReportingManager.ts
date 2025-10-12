@@ -68,3 +68,7 @@ export class ValidationReportingManager {
 
   // Add other reporting/compliance methods as needed
 } 
+
+
+
+

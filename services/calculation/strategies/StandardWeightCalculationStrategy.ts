@@ -691,3 +691,7 @@ export class StandardWeightCalculationStrategy implements IWeightCalculationStra
     return messageLevel >= configLevel;
   }
 }
+
+
+
+

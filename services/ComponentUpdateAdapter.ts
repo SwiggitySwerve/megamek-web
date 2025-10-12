@@ -113,3 +113,7 @@ export class ComponentUpdateAdapter implements ComponentUpdateAdapterInterface {
 
 // Export a singleton instance for use throughout the application
 export const componentUpdateAdapter = new ComponentUpdateAdapter() 
+
+
+
+

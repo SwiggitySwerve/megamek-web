@@ -729,3 +729,7 @@ export class AnalysisManager {
     return denominatorIndex * denominatorScore !== 0 ? numerator / (denominatorIndex * denominatorScore) : 0;
   }
 } 
+
+
+
+

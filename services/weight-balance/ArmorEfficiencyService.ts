@@ -5,7 +5,7 @@
  * and armor-specific weight analysis for BattleMech construction.
  */
 
-import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManager';
+import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes';
 import { ArmorEfficiency } from './types';
 
 export class ArmorEfficiencyService {
@@ -375,3 +375,7 @@ export class ArmorEfficiencyService {
     return component?.type || 'Standard';
   }
 }
+
+
+
+

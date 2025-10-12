@@ -231,3 +231,8 @@ export const EquipmentGateway = {
 // Export types for consumers
 export type { LocalEquipmentVariant }
 
+
+
+
+
+

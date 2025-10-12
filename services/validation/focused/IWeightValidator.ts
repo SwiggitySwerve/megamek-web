@@ -92,3 +92,7 @@ export interface WeightViolation {
   suggestedFix: string;
   impact: string;
 }
+
+
+
+

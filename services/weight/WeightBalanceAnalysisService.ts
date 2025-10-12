@@ -4,7 +4,7 @@
  * Extracted from WeightBalanceService to handle balance analysis and center of gravity calculations
  */
 
-import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManager';
+import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes';
 
 export interface WeightDistribution {
   frontHeavy: boolean;
@@ -255,3 +255,7 @@ export class WeightBalanceAnalysisServiceImpl implements WeightBalanceAnalysisSe
 export const createWeightBalanceAnalysisService = (): WeightBalanceAnalysisService => {
   return new WeightBalanceAnalysisServiceImpl();
 };
+
+
+
+

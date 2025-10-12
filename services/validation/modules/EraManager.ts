@@ -282,3 +282,7 @@ export class EraManager {
     return latestEraIndex >= 0 ? eraOrder[latestEraIndex] : 'Succession Wars';
   }
 }
+
+
+
+

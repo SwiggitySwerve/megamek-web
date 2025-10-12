@@ -198,3 +198,8 @@ export class StructureAdapter extends BaseAdapter {
   }
 }
 
+
+
+
+
+

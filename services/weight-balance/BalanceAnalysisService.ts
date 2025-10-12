@@ -5,7 +5,7 @@
  * for BattleMech construction and validation.
  */
 
-import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManager';
+import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes';
 import { 
   WeightDistribution, 
   CenterOfGravity, 
@@ -370,3 +370,7 @@ export class BalanceAnalysisService {
     return component?.type || 'Standard';
   }
 }
+
+
+
+

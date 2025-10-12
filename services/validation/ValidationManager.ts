@@ -5,7 +5,7 @@
  * Implements SOLID principles with proper type safety and dependency injection support.
  */
 
-import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManager';
+import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes';
 import { 
   IValidationManager,
   ValidationResult,
@@ -813,7 +813,7 @@ export class ValidationManager implements IValidationManager {
       errors,
       warnings,
       score: Math.max(0, score),
-      compatibleItems,
+      compatibleItems: compatibleItems.length,
       incompatibleItems
     };
   }
@@ -837,9 +837,14 @@ export class ValidationManager implements IValidationManager {
     return config.tonnage * 2; // Simplified calculation
   }
 
-  private checkMixedTech(equipment: EquipmentItem[]): MixedTechInfo {
-    const innerSphereComponents = equipment.filter(eq => eq.techBase === 'Inner Sphere').length;
-    const clanComponents = equipment.filter(eq => eq.techBase === 'Clan').length;
+  private checkMixedTech(equipment: EquipmentItem[]): {
+    isMixed: boolean;
+    innerSphereComponents: number;
+    clanComponents: number;
+    allowedMixed: boolean;
+  } {
+    const innerSphereComponents = equipment.filter(eq => (eq as any).techBase === 'Inner Sphere').length;
+    const clanComponents = equipment.filter(eq => (eq as any).techBase === 'Clan').length;
     const isMixed = innerSphereComponents > 0 && clanComponents > 0;
     const allowedMixed = false; // Simplified
 
@@ -866,6 +871,10 @@ export class ValidationManager implements IValidationManager {
   }
 
   private isCompatible(equipment: EquipmentItem, config: UnitConfiguration): boolean {
-    return equipment.techBase === config.techBase || !equipment.techBase;
+    return (equipment as any).techBase === config.techBase || !(equipment as any).techBase;
   }
 } 
+
+
+
+

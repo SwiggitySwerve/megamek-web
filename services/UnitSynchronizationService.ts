@@ -10,8 +10,9 @@
 
 import { TabUnit, MultiUnitState } from './MultiUnitStateService'
 import { MultiUnitStateService } from './MultiUnitStateService'
-import { UnitCriticalManager, UnitConfiguration, CompleteUnitState } from '../utils/criticalSlots/UnitCriticalManager'
-import { EngineType, GyroType } from '../utils/criticalSlots/SystemComponentRules'
+import { UnitCriticalManager } from '../utils/criticalSlots/UnitCriticalManager'
+import { UnitConfiguration, CompleteUnitState } from '../utils/criticalSlots/UnitCriticalManagerTypes'
+import { EngineType, GyroType } from '../types/components'
 import { EquipmentAllocation } from '../utils/criticalSlots/CriticalSlot'
 import { MultiTabDebouncedSaveManager } from '../utils/DebouncedSaveManager'
 
@@ -634,3 +635,8 @@ export class UnitSynchronizationService {
     this.listeners.clear()
   }
 }
+
+
+
+
+

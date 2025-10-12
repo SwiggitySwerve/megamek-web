@@ -83,3 +83,8 @@ export interface CalculatedComponent {
   derived?: Record<string, number>
 }
 
+
+
+
+
+

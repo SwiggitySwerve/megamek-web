@@ -4,8 +4,8 @@
  * Extracted from WeightBalanceService to handle optimization suggestions and analysis
  */
 
-import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManager';
-import { ComponentWeightBreakdown } from './WeightCalculationService';
+import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes';
+// import { ComponentWeightBreakdown } from './WeightCalculationService'; // TODO: This interface doesn't exist yet
 
 export interface OptimizationSuggestion {
   category: 'engine' | 'armor' | 'structure' | 'equipment' | 'heatsinks' | 'jumpjets';
@@ -498,3 +498,7 @@ export class WeightOptimizationServiceImpl implements WeightOptimizationService 
 export const createWeightOptimizationService = (): WeightOptimizationService => {
   return new WeightOptimizationServiceImpl();
 };
+
+
+
+

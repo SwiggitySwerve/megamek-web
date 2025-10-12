@@ -266,3 +266,8 @@ export function hasCalculation(name: string): boolean {
   return name in COMPONENT_CALCULATIONS
 }
 
+
+
+
+
+

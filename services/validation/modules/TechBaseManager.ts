@@ -13,7 +13,7 @@ import {
   ComponentInfo,
   TechLevelValidationContext
 } from '../types/TechLevelTypes';
-import { UnitConfiguration } from '../../../utils/criticalSlots/UnitCriticalManager';
+import { UnitConfiguration } from '../../../utils/criticalSlots/UnitCriticalManagerTypes';
 
 export class TechBaseManager {
   // Tech base compatibility matrix
@@ -213,3 +213,7 @@ export class TechBaseManager {
     return this.getAvailableTechBases().includes(techBase);
   }
 }
+
+
+
+

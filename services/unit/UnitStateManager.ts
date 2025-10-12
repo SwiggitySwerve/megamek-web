@@ -625,7 +625,9 @@ export class UnitStateManager implements IUnitStateManager {
     return {
       id: `equipment_${location}_${slot}`,
       equipmentId: 'mock_equipment',
-      isActive: true,
+      equipment: {} as any, // Mock equipment data
+      slotIndex: slot,
+      quantity: 1,
       configuration: {},
       status: {
         operational: true,
@@ -633,8 +635,7 @@ export class UnitStateManager implements IUnitStateManager {
         destroyed: false,
         criticalHits: 0
       },
-      location,
-      slot
+      location
     } as IEquipmentInstance;
   }
 
@@ -650,7 +651,7 @@ export class UnitStateManager implements IUnitStateManager {
           type: 'damaged',
           target: equipment.id,
           severity: damage.damage * 10,
-          description: `${equipment.name} critically damaged`,
+          description: `Equipment critically damaged`,
           repairable: true,
           repairCost: damage.damage * 100
         });
@@ -661,7 +662,7 @@ export class UnitStateManager implements IUnitStateManager {
           type: 'destroyed',
           target: equipment.id,
           severity: 100,
-          description: `${equipment.name} destroyed by ammunition explosion`,
+          description: `Equipment destroyed by ammunition explosion`,
           repairable: false,
           repairCost: 0
         });
@@ -762,3 +763,7 @@ export class UnitStateManager implements IUnitStateManager {
     };
   }
 }
+
+
+
+

@@ -773,9 +773,9 @@ export class ConstructionRulesValidatorImpl implements ConstructionRulesValidato
   ];
 
   private readonly ruleManagementManager = new RuleManagementManager();
-  private readonly validationOrchestrator = ValidationOrchestratorFactory.createWithDefaults();
+  private readonly validationOrchestrator = new ValidationOrchestrator({} as any, {} as any);
   private readonly calculationUtilitiesManager = new CalculationUtilitiesManager();
-  private readonly equipmentValidationService = new EquipmentValidationService();
+  private readonly equipmentValidationService = new EquipmentValidationManager();
   private readonly componentValidationManager = new ComponentValidationManager();
   private readonly reportingManager = new ValidationReportingManager();
 
@@ -1949,3 +1949,8 @@ export class ConstructionRulesValidatorImpl implements ConstructionRulesValidato
 export const createConstructionRulesValidator = (): ConstructionRulesValidator => {
   return new ConstructionRulesValidatorImpl();
 };
+
+
+
+
+

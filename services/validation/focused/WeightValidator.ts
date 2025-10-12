@@ -524,3 +524,7 @@ export class WeightValidator implements IWeightValidator {
     return component.type || 'Standard';
   }
 }
+
+
+
+

@@ -6,7 +6,7 @@
  */
 
 import { ComponentInfo } from '../types/TechLevelTypes';
-import { UnitConfiguration } from '../../../utils/criticalSlots/UnitCriticalManager';
+import { UnitConfiguration } from '../../../utils/criticalSlots/UnitCriticalManagerTypes';
 
 export class ComponentManager {
   /**
@@ -19,13 +19,13 @@ export class ComponentManager {
     // Add system components with proper tech base inheritance
     components.push({
       name: `${this.extractComponentType(config.structureType)} Structure`,
-      techBase: config.structureType?.techBase || unitTechBase,
+      techBase: (config.structureType as any)?.techBase || unitTechBase,
       category: 'structure'
     });
     
     components.push({
       name: `${this.extractComponentType(config.armorType)} Armor`,
-      techBase: config.armorType?.techBase || unitTechBase,
+      techBase: (config.armorType as any)?.techBase || unitTechBase,
       category: 'armor'
     });
     
@@ -182,3 +182,7 @@ export class ComponentManager {
     return groups;
   }
 }
+
+
+
+

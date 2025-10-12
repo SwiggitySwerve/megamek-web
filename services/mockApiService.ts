@@ -17,3 +17,8 @@ export const getMetadata = async (filePath: string): Promise<string[]> => {
     console.log("Mock API: getMetadata called for:", filePath);
     return fetchMockDataFile(filePath);
 };
+
+
+
+
+

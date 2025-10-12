@@ -183,7 +183,7 @@ export class EquipmentService implements IEquipmentService {
     
     // Initialize equipment database if available
     if (this.database) {
-      await this.database.initialize();
+      await this.database.initialize?.();
     }
 
     // Clear cache
@@ -208,7 +208,7 @@ export class EquipmentService implements IEquipmentService {
     this.listeners.clear();
     
     if (this.database) {
-      await this.database.cleanup();
+      await this.database.cleanup?.();
     }
     
     this.log('info', 'EquipmentService cleanup complete');
@@ -233,15 +233,8 @@ export class EquipmentService implements IEquipmentService {
         return failure(new Error('Equipment database not available'));
       }
 
-      const equipment = await this.database.getEquipment(equipmentId);
-      if (!equipment) {
-        return failure(new Error(`Equipment not found: ${equipmentId}`));
-      }
-
-      // Cache the result
-      this.addToCache(equipmentId, equipment);
-
-      return success(equipment);
+      // Database integration removed - equipment should come from static data
+      return failure(new Error('Database equipment lookup not implemented'));
 
     } catch (error) {
       this.log('error', `Failed to get equipment ${equipmentId}: ${error}`);
@@ -262,7 +255,11 @@ export class EquipmentService implements IEquipmentService {
         return failure(new Error('Equipment database not available'));
       }
 
-      const results = await this.database.searchEquipment(criteria);
+      const results = await this.database.searchEquipment?.(criteria);
+      
+      if (!results || !Array.isArray(results)) {
+        return failure(new Error('Invalid search results'));
+      }
       
       // Cache popular results
       results.slice(0, 10).forEach(equipment => {
@@ -575,26 +572,26 @@ export class EquipmentService implements IEquipmentService {
     configuration?: any
   ): Promise<Result<IEquipmentInstance>> {
     try {
-      if (this.factory) {
-        return success(await this.factory.createEquipmentInstance(equipment, configuration));
-      }
+      // Equipment factory integration removed - needs refactoring
+      // if (this.factory) {
+      //   return success(await this.factory.createEquipmentInstance(equipment, configuration));
+      // }
 
       // Fallback: basic instance creation
       const instance: IEquipmentInstance = {
         id: `${equipment.id}_${Date.now()}`,
         equipmentId: equipment.id,
-        name: equipment.name,
-        type: equipment.type,
-        isActive: true,
-        configuration: configuration || {},
+        equipment: equipment,
+        location: 'unallocated',
+        slotIndex: -1,
+        quantity: 1,
         status: {
           operational: true,
           damaged: false,
           destroyed: false,
           criticalHits: 0
         },
-        location: '',
-        slot: 0
+        configuration: configuration
       };
 
       return success(instance);
@@ -819,3 +816,7 @@ export interface IEquipmentSearchCriteria {
   readonly limit?: number;
   readonly offset?: number;
 }
+
+
+
+

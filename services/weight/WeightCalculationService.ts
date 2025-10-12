@@ -5,7 +5,7 @@
  * Implements SOLID principles with proper type safety and dependency injection support
  */
 
-import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManager';
+import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes';
 import { 
   IWeightCalculationService, 
   WeightSummary, 
@@ -405,3 +405,7 @@ export class WeightCalculationService implements IWeightCalculationService {
 export const createWeightCalculationService = (): IWeightCalculationService => {
   return new WeightCalculationService();
 };
+
+
+
+

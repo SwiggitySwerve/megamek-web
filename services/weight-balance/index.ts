@@ -5,7 +5,7 @@
  * Provides both individual service access and a comprehensive facade.
  */
 
-import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManager';
+import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes';
 import { WeightCalculationService } from './WeightCalculationService';
 import { BalanceAnalysisService } from './BalanceAnalysisService';
 import { OptimizationService } from './OptimizationService';
@@ -167,3 +167,7 @@ export const createWeightBalanceService = (): WeightBalanceService => {
  * Default export for backward compatibility
  */
 export default WeightBalanceServiceImpl;
+
+
+
+

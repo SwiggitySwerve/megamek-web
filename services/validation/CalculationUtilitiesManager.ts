@@ -486,3 +486,7 @@ export class CalculationUtilitiesManager {
     return Math.min(100, (totalDamage / totalHeat) * 20); // Damage per heat point
   }
 } 
+
+
+
+

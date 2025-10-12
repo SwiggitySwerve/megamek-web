@@ -253,3 +253,7 @@ export class AvailabilityManager {
     return this.getAvailableRatings().includes(rating);
   }
 }
+
+
+
+

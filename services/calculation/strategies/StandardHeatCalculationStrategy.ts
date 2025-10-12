@@ -621,3 +621,7 @@ export class StandardHeatCalculationStrategy implements IHeatCalculationStrategy
     return messageLevel >= configLevel;
   }
 }
+
+
+
+

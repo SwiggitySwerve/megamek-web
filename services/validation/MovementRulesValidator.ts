@@ -7,7 +7,7 @@
  * @see IMPLEMENTATION_REFERENCE.md for architectural patterns
  */
 
-import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManager';
+import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes';
 import { calculateInternalHeatSinks } from '../../utils/heatSinkCalculations';
 
 export interface MovementValidation {
@@ -301,3 +301,8 @@ export class MovementRulesValidator {
 }
 
 export default MovementRulesValidator;
+
+
+
+
+

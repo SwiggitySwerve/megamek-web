@@ -5,7 +5,7 @@
  * for BattleMech construction and configuration compliance.
  */
 
-import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManager';
+import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes';
 import { WeightCalculationService } from './WeightCalculationService';
 import { OptimizationService } from './OptimizationService';
 import { 
@@ -307,3 +307,7 @@ export class ValidationService {
     return component?.type || 'Standard';
   }
 }
+
+
+
+

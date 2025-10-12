@@ -5,7 +5,7 @@
  * Extracted from TechLevelRulesValidator.ts for better modularity.
  */
 
-import { UnitConfiguration } from '../../../utils/criticalSlots/UnitCriticalManager';
+import { UnitConfiguration } from '../../../utils/criticalSlots/UnitCriticalManagerTypes';
 
 export interface TechLevelValidation {
   isValid: boolean;
@@ -250,3 +250,7 @@ export interface ComponentInfo {
   techBase: string;
   category: string;
 }
+
+
+
+

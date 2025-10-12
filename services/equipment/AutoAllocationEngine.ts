@@ -870,7 +870,7 @@ export class AutoAllocationEngine {
     externalHeatSinks: number,
     config: UnitConfiguration
   ): number {
-    const heatSinkType = typeof config.heatSinkType === 'string' ? config.heatSinkType : config.heatSinkType?.type || 'Standard';
+    const heatSinkType = typeof config.heatSinkType === 'string' ? config.heatSinkType : (config.heatSinkType as any)?.type || 'Standard';
     const isDoubleHeatSinks = heatSinkType === 'Double' || heatSinkType === 'Clan Double';
     const multiplier = isDoubleHeatSinks ? 2 : 1;
 
@@ -1151,3 +1151,8 @@ export class AutoAllocationEngine {
 }
 
 export default AutoAllocationEngine;
+
+
+
+
+

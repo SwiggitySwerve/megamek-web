@@ -61,3 +61,7 @@ export class CatalogService {
     return { total: all.length, byKind, byTechBase }
   }
 }
+
+
+
+
