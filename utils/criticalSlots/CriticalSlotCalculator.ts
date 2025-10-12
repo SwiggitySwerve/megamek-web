@@ -9,8 +9,9 @@
 
 import { UnitConfiguration } from './UnitCriticalManagerTypes';
 import { ComponentConfiguration, TechBase } from '../../types/componentConfiguration';
-import { ComponentDatabaseService } from '../../services/ComponentDatabaseService';
-import { STRUCTURE_DATA, ARMOR_DATA } from '../../services/ComponentDatabaseService';
+import { SystemComponentsGateway } from '../../services/systemComponents/SystemComponentsGateway';
+// TODO: STRUCTURE_DATA and ARMOR_DATA need to be migrated to new adapters
+// import { STRUCTURE_DATA, ARMOR_DATA } from '../../services/ComponentDatabaseService';
 import { SlotCalculationManager, SlotRequirements, AvailableSlots, SlotUtilization } from './SlotCalculationManager';
 import { SlotAllocationManager, AllocationResult, OptimizationResult, SlotConflict, ConflictResolution, ReorganizationSuggestion } from './SlotAllocationManager';
 import { SlotValidationManager, ValidationResult, EfficiencyAnalysis, SlotReport, AvailableSlotLocation, ValidationError, ValidationWarning } from './SlotValidationManager';
@@ -74,7 +75,7 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
   private readonly slotAllocationManager: SlotAllocationManager;
   private readonly slotValidationManager: SlotValidationManager;
   private readonly specialComponentManager: SpecialComponentCalculator;
-  private readonly componentDatabaseService: ComponentDatabaseService;
+  // MIGRATED: No longer using ComponentDatabaseService, using SystemComponentsGateway instead
 
   // Standard slot counts for different locations
   private readonly STANDARD_SLOT_COUNTS = {
@@ -93,7 +94,7 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
     this.slotAllocationManager = new SlotAllocationManager();
     this.slotValidationManager = new SlotValidationManager();
     this.specialComponentManager = new SpecialComponentCalculator();
-    this.componentDatabaseService = ComponentDatabaseService.getInstance();
+    // MIGRATED: No longer initializing ComponentDatabaseService
   }
 
   // ===== CORE SLOT CALCULATIONS =====
@@ -793,24 +794,14 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
   }
   
   public calculateSystemComponentSlots(config: UnitConfiguration): number {
-    // Use component database for accurate slot calculations
-    const { componentDatabase } = require('../../services/ComponentDatabaseService');
+    // MIGRATED: Use SystemComponentsGateway for slot calculations
+    const engineType = this.extractComponentType(config.engineType);
+    const gyroType = this.extractComponentType(config.gyroType);
     
-    const engineSlots = componentDatabase.getEngineCriticalSlots(
-      this.getEngineId(config.engineType),
-      this.getGyroId(this.extractComponentType(config.gyroType))
-    );
+    const engineSlots = this.getEngineSlots(engineType);
+    const gyroSlots = this.getGyroSlots(gyroType);
     
-    const gyroSlots = componentDatabase.getGyroCriticalSlots(
-      this.getGyroId(this.extractComponentType(config.gyroType))
-    );
-    
-    const totalEngineSlots = engineSlots.centerTorso.length + 
-                           engineSlots.leftTorso.length + 
-                           engineSlots.rightTorso.length;
-    const totalGyroSlots = gyroSlots.centerTorso.length;
-    
-    return totalEngineSlots + totalGyroSlots;
+    return engineSlots + gyroSlots;
   }
   
   private getEngineId(engineType: string): string {
@@ -839,30 +830,36 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
   }
   
   public calculateSpecialComponentSlots(config: UnitConfiguration): number {
-    // Use component database for accurate slot calculations
-    const { componentDatabase } = require('../../services/ComponentDatabaseService');
+    // MIGRATED: Use SystemComponentsGateway for structure calculations
+    // TODO: Add ArmorAdapter when implemented
     let slots = 0;
 
     // Structure slots
     const structureType = this.extractComponentType(config.structureType);
     const structureId = this.getStructureId(structureType);
-    const structureData = STRUCTURE_DATA.find((s: any) => s.id === structureId);
-    if (structureData && structureData.placementType === 'dynamic' && structureData.totalSlots) {
-      slots += structureData.totalSlots;
-    } else {
-      const structureSlots = componentDatabase.getStructureCriticalSlots(structureId);
-      slots += Object.values(structureSlots).reduce((sum: number, slotArray: unknown) => sum + (slotArray as number[]).length, 0);
+    const context = SystemComponentsGateway.createContext({
+      tonnage: config.tonnage,
+      techBase: 'Inner Sphere', // TODO: Get from config
+      unitType: 'BattleMech'
+    });
+    
+    const structure = SystemComponentsGateway.getStructureById(structureId, context);
+    if (structure) {
+      slots += structure.slots;
     }
 
-    // Armor slots
+    // Armor slots - TODO: Implement when ArmorAdapter is ready
     const armorType = this.extractComponentType(config.armorType);
-    const armorId = this.getArmorId(armorType);
-    const armorData = ARMOR_DATA.find((a: any) => a.id === armorId);
-    if (armorData && armorData.placementType === 'dynamic' && armorData.totalSlots) {
-      slots += armorData.totalSlots;
-    } else {
-      const armorSlots = componentDatabase.getArmorCriticalSlots(armorId);
-      slots += Object.values(armorSlots).reduce((sum: number, slotArray: unknown) => sum + (slotArray as number[]).length, 0);
+    if (armorType === 'Ferro-Fibrous') {
+      slots += 14;
+    } else if (armorType === 'Ferro-Fibrous (Clan)') {
+      slots += 7;
+    } else if (armorType === 'Light Ferro-Fibrous') {
+      slots += 7;
+    } else if (armorType === 'Heavy Ferro-Fibrous') {
+      slots += 21;
+    } else if (armorType === 'Stealth') {
+      slots += 12;
     }
 
     return slots;
@@ -930,10 +927,21 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
   }
   
   public getEngineSlots(engineType: string): number {
-    // Map engine type to component database ID
+    // MIGRATED: Use SystemComponentsGateway for engine slot calculation
     const engineId = this.mapEngineTypeToId(engineType);
-    const engineSlots = this.componentDatabaseService.getEngineCriticalSlots(engineId, 'standard_gyro');
-    return engineSlots.centerTorso.length + engineSlots.leftTorso.length + engineSlots.rightTorso.length;
+    const context = SystemComponentsGateway.createContext();
+    const engine = SystemComponentsGateway.getEngineById(engineId, context);
+    
+    if (engine && engine.slots) {
+      return (engine.slots['Center Torso'] || 0) + 
+             (engine.slots['Left Torso'] || 0) + 
+             (engine.slots['Right Torso'] || 0);
+    }
+    
+    // Fallback to hardcoded values if gateway doesn't return engine
+    return this.getEngineAllocationByLocation(engineType).centerTorso +
+           this.getEngineAllocationByLocation(engineType).leftTorso +
+           this.getEngineAllocationByLocation(engineType).rightTorso;
   }
   
   private mapEngineTypeToId(engineType: string): string {
@@ -950,10 +958,23 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
   }
   
   public getGyroSlots(gyroType: string): number {
-    // Map gyro type to component database ID
+    // MIGRATED: Use SystemComponentsGateway for gyro slot calculation
     const gyroId = this.mapGyroTypeToId(gyroType);
-    const gyroSlots = this.componentDatabaseService.getGyroCriticalSlots(gyroId);
-    return gyroSlots.centerTorso.length;
+    const context = SystemComponentsGateway.createContext();
+    const gyro = SystemComponentsGateway.getGyroById(gyroId, context);
+    
+    if (gyro) {
+      return gyro.slots;
+    }
+    
+    // Fallback to hardcoded values if gateway doesn't return gyro
+    switch (gyroType) {
+      case 'Standard': return 4;
+      case 'Compact': return 2;
+      case 'XL': return 6;
+      case 'Heavy-Duty': return 4;
+      default: return 4;
+    }
   }
   
   private mapGyroTypeToId(gyroType: string): string {

@@ -32,6 +32,7 @@
     "@types/uuid": "^10.0.0",
     "autoprefixer": "^10.4.21",
     "electron-updater": "^6.6.2",
+    "minisearch": "^7.2.0",
     "next": "^15.3.3",
     "react": "^19.1.0",
     "react-dnd": "^16.0.1",

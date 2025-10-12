@@ -9,7 +9,7 @@
 
 import { UnitConfiguration, ArmorAllocation } from '../utils/criticalSlots/UnitCriticalManagerTypes';
 import { ComponentConfiguration } from '../types/componentConfiguration';
-import { calculateGyroWeight } from '../utils/gyroCalculations';
+import { SystemComponentsGateway } from './systemComponents/SystemComponentsGateway';
 import { GyroType } from '../utils/criticalSlots/SystemComponentRules';
 
 // Import focused service interfaces and types
@@ -501,15 +501,24 @@ export class WeightBalanceServiceImpl implements WeightBalanceService {
   private calculateGyroWeight(config: UnitConfiguration): ComponentWeightBreakdown['gyro'] {
     const gyroType = this.extractComponentType(config.gyroType);
     
-    // Type-safe gyro weight calculation with proper type conversion
+    // MIGRATED: Use SystemComponentsGateway for gyro weight calculation
     const validGyroTypes = ['Standard', 'XL', 'Compact', 'Heavy-Duty'];
     const safeGyroType = validGyroTypes.includes(gyroType) ? gyroType : 'Standard';
     
+    // Map gyro type to ID
+    const gyroIdMap: Record<string, string> = {
+      'Standard': 'standard_gyro',
+      'XL': 'xl_gyro',
+      'Compact': 'compact_gyro',
+      'Heavy-Duty': 'heavy_duty_gyro'
+    };
+    
+    const gyroId = gyroIdMap[safeGyroType] || 'standard_gyro';
     let weight: number;
     try {
-      weight = calculateGyroWeight(config.engineRating, safeGyroType as GyroType);
+      weight = SystemComponentsGateway.calculateGyroWeight(gyroId, config.engineRating);
     } catch (error) {
-      // Fallback to standard calculation if function fails
+      // Fallback to standard calculation if gateway fails
       weight = Math.ceil(config.engineRating / 100);
     }
     

@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getEquipmentCatalog, getEquipmentCategories, getTechBases, getRulesLevels } from '../../../services/equipmentService';
-import type { EquipmentSearchParams, EquipmentCatalogResponse } from '../../../services/equipmentService';
+import { EquipmentGateway, EquipmentSearchCriteria } from '../../../services/equipment/EquipmentGateway';
+import { TechBase, TechBaseUtil } from '../../../types/core/TechBase';
 
 // Legacy interface for API compatibility
 interface EquipmentVariant {
@@ -60,8 +60,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       tech_base,
       category,
       rules_level,
-      sortBy = 'variant_name',
-      sortOrder = 'ASC'
+      sortBy = 'name',
+      sortOrder = 'asc'
     } = req.query as {
       page?: string | number;
       pageSize?: string | number;
@@ -73,67 +73,34 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       sortOrder?: string;
     };
 
-    // Convert query parameters to service parameters
-    const searchParams: EquipmentSearchParams = {
+    // Tech base is required - default to Inner Sphere if not provided
+    const techBase: TechBase = tech_base === 'Clan' ? 'Clan' : 'Inner Sphere';
+
+    // Build search criteria
+    const searchCriteria: EquipmentSearchCriteria = {
+      techBase,
+      text: search,
       page: parseInt(page as string, 10) || 1,
       pageSize: Math.min(parseInt(pageSize as string, 10) || 25, 100),
       sortBy,
-      sortOrder: (sortOrder?.toUpperCase() === 'DESC' ? 'DESC' : 'ASC')
+      sortOrder: sortOrder?.toLowerCase() === 'desc' ? 'desc' : 'asc'
     };
 
-    if (search) {
-      searchParams.search = search;
-    }
-
-    if (tech_base && (tech_base === 'IS' || tech_base === 'Clan')) {
-      searchParams.techBase = tech_base;
-    }
-
+    // Add category filter if provided
     if (category) {
-      // Map category names from API to service types
-      const categoryMapping: Record<string, string> = {
-        'Energy Weapons': 'Energy Weapons',
-        'Ballistic Weapons': 'Ballistic Weapons', 
-        'Missile Weapons': 'Missile Weapons',
-        'Artillery Weapons': 'Artillery Weapons',
-        'Capital Weapons': 'Capital Weapons',
-        'Physical Weapons': 'Physical Weapons',
-        'Anti-Personnel Weapons': 'Anti-Personnel Weapons',
-        'One-Shot Weapons': 'One-Shot Weapons',
-        'Torpedoes': 'Torpedoes',
-        'Equipment': 'Equipment',
-        'Industrial Equipment': 'Industrial Equipment',
-        'Heat Management': 'Heat Management',
-        'Movement Equipment': 'Movement Equipment',
-        'Electronic Warfare': 'Electronic Warfare',
-        'Prototype Equipment': 'Prototype Equipment',
-        'Ammunition': 'Ammunition'
-      };
-      
-      if (categoryMapping[category]) {
-        // API boundary: Validate and safely cast external input to internal types
-        const mappedCategory = categoryMapping[category];
-        const validCategories = ['Energy Weapons', 'Ballistic Weapons', 'Missile Weapons', 'Artillery Weapons', 'Equipment', 'Ammunition'];
-        
-        if (validCategories.includes(mappedCategory)) {
-          // Safe cast after validation - API boundary exception
-          searchParams.category = mappedCategory as any;
-        }
-      }
+      searchCriteria.category = [category];
     }
 
+    // Add rules level filter if provided
     if (rules_level) {
-      // API boundary: Validate and safely cast external input to internal types
       const validRulesLevels = ['Introductory', 'Standard', 'Advanced', 'Experimental'];
-      
       if (validRulesLevels.includes(rules_level)) {
-        // Safe cast after validation - API boundary exception
-        searchParams.rulesLevel = rules_level as any;
+        searchCriteria.rulesLevel = [rules_level];
       }
     }
 
-    // Get equipment data from file-based service
-    const result: EquipmentCatalogResponse = getEquipmentCatalog(searchParams);
+    // Get equipment data from gateway
+    const result = EquipmentGateway.search(searchCriteria);
 
     // Convert service response to API format for compatibility
     const items: EquipmentVariant[] = result.items.map(item => ({
@@ -142,16 +109,16 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       variant_name: item.name,
       weight_tons: item.weight,
       critical_slots: item.crits,
-      damage: item.damage,
-      heat_generated: item.heat,
-      range_short: item.rangeShort,
-      range_medium: item.rangeMedium,
-      range_long: item.rangeLong,
-      range_extreme: item.rangeExtreme,
-      minimum_range: item.minRange,
-      ammo_per_ton: item.ammoPerTon,
-      cost_cbills: item.cost,
-      battle_value: item.battleValue,
+      damage: item.damage ?? null,
+      heat_generated: item.heat ?? null,
+      range_short: item.rangeShort ?? null,
+      range_medium: item.rangeMedium ?? null,
+      range_long: item.rangeLong ?? null,
+      range_extreme: item.rangeExtreme ?? null,
+      minimum_range: item.minRange ?? null,
+      ammo_per_ton: item.ammoPerTon ?? null,
+      cost_cbills: item.cost ?? null,
+      battle_value: item.battleValue ?? null,
       introduction_year: item.introductionYear,
       rules_level: item.rulesLevel,
       is_omnipod: false, // Not tracked in new system
@@ -166,12 +133,12 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const response: CatalogResponse = {
       items,
-      totalItems: result.totalItems,
+      totalItems: result.totalCount,
       totalPages: result.totalPages,
       currentPage: result.currentPage,
       pageSize: result.pageSize,
-      sortBy: result.sortBy,
-      sortOrder: result.sortOrder
+      sortBy: searchCriteria.sortBy || 'name',
+      sortOrder: searchCriteria.sortOrder || 'asc'
     };
 
     return res.status(200).json(response);
