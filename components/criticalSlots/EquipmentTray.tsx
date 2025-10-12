@@ -39,7 +39,7 @@ function EquipmentTrayItem({ equipment, index, onRemove, readOnly = false }: Equ
   const equipmentAny = equipment as any;
   
   // Check for V2 EquipmentAllocation structure first (most common)
-  const actualEquipment = equipment.equipmentData || equipmentAny;
+  const actualEquipment: any = equipment.equipmentData || equipmentAny;
   
   // Extract equipment data with comprehensive fallback patterns
   // Priority: V2 nested structure -> direct structure -> legacy patterns

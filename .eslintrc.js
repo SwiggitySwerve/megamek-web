@@ -30,6 +30,19 @@ module.exports = {
   rules: {
     // TypeScript rules
     '@typescript-eslint/no-explicit-any': 'warn',
+    '@typescript-eslint/no-unsafe-assignment': 'warn',
+    '@typescript-eslint/no-unsafe-member-access': 'warn',
+    '@typescript-eslint/no-unsafe-call': 'warn',
+    '@typescript-eslint/no-unsafe-return': 'warn',
+    '@typescript-eslint/explicit-module-boundary-types': ['warn', {
+      'allowArgumentsExplicitlyTypedAsAny': false
+    }],
+    '@typescript-eslint/ban-ts-comment': ['error', {
+      'ts-ignore': 'allow-with-description',
+      'ts-expect-error': 'allow-with-description',
+      'ts-nocheck': true,
+      'minimumDescriptionLength': 10
+    }],
     '@typescript-eslint/no-unused-vars': ['warn', { 'argsIgnorePattern': '^_' }],
     
     // React rules

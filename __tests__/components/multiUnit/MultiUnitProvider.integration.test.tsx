@@ -287,9 +287,9 @@ describe('MultiUnitProvider Integration Tests', () => {
       const originalWindow = global.window;
       const originalLocalStorage = window.localStorage;
       
-      // @ts-ignore
+      // @ts-expect-error - Intentionally deleting window object to simulate server-side rendering environment for testing
       delete global.window;
-      // @ts-ignore  
+      // @ts-expect-error - Intentionally assigning empty object to test SSR compatibility and missing localStorage handling
       global.window = {};
 
       render(

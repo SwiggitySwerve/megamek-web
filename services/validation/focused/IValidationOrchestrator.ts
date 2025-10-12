@@ -5,7 +5,7 @@
  * Follows SOLID principles by depending on abstractions rather than concrete implementations.
  */
 
-import { UnitConfiguration } from '../../../utils/criticalSlots/UnitCriticalManager';
+import { UnitConfiguration } from '../../../utils/criticalSlots/UnitCriticalManagerTypes';
 import { WeightValidation } from './IWeightValidator';
 import { HeatValidation } from './IHeatValidator';
 

@@ -4,7 +4,7 @@
  * Extracted from EquipmentAllocationService.ts for better organization
  */
 
-import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManager';
+import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes';
 
 export interface EquipmentPlacement {
   equipmentId: string;

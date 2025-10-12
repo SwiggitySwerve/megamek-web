@@ -6,7 +6,7 @@
  * Follows SOLID principles throughout.
  */
 
-import { UnitConfiguration } from '../../../utils/criticalSlots/UnitCriticalManager';
+import { UnitConfiguration } from '../../../utils/criticalSlots/UnitCriticalManagerTypes';
 import { 
   IValidationOrchestrator,
   ValidationResult,

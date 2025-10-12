@@ -30,12 +30,15 @@ import {
   ISlotUtilizationResult,
   IMovementPointsResult,
   ICalculationMetrics,
+  IOptimizationSummary,
   IServiceEvent,
   Result,
   success,
   failure,
   EntityId
 } from '../../types/core';
+
+import { IOptimizationImprovement } from '../../types/core/CalculationInterfaces';
 
 import { IObservableService, IService } from '../../types/core/BaseTypes';
 
@@ -217,24 +220,15 @@ export class CalculationOrchestrator implements ICalculationOrchestrator {
 
       // Combine results
       const completeResult: ICompleteCalculationResult = {
-        unitId: config.id,
-        timestamp: new Date(),
         weight: weightResult.data,
         heat: heatResult.data,
         armor: armorResult.data,
-        criticalSlots: slotsResult.data,
+        slots: slotsResult.data,
         movement: movementResult.data,
-        overallScore: this.calculateOverallScore(
-          weightResult.data,
-          heatResult.data,
-          armorResult.data,
-          slotsResult.data,
-          movementResult.data
-        ),
-        optimizations: this.config.enableOptimization 
-          ? this.calculateOptimizations(weightResult.data, heatResult.data, armorResult.data, slotsResult.data, movementResult.data)
-          : [],
-        performanceMetrics: this.updateMetrics(Date.now() - startTime)
+        optimization: this.config.enableOptimization
+          ? this.calculateOptimizationSummary(weightResult.data, heatResult.data, armorResult.data, slotsResult.data, movementResult.data)
+          : this.getEmptyOptimizationSummary(),
+        performance: this.updateMetrics(Date.now() - startTime)
       };
 
       // Cache the result
@@ -248,7 +242,7 @@ export class CalculationOrchestrator implements ICalculationOrchestrator {
         data: { 
           unitName: `${config.chassisName} ${config.model}`,
           calculationTime: Date.now() - startTime,
-          overallScore: completeResult.overallScore
+          overallScore: completeResult.optimization.overallScore
         }
       });
 
@@ -281,7 +275,7 @@ export class CalculationOrchestrator implements ICalculationOrchestrator {
       this.log('debug', 'Calculating weight distribution...');
 
       if (this.weightCalculator) {
-        const result = await this.weightCalculator.calculateWeight(config, equipment);
+        const result = await this.weightCalculator.calculateTotalWeight(config, equipment);
         this.endPerformanceTracking(trackerId);
         return success(result);
       }
@@ -367,7 +361,9 @@ export class CalculationOrchestrator implements ICalculationOrchestrator {
       this.log('debug', 'Calculating critical slot usage...');
 
       if (this.slotsCalculator) {
-        const result = await this.slotsCalculator.calculateCriticalSlots(config, equipment);
+        const requirements = await this.slotsCalculator.calculateSlotRequirements(config, equipment);
+        const availability = await this.slotsCalculator.calculateSlotAvailability(config);
+        const result = await this.slotsCalculator.calculateSlotUtilization(requirements, availability);
         this.endPerformanceTracking(trackerId);
         return success(result);
       }
@@ -388,14 +384,17 @@ export class CalculationOrchestrator implements ICalculationOrchestrator {
    */
   async calculateMovement(
     config: IUnitConfiguration
-  ): Promise<Result<IMovementCalculationResult>> {
+  ): Promise<Result<IMovementPointsResult>> {
     const trackerId = this.startPerformanceTracking('movement', 1);
     
     try {
       this.log('debug', 'Calculating movement profile...');
 
       if (this.movementCalculator) {
-        const result = await this.movementCalculator.calculateMovement(config);
+        const result = await this.movementCalculator.calculateMovementPoints(
+          config.engineRating || 0,
+          config.tonnage
+        );
         this.endPerformanceTracking(trackerId);
         return success(result);
       }
@@ -622,6 +621,70 @@ export class CalculationOrchestrator implements ICalculationOrchestrator {
     return optimizations;
   }
 
+  /**
+   * Calculate complete optimization summary
+   */
+  private calculateOptimizationSummary(
+    weight: IWeightCalculationResult,
+    heat: IHeatBalanceResult,
+    armor: IArmorEfficiencyResult,
+    slots: ISlotUtilizationResult,
+    movement: IMovementPointsResult
+  ): IOptimizationSummary {
+    const overallScore = this.calculateOverallScore(weight, heat, armor, slots, movement);
+    const optimizations = this.calculateOptimizations(weight, heat, armor, slots, movement);
+    
+    // Calculate individual optimization scores
+    const weightEfficiency = weight.optimization?.currentEfficiency || 0;
+    const heatScore = heat.heatBalance >= 0 ? 100 : Math.max(0, 100 + heat.heatBalance * 10);
+    const armorEfficiency = armor.overallEfficiency || 0;
+    const slotUtilization = slots.overallUtilization || 0;
+    const movementEfficiency = movement.walkMP > 0 ? 100 : 0;
+    
+    // Convert optimizations to IOptimizationImprovement format
+    const topImprovements: IOptimizationImprovement[] = optimizations.slice(0, 5).map((opt: any) => ({
+      category: opt.type as 'weight' | 'heat' | 'armor' | 'slots' | 'movement',
+      description: opt.description,
+      impact: opt.potentialImprovement || 0,
+      difficulty: this.determineDifficulty(opt.potentialImprovement || 0),
+      priority: opt.priority as 'high' | 'medium' | 'low'
+    }));
+    
+    return {
+      overallScore,
+      weightOptimization: weightEfficiency,
+      heatOptimization: heatScore,
+      armorOptimization: armorEfficiency,
+      slotOptimization: 100 - slotUtilization,
+      movementOptimization: movementEfficiency,
+      topImprovements
+    };
+  }
+
+  /**
+   * Get empty optimization summary when optimization is disabled
+   */
+  private getEmptyOptimizationSummary(): IOptimizationSummary {
+    return {
+      overallScore: 0,
+      weightOptimization: 0,
+      heatOptimization: 0,
+      armorOptimization: 0,
+      slotOptimization: 0,
+      movementOptimization: 0,
+      topImprovements: []
+    };
+  }
+
+  /**
+   * Determine difficulty level based on improvement magnitude
+   */
+  private determineDifficulty(improvement: number): 'easy' | 'moderate' | 'hard' {
+    if (improvement < 10) return 'easy';
+    if (improvement < 25) return 'moderate';
+    return 'hard';
+  }
+
   private emitEvent(event: IServiceEvent): void {
     this.listeners.forEach(listener => {
       try {
@@ -736,8 +799,8 @@ export class CalculationOrchestrator implements ICalculationOrchestrator {
       totalCalculationTime: this.metrics.totalCalculationTime + calculationTime,
       strategyMetrics: [...this.metrics.strategyMetrics],
       cacheHitRate: this.calculateCacheHitRate(),
-      bottlenecks: [...this.metrics.bottlenecks],
-      optimizationSuggestions: [...this.metrics.optimizationSuggestions]
+      memoryUsage: this.metrics.memoryUsage,
+      bottlenecks: [...this.metrics.bottlenecks]
     };
 
     return this.metrics;
@@ -812,28 +875,40 @@ export class CalculationOrchestrator implements ICalculationOrchestrator {
     };
   }
 
-  private createBasicHeatResult(config: IUnitConfiguration, equipment: IEquipmentAllocation[]): IHeatCalculationResult {
+  private createBasicHeatResult(config: IUnitConfiguration, equipment: IEquipmentAllocation[]): IHeatBalanceResult {
     const engineHeatSinks = Math.floor(config.engineRating / 25);
     const heatGeneration = equipment.length * 2; // Rough heat generation
     
+    const heatDissipation = engineHeatSinks * 1;
+    const heatBalance = heatDissipation - heatGeneration;
+    
     return {
-      heatGeneration: heatGeneration,
-      heatDissipation: engineHeatSinks * 1,
-      heatBalance: engineHeatSinks - heatGeneration,
-      heatEfficiency: Math.max(0, 100 - Math.max(0, heatGeneration - engineHeatSinks) * 10),
-      minimumHeatSinks: 10, // This is minimum TOTAL heat sinks for the mech, not engine heat sinks
-      optimalHeatSinks: Math.max(10, heatGeneration),
-      heatSinkBreakdown: {
-        engine: engineHeatSinks,
-        external: 0,
-        total: engineHeatSinks
-      },
-      efficiency: Math.max(0, 100 - Math.max(0, heatGeneration - engineHeatSinks) * 5),
-      optimization: {
-        currentEfficiency: 80,
-        potentialEfficiency: 90,
-        improvements: []
-      }
+      calculated: heatBalance,
+      isWithinTolerance: heatBalance >= 0,
+      calculationMethod: 'basic',
+      timestamp: new Date(),
+      heatGeneration,
+      heatDissipation,
+      heatBalance,
+      scenarios: [
+        {
+          name: 'Continuous Fire',
+          description: 'All weapons firing continuously',
+          heatGeneration,
+          heatDissipation,
+          balance: heatBalance,
+          sustainability: heatBalance >= 0 ? 'indefinite' : 'unsustainable' as 'indefinite' | 'limited' | 'unsustainable',
+          turnsToOverheat: heatBalance >= 0 ? Infinity : Math.ceil(30 / Math.abs(heatBalance))
+        }
+      ],
+      recommendations: heatBalance < 0 ? [{
+        type: 'heat_sinks' as 'heat_sinks' | 'weapons' | 'movement' | 'tactics',
+        description: 'Add more heat sinks to balance heat generation',
+        heatImprovement: Math.abs(heatBalance),
+        difficulty: 'easy' as 'easy' | 'moderate' | 'hard',
+        priority: 'high' as 'high' | 'medium' | 'low',
+        cost: 'Low'
+      }] : []
     };
   }
 

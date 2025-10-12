@@ -6,7 +6,7 @@ describe('Catalog API', () => {
     const req = httpMocks.createRequest({ method: 'GET', url: '/api/catalog', query: { text: 'laser', techBase: 'Inner Sphere', unitType: 'BattleMech', page: '1', pageSize: '10' } })
     const res = httpMocks.createResponse()
 
-    // @ts-ignore
+    // @ts-expect-error - Mock request/response types don't exactly match Next.js API types but are compatible for testing
     await handler(req, res)
 
     expect(res.statusCode).toBe(200)

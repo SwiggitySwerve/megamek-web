@@ -130,6 +130,18 @@ export interface UnitConfiguration {
   // Legacy compatibility
   mass: number                       // Alias for tonnage
   
+  // Tech progression tracking
+  techProgression?: {
+    chassis: 'Inner Sphere' | 'Clan'
+    gyro: 'Inner Sphere' | 'Clan'
+    engine: 'Inner Sphere' | 'Clan'
+    heatsink: 'Inner Sphere' | 'Clan'
+    targeting: 'Inner Sphere' | 'Clan'
+    myomer: 'Inner Sphere' | 'Clan'
+    movement: 'Inner Sphere' | 'Clan'
+    armor: 'Inner Sphere' | 'Clan'
+  }
+  
   // Legacy type compatibility - deprecated, will be migrated to ComponentConfiguration
   legacyStructureType?: ComponentConfiguration
   legacyArmorType?: ComponentConfiguration

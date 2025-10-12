@@ -7,7 +7,7 @@
  * @see IMPLEMENTATION_REFERENCE.md for architectural patterns
  */
 
-import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManager';
+import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes';
 import { EquipmentPlacement, EquipmentConstraints } from './PlacementCalculationService';
 import { PlacementCalculationService } from './PlacementCalculationService';
 import { calculateInternalHeatSinks } from '../../utils/heatSinkCalculations';

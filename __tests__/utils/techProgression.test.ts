@@ -103,7 +103,7 @@ describe('TechProgression Utilities', () => {
     });
 
     test('should handle invalid subsystem gracefully', () => {
-      // @ts-expect-error Testing invalid input
+      // @ts-expect-error - Testing invalid subsystem input to verify graceful error handling
       const result = updateTechProgression(innerSphereProgression, 'invalidSubsystem', 'Clan');
       
       // Current implementation adds the invalid subsystem to the object
@@ -114,7 +114,7 @@ describe('TechProgression Utilities', () => {
     });
 
     test('should handle invalid tech base gracefully', () => {
-      // @ts-expect-error Testing invalid input
+      // @ts-expect-error - Testing invalid tech base input to verify the function handles unexpected values gracefully
       const result = updateTechProgression(innerSphereProgression, 'targeting', 'InvalidTech');
       
       // Current implementation allows invalid tech base (adds it to the object)

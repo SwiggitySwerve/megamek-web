@@ -34,6 +34,19 @@ export interface EquipmentTabProps {
 export const EquipmentTab: React.FC<EquipmentTabProps> = ({ readOnly = false }) => {
   const { unit, unallocatedEquipment, addEquipmentToUnit } = useUnit();
 
+  // Wrapper to convert EquipmentObject to EquipmentAllocation
+  const handleAddEquipment = React.useCallback((equipment: any) => {
+    const equipmentAllocation = {
+      equipmentGroupId: `equipment-${Date.now()}-${Math.random()}`,
+      equipmentData: equipment,
+      location: 'unallocated',
+      occupiedSlots: [],
+      startSlotIndex: -1,
+      endSlotIndex: -1
+    };
+    addEquipmentToUnit(equipmentAllocation);
+  }, [addEquipmentToUnit]);
+
   // Calculate equipment statistics for header display
   const equipmentStats = React.useMemo(() => {
     let totalWeight = 0;
@@ -107,7 +120,7 @@ export const EquipmentTab: React.FC<EquipmentTabProps> = ({ readOnly = false }) 
       <div className="flex-1 px-4 pb-4 min-h-0">
         <div className="bg-slate-800 rounded-lg border border-slate-700">
           <EquipmentBrowser
-            onAddEquipment={addEquipmentToUnit}
+            onAddEquipment={handleAddEquipment}
             showAddButtons={!readOnly}
             actionButtonLabel="Add to unit"
             actionButtonIcon="+"

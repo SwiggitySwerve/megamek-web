@@ -296,7 +296,7 @@ function CustomizerV2Content() {
       <div className="flex border-b border-slate-700 bg-slate-800 flex-shrink-0">
         {tabs.map(tab => (
           <button
-            key={tab.name}
+            key={tab.id}
             className={`
               px-6 py-3 text-sm font-medium transition-colors
               ${activeTab === tab.id

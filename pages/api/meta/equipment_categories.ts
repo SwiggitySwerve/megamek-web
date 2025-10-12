@@ -1,28 +1,15 @@
-// battletech-editor-app/pages/api/meta/equipment_categories.js
 import type { NextApiRequest, NextApiResponse } from 'next';
-import sqlite3 from 'sqlite3';
-import { Database } from 'sqlite';
-import { openDatabase } from '../../../services/db';
+import mockEquipmentCategories from '../../../public/mockdata/mockEquipmentCategories.json';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  let db: Database<sqlite3.Database, sqlite3.Statement> | undefined;
+  if (req.method !== 'GET') {
+    return res.status(405).json({ message: 'Method not allowed' });
+  }
+
   try {
-    db = await openDatabase(true); // Open in readonly mode
-
-    const result: { type: string }[] = await db.all("SELECT DISTINCT type FROM equipment WHERE type IS NOT NULL AND TRIM(type) <> '' ORDER BY type ASC");
-    const values: string[] = result.map(row => row.type);
-
-    res.status(200).json(values);
-  } catch (error: any) {
-    console.error('Error fetching distinct equipment categories (types) from SQLite:', error);
-    res.status(500).json({
-      message: 'Error fetching distinct equipment categories (types)',
-      error: error.message,
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
-    });
-  } finally {
-    if (db) {
-      await db.close();
-    }
+    res.status(200).json(mockEquipmentCategories);
+  } catch (error) {
+    console.error('Error fetching equipment categories:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 }

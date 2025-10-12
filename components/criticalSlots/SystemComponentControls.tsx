@@ -27,7 +27,7 @@ import {
   getMaxAllowedJumpMP
 } from '../../utils/jumpJetCalculations'
 
-export function SystemComponentControls() {
+export function SystemComponentControls(): React.ReactElement | null {
   const { 
     unit, 
     validation, 
@@ -461,19 +461,19 @@ export function SystemComponentControls() {
               </div>
               <div className="grid grid-cols-2 gap-1">
                 <span className="text-gray-400">Status:</span>
-                <span className={`${(validation.isValid && engineValidation.isValid) ? 'text-green-400' : 'text-red-400'}`}>
-                  {(validation.isValid && engineValidation.isValid) ? 'Valid' : 'Invalid'}
+                <span className={`${(validation?.isValid && engineValidation.isValid) ? 'text-green-400' : 'text-red-400'}`}>
+                  {(validation?.isValid && engineValidation.isValid) ? 'Valid' : 'Invalid'}
                 </span>
               </div>
             </div>
           </div>
 
           {/* Validation Messages */}
-          {(!validation.isValid || !engineValidation.isValid || !jumpJetValidation.isValid) && (
+          {(!validation?.isValid || !engineValidation.isValid || !jumpJetValidation.isValid) && (
             <div className="bg-red-900 border border-red-600 p-2 rounded">
               <h4 className="text-red-200 text-xs font-medium mb-1">Errors:</h4>
               <ul className="text-red-300 text-xs space-y-1">
-                {validation.errors.map((error: string, index: number) => (
+                {(validation?.errors || []).map((error: string, index: number) => (
                   <li key={`validation-${index}`}>• {error}</li>
                 ))}
                 {engineValidation.errors.map((error: string, index: number) => (
@@ -486,11 +486,11 @@ export function SystemComponentControls() {
             </div>
           )}
 
-          {(validation.warnings && validation.warnings.length > 0) || jumpJetValidation.warnings.length > 0 && (
+          {((validation?.warnings && validation.warnings.length > 0) || jumpJetValidation.warnings.length > 0) && (
             <div className="bg-yellow-900 border border-yellow-600 p-2 rounded">
               <h4 className="text-yellow-200 text-xs font-medium mb-1">Warnings:</h4>
               <ul className="text-yellow-300 text-xs space-y-1">
-                {validation.warnings && validation.warnings.map((warning: string, index: number) => (
+                {(validation?.warnings || []).map((warning: string, index: number) => (
                   <li key={`warning-${index}`}>• {warning}</li>
                 ))}
                 {jumpJetValidation.warnings.map((warning: string, index: number) => (

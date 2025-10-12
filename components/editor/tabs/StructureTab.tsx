@@ -9,6 +9,8 @@
 
 import React from 'react';
 import { useUnit } from '../../multiUnit/MultiUnitProvider';
+import { UnitConfiguration } from '../../../utils/criticalSlots/UnitCriticalManagerTypes';
+import { EngineType } from '../../../types/components';
 import { 
   SkeletonInput,
   SkeletonSelect,
@@ -121,11 +123,11 @@ export const StructureTab: React.FC<StructureTabProps> = ({ readOnly = false }) 
   const applyMemoryRestoration = (config: UnitConfiguration, memoryState: ComponentMemoryState): UnitConfiguration => {
     if (!memoryState || !memoryState.techBaseMemory) {
       console.log('[StructureTab] 💾 No memory state available for restoration');
-      return {};
+      return config;
     }
     
     console.log('[StructureTab] 💾 Attempting memory restoration from saved state');
-    const restorationUpdates: Partial<UnitConfiguration> = {};
+    const restorationUpdates: any = {};
     
     // Get current tech progression (or use defaults)
     const techProgression = config.techProgression || enhancedConfig.techProgression;
@@ -139,7 +141,7 @@ export const StructureTab: React.FC<StructureTabProps> = ({ readOnly = false }) 
     
     if (!componentsAvailable) {
       console.log('[StructureTab] 💾 🚫 Components not available, skipping restoration');
-      return {};
+      return config;
     }
     
     console.log('[StructureTab] 💾 ✅ Components available, proceeding with restoration');
@@ -185,7 +187,7 @@ export const StructureTab: React.FC<StructureTabProps> = ({ readOnly = false }) 
     
     const property = propertyMap[subsystem as keyof typeof propertyMap];
     if (!property) return 'Standard';
-    const value = config[property];
+    const value = (config as any)[property];
     if (value && typeof value === 'object' && 'type' in value) {
       return value.type;
     }
@@ -290,7 +292,7 @@ export const StructureTab: React.FC<StructureTabProps> = ({ readOnly = false }) 
       return;
     }
 
-    updateConfig({ engineType: newValue });
+    updateConfig({ engineType: newValue as EngineType });
     console.log(`[StructureTab] ✅ Engine type updated successfully`);
   };
 
@@ -325,7 +327,7 @@ export const StructureTab: React.FC<StructureTabProps> = ({ readOnly = false }) 
     const canonicalStructureType = getCanonicalStructureTypeObject(newValue, config.techBase);
     console.log(`[StructureTab] 🔧 Converting to canonical object:`, canonicalStructureType);
     
-    updateConfig({ structureType: canonicalStructureType });
+    updateConfig({ structureType: canonicalStructureType as any });
     console.log(`[StructureTab] ✅ Structure type updated successfully`);
   };
 
@@ -371,7 +373,7 @@ export const StructureTab: React.FC<StructureTabProps> = ({ readOnly = false }) 
     const canonicalGyroType = getCanonicalGyroTypeObject(newValue, config.techBase);
     console.log(`[StructureTab] 🔧 Converting to canonical object:`, canonicalGyroType);
     
-    updateConfig({ gyroType: canonicalGyroType });
+    updateConfig({ gyroType: canonicalGyroType as any });
     console.log(`[StructureTab] ✅ Gyro type updated successfully`);
   };
 
@@ -387,7 +389,7 @@ export const StructureTab: React.FC<StructureTabProps> = ({ readOnly = false }) 
     const canonicalHeatSinkType = getCanonicalHeatSinkTypeObject(newValue, config.techBase);
     console.log(`[StructureTab] 🔧 Converting to canonical object:`, canonicalHeatSinkType);
     
-    updateConfig({ heatSinkType: canonicalHeatSinkType });
+    updateConfig({ heatSinkType: canonicalHeatSinkType as any });
     console.log(`[StructureTab] ✅ Heat sink type updated successfully`);
   };
 

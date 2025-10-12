@@ -192,11 +192,11 @@ export function UnitProvider({ children, initialConfiguration }: UnitProviderPro
         saveConfiguration(config)
       },
       addTestEquipment: (equipment: EquipmentAllocation, location: string, startSlot?: number) => {
-        console.log(`Context: Adding equipment ${equipment.name} to ${location}`)
+        console.log(`Context: Adding equipment ${equipment.equipmentData?.name || 'Unknown'} to ${location}`)
         return stateManager.addTestEquipment(equipment, location, startSlot)
       },
       addEquipmentToUnit: (equipment: EquipmentAllocation) => {
-        console.log(`Context: Adding equipment ${equipment.name} to unit as unallocated`)
+        console.log(`Context: Adding equipment ${equipment.equipmentData?.name || 'Unknown'} to unit as unallocated`)
         stateManager.addUnallocatedEquipment(equipment)
       },
       removeEquipment: (equipmentGroupId: string) => {

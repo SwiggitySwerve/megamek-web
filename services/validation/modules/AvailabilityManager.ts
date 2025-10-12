@@ -13,7 +13,7 @@ import {
   ComponentInfo,
   TechLevelValidationContext
 } from '../types/TechLevelTypes';
-import { UnitConfiguration } from '../../../utils/criticalSlots/UnitCriticalManager';
+import { UnitConfiguration } from '../../../utils/criticalSlots/UnitCriticalManagerTypes';
 
 export class AvailabilityManager {
   // Availability rating definitions

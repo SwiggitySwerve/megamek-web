@@ -445,4 +445,4 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({ readOnly = false }) =>
   )
 }
 
-export default OverviewTabV2
+export default OverviewTab

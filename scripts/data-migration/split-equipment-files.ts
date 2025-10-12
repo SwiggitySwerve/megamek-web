@@ -115,18 +115,18 @@ const MIGRATION_RULES: CategoryRule[] = [
     category: 'Ballistic Weapons',
     subcategory: 'Ultra Autocannons',
     filename: 'ballistic-weapons-ultra-acs.ts',
-    filter: (eq) => eq.category === 'Ballistic Weapons' && eq.baseType &&
-      eq.baseType.includes('Ultra AC'),
+    filter: (eq) => Boolean(eq.category === 'Ballistic Weapons' && eq.baseType &&
+      eq.baseType.includes('Ultra AC')),
     description: 'Ultra Autocannon variants'
   },
   {
     category: 'Ballistic Weapons',
     subcategory: 'LB-X Autocannons',
     filename: 'ballistic-weapons-lbx-acs.ts',
-    filter: (eq) => eq.category === 'Ballistic Weapons' && eq.baseType &&
+    filter: (eq) => Boolean(eq.category === 'Ballistic Weapons' && eq.baseType &&
       eq.baseType.includes('LB') && 
       eq.baseType.includes('X') && 
-      eq.baseType.includes('AC'),
+      eq.baseType.includes('AC')),
     description: 'LB-X Autocannon variants'
   },
   {

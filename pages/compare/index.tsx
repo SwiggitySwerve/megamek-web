@@ -287,10 +287,10 @@ const CompareVariantsPage: React.FC = () => {
                 <h3 className="text-lg font-medium mb-1">Select Variant A:</h3>
                 <ul className="space-y-1 max-h-60 overflow-y-auto border p-2 rounded">
                   {subversions.map(variant => (
-                    <li key={variant.name}
+                      <li key={variant.id}
                         className={`p-2 border rounded cursor-pointer ${selectedVariantAId === variant.id ? 'bg-blue-200 ring-2 ring-blue-500' : 'hover:bg-gray-100'}`}
                         onClick={() => handleSelectVariant(variant.id, 'A')}>
-                      ID: {variant.name} - Notes: {variant.notes || "N/A"} (Saved: {new Date(variant.created_at).toLocaleString()})
+                        ID: {variant.id} - Notes: {variant.notes || "N/A"} (Saved: {new Date(variant.created_at).toLocaleString()})
                     </li>
                   ))}
                 </ul>
@@ -300,10 +300,10 @@ const CompareVariantsPage: React.FC = () => {
                 <h3 className="text-lg font-medium mb-1">Select Variant B:</h3>
                  <ul className="space-y-1 max-h-60 overflow-y-auto border p-2 rounded">
                   {subversions.map(variant => (
-                    <li key={variant.name}
+                      <li key={variant.id}
                         className={`p-2 border rounded cursor-pointer ${selectedVariantBId === variant.id ? 'bg-green-200 ring-2 ring-green-500' : 'hover:bg-gray-100'}`}
                         onClick={() => handleSelectVariant(variant.id, 'B')}>
-                       ID: {variant.name} - Notes: {variant.notes || "N/A"} (Saved: {new Date(variant.created_at).toLocaleString()})
+                        ID: {variant.id} - Notes: {variant.notes || "N/A"} (Saved: {new Date(variant.created_at).toLocaleString()})
                     </li>
                   ))}
                 </ul>

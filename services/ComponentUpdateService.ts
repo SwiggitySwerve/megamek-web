@@ -50,22 +50,22 @@ export class ComponentUpdateService {
     // Update the specific component
     switch (componentType) {
       case 'structure':
-        newConfiguration.structureType = this.normalizeComponentValue(newValue, currentConfiguration.techBase)
+        newConfiguration.structureType = this.normalizeComponentValue(newValue, currentConfiguration.techBase) as any
         break
       case 'armor':
-        newConfiguration.armorType = this.normalizeComponentValue(newValue, currentConfiguration.techBase)
+        newConfiguration.armorType = this.normalizeComponentValue(newValue, currentConfiguration.techBase) as any
         break
       case 'engine':
         newConfiguration.engineType = (typeof newValue === 'string' ? newValue : newValue.type) as EngineType
         break
       case 'gyro':
-        newConfiguration.gyroType = this.normalizeComponentValue(newValue, currentConfiguration.techBase)
+        newConfiguration.gyroType = this.normalizeComponentValue(newValue, currentConfiguration.techBase) as any
         break
       case 'heatSink':
-        newConfiguration.heatSinkType = this.normalizeComponentValue(newValue, currentConfiguration.techBase)
+        newConfiguration.heatSinkType = this.normalizeComponentValue(newValue, currentConfiguration.techBase) as any
         break
       case 'jumpJet':
-        newConfiguration.jumpJetType = this.normalizeComponentValue(newValue, currentConfiguration.techBase)
+        newConfiguration.jumpJetType = this.normalizeComponentValue(newValue, currentConfiguration.techBase) as any
         break
       default:
         return {
@@ -172,11 +172,11 @@ export class ComponentUpdateService {
     }
     
     // Component-specific validation
-    if (config.structureType && config.structureType.type === 'Endo Steel' && config.techBase === 'Clan') {
+    if (config.structureType && (typeof config.structureType === 'object' ? (config.structureType as any).type === 'Endo Steel' : config.structureType === 'Endo Steel') && config.techBase === 'Clan') {
       warnings.push('Clan Endo Steel detected - will be converted to Endo Steel (Clan)')
     }
     
-    if (config.armorType && config.armorType.type === 'Ferro-Fibrous' && config.techBase === 'Clan') {
+    if (config.armorType && (typeof config.armorType === 'object' ? (config.armorType as any).type === 'Ferro-Fibrous' : config.armorType === 'Ferro-Fibrous') && config.techBase === 'Clan') {
       warnings.push('Clan Ferro-Fibrous detected - will be converted to Ferro-Fibrous (Clan)')
     }
     

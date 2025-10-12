@@ -7,7 +7,7 @@
  * @see IMPLEMENTATION_REFERENCE.md for architectural patterns
  */
 
-import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManager';
+import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes';
 import { ComponentConfiguration } from '../../types/componentConfiguration';
 
 export interface PlacementSuggestion {

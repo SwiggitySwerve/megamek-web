@@ -38,8 +38,6 @@
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^19.1.0",
-    "sqlite": "^5.1.1",
-    "sqlite3": "^5.1.7",
     "tailwindcss": "^4.1.8",
     "uuid": "^11.1.0"
   },

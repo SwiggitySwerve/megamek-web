@@ -5,7 +5,7 @@
  * Extracted from the monolithic ConstructionRulesValidator to follow SOLID principles.
  */
 
-import { UnitConfiguration } from '../../../utils/criticalSlots/UnitCriticalManager';
+import { UnitConfiguration } from '../../../utils/criticalSlots/UnitCriticalManagerTypes';
 import { ComponentConfiguration } from '../../../types/componentConfiguration';
 import { 
   IWeightValidator, 

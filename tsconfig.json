@@ -37,6 +37,7 @@
   "exclude": [
     "node_modules",
     "scripts/unused/**/*",
+    "scripts/data-migration/**/*",
     "backup-before-refactor-*/**/*",
     "desktop/**/*",
     "components/.disabled/**/*",

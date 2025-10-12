@@ -8,23 +8,24 @@
  * @see IMPLEMENTATION_REFERENCE.md for architectural patterns
  */
 
-import { UnitConfiguration } from '../utils/criticalSlots/UnitCriticalManager';
+import { UnitConfiguration } from '../utils/criticalSlots/UnitCriticalManagerTypes';
 import { ComponentConfiguration, TechBase } from '../types/componentConfiguration';
 import { EquipmentAllocation } from '../utils/criticalSlots/CriticalSlot';
 import { WeightRulesValidator } from './validation/WeightRulesValidator';
 import { HeatRulesValidator } from './validation/HeatRulesValidator';
-import { CriticalSlotRulesValidator } from '../../services/validation/CriticalSlotRulesValidatorRefactored';
+// import { CriticalSlotRulesValidator } from '../../services/validation/CriticalSlotRulesValidatorRefactored'; // File no longer exists
 import { TechLevelRulesValidator } from './validation/TechLevelRulesValidator';
 import { MovementRulesValidator } from './validation/MovementRulesValidator';
 import { ArmorRulesValidator } from './validation/ArmorRulesValidator';
 import { StructureRulesValidator } from './validation/StructureRulesValidator';
-import { EquipmentValidationService } from '../../services/equipment/EquipmentValidationServiceRefactored';
+// import { EquipmentValidationService } from '../../services/equipment/EquipmentValidationServiceRefactored'; // File no longer exists
+import { EquipmentValidationManager } from './validation/EquipmentValidationManager';
 import { ComponentValidationManager } from './validation/ComponentValidationManager';
 import { ValidationReportingManager } from './validation/ValidationReportingManager';
 import { ValidationCalculations } from './validation/ValidationCalculations';
 import { RuleManagementManager } from './validation/RuleManagementManager';
-import { ValidationOrchestratorFactory } from '../../services/validation/ValidationOrchestrator';
-import { IValidationOrchestrator } from '../../services/validation/interfaces/IValidationOrchestrator';
+import { ValidationOrchestrator } from './validation/focused/ValidationOrchestrator';
+import { IValidationOrchestrator } from './validation/focused/IValidationOrchestrator';
 import { CalculationUtilitiesManager } from './validation/CalculationUtilitiesManager';
 
 // Import types from validation services
@@ -37,11 +38,11 @@ import type {
   HeatValidation as HeatRulesValidation, 
   HeatViolation as HeatRulesViolation 
 } from './validation/HeatRulesValidator';
-import type { 
-  CriticalSlotValidation as CriticalSlotRulesValidation, 
-  CriticalSlotViolation as CriticalSlotRulesViolation, 
-  SlotUtilization as SlotRulesUtilization 
-} from './validation/CriticalSlotRulesValidator';
+// import type { 
+//   CriticalSlotValidation as CriticalSlotRulesValidation, 
+//   CriticalSlotViolation as CriticalSlotRulesViolation, 
+//   SlotUtilization as SlotRulesUtilization 
+// } from './validation/CriticalSlotRulesValidator'; // File no longer exists
 import type { 
   TechLevelValidation as TechLevelRulesValidation, 
   TechLevelViolation as TechLevelRulesViolation, 

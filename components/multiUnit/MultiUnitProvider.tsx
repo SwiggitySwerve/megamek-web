@@ -7,11 +7,12 @@
 import React, { createContext, useContext, useReducer, useEffect, useCallback, useState } from 'react'
 import { UnitStateManager } from '../../utils/criticalSlots/UnitStateManager'
 import { UnitCriticalManager } from '../../utils/criticalSlots/UnitCriticalManager'
-import { UnitConfiguration, CompleteUnitState } from '../../utils/criticalSlots/UnitCriticalManagerTypes'
+import { UnitConfiguration, CompleteUnitState, UnitValidationResult } from '../../utils/criticalSlots/UnitCriticalManagerTypes'
 import { EngineType, GyroType, StructureType, ArmorType, HeatSinkType } from '../../types/components'
 import { EquipmentAllocation } from '../../utils/criticalSlots/CriticalSlot'
 import { MultiTabDebouncedSaveManager, SaveManagerBrowserHandlers } from '../../utils/DebouncedSaveManager'
 import { componentUpdateAdapter } from '../../services/ComponentUpdateAdapter'
+import { ComponentConfiguration, createComponentConfiguration } from '../../types/componentConfiguration'
 
 // Tab unit interface
 export interface TabUnit {
@@ -61,7 +62,7 @@ interface MultiUnitContextValue {
   engineType: EngineType | null
   gyroType: GyroType | null
   unallocatedEquipment: EquipmentAllocation[]
-  validation: Record<string, unknown>
+  validation: UnitValidationResult | null
   summary: Record<string, unknown>
   isConfigLoaded: boolean
   selectedEquipmentId: string | null
@@ -113,11 +114,11 @@ const createDefaultConfiguration = (): UnitConfiguration => ({
   },
   armorTonnage: 8.0,
   externalHeatSinks: 2,
-  heatSinkType: createComponentConfiguration('heatSink', 'Single')!,
+  heatSinkType: createComponentConfiguration('heatSink', 'Single') as any,
   totalHeatSinks: 10,
   internalHeatSinks: 8,
   jumpMP: 0,
-  jumpJetType: createComponentConfiguration('jumpJet', 'Standard Jump Jet')!,
+  jumpJetType: createComponentConfiguration('jumpJet', 'Standard Jump Jet') as any,
   jumpJetCounts: {},
   hasPartialWing: false,
   enhancements: [],
