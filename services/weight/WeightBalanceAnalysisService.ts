@@ -5,6 +5,7 @@
  */
 
 import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes';
+import { IEquipmentInstance } from '../../types/core/UnitInterfaces';
 
 export interface WeightDistribution {
   frontHeavy: boolean;
@@ -45,14 +46,14 @@ export interface StabilityAnalysis {
 }
 
 export interface WeightBalanceAnalysisService {
-  analyzeWeightDistribution(config: UnitConfiguration, equipment: any[]): WeightDistribution;
-  calculateCenterOfGravity(config: UnitConfiguration, equipment: any[]): CenterOfGravity;
-  analyzeStability(config: UnitConfiguration, equipment: any[]): StabilityAnalysis;
+  analyzeWeightDistribution(config: UnitConfiguration, equipment: IEquipmentInstance[]): WeightDistribution;
+  calculateCenterOfGravity(config: UnitConfiguration, equipment: IEquipmentInstance[]): CenterOfGravity;
+  analyzeStability(config: UnitConfiguration, equipment: IEquipmentInstance[]): StabilityAnalysis;
 }
 
 export class WeightBalanceAnalysisServiceImpl implements WeightBalanceAnalysisService {
   
-  analyzeWeightDistribution(config: UnitConfiguration, equipment: any[]): WeightDistribution {
+  analyzeWeightDistribution(config: UnitConfiguration, equipment: IEquipmentInstance[]): WeightDistribution {
     const distribution = this.calculateLocationWeights(config, equipment);
     
     // Calculate balance ratios
@@ -80,7 +81,7 @@ export class WeightBalanceAnalysisServiceImpl implements WeightBalanceAnalysisSe
     };
   }
   
-  calculateCenterOfGravity(config: UnitConfiguration, equipment: any[]): CenterOfGravity {
+  calculateCenterOfGravity(config: UnitConfiguration, equipment: IEquipmentInstance[]): CenterOfGravity {
     const distribution = this.calculateLocationWeights(config, equipment);
     const totalWeight = Object.values(distribution).reduce((sum, weight) => sum + weight, 0);
     
@@ -108,7 +109,7 @@ export class WeightBalanceAnalysisServiceImpl implements WeightBalanceAnalysisSe
     return { x, y, z, stability, recommendations };
   }
   
-  analyzeStability(config: UnitConfiguration, equipment: any[]): StabilityAnalysis {
+  analyzeStability(config: UnitConfiguration, equipment: IEquipmentInstance[]): StabilityAnalysis {
     const distribution = this.analyzeWeightDistribution(config, equipment);
     const centerOfGravity = this.calculateCenterOfGravity(config, equipment);
     

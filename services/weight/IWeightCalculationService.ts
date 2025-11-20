@@ -6,6 +6,7 @@
  */
 
 import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes';
+import { IEquipmentInstance } from '../../types/core/UnitInterfaces';
 
 export interface WeightSummary {
   totalWeight: number;
@@ -73,14 +74,6 @@ export interface TonnageValidation {
   suggestions: string[];
 }
 
-export interface EquipmentItem {
-  equipmentData?: {
-    tonnage?: number;
-    type?: string;
-  };
-  quantity?: number;
-}
-
 /**
  * Core interface for weight calculation operations
  */
@@ -88,7 +81,7 @@ export interface IWeightCalculationService {
   /**
    * Calculate the total weight of a unit including all components and equipment
    */
-  calculateTotalWeight(config: UnitConfiguration, equipment: EquipmentItem[]): WeightSummary;
+  calculateTotalWeight(config: UnitConfiguration, equipment: IEquipmentInstance[]): WeightSummary;
 
   /**
    * Calculate the weight breakdown for all structural components
@@ -98,22 +91,22 @@ export interface IWeightCalculationService {
   /**
    * Calculate the total weight of equipment loadout
    */
-  calculateEquipmentWeight(equipment: EquipmentItem[]): number;
+  calculateEquipmentWeight(equipment: IEquipmentInstance[]): number;
 
   /**
    * Validate that the unit stays within tonnage limits
    */
-  validateTonnageLimit(config: UnitConfiguration, equipment: EquipmentItem[]): TonnageValidation;
+  validateTonnageLimit(config: UnitConfiguration, equipment: IEquipmentInstance[]): TonnageValidation;
 
   /**
    * Calculate remaining tonnage available for equipment
    */
-  calculateRemainingTonnage(config: UnitConfiguration, equipment: EquipmentItem[]): number;
+  calculateRemainingTonnage(config: UnitConfiguration, equipment: IEquipmentInstance[]): number;
 
   /**
    * Check if unit is within tonnage limit
    */
-  isWithinTonnageLimit(config: UnitConfiguration, equipment: EquipmentItem[]): boolean;
+  isWithinTonnageLimit(config: UnitConfiguration, equipment: IEquipmentInstance[]): boolean;
 
   /**
    * Calculate the weight of jump jets based on configuration
@@ -137,16 +130,16 @@ export function isValidUnitConfiguration(config: unknown): config is UnitConfigu
 }
 
 /**
- * Type guard to check if an object is a valid EquipmentItem
+ * Type guard to check if an object is a valid IEquipmentInstance
  */
-export function isValidEquipmentItem(item: unknown): item is EquipmentItem {
-  return typeof item === 'object' && item !== null;
+export function isValidEquipmentItem(item: unknown): item is IEquipmentInstance {
+  return typeof item === 'object' && item !== null && 'equipment' in item;
 }
 
 /**
  * Type guard to check if an array contains valid equipment items
  */
-export function isValidEquipmentArray(equipment: unknown): equipment is EquipmentItem[] {
+export function isValidEquipmentArray(equipment: unknown): equipment is IEquipmentInstance[] {
   return Array.isArray(equipment) && equipment.every(isValidEquipmentItem);
 }
 

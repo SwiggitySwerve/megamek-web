@@ -6,19 +6,19 @@
  */
 
 import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes';
+import { IEquipmentInstance } from '../../types/core/UnitInterfaces';
 import { 
   IWeightCalculationService, 
   WeightSummary, 
   ComponentWeightBreakdown, 
   TonnageValidation, 
-  EquipmentItem,
   isValidUnitConfiguration,
   isValidEquipmentArray
 } from './IWeightCalculationService';
 
 export class WeightCalculationService implements IWeightCalculationService {
   
-  calculateTotalWeight(config: UnitConfiguration, equipment: EquipmentItem[]): WeightSummary {
+  calculateTotalWeight(config: UnitConfiguration, equipment: IEquipmentInstance[]): WeightSummary {
     // Type safety validation
     if (!isValidUnitConfiguration(config)) {
       throw new Error('Invalid unit configuration provided');
@@ -71,7 +71,7 @@ export class WeightCalculationService implements IWeightCalculationService {
     };
   }
   
-  calculateEquipmentWeight(equipment: EquipmentItem[]): number {
+  calculateEquipmentWeight(equipment: IEquipmentInstance[]): number {
     // Check for null/undefined equipment parameter - should throw
     if (equipment === null || equipment === undefined) {
       throw new Error('Invalid equipment array provided');
@@ -83,12 +83,12 @@ export class WeightCalculationService implements IWeightCalculationService {
     }
     
     return equipment.reduce((total, item) => {
-      if (!item || !item.equipmentData) return total;
-      return total + (item.equipmentData.tonnage || 0) * (item.quantity || 1);
+      if (!item || !item.equipment) return total;
+      return total + (item.equipment.weight || 0) * (item.quantity || 1);
     }, 0);
   }
   
-  validateTonnageLimit(config: UnitConfiguration, equipment: EquipmentItem[]): TonnageValidation {
+  validateTonnageLimit(config: UnitConfiguration, equipment: IEquipmentInstance[]): TonnageValidation {
     if (!isValidUnitConfiguration(config)) {
       throw new Error('Invalid unit configuration provided');
     }
@@ -124,7 +124,7 @@ export class WeightCalculationService implements IWeightCalculationService {
     };
   }
   
-  calculateRemainingTonnage(config: UnitConfiguration, equipment: EquipmentItem[]): number {
+  calculateRemainingTonnage(config: UnitConfiguration, equipment: IEquipmentInstance[]): number {
     if (!isValidUnitConfiguration(config)) {
       throw new Error('Invalid unit configuration provided');
     }
@@ -136,7 +136,7 @@ export class WeightCalculationService implements IWeightCalculationService {
     return Math.max(0, config.tonnage - totalWeight.totalWeight);
   }
   
-  isWithinTonnageLimit(config: UnitConfiguration, equipment: EquipmentItem[]): boolean {
+  isWithinTonnageLimit(config: UnitConfiguration, equipment: IEquipmentInstance[]): boolean {
     if (!isValidUnitConfiguration(config)) {
       throw new Error('Invalid unit configuration provided');
     }
@@ -361,17 +361,19 @@ export class WeightCalculationService implements IWeightCalculationService {
     }, 0);
   }
   
-  private extractEquipmentWeight(equipment: EquipmentItem[]): number {
+  private extractEquipmentWeight(equipment: IEquipmentInstance[]): number {
     return equipment.reduce((total, item) => {
-      if (!item?.equipmentData || item.equipmentData.type === 'ammunition') return total;
-      return total + (item.equipmentData.tonnage || 0) * (item.quantity || 1);
+      // Exclude ammunition from equipment weight (it's calculated separately)
+      if (!item?.equipment || item.equipment.type === 'ammunition' || item.equipment.category === 'ammunition') return total;
+      return total + (item.equipment.weight || 0) * (item.quantity || 1);
     }, 0);
   }
   
-  private extractAmmoWeight(equipment: EquipmentItem[]): number {
+  private extractAmmoWeight(equipment: IEquipmentInstance[]): number {
     return equipment.reduce((total, item) => {
-      if (!item?.equipmentData || item.equipmentData.type !== 'ammunition') return total;
-      return total + (item.equipmentData.tonnage || 0) * (item.quantity || 1);
+      // Include ONLY ammunition
+      if (!item?.equipment || (item.equipment.type !== 'ammunition' && item.equipment.category !== 'ammunition')) return total;
+      return total + (item.equipment.weight || 0) * (item.quantity || 1);
     }, 0);
   }
   

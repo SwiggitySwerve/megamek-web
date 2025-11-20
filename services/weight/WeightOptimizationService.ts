@@ -5,6 +5,7 @@
  */
 
 import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes';
+import { IEquipmentInstance } from '../../types/core/UnitInterfaces';
 // import { ComponentWeightBreakdown } from './WeightCalculationService'; // TODO: This interface doesn't exist yet
 
 export interface OptimizationSuggestion {
@@ -81,16 +82,16 @@ export interface WeightPenalty {
 }
 
 export interface WeightOptimizationService {
-  generateOptimizationSuggestions(config: UnitConfiguration, equipment: any[]): OptimizationSuggestion[];
+  generateOptimizationSuggestions(config: UnitConfiguration, equipment: IEquipmentInstance[]): OptimizationSuggestion[];
   calculateWeightReduction(config: UnitConfiguration): WeightReductionOptions;
-  findWeightSavings(config: UnitConfiguration, equipment: any[]): WeightSaving[];
+  findWeightSavings(config: UnitConfiguration, equipment: IEquipmentInstance[]): WeightSaving[];
   calculateArmorEfficiency(config: UnitConfiguration): ArmorEfficiency;
   calculateWeightPenalties(config: UnitConfiguration): WeightPenalty[];
 }
 
 export class WeightOptimizationServiceImpl implements WeightOptimizationService {
   
-  generateOptimizationSuggestions(config: UnitConfiguration, equipment: any[]): OptimizationSuggestion[] {
+  generateOptimizationSuggestions(config: UnitConfiguration, equipment: IEquipmentInstance[]): OptimizationSuggestion[] {
     const suggestions: OptimizationSuggestion[] = [];
     
     // Engine optimization
@@ -131,7 +132,7 @@ export class WeightOptimizationServiceImpl implements WeightOptimizationService 
     };
   }
   
-  findWeightSavings(config: UnitConfiguration, equipment: any[]): WeightSaving[] {
+  findWeightSavings(config: UnitConfiguration, equipment: IEquipmentInstance[]): WeightSaving[] {
     const savings: WeightSaving[] = [];
     
     // Structure savings
@@ -309,7 +310,7 @@ export class WeightOptimizationServiceImpl implements WeightOptimizationService 
     return suggestions;
   }
   
-  private generateEquipmentOptimizations(equipment: any[]): OptimizationSuggestion[] {
+  private generateEquipmentOptimizations(equipment: IEquipmentInstance[]): OptimizationSuggestion[] {
     const suggestions: OptimizationSuggestion[] = [];
     
     // This would analyze equipment for weight optimization opportunities
@@ -449,7 +450,7 @@ export class WeightOptimizationServiceImpl implements WeightOptimizationService 
     return savings;
   }
   
-  private findEquipmentSavings(equipment: any[]): WeightSaving[] {
+  private findEquipmentSavings(equipment: IEquipmentInstance[]): WeightSaving[] {
     return []; // Implementation depends on equipment data structure
   }
   
