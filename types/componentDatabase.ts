@@ -3,22 +3,14 @@
  * Defines the schema for the Rich Component Database system
  */
 
-// ===== CORE ENUMS =====
+import {
+  ComponentCategory,
+  TechBase,
+  RulesLevel,
+  TechLevel
+} from './core/BaseTypes';
 
-export type TechLevel = 'Introductory' | 'Standard' | 'Advanced' | 'Experimental';
-export type RulesLevel = 'Introductory' | 'Standard' | 'Advanced' | 'Experimental';
-export type TechBase = 'Inner Sphere' | 'Clan';
-
-// Component categories that correspond to tech progression subsystems
-export type ComponentCategory = 
-  | 'chassis'      // Internal structure
-  | 'engine'       // Engine types
-  | 'gyro'         // Gyroscope types
-  | 'heatsink'     // Heat sink types
-  | 'armor'        // Armor types
-  | 'myomer'       // Enhancement/myomer systems
-  | 'targeting'    // Targeting systems
-  | 'movement';    // Jump jets and movement systems
+import { IEquipmentConfiguration } from './core/BaseTypes';
 
 // ===== COMPONENT SPECIFICATION INTERFACE =====
 
@@ -26,20 +18,20 @@ export type ComponentCategory =
  * Complete specification for a single component variant
  * Contains all metadata needed for display, calculations, and validation
  */
-export interface ComponentSpec {
+export interface ComponentSpec extends IEquipmentConfiguration {
   // Basic identification
-  name: string;                    // Display name: "Endo Steel (Clan)"
-  id: string;                      // Unique identifier: "endo_steel_clan"
+  // name: string; (Inherited)
+  // id: string;   (Inherited)
   
   // Weight properties (mutually exclusive based on component type)
+  // weight: number; (Inherited)
   weightMultiplier?: number;       // For structure/armor: 0.05 = 5% of tonnage
   weightMod?: number;              // For engine/gyro: 0.5 = half weight
-  weight?: number;                 // Fixed weight: 3.0 tons
   
   // Game mechanics
   criticalSlots: number;           // Required critical slots
   dissipation?: number;            // Heat dissipation for heat sinks
-  heatGeneration?: number;         // Heat generation when active
+  // heatGeneration?: number;      (Inherited)
   
   // Tech classification
   techLevel: TechLevel;            // Technology sophistication level
@@ -52,7 +44,7 @@ export interface ComponentSpec {
   isExperimental?: boolean;        // Experimental technology
   
   // Display and documentation
-  description?: string;            // Detailed description for tooltips
+  // description?: string;         (Inherited)
   gameEffect?: string;             // Mechanical game effect description
   specialRules?: string[];         // Special rules or restrictions
   
@@ -318,31 +310,28 @@ export type ComponentNames<T extends ComponentCategory> = string;
  * Type guard for component category
  */
 export function isComponentCategory(value: string): value is ComponentCategory {
-  return [
-    'chassis', 'engine', 'gyro', 'heatsink', 
-    'armor', 'myomer', 'targeting', 'movement'
-  ].includes(value);
+  return Object.values(ComponentCategory).includes(value as ComponentCategory);
 }
 
 /**
  * Type guard for tech base
  */
 export function isTechBase(value: string): value is TechBase {
-  return value === 'Inner Sphere' || value === 'Clan';
+  return Object.values(TechBase).includes(value as TechBase);
 }
 
 /**
  * Type guard for tech level
  */
 export function isTechLevel(value: string): value is TechLevel {
-  return ['Introductory', 'Standard', 'Advanced', 'Experimental'].includes(value);
+  return Object.values(TechLevel).includes(value as TechLevel);
 }
 
 /**
  * Type guard for rules level
  */
 export function isRulesLevel(value: string): value is RulesLevel {
-  return ['Introductory', 'Standard', 'Advanced', 'Experimental'].includes(value);
+  return Object.values(RulesLevel).includes(value as RulesLevel);
 }
 
 // ===== DATABASE INTEGRITY INTERFACES =====
@@ -469,25 +458,40 @@ export class InvalidTechProgressionError extends ComponentDatabaseError {
  * All component categories as a constant array
  */
 export const COMPONENT_CATEGORIES: readonly ComponentCategory[] = [
-  'chassis', 'engine', 'gyro', 'heatsink', 
-  'armor', 'myomer', 'targeting', 'movement'
+  ComponentCategory.CHASSIS,
+  ComponentCategory.ENGINE,
+  ComponentCategory.GYRO,
+  ComponentCategory.HEAT_SINK,
+  ComponentCategory.ARMOR,
+  ComponentCategory.MYOMER,
+  ComponentCategory.TARGETING,
+  ComponentCategory.MOVEMENT
 ] as const;
 
 /**
  * All tech bases as a constant array
  */
-export const TECH_BASES: readonly TechBase[] = ['Inner Sphere', 'Clan'] as const;
+export const TECH_BASES: readonly TechBase[] = [
+  TechBase.INNER_SPHERE,
+  TechBase.CLAN
+] as const;
 
 /**
  * All tech levels as a constant array
  */
 export const TECH_LEVELS: readonly TechLevel[] = [
-  'Introductory', 'Standard', 'Advanced', 'Experimental'
+  TechLevel.INTRODUCTORY,
+  TechLevel.STANDARD,
+  TechLevel.ADVANCED,
+  TechLevel.EXPERIMENTAL
 ] as const;
 
 /**
  * All rules levels as a constant array
  */
 export const RULES_LEVELS: readonly RulesLevel[] = [
-  'Introductory', 'Standard', 'Advanced', 'Experimental'
+  RulesLevel.INTRODUCTORY,
+  RulesLevel.STANDARD,
+  RulesLevel.ADVANCED,
+  RulesLevel.EXPERIMENTAL
 ] as const;

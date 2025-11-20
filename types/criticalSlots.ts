@@ -4,7 +4,11 @@
  * NO STRINGS - only objects and references
  */
 
-import { SystemComponents } from './systemComponents';
+import {
+  IEquipmentInstance,
+  IFixedAllocation,
+  IEquipment
+} from './core/UnitInterfaces';
 
 // Core slot object - never a string
 export interface CriticalSlotObject {
@@ -23,83 +27,14 @@ export enum SlotType {
   TURRET = 'turret'
 }
 
-// Reference to actual equipment
+// Reference to actual equipment or system component
 export interface EquipmentReference {
-  equipmentId: string;  // UUID reference to equipment in weapons_and_equipment
-  equipmentData: EquipmentObject;
+  id: string; // UUID of the Allocation (Instance ID)
+  equipmentData: IEquipment | IFixedAllocation; // The actual definition or fixed allocation record
   allocatedSlots: number;
   startSlotIndex: number;
   endSlotIndex: number;
-}
-
-// Equipment object with all metadata
-export interface EquipmentObject {
-  id: string;
-  name: string;
-  type: EquipmentType;
-  category: EquipmentCategory;
-  requiredSlots: number;
-  weight: number;
-  isFixed: boolean;
-  isRemovable: boolean;
-  techBase: 'Inner Sphere' | 'Clan' | 'Both';
-  manufacturer?: string;
-  model?: string;
-  // Weapon-specific
-  damage?: number | string;
-  heat?: number;
-  minRange?: number;
-  shortRange?: number;
-  mediumRange?: number;
-  longRange?: number;
-  // Ammo-specific
-  ammoType?: string;
-  shotsPerTon?: number;
-  // Heat sink specific
-  dissipation?: number;
-  // Additional metadata
-  criticalHitModifier?: number;
-  explosiveAmmo?: boolean;
-  requiresAmmo?: boolean;
-  linkedAmmoTypes?: string[];
-}
-
-export enum EquipmentType {
-  // System Components
-  ENGINE = 'engine',
-  GYRO = 'gyro',
-  COCKPIT = 'cockpit',
-  LIFE_SUPPORT = 'life_support',
-  SENSORS = 'sensors',
-  ACTUATOR = 'actuator',
-  
-  // Structure & Armor
-  ENDO_STEEL = 'endo_steel',
-  FERRO_FIBROUS = 'ferro_fibrous',
-  
-  // Heat Management
-  HEAT_SINK = 'heat_sink',
-  
-  // Weapons
-  BALLISTIC = 'ballistic',
-  ENERGY = 'energy',
-  MISSILE = 'missile',
-  PHYSICAL = 'physical',
-  
-  // Equipment
-  AMMO = 'ammo',
-  EQUIPMENT = 'equipment',
-  ELECTRONICS = 'electronics',
-  TARGETING = 'targeting',
-  MISCELLANEOUS = 'miscellaneous'
-}
-
-export enum EquipmentCategory {
-  SYSTEM = 'system',
-  WEAPON = 'weapon',
-  AMMO = 'ammo',
-  EQUIPMENT = 'equipment',
-  SPECIAL = 'special'
+  type: 'equipment' | 'system'; // Differentiate between inventory items and fixed system components
 }
 
 // Location-based allocation map
@@ -107,66 +42,10 @@ export interface CriticalAllocationMap {
   [location: string]: CriticalSlotObject[];
 }
 
-// Equipment registry entry
-export interface EquipmentRegistryEntry {
-  equipment: EquipmentObject;
-  totalQuantity: number;
-  allocatedQuantity: number;
-  allocations: Array<{
-    location: string;
-    startSlot: number;
-    endSlot: number;
-  }>;
-}
-
-// Equipment registry
-export interface EquipmentRegistry {
-  [equipmentId: string]: EquipmentRegistryEntry;
-}
-
-// System component equipment objects
-export interface SystemEquipmentSet {
-  engine: EquipmentObject;
-  gyro: EquipmentObject;
-  cockpit: EquipmentObject;
-  lifeSupport: EquipmentObject;
-  sensors: EquipmentObject;
-  actuators: {
-    shoulder: EquipmentObject;
-    upperArm: EquipmentObject;
-    lowerArm?: EquipmentObject;
-    hand?: EquipmentObject;
-    hip: EquipmentObject;
-    upperLeg: EquipmentObject;
-    lowerLeg: EquipmentObject;
-    foot: EquipmentObject;
-  };
-  heatSinks?: EquipmentObject[];
-  endoSteel?: EquipmentObject;
-  ferroFibrous?: EquipmentObject;
-}
-
-// Multi-slot group tracking
-export interface MultiSlotGroup {
-  groupId: string;
-  equipmentId: string;
-  location: string;
-  startIndex: number;
-  endIndex: number;
-  totalSlots: number;
-}
-
-// Slot validation result
-export interface SlotValidationResult {
-  isValid: boolean;
-  errors: string[];
-  warnings: string[];
-}
-
 // Drag and drop state
 export interface CriticalDragState {
   isDragging: boolean;
-  draggedEquipment: EquipmentObject | null;
+  draggedItem: EquipmentReference | null;
   sourceLocation?: string;
   sourceSlotIndex?: number;
   hoveredLocation?: string;
@@ -184,10 +63,6 @@ export interface LocationSlotConfig {
   totalSlots: number;
   rearSlots?: number;
   turretSlots?: number;
-  fixedEquipment?: Array<{
-    equipment: EquipmentObject;
-    startSlot: number;
-  }>;
 }
 
 // Mech location configurations
@@ -207,7 +82,7 @@ export interface SlotOperation {
   type: 'allocate' | 'remove' | 'move';
   location: string;
   slotIndex: number;
-  equipment?: EquipmentObject;
+  item?: EquipmentReference;
   targetLocation?: string;
   targetSlotIndex?: number;
 }
@@ -224,7 +99,6 @@ export interface SlotChangeEvent {
 // Critical slot state for UI
 export interface CriticalSlotUIState {
   allocations: CriticalAllocationMap;
-  registry: EquipmentRegistry;
   dragState: CriticalDragState;
   hoveredSlot: {
     location: string;
@@ -234,5 +108,10 @@ export interface CriticalSlotUIState {
     location: string;
     index: number;
   }>;
-  validation: SlotValidationResult;
+  // Validation should be handled by a service, not stored in UI state ideally, but keeping for compatibility if needed
+  validation: {
+    isValid: boolean;
+    errors: string[];
+    warnings: string[];
+  };
 }

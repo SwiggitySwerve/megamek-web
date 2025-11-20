@@ -25,13 +25,24 @@ export type EntityId = string;
 export enum TechBase {
   INNER_SPHERE = 'Inner Sphere',
   CLAN = 'Clan',
-  MIXED = 'Mixed'
+  MIXED = 'Mixed',
+  BOTH = 'Both'
 }
 
 /**
  * Rules level enum - strongly typed replacement for string literals
  */
 export enum RulesLevel {
+  INTRODUCTORY = 'Introductory',
+  STANDARD = 'Standard',
+  ADVANCED = 'Advanced',
+  EXPERIMENTAL = 'Experimental'
+}
+
+/**
+ * Technology Level enum - sophistication of the tech
+ */
+export enum TechLevel {
   INTRODUCTORY = 'Introductory',
   STANDARD = 'Standard',
   ADVANCED = 'Advanced',
@@ -64,6 +75,68 @@ export enum Priority {
   HIGH = 'high',
   MEDIUM = 'medium',
   LOW = 'low'
+}
+
+/**
+ * Component Category Enum
+ * Represents structural systems that are part of the unit's chassis or core identity.
+ */
+export enum ComponentCategory {
+  CHASSIS = 'chassis',
+  ENGINE = 'engine',
+  GYRO = 'gyro',
+  COCKPIT = 'cockpit',
+  STRUCTURE = 'structure',
+  ARMOR = 'armor',
+  HEAT_SINK = 'heatsink', // System-level heat sink config (type, etc)
+  MYOMER = 'myomer',
+  TARGETING = 'targeting',
+  MOVEMENT = 'movement' // Jump jet config, MASC, etc.
+}
+
+/**
+ * Equipment Category Enum
+ * Represents inventory items that are placed in critical slots.
+ */
+export enum EquipmentCategory {
+  // Weapons
+  WEAPON = 'weapon',
+  
+  // Ammunition
+  AMMO = 'ammo',
+  
+  // Equipment
+  EQUIPMENT = 'equipment',
+  ELECTRONICS = 'electronics',
+  
+  // System Components placed as items (e.g. Jump Jets, Heat Sinks)
+  HEAT_SINK = 'heat_sink',
+  JUMP_JET = 'jump_jet',
+  
+  // Physical
+  PHYSICAL = 'physical', // Hatchet, etc.
+  
+  // Misc
+  MISCELLANEOUS = 'miscellaneous'
+}
+
+/**
+ * Unit type enum
+ */
+export enum UnitType {
+  BATTLEMECH = 'BattleMech',
+  INDUSTRIALMECH = 'IndustrialMech',
+  COMBAT_VEHICLE = 'Combat Vehicle',
+  SUPPORT_VEHICLE = 'Support Vehicle',
+  AEROSPACE = 'Aerospace',
+  BATTLE_ARMOR = 'Battle Armor',
+  PROTO_MECH = 'ProtoMech',
+  INFANTRY = 'Infantry',
+  DROPSHIP = 'DropShip',
+  JUMPSHIP = 'JumpShip',
+  WARSHIP = 'WarShip',
+  SPACE_STATION = 'Space Station',
+  MOBILE_STRUCTURE = 'Mobile Structure'
 }
 
 // ===== BASE ENTITY INTERFACES =====
@@ -210,7 +283,7 @@ export interface IComponentConfiguration extends ITechBased, INamed {
  * Base interface for equipment configurations
  */
 export interface IEquipmentConfiguration extends IComponentConfiguration, IWeighted, ISlotted, ILocationRestricted {
-  readonly category: string;
+  readonly category: EquipmentCategory | string;
   readonly requiresAmmo: boolean;
   readonly heatGeneration?: number;
   readonly range?: IRangeProfile;
