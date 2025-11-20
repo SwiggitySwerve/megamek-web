@@ -10,7 +10,7 @@
 import React from 'react';
 import { useUnit } from '../../multiUnit/MultiUnitProvider';
 import { UnitConfiguration } from '../../../utils/criticalSlots/UnitCriticalManagerTypes';
-import { EngineType } from '../../../types/systemComponents';
+import { ArmorType, EngineType, GyroType, HeatSinkType, StructureType } from '../../../types/systemComponents';
 import { 
   SkeletonInput,
   SkeletonSelect,
@@ -44,15 +44,14 @@ import {
   ComponentMemoryState
 } from '../../../types/componentDatabase';
 
-import { ComponentCategory } from '../../../utils/componentAvailability';
-
 // Import ComponentConfiguration helpers
 import { 
   ComponentConfiguration, 
   TechBase, 
   createComponentConfiguration, 
   migrateStringToComponentConfiguration,
-  createDefaultComponentConfiguration 
+  createDefaultComponentConfiguration, 
+  ComponentCategory
 } from '../../../types/componentConfiguration';
 
 // Import movement calculations
@@ -64,6 +63,96 @@ import { calculateStructureWeight, getStructureSlots } from '../../../utils/stru
 import { calculateMaxArmorTonnage } from '../../../utils/armorAllocation';
 import { getArmorType } from '../../../utils/armorTypes';
 import { isComponentAvailable } from '../../../utils/componentDatabaseHelpers';
+
+type CanonicalUnitConfiguration = Omit<UnitConfiguration, 'structureType' | 'gyroType' | 'heatSinkType' | 'armorType' | 'jumpJetType'> & {
+  structureType: ComponentConfiguration;
+  gyroType: ComponentConfiguration;
+  heatSinkType: ComponentConfiguration;
+  armorType: ComponentConfiguration;
+  jumpJetType: ComponentConfiguration;
+};
+
+const DEFAULT_COMPONENT_TYPES = {
+  structure: 'Standard',
+  gyro: 'Standard',
+  heatSink: 'Single',
+  armor: 'Standard',
+  jumpJet: 'Standard Jump Jet'
+} as const;
+
+const resolveTechBase = (techBase: string): TechBase =>
+  techBase === 'Clan' ? 'Clan' : 'Inner Sphere';
+
+const isComponentConfiguration = (value: unknown): value is ComponentConfiguration => {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'type' in value &&
+    'techBase' in value
+  );
+};
+
+const ensureComponentConfiguration = (
+  value: unknown,
+  category: ComponentCategory,
+  fallbackType: string,
+  techBase: TechBase
+): ComponentConfiguration => {
+  if (isComponentConfiguration(value)) {
+    return value;
+  }
+  if (typeof value === 'string' && value.length > 0) {
+    return migrateStringToComponentConfiguration(category, value, techBase);
+  }
+  return migrateStringToComponentConfiguration(category, fallbackType, techBase);
+};
+
+const buildCanonicalConfiguration = (baseConfig: UnitConfiguration): CanonicalUnitConfiguration => {
+  const techBase = resolveTechBase(baseConfig.techBase);
+
+  return {
+    ...baseConfig,
+    structureType: ensureComponentConfiguration(
+      baseConfig.structureType,
+      'structure',
+      DEFAULT_COMPONENT_TYPES.structure,
+      techBase
+    ),
+    gyroType: ensureComponentConfiguration(
+      baseConfig.gyroType,
+      'gyro',
+      DEFAULT_COMPONENT_TYPES.gyro,
+      techBase
+    ),
+    heatSinkType: ensureComponentConfiguration(
+      baseConfig.heatSinkType,
+      'heatSink',
+      DEFAULT_COMPONENT_TYPES.heatSink,
+      techBase
+    ),
+    armorType: ensureComponentConfiguration(
+      baseConfig.armorType,
+      'armor',
+      DEFAULT_COMPONENT_TYPES.armor,
+      techBase
+    ),
+    jumpJetType: ensureComponentConfiguration(
+      baseConfig.jumpJetType,
+      'jumpJet',
+      DEFAULT_COMPONENT_TYPES.jumpJet,
+      techBase
+    )
+  };
+};
+
+const canonicalToUnitConfiguration = (canonical: CanonicalUnitConfiguration): UnitConfiguration => ({
+  ...canonical,
+  structureType: canonical.structureType.type as StructureType,
+  gyroType: canonical.gyroType.type as GyroType,
+  heatSinkType: canonical.heatSinkType.type as HeatSinkType,
+  armorType: canonical.armorType.type as ArmorType,
+  jumpJetType: canonical.jumpJetType.type
+});
 
 /**
  * Props for StructureTab component
@@ -86,6 +175,7 @@ export interface StructureTabProps {
 export const StructureTab: React.FC<StructureTabProps> = ({ readOnly = false }) => {
   const { unit, engineType, gyroType, updateConfiguration, isConfigLoaded } = useUnit();
   const config = unit.getConfiguration();
+  const canonicalConfig = React.useMemo(() => buildCanonicalConfiguration(config), [config]);
 
   // 🔥 MEMORY SYSTEM STATE (same as Overview tab)
   const [memoryState, setMemoryState] = React.useState<ComponentMemoryState | null>(null);
@@ -211,11 +301,15 @@ export const StructureTab: React.FC<StructureTabProps> = ({ readOnly = false }) 
 
   // Helper functions to handle ComponentConfiguration vs string migration
   const getStructureTypeValue = (): string => {
-    return config.structureType || 'Standard';
+    return canonicalConfig.structureType.type || 'Standard';
+  };
+
+  const getStructureTypeForRules = (): StructureType => {
+    return canonicalConfig.structureType.type as StructureType;
   };
 
   const getGyroTypeValue = (): string => {
-    return config.gyroType || 'Standard';
+    return canonicalConfig.gyroType.type || 'Standard';
   };
 
   // Remove all enhancementType references and use only enhancements array
@@ -234,11 +328,11 @@ export const StructureTab: React.FC<StructureTabProps> = ({ readOnly = false }) 
   }));
 
   const getHeatSinkTypeValue = (): string => {
-    return config.heatSinkType || 'Single';
+    return canonicalConfig.heatSinkType.type || 'Single';
   };
 
   const getArmorTypeValue = (): string => {
-    return config.armorType || 'Standard';
+    return canonicalConfig.armorType.type || 'Standard';
   };
 
   // Calculate derived values
@@ -261,18 +355,18 @@ export const StructureTab: React.FC<StructureTabProps> = ({ readOnly = false }) 
   const calculatedRunMP = config.runMP; // Use base run MP for data model consistency
 
   // Update configuration helper with auto-calculations and tech progression sync
-  const updateConfig = (updates: Partial<UnitConfiguration>) => {
-    let newConfig = { ...config, ...updates };
+  const updateConfig = (updates: Partial<CanonicalUnitConfiguration>) => {
+    let newConfig: CanonicalUnitConfiguration = { ...canonicalConfig, ...updates };
 
     // Auto-calculate engine rating and movement when tonnage, walkMP, or enhancement changes
     if ('tonnage' in updates || 'walkMP' in updates || 'enhancements' in updates) {
-      const tonnage = Number(updates.tonnage ?? config.tonnage);
-      const walkMP = Number(updates.walkMP ?? config.walkMP);
-      const enhancements = updates.enhancements ?? config.enhancements;
+      const tonnage = Number(updates.tonnage ?? canonicalConfig.tonnage);
+      const walkMP = Number(updates.walkMP ?? canonicalConfig.walkMP);
+      const enhancementState = updates.enhancements ?? canonicalConfig.enhancements;
       const engineRating = Math.min(tonnage * walkMP, 400);
 
       // Calculate enhanced movement using shared utility
-      const movementConfig = { walkMP, runMP: Math.floor(walkMP * 1.5), jumpMP: newConfig.jumpMP, enhancements };
+      const movementConfig = { walkMP, runMP: Math.floor(walkMP * 1.5), jumpMP: newConfig.jumpMP, enhancements: enhancementState };
       const enhancedMovement = calculateEnhancedMovement(movementConfig);
 
       newConfig = {
@@ -282,7 +376,7 @@ export const StructureTab: React.FC<StructureTabProps> = ({ readOnly = false }) 
       };
     }
 
-    updateConfiguration(newConfig);
+    updateConfiguration(canonicalToUnitConfiguration(newConfig));
   };
 
   // 🔥 WORKING DROPDOWN PATTERN - Based on Overview tab success
@@ -329,7 +423,7 @@ export const StructureTab: React.FC<StructureTabProps> = ({ readOnly = false }) 
     const canonicalStructureType = getCanonicalStructureTypeObject(newValue, config.techBase);
     console.log(`[StructureTab] 🔧 Converting to canonical object:`, canonicalStructureType);
     
-    updateConfig({ structureType: canonicalStructureType as any });
+    updateConfig({ structureType: canonicalStructureType });
     console.log(`[StructureTab] ✅ Structure type updated successfully`);
   };
 
@@ -375,7 +469,7 @@ export const StructureTab: React.FC<StructureTabProps> = ({ readOnly = false }) 
     const canonicalGyroType = getCanonicalGyroTypeObject(newValue, config.techBase);
     console.log(`[StructureTab] 🔧 Converting to canonical object:`, canonicalGyroType);
     
-    updateConfig({ gyroType: canonicalGyroType as any });
+    updateConfig({ gyroType: canonicalGyroType });
     console.log(`[StructureTab] ✅ Gyro type updated successfully`);
   };
 
@@ -391,7 +485,7 @@ export const StructureTab: React.FC<StructureTabProps> = ({ readOnly = false }) 
     const canonicalHeatSinkType = getCanonicalHeatSinkTypeObject(newValue, config.techBase);
     console.log(`[StructureTab] 🔧 Converting to canonical object:`, canonicalHeatSinkType);
     
-    updateConfig({ heatSinkType: canonicalHeatSinkType as any });
+    updateConfig({ heatSinkType: canonicalHeatSinkType });
     console.log(`[StructureTab] ✅ Heat sink type updated successfully`);
   };
 
@@ -789,8 +883,8 @@ export const StructureTab: React.FC<StructureTabProps> = ({ readOnly = false }) 
                   </tr>
                   <tr className="border-b border-slate-700/50">
                     <td className="py-1">Structure ({getStructureTypeValue()}):</td>
-                    <td className="text-center font-medium">{calculateStructureWeight(config.tonnage, getStructureTypeValue() as any).toFixed(1)}t</td>
-                    <td className="text-center">{getStructureSlots(getStructureTypeValue() as any)}</td>
+                    <td className="text-center font-medium">{calculateStructureWeight(config.tonnage, getStructureTypeForRules()).toFixed(1)}t</td>
+                    <td className="text-center">{getStructureSlots(getStructureTypeForRules())}</td>
                     <td className="text-center text-yellow-400">D/C-E-D-D</td>
                   </tr>
                   <tr className="border-b border-slate-700/50">
@@ -838,7 +932,7 @@ export const StructureTab: React.FC<StructureTabProps> = ({ readOnly = false }) 
                   <tr className="border-t-2 border-slate-600 font-medium">
                     <td className="py-2 text-slate-200">Subtotal:</td>
                     <td className="text-center text-slate-200">{(
-                      calculateStructureWeight(config.tonnage, getStructureTypeValue() as any) + // Structure
+                      calculateStructureWeight(config.tonnage, getStructureTypeForRules()) + // Structure
                       (config.engineRating * (config.engineType === 'XL' ? 0.5 : config.engineType === 'Light' ? 0.75 : 1) / 25) + // Engine
                       Math.ceil(config.engineRating / 100) + // Gyro  
                       3.0 + // Cockpit
@@ -863,7 +957,7 @@ export const StructureTab: React.FC<StructureTabProps> = ({ readOnly = false }) 
                 <div className="flex justify-between items-center">
                   <span>Remaining Tonnage:</span>
                   <span className="text-slate-100 font-semibold">{(config.tonnage -
-                    (calculateStructureWeight(config.tonnage, getStructureTypeValue() as any) +
+                    (calculateStructureWeight(config.tonnage, getStructureTypeForRules()) +
                       (config.engineRating * (config.engineType === 'XL' ? 0.5 : config.engineType === 'Light' ? 0.75 : 1) / 25) +
                       Math.ceil(config.engineRating / 100) +
                       3.0 +
