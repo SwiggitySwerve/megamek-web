@@ -4,7 +4,7 @@
  */
 
 import { EquipmentObject, EquipmentAllocation } from './CriticalSlot'
-import { EngineType, GyroType, StructureType, ArmorType, HeatSinkType } from '../../types/components'
+import { EngineType, GyroType, StructureType, ArmorType, HeatSinkType } from '../../types/systemComponents'
 import { JumpJetType } from '../jumpJetCalculations'
 import { 
   ComponentConfiguration, 

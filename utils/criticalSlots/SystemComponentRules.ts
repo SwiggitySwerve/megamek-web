@@ -4,9 +4,7 @@
  */
 
 import { ComponentConfiguration } from '../../types/componentConfiguration'
-
-// Define EngineType locally since it's used throughout this file
-export type EngineType = 'Standard' | 'XL' | 'Light' | 'XXL' | 'Compact' | 'ICE' | 'Fuel Cell'
+import { EngineType, GyroType } from '../../types/systemComponents'
 
 export interface SystemAllocation {
   centerTorso: number[]
@@ -29,14 +27,15 @@ export class SystemComponentRules {
   /**
    * Get gyro slot allocation based on gyro type
    */
-  static getGyroAllocation(gyroType: ComponentConfiguration): SystemAllocation {
+  static getGyroAllocation(gyroType: ComponentConfiguration | GyroType): SystemAllocation {
     const allocation: SystemAllocation = {
       centerTorso: [],
       leftTorso: [],
       rightTorso: []
     }
 
-    switch (gyroType.type) {
+    const gyroTypeString = typeof gyroType === 'string' ? gyroType : gyroType.type;
+    switch (gyroTypeString) {
       case 'Standard':
         allocation.centerTorso = [3, 4, 5, 6] // Slots 4-7
         break
@@ -58,7 +57,7 @@ export class SystemComponentRules {
    * Get engine slot allocation based on engine type (official BattleTech rules)
    * CRITICAL FIX: Engine placement is gyro-aware - engine slots come after gyro ends
    */
-  static getEngineAllocation(engineType: EngineType, gyroType: ComponentConfiguration): SystemAllocation {
+  static getEngineAllocation(engineType: EngineType, gyroType: ComponentConfiguration | GyroType): SystemAllocation {
     const allocation: SystemAllocation = {
       centerTorso: [],
       leftTorso: [],
@@ -66,7 +65,8 @@ export class SystemComponentRules {
     }
 
     // Get gyro allocation to determine where engine's second slot group should start
-    const gyroAllocation = this.getGyroAllocation(gyroType)
+    const gyroAllocation = this.getGyroAllocation(gyroType);
+    const gyroTypeString = typeof gyroType === 'string' ? gyroType : gyroType.type;
     const gyroEndSlot = gyroAllocation.centerTorso.length > 0 
       ? Math.max(...gyroAllocation.centerTorso) 
       : 2 // If no gyro slots, start after slot 3 (index 2)
@@ -150,7 +150,7 @@ export class SystemComponentRules {
   /**
    * Get complete system component allocation for both engine and gyro
    */
-  static getCompleteSystemAllocation(engineType: EngineType, gyroType: ComponentConfiguration): {
+  static getCompleteSystemAllocation(engineType: EngineType, gyroType: ComponentConfiguration | GyroType): {
     engine: SystemAllocation
     gyro: SystemAllocation
     combined: SystemAllocation
@@ -175,7 +175,7 @@ export class SystemComponentRules {
   /**
    * Validate system component compatibility
    */
-  static validateSystemComponents(engineType: EngineType, gyroType: ComponentConfiguration): ValidationResult {
+  static validateSystemComponents(engineType: EngineType, gyroType: ComponentConfiguration | GyroType): ValidationResult {
     const result: ValidationResult = {
       isValid: true,
       errors: [],
@@ -210,7 +210,8 @@ export class SystemComponentRules {
       }
 
       // Check for incompatible combinations
-      if (engineType === 'XXL' && gyroType.type === 'XL') {
+      const gyroTypeString = typeof gyroType === 'string' ? gyroType : gyroType.type;
+      if (engineType === 'XXL' && gyroTypeString === 'XL') {
         result.warnings.push('XXL Engine with XL Gyro combination may be unstable')
       }
 
@@ -222,9 +223,10 @@ export class SystemComponentRules {
         result.errors.push('System component slot overlap detected')
       }
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       result.isValid = false
-      result.errors.push(`System validation error: ${error?.message || 'Unknown error'}`)
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      result.errors.push(`System validation error: ${errorMessage}`)
     }
 
     return result
@@ -255,7 +257,7 @@ export class SystemComponentRules {
   /**
    * Get available equipment slots after system components are placed
    */
-  static getAvailableEquipmentSlots(engineType: EngineType, gyroType: ComponentConfiguration): {
+  static getAvailableEquipmentSlots(engineType: EngineType, gyroType: ComponentConfiguration | GyroType): {
     [location: string]: number[]
   } {
     const allocation = this.getCompleteSystemAllocation(engineType, gyroType)
@@ -305,7 +307,7 @@ export class SystemComponentRules {
   /**
    * Calculate maximum equipment size that can fit in each location
    */
-  static getMaxEquipmentSizes(engineType: EngineType, gyroType: ComponentConfiguration): {
+  static getMaxEquipmentSizes(engineType: EngineType, gyroType: ComponentConfiguration | GyroType): {
     [location: string]: number
   } {
     const availableSlots = this.getAvailableEquipmentSlots(engineType, gyroType)
@@ -344,7 +346,7 @@ export class SystemComponentRules {
     equipmentSlots: number,
     location: string,
     engineType: EngineType,
-    gyroType: ComponentConfiguration
+    gyroType: ComponentConfiguration | GyroType
   ): boolean {
     const maxSizes = this.getMaxEquipmentSizes(engineType, gyroType)
     return (maxSizes[location] || 0) >= equipmentSlots
@@ -355,9 +357,9 @@ export class SystemComponentRules {
    */
   static getDisplacementImpact(
     oldEngineType: EngineType,
-    oldGyroType: ComponentConfiguration,
+    oldGyroType: ComponentConfiguration | GyroType,
     newEngineType: EngineType,
-    newGyroType: ComponentConfiguration
+    newGyroType: ComponentConfiguration | GyroType
   ): {
     affectedLocations: string[]
     conflictSlots: { [location: string]: number[] }
@@ -401,7 +403,7 @@ export class SystemComponentRules {
   /**
    * Get human-readable description of system component requirements
    */
-  static getSystemDescription(engineType: EngineType, gyroType: ComponentConfiguration): string {
+  static getSystemDescription(engineType: EngineType, gyroType: ComponentConfiguration | GyroType): string {
     const allocation = this.getCompleteSystemAllocation(engineType, gyroType)
     const descriptions: string[] = []
 
@@ -423,8 +425,9 @@ export class SystemComponentRules {
     }
 
     // Gyro description
+    const gyroTypeString = typeof gyroType === 'string' ? gyroType : gyroType.type;
     descriptions.push(
-      `${gyroType.type} Gyro: CT slots ${allocation.gyro.centerTorso.map(s => s + 1).join(', ')}`
+      `${gyroTypeString} Gyro: CT slots ${allocation.gyro.centerTorso.map(s => s + 1).join(', ')}`
     )
 
     return descriptions.join('\n')

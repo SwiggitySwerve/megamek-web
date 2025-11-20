@@ -9,7 +9,7 @@ import { UnitPersistenceService, UnitIdentifier, UnitLoadResult, generateUnitId 
 import { UnitCriticalManager } from '../../utils/criticalSlots/UnitCriticalManager'
 import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes'
 import { UnitStateManager } from '../../utils/criticalSlots/UnitStateManager'
-import { EngineType, GyroType } from '../../types/components'
+import { EngineType, GyroType } from '../../types/systemComponents'
 import { EquipmentAllocation } from '../../utils/criticalSlots/CriticalSlot'
 import { MultiTabDebouncedSaveManager } from '../../utils/DebouncedSaveManager'
 

@@ -10,7 +10,7 @@
 
 import { TabUnit } from './MultiUnitStateService'
 import { UnitCriticalManager } from '../utils/criticalSlots/UnitCriticalManager'
-import { EngineType, GyroType } from '../types/components'
+import { EngineType, GyroType } from '../types/systemComponents'
 import { EquipmentAllocation } from '../utils/criticalSlots/CriticalSlot'
 
 export interface UnitStatistics {

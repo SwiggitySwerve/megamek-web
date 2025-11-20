@@ -8,9 +8,12 @@
  */
 
 import { UnitConfiguration } from './UnitCriticalManagerTypes';
-import { ComponentConfiguration, TechBase } from '../../types/componentConfiguration';
+import { ComponentConfiguration } from '../../types/componentConfiguration';
+import { TechBase } from '../../types/core/BaseTypes';
 import { SystemComponentsGateway } from '../../services/systemComponents/SystemComponentsGateway';
 import { EquipmentAllocation } from './CriticalSlot';
+import { CriticalSection } from './CriticalSection';
+import { CriticalSlotBreakdown } from '../editor/UnitCalculationService';
 // TODO: STRUCTURE_DATA and ARMOR_DATA need to be migrated to new adapters
 // import { STRUCTURE_DATA, ARMOR_DATA } from '../../services/ComponentDatabaseService';
 import { SlotCalculationManager, SlotRequirements, AvailableSlots, SlotUtilization } from './SlotCalculationManager';
@@ -60,15 +63,84 @@ export interface CriticalSlotCalculator {
   findAvailableSlots(config: UnitConfiguration, equipment: EquipmentAllocation[], requiredSlots: number): AvailableSlotLocation[];
 }
 
-export interface EquipmentAllocation {
-  equipment: Record<string, unknown>;
-  location: string;
-  slots: number[];
-  validated: boolean;
-  conflicts: string[];
+// Using EquipmentAllocation from CriticalSlot.ts - no duplicate interface needed
+
+// Interface for structural slots breakdown
+export interface StructuralSlotsBreakdown {
+  fixedComponents: number;
+  systemComponents: number;
+  specialComponents: number;
+  total: number;
 }
 
-// Using the concrete types from CriticalSlotTypes.ts instead of the old interface
+// Interface for complete breakdown return type
+export interface CompleteBreakdownResult {
+  structural: StructuralSlotsBreakdown;
+  locationBreakdown: CompleteCriticalSlotBreakdown;
+  equipment: {
+    allocated: number;
+    unallocated: number;
+    total: number;
+  };
+  totals: {
+    capacity: number;
+    used: number;
+    remaining: number;
+    equipmentBurden: number;
+    overCapacity: number;
+  };
+  debug: {
+    fixedBreakdown: {
+      head: { total: number };
+      arms: { total: number };
+      legs: { total: number };
+      total: number;
+    };
+    systemBreakdown: {
+      engine: number;
+      gyro: number;
+      total: number;
+    };
+    specialBreakdown: {
+      structure: number;
+      armor: number;
+      jumpJets: number;
+      total: number;
+    };
+    equipmentBreakdown: {
+      allocated: number;
+      unallocated: number;
+      total: number;
+    };
+  };
+}
+
+// Interface for location efficiency data
+export interface LocationEfficiencyData {
+  efficiency: number;
+  utilization: number;
+  wastedSlots: number;
+  suggestions: string[];
+}
+
+// Interface for slot report summary
+export interface SlotReportSummary {
+  totalSlots: number;
+  usedSlots: number;
+  availableSlots: number;
+  utilization: number;
+  efficiency: string;
+}
+
+// Interface for location breakdown in slot report
+export interface LocationBreakdownData {
+  capacity: number;
+  used: number;
+  available: number;
+  equipment: string[];
+  specialComponents: string[];
+  conflicts: string[];
+}
 
 export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
   
@@ -1327,13 +1399,13 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
     return suggestions;
   }
   
-  private calculateOptimizationPotential(locationEfficiency: any): number {
-    const efficiencies = Object.values(locationEfficiency).map((loc: any) => loc.efficiency);
-    const averageEfficiency = efficiencies.reduce((sum: number, eff: any) => sum + eff, 0) / efficiencies.length;
+  private calculateOptimizationPotential(locationEfficiency: Record<string, LocationEfficiencyData>): number {
+    const efficiencies = Object.values(locationEfficiency).map((loc) => loc.efficiency);
+    const averageEfficiency = efficiencies.reduce((sum: number, eff: number) => sum + eff, 0) / efficiencies.length;
     return Math.max(0, 100 - averageEfficiency);
   }
   
-  private generateEfficiencyRecommendations(locationEfficiency: any, overallEfficiency: number): string[] {
+  private generateEfficiencyRecommendations(locationEfficiency: Record<string, LocationEfficiencyData>, overallEfficiency: number): string[] {
     const recommendations: string[] = [];
     
     if (overallEfficiency < 70) {
@@ -1343,7 +1415,7 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
     return recommendations;
   }
   
-  private calculateOverallEfficiency(config: UnitConfiguration, equipment: any[]): string {
+  private calculateOverallEfficiency(config: UnitConfiguration, equipment: EquipmentAllocation[]): string {
     const utilization = this.calculateSlotUtilization(config, equipment);
     
     if (utilization.percentageUsed < 60) return 'excellent';
@@ -1372,7 +1444,7 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
     return components;
   }
   
-  private generateReportRecommendations(summary: any, locationBreakdown: any, conflicts: SlotConflict[]): string[] {
+  private generateReportRecommendations(summary: SlotReportSummary, locationBreakdown: Record<string, LocationBreakdownData>, conflicts: SlotConflict[]): string[] {
     const recommendations: string[] = [];
     
     if (summary.utilization > 90) {
@@ -1447,7 +1519,7 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
     return restrictions;
   }
   
-  private getSuitableLocations(item: any, config: UnitConfiguration): string[] {
+  private getSuitableLocations(item: EquipmentAllocation, config: UnitConfiguration): string[] {
     // Simplified location suitability logic
     const allLocations = Object.keys(this.STANDARD_SLOT_COUNTS);
     
@@ -1483,7 +1555,7 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
 // Backwards compatibility: Static methods that delegate to instance implementation
 export class CriticalSlotCalculatorStatic {
   // Legacy static method for backwards compatibility
-  static calculateStructuralSlots(config: UnitConfiguration): any {
+  static calculateStructuralSlots(config: UnitConfiguration): StructuralSlotsBreakdown {
     const instance = new CriticalSlotCalculatorImpl();
     const systemSlots = instance.calculateSystemComponentSlots(config);
     const specialSlots = instance.calculateSpecialComponentSlots(config);
@@ -1498,7 +1570,7 @@ export class CriticalSlotCalculatorStatic {
   }
 
   // Legacy static method for complete breakdown
-  static getCompleteBreakdown(config: UnitConfiguration, sections: any, equipment: any[]): any {
+  static getCompleteBreakdown(config: UnitConfiguration, sections: Map<string, CriticalSection> | null, equipment: EquipmentAllocation[]): CompleteBreakdownResult {
     const instance = new CriticalSlotCalculatorImpl();
     const structural = CriticalSlotCalculatorStatic.calculateStructuralSlots(config);
     
@@ -1508,10 +1580,10 @@ export class CriticalSlotCalculatorStatic {
     // CRITICAL FIX: Calculate allocated equipment slots from sections - count ALL equipment
     let allocatedSlots = 0;
     if (sections && sections instanceof Map) {
-      sections.forEach((section: any) => {
+      sections.forEach((section: CriticalSection) => {
         if (section && typeof section.getAllEquipment === 'function') {
           const sectionEquipment = section.getAllEquipment();
-          sectionEquipment.forEach((eq: any) => {
+          sectionEquipment.forEach((eq: EquipmentAllocation) => {
             // Count ALL equipment slots (including system components)
             if (eq.equipmentData && eq.equipmentData.crits) {
               allocatedSlots += eq.equipmentData.crits;
@@ -1529,7 +1601,7 @@ export class CriticalSlotCalculatorStatic {
     // CRITICAL FIX: Calculate unallocated equipment slots - count ALL equipment
     let unallocatedSlots = 0;
     if (equipment && Array.isArray(equipment)) {
-      equipment.forEach((eq: any) => {
+      equipment.forEach((eq: EquipmentAllocation) => {
         // Count ALL equipment slots (including system components)
         if (eq.equipmentData && eq.equipmentData.crits) {
           unallocatedSlots += eq.equipmentData.crits;
@@ -1589,7 +1661,7 @@ export class CriticalSlotCalculatorStatic {
     // CRITICAL DEBUG: Log ALL equipment to see what's being counted
     if (equipment && Array.isArray(equipment)) {
       console.log('[CriticalSlotCalculator] ALL equipment in unallocated pool:', 
-        equipment.map((eq: any) => ({
+        equipment.map((eq: EquipmentAllocation) => ({
           name: eq.equipmentData?.name,
           componentType: eq.equipmentData?.componentType,
           crits: eq.equipmentData?.crits || eq.equipmentData?.requiredSlots || 1,
@@ -1614,12 +1686,12 @@ export class CriticalSlotCalculatorStatic {
     // CRITICAL DEBUG: Log allocated equipment from sections
     if (sections && sections instanceof Map) {
       let totalAllocated = 0;
-      sections.forEach((section: any, location: string) => {
+      sections.forEach((section: CriticalSection, location: string) => {
         if (section && typeof section.getAllEquipment === 'function') {
           const sectionEquipment = section.getAllEquipment();
           totalAllocated += sectionEquipment.length;
           console.log(`[CriticalSlotCalculator] ${location} has ${sectionEquipment.length} equipment:`, 
-            sectionEquipment.map((eq: any) => ({
+            sectionEquipment.map((eq: EquipmentAllocation) => ({
               name: eq.equipmentData?.name,
               crits: eq.equipmentData?.crits || eq.equipmentData?.requiredSlots || 1
             }))

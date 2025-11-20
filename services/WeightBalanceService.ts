@@ -10,7 +10,7 @@
 import { UnitConfiguration, ArmorAllocation } from '../utils/criticalSlots/UnitCriticalManagerTypes';
 import { ComponentConfiguration } from '../types/componentConfiguration';
 import { SystemComponentsGateway } from './systemComponents/SystemComponentsGateway';
-import { GyroType } from '../types/components';
+import { GyroType } from '../types/systemComponents';
 
 // Import focused service interfaces and types
 import { 

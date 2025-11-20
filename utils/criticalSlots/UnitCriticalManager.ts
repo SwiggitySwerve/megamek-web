@@ -5,9 +5,11 @@
 
 import { CriticalSection, LocationSlotConfiguration, FixedSystemComponent } from './CriticalSection'
 import { EquipmentObject, EquipmentAllocation } from './CriticalSlot'
-import { EngineType, SystemComponentRules } from './SystemComponentRules'
+import { EngineType, SystemComponentRules, SystemAllocation } from './SystemComponentRules'
 import { CriticalSlotCalculator } from './CriticalSlotCalculator'
 import { CriticalSlotBreakdown } from '../editor/UnitCalculationService'
+import { ArmorAnalysis } from './UnitCalculationManager'
+import { UserEquipmentSlotStatus, UnitSummary } from './UnitStateManager'
 import { 
   ComponentConfiguration, 
   TechBase, 
@@ -331,7 +333,7 @@ export class UnitCriticalManager {
   /**
    * Allocate engine slots across torso sections
    */
-  private allocateEngineSlots(engineAllocation: any): void {
+  private allocateEngineSlots(engineAllocation: SystemAllocation): void {
     // Center Torso engine slots
     if (engineAllocation.centerTorso.length > 0) {
       const centerTorso = this.sections.get('Center Torso')
@@ -360,7 +362,7 @@ export class UnitCriticalManager {
   /**
    * Allocate gyro slots in center torso
    */
-  private allocateGyroSlots(gyroAllocation: any): void {
+  private allocateGyroSlots(gyroAllocation: SystemAllocation): void {
     if (gyroAllocation.centerTorso.length > 0) {
       const centerTorso = this.sections.get('Center Torso')
       if (centerTorso) {
@@ -1518,7 +1520,7 @@ export class UnitCriticalManager {
    * Calculate wasted armor points using simple maximum comparison
    * CLEAN LOGIC: Pure comparison between tonnage maximum vs unit maximum
    */
-  getArmorWasteAnalysis(): any {
+  getArmorWasteAnalysis(): ArmorAnalysis {
     return this.calculationManager.calculateArmorWasteAnalysis(this.configuration);
   }
 
@@ -1648,7 +1650,7 @@ export class UnitCriticalManager {
    * Get slot status specifically for user equipment (excludes system components)
    * This is what the Equipment Tray should use for accurate capacity warnings
    */
-  getUserEquipmentSlotStatus(): any {
+  getUserEquipmentSlotStatus(): UserEquipmentSlotStatus {
     return this.stateManager.getUserEquipmentSlotStatus();
   }
 
@@ -1670,7 +1672,7 @@ export class UnitCriticalManager {
   /**
    * Get summary statistics
    */
-  getSummary(): any {
+  getSummary(): UnitSummary {
     return this.stateManager.getSummary();
   }
 
@@ -2095,8 +2097,8 @@ export class UnitCriticalManager {
     };
   }
 
-  static isLegacyConfigurationOnly(data: any): boolean {
-    return data && typeof data === 'object' && 'tonnage' in data && !('version' in data);
+  static isLegacyConfigurationOnly(data: unknown): boolean {
+    return data !== null && typeof data === 'object' && 'tonnage' in data && !('version' in data);
   }
 
   static upgradeLegacyConfiguration(legacyConfig: UnitConfiguration): CompleteUnitState {

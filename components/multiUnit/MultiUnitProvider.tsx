@@ -10,7 +10,7 @@ import { useUnitStoreIntegration } from '../../hooks/useUnitStoreIntegration';
 import { UnitCriticalManager } from '../../utils/criticalSlots/UnitCriticalManager';
 import { UnitStateManager } from '../../utils/criticalSlots/UnitStateManager';
 import { UnitConfiguration, UnitValidationResult } from '../../utils/criticalSlots/UnitCriticalManagerTypes';
-import { EngineType, GyroType, StructureType, ArmorType, HeatSinkType } from '../../types/components';
+import { EngineType, GyroType, StructureType, ArmorType, HeatSinkType } from '../../types/systemComponents';
 import { EquipmentAllocation } from '../../utils/criticalSlots/CriticalSlot';
 import { ComponentConfiguration } from '../../types/componentConfiguration';
 import { SaveManagerBrowserHandlers, MultiTabDebouncedSaveManager } from '../../utils/DebouncedSaveManager';

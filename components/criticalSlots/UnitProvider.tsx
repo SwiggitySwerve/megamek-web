@@ -7,7 +7,7 @@ import React, { createContext, useContext, useMemo, useReducer, useEffect, useRe
 import { UnitStateManager } from '../../utils/criticalSlots/UnitStateManager'
 import { UnitCriticalManager } from '../../utils/criticalSlots/UnitCriticalManager'
 import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes'
-import { EngineType, GyroType } from '../../types/components'
+import { EngineType, GyroType } from '../../types/systemComponents'
 import { EquipmentAllocation } from '../../utils/criticalSlots/CriticalSlot'
 
 interface UnitContextValue {

@@ -10,7 +10,7 @@
 import React from 'react';
 import { useUnit } from '../../multiUnit/MultiUnitProvider';
 import { UnitConfiguration } from '../../../utils/criticalSlots/UnitCriticalManagerTypes';
-import { EngineType } from '../../../types/components';
+import { EngineType } from '../../../types/systemComponents';
 import { 
   SkeletonInput,
   SkeletonSelect,

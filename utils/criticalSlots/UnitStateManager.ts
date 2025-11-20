@@ -36,14 +36,17 @@ export interface UserEquipmentSlotStatus {
   availableUserSlots: number;  // Remaining slots for user equipment
 }
 
+import { CriticalSection } from './CriticalSection';
+import { EquipmentAllocation } from './CriticalSlot';
+
 export class UnitStateManager {
   private listeners: StateChangeListener[] = [];
-  private sections: Map<string, any>; // CriticalSection[]
-  private unallocatedEquipment: any[]; // EquipmentAllocation[]
+  private sections: Map<string, CriticalSection>;
+  private unallocatedEquipment: EquipmentAllocation[];
   private unitCriticalManager: UnitCriticalManager;
   private changeHistory: StateChangeEvent[] = [];
 
-  constructor(configurationOrSections?: UnitConfiguration | Map<string, any>, unallocatedEquipment?: any[], unitManager?: UnitCriticalManager) {
+  constructor(configurationOrSections?: UnitConfiguration | Map<string, CriticalSection>, unallocatedEquipment?: EquipmentAllocation[], unitManager?: UnitCriticalManager) {
     // Support both constructor signatures for backward compatibility
     if (configurationOrSections instanceof Map) {
       // Legacy constructor: (sections, unallocatedEquipment, unitManager)
@@ -173,7 +176,7 @@ export class UnitStateManager {
     
     this.sections.forEach(section => {
       totalSlots += section.getTotalSlots();
-      section.getAllSlots().forEach((slot: any) => {
+      section.getAllSlots().forEach((slot) => {
         if (!slot.isEmpty()) {
           occupiedSlots++;
           if (slot.isSystemSlot()) {
@@ -215,7 +218,7 @@ export class UnitStateManager {
     // Count user equipment slots (exclude system components)
     let usedUserSlots = 0;
     this.sections.forEach(section => {
-      section.getAllEquipment().forEach((allocation: any) => {
+      section.getAllEquipment().forEach((allocation: EquipmentAllocation) => {
         // Only count user equipment, not system components
         if (!this.isSystemComponent(allocation.equipmentData)) {
           usedUserSlots += allocation.occupiedSlots.length;
@@ -264,7 +267,7 @@ export class UnitStateManager {
   /**
    * Check if equipment is a system component (engine, gyro, actuators, etc.)
    */
-  private isSystemComponent(equipment: any): boolean {
+  private isSystemComponent(equipment: { name?: string }): boolean {
     const name = equipment.name.toLowerCase();
     
     // System component patterns
@@ -297,7 +300,7 @@ export class UnitStateManager {
   /**
    * Update internal references when sections or unallocated equipment change
    */
-  updateReferences(sections: Map<string, any>, unallocatedEquipment: any[]): void {
+  updateReferences(sections: Map<string, CriticalSection>, unallocatedEquipment: EquipmentAllocation[]): void {
     this.sections = sections;
     this.unallocatedEquipment = unallocatedEquipment;
   }
@@ -307,7 +310,7 @@ export class UnitStateManager {
   /**
    * Add unallocated equipment (delegated to unit manager)
    */
-  addUnallocatedEquipment(equipment: any): void {
+  addUnallocatedEquipment(equipment: EquipmentAllocation | EquipmentAllocation[]): void {
     // Convert single equipment to array format if needed
     const equipmentArray = Array.isArray(equipment) ? equipment : [equipment];
     
@@ -364,7 +367,7 @@ export class UnitStateManager {
   /**
    * Add test equipment to specific location
    */
-  addTestEquipment(equipment: any, location: string, startSlot?: number): boolean {
+  addTestEquipment(equipment: { requiredSlots?: number; name?: string }, location: string, startSlot?: number): boolean {
     const section = this.unitCriticalManager.getSection(location);
     if (!section) return false;
 
@@ -391,7 +394,7 @@ export class UnitStateManager {
   /**
    * Handle engine changes (delegated)
    */
-  handleEngineChange(newEngineType: string, options?: any): any {
+  handleEngineChange(newEngineType: string, options?: { attemptMigration?: boolean; preserveLocationPreference?: boolean }): { summary: { totalDisplaced: number }; newUnit?: UnitCriticalManager } {
     const currentEngineType = this.unitCriticalManager.getEngineType();
     if (currentEngineType === newEngineType) {
       return { summary: { totalDisplaced: 0 } };
@@ -423,7 +426,7 @@ export class UnitStateManager {
   /**
    * Handle gyro changes (delegated)
    */
-  handleGyroChange(newGyroType: string, options?: any): any {
+  handleGyroChange(newGyroType: string, options?: { attemptMigration?: boolean; preserveLocationPreference?: boolean }): { summary: { totalDisplaced: number }; newUnit?: UnitCriticalManager } {
     const currentGyroType = this.unitCriticalManager.getGyroType();
     if (currentGyroType === newGyroType) {
       return { summary: { totalDisplaced: 0 } };
@@ -454,7 +457,7 @@ export class UnitStateManager {
   /**
    * Handle engine and gyro changes together
    */
-  handleEngineAndGyroChange(newEngineType: string, newGyroType: string, options?: any): any {
+  handleEngineAndGyroChange(newEngineType: string, newGyroType: string, options?: { attemptMigration?: boolean; preserveLocationPreference?: boolean }): { summary: { totalDisplaced: number }; newUnit?: UnitCriticalManager } {
     try {
       const { MechConstructor } = require('./MechConstructor');
       const result = MechConstructor.changeEngineAndGyro(
@@ -510,7 +513,7 @@ export class UnitStateManager {
   /**
    * Get comprehensive unit summary
    */
-  getUnitSummary(): any {
+  getUnitSummary(): { configuration: UnitConfiguration; summary: UnitSummary; validation: unknown; unallocatedEquipment: EquipmentAllocation[]; equipmentByLocation: unknown } {
     return {
       configuration: this.unitCriticalManager.getConfiguration(),
       summary: this.unitCriticalManager.getSummary(),
@@ -545,7 +548,7 @@ export class UnitStateManager {
   /**
    * Get validation status
    */
-  getValidation(): any {
+  getValidation(): unknown {
     return this.unitCriticalManager.validate();
   }
 
@@ -573,7 +576,7 @@ export class UnitStateManager {
   /**
    * Get debug information about current state
    */
-  getDebugInfo(): any {
+  getDebugInfo(): { unallocatedCount: number; changeHistoryLength: number; sectionsCount: number; equipmentByLocation: unknown; configuration: UnitConfiguration; lastChange: StateChangeEvent | null } {
     return {
       unallocatedCount: this.unallocatedEquipment.length,
       changeHistoryLength: this.changeHistory.length,

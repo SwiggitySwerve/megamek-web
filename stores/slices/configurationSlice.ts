@@ -2,7 +2,7 @@ import { StateCreator } from 'zustand';
 import { UnitStore, UnitStoreState } from '../unitStore';
 import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes';
 import { UnitCriticalManager } from '../../utils/criticalSlots/UnitCriticalManager';
-import { EngineType, GyroType, StructureType, ArmorType, HeatSinkType } from '../../types/components';
+import { EngineType, GyroType, StructureType, ArmorType, HeatSinkType } from '../../types/systemComponents';
 import { ComponentConfiguration } from '../../types/componentConfiguration';
 import { componentUpdateAdapter } from '../../services/ComponentUpdateAdapter';
 

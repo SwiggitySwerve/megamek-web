@@ -8,7 +8,7 @@ import { useMultiUnit } from '../multiUnit/MultiUnitProvider'
 import { UnitConfigurationBuilder } from '../../utils/criticalSlots/UnitConfigurationBuilder'
 import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes'
 import { ComponentConfiguration } from '../../types/componentConfiguration'
-import { EngineType, GyroType, StructureType, ArmorType, HeatSinkType } from '../../types/components'
+import { EngineType, GyroType, StructureType, ArmorType, HeatSinkType } from '../../types/systemComponents'
 import { 
   getAvailableStructureTypes, 
   getAvailableArmorTypes, 

@@ -7,7 +7,8 @@
  * @see IMPLEMENTATION_REFERENCE.md for architectural patterns
  */
 
-import { ComponentConfiguration, TechBase } from '../../types/componentConfiguration';
+import { ComponentConfiguration } from '../../types/componentConfiguration';
+import { TechBase } from '../../types/core/BaseTypes';
 
 // ===== CORE COMPONENT TYPES =====
 

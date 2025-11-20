@@ -475,7 +475,7 @@ export function syncHeatSinkChange(
  * Convert critical allocations to legacy criticals format
  */
 function convertToLegacyCriticals(
-  criticalAllocations: Record<string, any[]>
+  criticalAllocations: Record<string, Array<{ name?: string; type?: string }>>
 ): CriticalSlotLocation[] {
   return Object.entries(criticalAllocations).map(([location, slots]) => ({
     location,
@@ -518,7 +518,7 @@ function findDisplacedEquipment(
 /**
  * Check if a slot content is a system component
  */
-function isSystemComponent(content: any): boolean {
+function isSystemComponent(content: string | { name?: string; type?: string } | null | undefined): boolean {
   // Handle both string and object formats
   let slotName: string;
   
@@ -545,7 +545,7 @@ function isSystemComponent(content: any): boolean {
 export function validateComponentChange(
   unit: EditableUnit,
   componentType: 'engine' | 'gyro' | 'structure',
-  newValue: any
+  newValue: { rating?: number; type?: string }
 ): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
   
