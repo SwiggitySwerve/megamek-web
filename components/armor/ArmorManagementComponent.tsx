@@ -82,7 +82,7 @@ const ArmorManagementComponent: React.FC<ArmorManagementComponentProps> = ({
     setArmorTonnage(newTonnage);
     
     // Note: Actual unit update should be handled by the parent component
-    // through armorAllocation changes or other appropriate mechanisms
+    // through armor configuration changes
   }, [readOnly, onUnitChange]);
 
   // Handle armor location change (edit mode only)
@@ -121,19 +121,35 @@ const ArmorManagementComponent: React.FC<ArmorManagementComponentProps> = ({
   const handleApplyDistribution = useCallback((distribution: any) => {
     if (readOnly || !onUnitChange) return;
 
-    // Build updated armor allocation with all required properties
-    const locations = ['Head', 'Center Torso', 'Left Torso', 'Right Torso', 'Left Arm', 'Right Arm', 'Left Leg', 'Right Leg'];
+    // Build updated armor allocation with standard keys
+    const locationMap: Record<string, string> = {
+        'Head': 'head',
+        'Center Torso': 'centerTorso',
+        'Left Torso': 'leftTorso',
+        'Right Torso': 'rightTorso',
+        'Left Arm': 'leftArm',
+        'Right Arm': 'rightArm',
+        'Left Leg': 'leftLeg',
+        'Right Leg': 'rightLeg'
+    };
+
+    const locations = Object.keys(locationMap);
     const updatedArmorAllocation: { [key: string]: any } = {};
 
     locations.forEach(location => {
       const calcLocation = armorCalcs.locations[location];
       if (calcLocation && distribution[location]) {
-        updatedArmorAllocation[location] = {
-          front: distribution[location].front,
-          rear: distribution[location].rear,
-          maxArmor: calcLocation.max,
-          type: selectedArmorType
-        };
+        const standardKey = locationMap[location];
+        
+        // Map to standard structure (numbers only)
+        if (standardKey) {
+            updatedArmorAllocation[standardKey] = distribution[location].front;
+            
+            // Handle rear armor if present
+            if (distribution[location].rear !== undefined) {
+                updatedArmorAllocation[`${standardKey}Rear`] = distribution[location].rear;
+            }
+        }
       }
     });
 
@@ -161,11 +177,11 @@ const ArmorManagementComponent: React.FC<ArmorManagementComponentProps> = ({
     const tempUnit = {
       ...unit,
       data: {
-        ...unit.data,
+        ...('data' in unit ? unit.data : {}),
         armor: {
-          ...unit.data?.armor,
+          ...('data' in unit && unit.data ? (unit.data as any).armor : {}),
           total_armor_points: maxArmorPoints,
-          locations: unit.data?.armor?.locations || []
+          locations: ('data' in unit && unit.data ? (unit.data as any).armor?.locations : []) || []
         }
       }
     };

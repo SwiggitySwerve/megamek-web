@@ -22,7 +22,8 @@ export interface ArmorCalculations {
 
 export function useArmorCalculations(unit: EditableUnit | FullUnit): ArmorCalculations {
   return useMemo(() => {
-    const mass = unit.mass || 50;
+    // Handle both EditableUnit (tonnage) and FullUnit (mass)
+    const mass = 'tonnage' in unit ? unit.tonnage : ('mass' in unit ? unit.mass : 50);
     const locations: Record<string, ArmorLocationData> = {};
     let totalArmor = 0;
     let totalMax = 0;
@@ -49,13 +50,28 @@ export function useArmorCalculations(unit: EditableUnit | FullUnit): ArmorCalcul
       let front = 0;
       let rear = 0;
 
-      // Check EditableUnit armor allocation first
-      if ('armorAllocation' in unit && unit.armorAllocation?.[displayName]) {
-        front = unit.armorAllocation[displayName].front || 0;
-        rear = unit.armorAllocation[displayName].rear || 0;
-      } 
-      // Fallback to standard unit armor data
-      else if (unit.data?.armor?.locations) {
+      // Use standard structure from ICompleteUnitConfiguration
+      if ('armor' in unit && unit.armor && unit.armor.allocation) {
+        const allocation = unit.armor.allocation as any; // Safe cast as we know structure matches roughly
+        
+        // Standardize key generation (camelCase)
+        // Head -> head
+        // Center Torso -> centerTorso
+        const baseKey = displayName.toLowerCase().replace(/\s/g, '');
+        
+        if (baseKey in allocation) {
+            front = Number(allocation[baseKey]) || 0;
+        }
+
+        if (hasRear) {
+            const rearKey = `${baseKey}Rear`;
+            if (rearKey in allocation) {
+                rear = Number(allocation[rearKey]) || 0;
+            }
+        }
+      }
+      // Fallback for FullUnit (database record)
+      else if ('data' in unit && unit.data?.armor?.locations) {
         const armorLocation = unit.data.armor.locations.find(
           (loc: any) => loc.location === displayName
         );
