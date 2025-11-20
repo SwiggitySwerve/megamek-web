@@ -100,7 +100,7 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
 
   // ===== CORE SLOT CALCULATIONS =====
   
-  calculateRequiredSlots(config: UnitConfiguration, equipment: any[]): SlotRequirements {
+  calculateRequiredSlots(config: UnitConfiguration, equipment: EquipmentAllocation[]): SlotRequirements {
     return this.slotCalculationManager.calculateRequiredSlots(config, equipment);
   }
   
@@ -108,17 +108,17 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
     return this.slotCalculationManager.calculateAvailableSlots(config);
   }
   
-  calculateSlotUtilization(config: UnitConfiguration, equipment: any[]): SlotUtilization {
+  calculateSlotUtilization(config: UnitConfiguration, equipment: EquipmentAllocation[]): SlotUtilization {
     return this.slotCalculationManager.calculateSlotUtilization(config, equipment);
   }
   
   // ===== ALLOCATION METHODS =====
   
-  allocateEquipmentSlots(config: UnitConfiguration, equipment: any[]): AllocationResult {
+  allocateEquipmentSlots(config: UnitConfiguration, equipment: EquipmentAllocation[]): AllocationResult {
     return this.slotAllocationManager.allocateEquipmentSlots(config, equipment);
   }
   
-  optimizeSlotAllocation(config: UnitConfiguration, equipment: any[]): OptimizationResult {
+  optimizeSlotAllocation(config: UnitConfiguration, equipment: EquipmentAllocation[]): OptimizationResult {
     const originalResult = this.allocateEquipmentSlots(config, equipment);
     const originalAllocations = originalResult.allocations;
     
@@ -155,11 +155,11 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
     };
   }
   
-  validateSlotAllocation(config: UnitConfiguration, equipment: any[]): ValidationResult {
+  validateSlotAllocation(config: UnitConfiguration, equipment: EquipmentAllocation[]): ValidationResult {
     const errors: ValidationError[] = [];
     const warnings: ValidationWarning[] = [];
     const suggestions: string[] = [];
-    const locationStatus: { [location: string]: any } = {};
+    const locationStatus: { [location: string]: { used: number; available: number; utilization: number } } = {};
     
     const allocation = this.allocateEquipmentSlots(config, equipment);
     const available = this.calculateAvailableSlots(config);
@@ -295,7 +295,7 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
   
   // ===== CONFLICT DETECTION AND RESOLUTION =====
   
-  detectSlotConflicts(config: UnitConfiguration, equipment: any[]): SlotConflict[] {
+  detectSlotConflicts(config: UnitConfiguration, equipment: EquipmentAllocation[]): SlotConflict[] {
     const conflicts: SlotConflict[] = [];
     const allocation = this.allocateEquipmentSlots(config, equipment);
     
@@ -339,7 +339,7 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
     };
   }
   
-  suggestSlotReorganization(config: UnitConfiguration, equipment: any[]): ReorganizationSuggestion[] {
+  suggestSlotReorganization(config: UnitConfiguration, equipment: EquipmentAllocation[]): ReorganizationSuggestion[] {
     const suggestions: ReorganizationSuggestion[] = [];
     const utilization = this.calculateSlotUtilization(config, equipment);
     
@@ -359,11 +359,11 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
   
   // ===== ANALYSIS AND REPORTING =====
   
-  analyzeSlotEfficiency(config: UnitConfiguration, equipment: any[]): EfficiencyAnalysis {
+  analyzeSlotEfficiency(config: UnitConfiguration, equipment: EquipmentAllocation[]): EfficiencyAnalysis {
     const utilization = this.calculateSlotUtilization(config, equipment);
     const allocation = this.allocateEquipmentSlots(config, equipment);
     
-    const locationEfficiency: { [location: string]: any } = {};
+    const locationEfficiency: { [location: string]: { used: number; available: number; efficiency: number } } = {};
     let totalEfficiency = 0;
     
     Object.keys(utilization.byLocation).forEach(location => {
@@ -395,7 +395,7 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
     };
   }
   
-  generateSlotReport(config: UnitConfiguration, equipment: any[]): SlotReport {
+  generateSlotReport(config: UnitConfiguration, equipment: EquipmentAllocation[]): SlotReport {
     const available = this.calculateAvailableSlots(config);
     const required = this.calculateRequiredSlots(config, equipment);
     const allocation = this.allocateEquipmentSlots(config, equipment);
@@ -410,7 +410,7 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
       efficiency: this.calculateOverallEfficiency(config, equipment)
     };
     
-    const locationBreakdown: { [location: string]: any } = {};
+    const locationBreakdown: { [location: string]: { capacity: number; used: number; available: number; equipment: EquipmentAllocation[]; special: SpecialComponentAllocation[] } } = {};
     
     Object.keys(available.byLocation).forEach(location => {
       const capacity = available.byLocation[location as keyof typeof available.byLocation];
@@ -440,7 +440,7 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
     };
   }
   
-  findAvailableSlots(config: UnitConfiguration, equipment: any[], requiredSlots: number): AvailableSlotLocation[] {
+  findAvailableSlots(config: UnitConfiguration, equipment: EquipmentAllocation[], requiredSlots: number): AvailableSlotLocation[] {
     const allocation = this.allocateEquipmentSlots(config, equipment);
     const available = this.calculateAvailableSlots(config);
     const locations: AvailableSlotLocation[] = [];
@@ -471,7 +471,7 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
   /**
    * Calculate critical slots broken down by location with proper BattleTech rules
    */
-  public calculateLocationBreakdown(config: UnitConfiguration, equipment: any[]): CompleteCriticalSlotBreakdown {
+  public calculateLocationBreakdown(config: UnitConfiguration, equipment: EquipmentAllocation[]): CompleteCriticalSlotBreakdown {
     // This method needs to be completely rewritten to use the new concrete types
     // For now, return a simplified version that matches the interface
     const engineType = this.extractComponentType(config.engineType);
@@ -703,7 +703,7 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
   /**
    * Distribute equipment across locations based on type and suitability
    */
-  private distributeEquipmentByLocation(equipment: any[]): { [location: string]: number } {
+  private distributeEquipmentByLocation(equipment: EquipmentAllocation[]): { [location: string]: number } {
     const distribution: { [location: string]: number } = {
       head: 0,
       centerTorso: 0,
@@ -744,7 +744,7 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
   /**
    * Get suitable locations for equipment based on type
    */
-  private getSuitableLocationsForEquipment(item: any): string[] {
+  private getSuitableLocationsForEquipment(item: EquipmentAllocation): string[] {
     const equipmentType = item.equipmentData?.type || 'equipment';
     const isExplosive = item.equipmentData?.explosive || false;
     
@@ -765,7 +765,7 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
   /**
    * Get maximum slots available for equipment in a location
    */
-  private getMaxSlotsForLocation(location: string, item: any): number {
+  private getMaxSlotsForLocation(location: string, item: EquipmentAllocation): number {
     const equipmentType = item.equipmentData?.type || 'equipment';
     
     switch (location) {
@@ -891,7 +891,7 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
     return armorMap[armorType] || 'standard_armor';
   }
   
-  private calculateEquipmentSlots(equipment: any[]): number {
+  private calculateEquipmentSlots(equipment: EquipmentAllocation[]): number {
     return equipment.reduce((total, item) => {
       if (!item?.equipmentData) return total;
       const slotsPerItem = item.equipmentData.criticals || 1;
@@ -900,7 +900,7 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
     }, 0);
   }
   
-  private getAmmoSlots(equipment: any[]): number {
+  private getAmmoSlots(equipment: EquipmentAllocation[]): number {
     return equipment.reduce((total, item) => {
       if (!item?.equipmentData || item.equipmentData.type !== 'ammunition') return total;
       const slotsPerItem = item.equipmentData.criticals || 1;
@@ -909,13 +909,13 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
     }, 0);
   }
   
-  private distributeSlotsByLocation(config: UnitConfiguration, equipment: any[]) {
+  private distributeSlotsByLocation(config: UnitConfiguration, equipment: EquipmentAllocation[]) {
     // Simplified distribution logic - in reality this would be much more complex
     const totalSlots = this.calculateRequiredSlots(config, equipment).total;
     const locations = Object.keys(this.STANDARD_SLOT_COUNTS);
     const slotsPerLocation = Math.ceil(totalSlots / locations.length);
     
-    const distribution: any = {};
+    const distribution: { [location: string]: number } = {};
     locations.forEach(location => {
       distribution[location] = Math.min(slotsPerLocation, this.STANDARD_SLOT_COUNTS[location as keyof typeof this.STANDARD_SLOT_COUNTS]);
     });
@@ -988,7 +988,7 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
     return gyroMap[gyroType] || 'standard_gyro';
   }
   
-  private generateUtilizationRecommendations(byLocation: any, bottlenecks: string[]): string[] {
+  private generateUtilizationRecommendations(byLocation: { [location: string]: number }, bottlenecks: string[]): string[] {
     const recommendations: string[] = [];
     
     if (bottlenecks.length > 0) {
@@ -1045,7 +1045,7 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
     return { allocations, conflicts };
   }
   
-  private allocateSingleEquipment(item: any, config: UnitConfiguration, existingAllocations: EquipmentAllocation[]): { success: boolean, allocation?: EquipmentAllocation, conflicts: SlotConflict[], warnings: string[] } {
+  private allocateSingleEquipment(item: EquipmentAllocation, config: UnitConfiguration, existingAllocations: EquipmentAllocation[]): { success: boolean, allocation?: EquipmentAllocation, conflicts: SlotConflict[], warnings: string[] } {
     const conflicts: SlotConflict[] = [];
     const warnings: string[] = [];
     
@@ -1075,7 +1075,7 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
     return { success: false, conflicts, warnings };
   }
   
-  private generateAllocationSuggestions(config: UnitConfiguration, allocations: EquipmentAllocation[], unallocated: any[]): string[] {
+  private generateAllocationSuggestions(config: UnitConfiguration, allocations: EquipmentAllocation[], unallocated: EquipmentAllocation[]): string[] {
     const suggestions: string[] = [];
     
     if (unallocated.length > 0) {
@@ -1086,20 +1086,20 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
     return suggestions;
   }
   
-  private optimizeByLocation(config: UnitConfiguration, equipment: any[], allocations: EquipmentAllocation[]): AllocationResult {
+  private optimizeByLocation(config: UnitConfiguration, equipment: EquipmentAllocation[], allocations: EquipmentAllocation[]): AllocationResult {
     // Simplified optimization - return original result
     return this.allocateEquipmentSlots(config, equipment);
   }
   
-  private optimizeBySize(config: UnitConfiguration, equipment: any[], allocations: EquipmentAllocation[]): AllocationResult {
+  private optimizeBySize(config: UnitConfiguration, equipment: EquipmentAllocation[], allocations: EquipmentAllocation[]): AllocationResult {
     return this.allocateEquipmentSlots(config, equipment);
   }
   
-  private optimizeByType(config: UnitConfiguration, equipment: any[], allocations: EquipmentAllocation[]): AllocationResult {
+  private optimizeByType(config: UnitConfiguration, equipment: EquipmentAllocation[], allocations: EquipmentAllocation[]): AllocationResult {
     return this.allocateEquipmentSlots(config, equipment);
   }
   
-  private optimizeSpecialComponents(config: UnitConfiguration, equipment: any[], allocations: EquipmentAllocation[]): AllocationResult {
+  private optimizeSpecialComponents(config: UnitConfiguration, equipment: EquipmentAllocation[], allocations: EquipmentAllocation[]): AllocationResult {
     return this.allocateEquipmentSlots(config, equipment);
   }
   
@@ -1111,7 +1111,13 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
     return Math.max(0, score);
   }
   
-  private calculateImprovements(original: AllocationResult, optimized: AllocationResult): any {
+  interface OptimizationImprovements {
+    slotsFreed: number;
+    conflictsResolved: number;
+    efficiencyGain: number;
+  }
+
+  private calculateImprovements(original: AllocationResult, optimized: AllocationResult): OptimizationImprovements {
     return {
       slotsFreed: optimized.allocations.length - original.allocations.length,
       conflictsResolved: original.conflicts.length - optimized.conflicts.length,
@@ -1119,7 +1125,7 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
     };
   }
   
-  private generateOptimizationRecommendations(improvements: any): string[] {
+  private generateOptimizationRecommendations(improvements: OptimizationImprovements): string[] {
     const recommendations: string[] = [];
     
     if (improvements.slotsFreed > 0) {
@@ -1286,7 +1292,7 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
     return `Resolved ${resolved.length} conflicts, ${unresolved.length} remain unresolved`;
   }
   
-  private generateBottleneckSuggestions(bottleneck: string, config: UnitConfiguration, equipment: any[]): ReorganizationSuggestion[] {
+  private generateBottleneckSuggestions(bottleneck: string, config: UnitConfiguration, equipment: EquipmentAllocation[]): ReorganizationSuggestion[] {
     return [{
       type: 'move_equipment',
       component: 'Heavy equipment',
@@ -1302,7 +1308,7 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
     return []; // Simplified implementation
   }
   
-  private generateConsolidationSuggestions(equipment: any[]): ReorganizationSuggestion[] {
+  private generateConsolidationSuggestions(equipment: EquipmentAllocation[]): ReorganizationSuggestion[] {
     return []; // Simplified implementation
   }
   
@@ -1311,7 +1317,7 @@ export class CriticalSlotCalculatorImpl implements CriticalSlotCalculator {
     return 0; // Simplified implementation
   }
   
-  private generateLocationSuggestions(location: string, locationData: any, wastedSlots: number): string[] {
+  private generateLocationSuggestions(location: string, locationData: { used: number; available: number; utilization: number }, wastedSlots: number): string[] {
     const suggestions: string[] = [];
     
     if (wastedSlots > 0) {

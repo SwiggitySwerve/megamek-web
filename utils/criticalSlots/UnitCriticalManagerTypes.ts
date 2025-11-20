@@ -15,13 +15,15 @@ import {
   getComponentTypeNames
 } from '../../types/componentConfiguration'
 
+import { SectionValidationResult } from './CriticalSection';
+
 export interface UnitValidationResult {
   isValid: boolean
   errors: string[]
   warnings: string[]
   sectionResults: Array<{
     location: string
-    result: any
+    result: SectionValidationResult
   }>
 }
 

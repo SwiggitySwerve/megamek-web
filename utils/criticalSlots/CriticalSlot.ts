@@ -3,6 +3,8 @@
  * Part of the layered critical slot architecture
  */
 
+import type { UnitCriticalManager } from './UnitCriticalManager';
+
 export interface SlotContent {
   type: 'system' | 'equipment' | 'empty'
   equipmentGroupId?: string
@@ -14,7 +16,7 @@ export interface SlotContent {
 
 export interface LocationRestrictions {
   type: 'static' | 'engine_slots' | 'custom'
-  validator?: (unit: any, location: string) => boolean
+  validator?: (unit: UnitCriticalManager, location: string) => boolean
 }
 
 export interface EquipmentObject {
