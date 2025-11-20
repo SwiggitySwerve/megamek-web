@@ -5,22 +5,42 @@
 
 import React, { useRef, useEffect } from 'react';
 import { useDrop, useDrag } from 'react-dnd';
-import { CriticalSlotObject, EquipmentObject, EquipmentType, EquipmentCategory } from '../../../types/criticalSlots';
-import { DraggedEquipment } from '../dnd/types';
+import { CriticalSlotObject, EquipmentReference } from '../../../types/criticalSlots';
+import { IEquipment } from '../../../types/core/EquipmentInterfaces';
+import { EquipmentCategory } from '../../../types/core/BaseTypes';
+import { DraggedEquipment, DragItemType } from '../dnd/types';
 import { getEquipmentColorClasses } from '../../../utils/equipmentColors';
 import styles from './CriticalSlotDropZone.module.css';
+
+/**
+ * Simplified equipment object for drag-and-drop operations
+ * This is a lightweight representation used during drag operations
+ */
+interface SimplifiedEquipment {
+  id: string;
+  name: string;
+  type?: string;
+  category?: EquipmentCategory | string;
+  requiredSlots: number;
+  weight: number;
+  isFixed?: boolean;
+  isRemovable?: boolean;
+  techBase?: 'Inner Sphere' | 'Clan' | 'Both';
+  damage?: number | string;
+  heat?: number;
+}
 
 interface CriticalSlotDropZoneProps {
   location: string;
   slotIndex: number;
   slot: CriticalSlotObject;
-  onDrop: (equipment: EquipmentObject, location: string, slotIndex: number) => void;
+  onDrop: (equipment: SimplifiedEquipment, location: string, slotIndex: number) => void;
   onRemove?: (location: string, slotIndex: number) => void;
   onMove?: (fromLocation: string, fromIndex: number, toLocation: string, toIndex: number) => void;
-  canAccept: (equipment: EquipmentObject) => boolean;
+  canAccept: (equipment: SimplifiedEquipment) => boolean;
   disabled?: boolean;
   isHoveredMultiSlot?: boolean;
-  onHoverChange?: (isHovering: boolean, equipment: EquipmentObject | null) => void;
+  onHoverChange?: (isHovering: boolean, equipment: SimplifiedEquipment | null) => void;
   isPartOfDropPreview?: boolean;
   criticalSlots?: CriticalSlotObject[]; // Add this to check consecutive slots
 }
@@ -43,8 +63,10 @@ const CriticalSlotDropZone: React.FC<CriticalSlotDropZoneProps> = ({
   
   // Check if slot has equipment
   const hasEquipment = slot.equipment !== null;
-  const equipment = slot.equipment?.equipmentData;
-  const isSystemComponent = equipment?.isFixed && !equipment?.isRemovable;
+  const equipmentRef = slot.equipment;
+  const equipment = equipmentRef?.equipmentData;
+  // Check if this is a fixed allocation (system component) vs equipment instance
+  const isSystemComponent = equipmentRef?.type === 'system' || (equipment && 'isFixed' in equipment && equipment.isFixed && !('isRemovable' in equipment && equipment.isRemovable));
   const isMultiSlot = slot.isPartOfMultiSlot;
   const multiSlotPosition = slot.multiSlotIndex;
   
@@ -61,16 +83,22 @@ const CriticalSlotDropZone: React.FC<CriticalSlotDropZoneProps> = ({
         actualStartIndex = slotIndex - multiSlotPosition;
       }
       
+      // Extract equipment data - handle both IEquipment and IFixedAllocation
+      // Only IEquipment can be dragged (not fixed allocations)
+      if (!equipment || 'isFixed' in equipment) return null;
+      
+      const equipmentData = equipment as IEquipment;
+      
       return {
-        type: 'equipment' as any,
-        equipmentId: equipment.id,
-        name: equipment.name,
-        weight: equipment.weight,
-        criticalSlots: equipment.requiredSlots,
-        category: equipment.category,
-        techBase: equipment.techBase,
-        damage: equipment.damage,
-        heat: equipment.heat,
+        type: DragItemType.EQUIPMENT,
+        equipmentId: equipmentData.id,
+        name: equipmentData.name,
+        weight: equipmentData.weight,
+        criticalSlots: equipmentData.slots,
+        category: equipmentData.category,
+        techBase: equipmentData.techBase,
+        damage: 'damage' in equipmentData ? equipmentData.damage : undefined,
+        heat: 'heatGeneration' in equipmentData ? equipmentData.heatGeneration : undefined,
         isFromCriticalSlot: true,
         sourceLocation: location,
         sourceSlotIndex: actualStartIndex
@@ -153,11 +181,11 @@ const CriticalSlotDropZone: React.FC<CriticalSlotDropZoneProps> = ({
       
       if (!onHoverChange || !isHovering) return;
       
-      const equipmentObj: EquipmentObject = {
+      const equipmentObj: SimplifiedEquipment = {
         id: item.equipmentId,
         name: item.name,
-        type: item.type as any,
-        category: item.category as any,
+        type: item.type,
+        category: item.category,
         requiredSlots: item.criticalSlots,
         weight: item.weight || 0,
         isFixed: false,
@@ -169,11 +197,11 @@ const CriticalSlotDropZone: React.FC<CriticalSlotDropZoneProps> = ({
       onHoverChange(true, equipmentObj);
     },
     drop: (item: DraggedEquipment) => {
-      const equipmentObj: EquipmentObject = {
+      const equipmentObj: SimplifiedEquipment = {
         id: item.equipmentId,
         name: item.name,
-        type: item.type as any,
-        category: item.category as any,
+        type: item.type,
+        category: item.category,
         requiredSlots: item.criticalSlots,
         weight: item.weight || 0,
         isFixed: false,
@@ -229,11 +257,10 @@ const CriticalSlotDropZone: React.FC<CriticalSlotDropZoneProps> = ({
       }
       
       // If it's from another critical slot, call move instead
-      if ('isFromCriticalSlot' in item && item.isFromCriticalSlot && 
-          'sourceLocation' in item && 'sourceSlotIndex' in item && onMove) {
+      if (item.isFromCriticalSlot && item.sourceLocation && item.sourceSlotIndex !== undefined && onMove) {
         onMove(
-          (item as any).sourceLocation,
-          (item as any).sourceSlotIndex,
+          item.sourceLocation,
+          item.sourceSlotIndex,
           location,
           slotIndex
         );
@@ -261,7 +288,7 @@ const CriticalSlotDropZone: React.FC<CriticalSlotDropZoneProps> = ({
 
   // Handle click to remove
   const handleClick = () => {
-    if (!disabled && hasEquipment && equipment && equipment.isRemovable && onRemove) {
+    if (!disabled && hasEquipment && equipmentRef && equipmentRef.type === 'equipment' && onRemove) {
       onRemove(location, slotIndex);
     }
   };
@@ -278,7 +305,9 @@ const CriticalSlotDropZone: React.FC<CriticalSlotDropZoneProps> = ({
     if (!hasEquipment || !equipment) {
       return getEquipmentColorClasses('-Empty-');
     }
-    return getEquipmentColorClasses(equipment.name);
+    // Handle both IEquipment (has name) and IFixedAllocation (has name)
+    const equipmentName = 'name' in equipment ? equipment.name : 'Unknown';
+    return getEquipmentColorClasses(equipmentName);
   };
 
   // Determine slot styling
@@ -353,14 +382,17 @@ const CriticalSlotDropZone: React.FC<CriticalSlotDropZoneProps> = ({
     }
 
     // Show equipment name
+    const equipmentName = 'name' in equipment ? equipment.name : 'Unknown';
+    const requiredSlots = equipmentRef?.allocatedSlots || ('slots' in equipment ? equipment.slots : 1);
+    
     return (
       <>
         <span className={styles.equipmentName}>
-          {equipment.name}
+          {equipmentName}
         </span>
-        {equipment.requiredSlots > 1 && (
+        {requiredSlots > 1 && (
           <span className={styles.slotCount}>
-            ({equipment.requiredSlots})
+            ({requiredSlots})
           </span>
         )}
       </>
@@ -397,7 +429,7 @@ const CriticalSlotDropZone: React.FC<CriticalSlotDropZoneProps> = ({
       ref={ref}
       className={getSlotClassName()}
       onClick={handleClick}
-      title={equipment ? `${equipment.name} (${equipment.weight}t)` : `Slot ${slotIndex + 1}`}
+      title={equipment ? `${'name' in equipment ? equipment.name : 'Unknown'} (${'weight' in equipment ? equipment.weight : 0}t)` : `Slot ${slotIndex + 1}`}
     >
       {renderContent()}
       {renderRemoveButton()}
