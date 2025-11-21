@@ -522,12 +522,12 @@ export function importFromMTF(mtfString: string): EditableUnit {
         case 'config':
           // Type-safe config assignment with explicit typing
           const validConfigValues = ['Vehicle', 'BattleMech', 'AeroSpaceFighter', 'Jumpship', 'WarShip', 'SpaceStation'] as const;
-          unitData.config = validConfigValues.includes(value as any) ? value as any : 'Vehicle';
+          unitData.config = (validConfigValues as readonly string[]).includes(value) ? value as typeof validConfigValues[number] : 'Vehicle';
           break;
         case 'techbase':
           // Type-safe tech base assignment with explicit typing
           const validTechBases = ['Inner Sphere', 'Clan'] as const;
-          const safeTechBase = validTechBases.includes(value as any) ? value as any : 'Inner Sphere';
+          const safeTechBase = (validTechBases as readonly string[]).includes(value) ? value as typeof validTechBases[number] : 'Inner Sphere';
           unit.tech_base = safeTechBase;
           unitData.tech_base = safeTechBase;
           break;

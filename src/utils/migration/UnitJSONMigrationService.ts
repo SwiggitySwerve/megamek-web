@@ -5,9 +5,11 @@
 
 import { UnitConfiguration } from '../criticalSlots/UnitCriticalManagerTypes';
 import { ComponentConfiguration, TechBase } from '../../types/componentConfiguration';
+import { EngineType } from '../../types/systemComponents';
 import { EquipmentIDMappingService, EquipmentMapping } from './EquipmentIDMapping';
 import { ArmorLocation } from '../../types';
-import { ArmorType, ARMOR_TYPES, CriticalSlotAssignment, EquipmentPlacement } from '../../types/editor';
+import { ArmorType, ARMOR_TYPES } from '../armorTypes';
+import { CriticalSlotAssignment, EquipmentPlacement } from '../../types/editor';
 
 // Field name mapping from JSON snake_case to TypeScript camelCase
 const FIELD_MAPPING: Record<string, string> = {
@@ -28,9 +30,9 @@ const TECH_BASE_MAPPING: Record<string, TechBase> = {
 };
 
 // Engine type mapping
-const ENGINE_TYPE_MAPPING: Record<string, string> = {
-  'Fusion Engine': 'Fusion',
-  'Light Engine': 'Light Fusion',
+const ENGINE_TYPE_MAPPING: Record<string, EngineType> = {
+  'Fusion Engine': 'Standard',
+  'Light Engine': 'Light',
   'XL Engine': 'XL',
   'XXL Engine': 'XXL',
   'Compact Engine': 'Compact',
@@ -273,11 +275,11 @@ export class UnitJSONMigrationService {
       
       // Engine type
       if (jsonUnit.engine.type) {
-        const mappedEngineType = ENGINE_TYPE_MAPPING[jsonUnit.engine.type] || jsonUnit.engine.type;
-        config.engineType = mappedEngineType as any; // Will need proper typing later
+        const mappedEngineType = ENGINE_TYPE_MAPPING[jsonUnit.engine.type] || (jsonUnit.engine.type as EngineType);
+        config.engineType = mappedEngineType;
       } else {
-        warnings.push('Missing engine type, defaulting to Fusion');
-        config.engineType = 'Fusion' as any;
+        warnings.push('Missing engine type, defaulting to Standard');
+        config.engineType = 'Standard';
       }
       
       // Calculate movement if we have engine rating and tonnage

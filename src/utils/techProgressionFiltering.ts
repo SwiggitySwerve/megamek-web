@@ -84,12 +84,12 @@ export interface FilteredComponentOptions {
 
 export function getFilteredComponentOptions(techProgression: TechProgression, config?: any): FilteredComponentOptions {
   // Create a mock config object with the tech progression for the central utility
-  const mockConfig = {
+  const mockConfig: Partial<UnitConfiguration> = {
     techBase: techProgression.chassis, // Use chassis tech base as primary
     techProgression,
     introductionYear: config?.introductionYear || 3068, // Use config introduction year or default to 3068
     rulesLevel: config?.rulesLevel || 'Standard'
-  } as any;
+  };
 
   return {
     structure: getAvailableStructureTypes(mockConfig, techProgression.chassis).map(option => option.type),

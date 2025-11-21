@@ -9,6 +9,8 @@
 import { ComponentConfiguration } from '../types/componentConfiguration'
 import { UnitConfiguration } from '../utils/criticalSlots/UnitCriticalManagerTypes'
 import { EngineType } from '../utils/criticalSlots/SystemComponentRules'
+import { IComponentConfiguration } from '../types/core/ComponentInterfaces'
+import { TechBase } from '../types/core/BaseTypes'
 
 export interface ComponentUpdateResult {
   success: boolean
@@ -50,22 +52,22 @@ export class ComponentUpdateService {
     // Update the specific component
     switch (componentType) {
       case 'structure':
-        newConfiguration.structureType = this.normalizeComponentValue(newValue, currentConfiguration.techBase) as any
+        newConfiguration.structureType = this.normalizeComponentValue(newValue, currentConfiguration.techBase)
         break
       case 'armor':
-        newConfiguration.armorType = this.normalizeComponentValue(newValue, currentConfiguration.techBase) as any
+        newConfiguration.armorType = this.normalizeComponentValue(newValue, currentConfiguration.techBase)
         break
       case 'engine':
         newConfiguration.engineType = (typeof newValue === 'string' ? newValue : newValue.type) as EngineType
         break
       case 'gyro':
-        newConfiguration.gyroType = this.normalizeComponentValue(newValue, currentConfiguration.techBase) as any
+        newConfiguration.gyroType = this.normalizeComponentValue(newValue, currentConfiguration.techBase)
         break
       case 'heatSink':
-        newConfiguration.heatSinkType = this.normalizeComponentValue(newValue, currentConfiguration.techBase) as any
+        newConfiguration.heatSinkType = this.normalizeComponentValue(newValue, currentConfiguration.techBase)
         break
       case 'jumpJet':
-        newConfiguration.jumpJetType = this.normalizeComponentValue(newValue, currentConfiguration.techBase) as any
+        newConfiguration.jumpJetType = this.normalizeComponentValue(newValue, currentConfiguration.techBase)
         break
       default:
         return {
@@ -119,7 +121,13 @@ export class ComponentUpdateService {
    */
   private static normalizeComponentValue(value: ComponentConfiguration | string, techBase: string): ComponentConfiguration {
     if (typeof value === 'string') {
-      return { type: value, techBase: techBase as 'Inner Sphere' | 'Clan' }
+      return { 
+        type: value, 
+        techBase: (techBase === 'Clan' ? TechBase.CLAN : TechBase.INNER_SPHERE),
+        name: value, // Add required name property
+        techLevel: 'Standard', // Default required fields
+        rulesLevel: 'Standard'
+      } as ComponentConfiguration
     }
     return value
   }
@@ -172,11 +180,13 @@ export class ComponentUpdateService {
     }
     
     // Component-specific validation
-    if (config.structureType && (typeof config.structureType === 'object' ? (config.structureType as any).type === 'Endo Steel' : config.structureType === 'Endo Steel') && config.techBase === 'Clan') {
+    const structureType = config.structureType ? (typeof config.structureType === 'string' ? config.structureType : config.structureType.type) : '';
+    if (structureType === 'Endo Steel' && config.techBase === 'Clan') {
       warnings.push('Clan Endo Steel detected - will be converted to Endo Steel (Clan)')
     }
     
-    if (config.armorType && (typeof config.armorType === 'object' ? (config.armorType as any).type === 'Ferro-Fibrous' : config.armorType === 'Ferro-Fibrous') && config.techBase === 'Clan') {
+    const armorType = config.armorType ? (typeof config.armorType === 'string' ? config.armorType : config.armorType.type) : '';
+    if (armorType === 'Ferro-Fibrous' && config.techBase === 'Clan') {
       warnings.push('Clan Ferro-Fibrous detected - will be converted to Ferro-Fibrous (Clan)')
     }
     

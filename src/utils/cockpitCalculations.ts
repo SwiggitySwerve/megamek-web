@@ -147,7 +147,7 @@ export function validateCockpitType(
   const validTechBase = restrictions.techBase.includes(techBase) || restrictions.techBase.includes('Both');
   // Type-safe rules level validation
   const validRulesLevels = ['Standard', 'Tournament', 'Advanced', 'Experimental'] as const;
-  const safeRulesLevel = validRulesLevels.includes(rulesLevel as any) ? rulesLevel as 'Standard' | 'Tournament' | 'Advanced' | 'Experimental' : 'Standard';
+  const safeRulesLevel = (validRulesLevels as readonly string[]).includes(rulesLevel) ? rulesLevel as typeof validRulesLevels[number] : 'Standard';
   const validRulesLevel = restrictions.rulesLevel.includes(safeRulesLevel);
   
   // Check incompatibilities (e.g., Torso-Mounted with XL Gyro)

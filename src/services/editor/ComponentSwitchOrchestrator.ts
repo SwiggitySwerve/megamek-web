@@ -1,9 +1,8 @@
 import { CatalogGateway } from '../catalog/CatalogGateway'
 import { ComponentCategory as CatalogComponentCategory, TechContext } from '../catalog/types'
-import { ComponentMemoryState } from '../../types/componentDatabase'
+import { ComponentMemoryState, COMPONENT_CATEGORIES, TECH_BASES, TechBaseMemory } from '../../types/componentDatabase'
 import { validateAndResolveComponentWithMemory, createDefaultMemory } from '../../utils/techBaseMemory'
-import { ComponentCategory as DbComponentCategory, TechBase, } from '../../types/componentDatabase'
-import { COMPONENT_CATEGORIES, TECH_BASES } from '../../types/componentDatabase'
+import { ComponentCategory as DbComponentCategory, RulesLevel, TechBase } from '../../types/core/BaseTypes'
 import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes'
 
 // Map overview subsystem → catalog component category (for searching)
@@ -20,14 +19,14 @@ const SubsystemToCategory: Record<string, CatalogComponentCategory> = {
 
 // Map overview subsystem → database component category (for memory)
 const SubsystemToDbCategory: Record<string, DbComponentCategory> = {
-  chassis: 'chassis',
-  gyro: 'gyro',
-  engine: 'engine',
-  heatsink: 'heatsink',
-  targeting: 'targeting',
-  myomer: 'myomer',
-  movement: 'movement',
-  armor: 'armor'
+  chassis: DbComponentCategory.CHASSIS,
+  gyro: DbComponentCategory.GYRO,
+  engine: DbComponentCategory.ENGINE,
+  heatsink: DbComponentCategory.HEAT_SINK,
+  targeting: DbComponentCategory.TARGETING,
+  myomer: DbComponentCategory.MYOMER,
+  movement: DbComponentCategory.MOVEMENT,
+  armor: DbComponentCategory.ARMOR
 }
 
 function normalizeMemory(state: ComponentMemoryState | null): ComponentMemoryState {
@@ -35,13 +34,25 @@ function normalizeMemory(state: ComponentMemoryState | null): ComponentMemorySta
   if (!state || !state.techBaseMemory) {
     return { techBaseMemory: base, lastUpdated: Date.now(), version: '1.0.0' }
   }
-  const merged: any = { ...base }
-  COMPONENT_CATEGORIES.forEach((cat: any) => {
-    merged[cat] = { ...(base as any)[cat] }
-    const provided = (state.techBaseMemory as any)[cat] || {}
-    TECH_BASES.forEach((tb: TechBase) => {
-      if (provided[tb] !== undefined) merged[cat][tb] = provided[tb]
-    })
+  const merged = { ...base };
+  COMPONENT_CATEGORIES.forEach((category) => {
+    // Cast category to keyof TechBaseMemory since we know they match
+    const cat = category as keyof TechBaseMemory;
+    
+    if (base && base[cat]) {
+      // Create a copy of the base category memory
+      merged[cat] = { ...base[cat] };
+      
+      const provided = state.techBaseMemory[cat] || {};
+      TECH_BASES.forEach((tb: TechBase) => {
+        if (provided[tb] !== undefined) {
+            // We need to handle the strict typing of TechBaseMemory
+            // merged[cat] is { [K in TechBase]: string }
+            // provided is { [K in TechBase]: string }
+            (merged[cat] as Record<string, string>)[tb] = provided[tb];
+        }
+      })
+    }
   })
   return { techBaseMemory: merged, lastUpdated: Date.now(), version: '1.0.0' }
 }
@@ -76,8 +87,10 @@ export class ComponentSwitchOrchestrator {
   ): Promise<SwitchResult> {
     const oldTechBase: 'Inner Sphere' | 'Clan' = currentConfiguration.techProgression?.[subsystem as keyof typeof currentConfiguration.techProgression] || 'Inner Sphere'
     const configProp = SubsystemToConfigProp[subsystem]
-    // Use type assertion to access dynamic property on UnitConfiguration safely
-    const currentComponent = configProp ? (currentConfiguration as any)[configProp] : undefined
+    
+    // Access dynamic property safely using Record<string, any>
+    // This is necessary because SubsystemToConfigProp maps to string keys that may not be statically known
+    const currentComponent = configProp ? (currentConfiguration as Record<string, any>)[configProp] : undefined
 
     // Update catalog context so subsequent searches are tech-aware
     await CatalogGateway.setContext({ techBase: newTechBase, unitType: context.unitType || 'BattleMech' })
@@ -94,7 +107,7 @@ export class ComponentSwitchOrchestrator {
         oldTechBase,
         newTechBase,
         updatedMemoryState.techBaseMemory,
-        currentConfiguration.rulesLevel as any || 'Standard'
+        currentConfiguration.rulesLevel || RulesLevel.STANDARD
       )
       wasRestoredFromMemory = resolution.wasRestored
       resolutionReason = resolution.resolutionReason
@@ -120,7 +133,16 @@ export class ComponentSwitchOrchestrator {
 
     // Build updated progression and configuration
     const newProgression = {
-      ...(currentConfiguration.techProgression || {}),
+      ...(currentConfiguration.techProgression || {
+        chassis: 'Inner Sphere',
+        engine: 'Inner Sphere',
+        gyro: 'Inner Sphere',
+        heatsink: 'Inner Sphere',
+        armor: 'Inner Sphere',
+        myomer: 'Inner Sphere',
+        targeting: 'Inner Sphere',
+        movement: 'Inner Sphere'
+      }),
       [subsystem]: newTechBase
     }
 
@@ -128,7 +150,7 @@ export class ComponentSwitchOrchestrator {
       ...currentConfiguration,
       techProgression: newProgression,
       [configProp]: resolvedName
-    }
+    } as UnitConfiguration
 
     // Placeholders for displacement diffs: require orchestrator/state access to compute precisely
     const displacedEquipmentIds: string[] = []

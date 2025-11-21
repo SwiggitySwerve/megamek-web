@@ -53,7 +53,7 @@ export class ComponentPlacementService implements IComponentPlacementService {
         return this.validateRestrictedPlacement(component as ComponentPlacement & { placementType: 'restricted'; allowedLocations: MechLocation[]; validationRules?: any }, context)
       
       default:
-        errors.push(`Unknown placement type: ${(component as any).placementType}`)
+        errors.push(`Unknown placement type: ${(component as { placementType: string }).placementType}`)
         return { valid: false, errors, warnings }
     }
   }

@@ -858,7 +858,7 @@ export class CalculationUtilitiesManager {
     const totalArmor = config.armorTonnage || 0;
     const maxArmor = config.tonnage || 0;
     const armorType = config.armorType;
-    const armorTypeStr = typeof armorType === 'string' ? armorType : (armorType as any)?.type || 'Standard';
+    const armorTypeStr = typeof armorType === 'string' ? armorType : 'Standard';
     
     return {
       isValid: totalArmor <= maxArmor,

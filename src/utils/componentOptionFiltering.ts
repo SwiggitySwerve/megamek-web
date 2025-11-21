@@ -11,9 +11,9 @@ function createComponentConfig(type: string, techBase: TechBase): ComponentConfi
 }
 
 // Example: filter armor types
-export function getAvailableArmorTypes(config: UnitConfiguration, overrideTechBase?: string): ComponentConfiguration[] {
+export function getAvailableArmorTypes(config: Partial<UnitConfiguration>, overrideTechBase?: string): ComponentConfiguration[] {
   const techBase = overrideTechBase || config.techBase || 'Inner Sphere';
-  const introductionYear = (config as any).introductionYear || 3025;
+  const introductionYear = config.introductionYear || 3025;
 
   // Debugging: Log config, techBase, introductionYear, and database
   console.log('[getAvailableArmorTypes] config:', config);
@@ -42,9 +42,9 @@ export function getAvailableArmorTypes(config: UnitConfiguration, overrideTechBa
 }
 
 // PROPER IMPLEMENTATION: Use component database for structure types
-export function getAvailableStructureTypes(config: UnitConfiguration, overrideTechBase?: TechBase): ComponentConfiguration[] {
+export function getAvailableStructureTypes(config: Partial<UnitConfiguration>, overrideTechBase?: TechBase): ComponentConfiguration[] {
   const techBase = overrideTechBase || config.techBase || 'Inner Sphere';
-  const introductionYear = (config as any).introductionYear || 3025;
+  const introductionYear = config.introductionYear || 3025;
   
   // Get structure components from database for the specified tech base
   const structureComponents = COMPONENT_DATABASE.chassis[techBase] || [];
@@ -60,9 +60,9 @@ export function getAvailableStructureTypes(config: UnitConfiguration, overrideTe
 }
 
 // PROPER IMPLEMENTATION: Use component database for engine types
-export function getAvailableEngineTypes(config: UnitConfiguration, overrideTechBase?: TechBase): ComponentConfiguration[] {
+export function getAvailableEngineTypes(config: Partial<UnitConfiguration>, overrideTechBase?: TechBase): ComponentConfiguration[] {
   const techBase = overrideTechBase || config.techBase || 'Inner Sphere';
-  const introductionYear = (config as any).introductionYear || 3025;
+  const introductionYear = config.introductionYear || 3025;
   
   // Get engine components from database for the specified tech base
   const engineComponents = COMPONENT_DATABASE.engine[techBase] || [];
@@ -78,9 +78,9 @@ export function getAvailableEngineTypes(config: UnitConfiguration, overrideTechB
 }
 
 // NEW: Use component database for gyro types
-export function getAvailableGyroTypes(config: UnitConfiguration, overrideTechBase?: TechBase): ComponentConfiguration[] {
+export function getAvailableGyroTypes(config: Partial<UnitConfiguration>, overrideTechBase?: TechBase): ComponentConfiguration[] {
   const techBase = overrideTechBase || config.techBase || 'Inner Sphere';
-  const introductionYear = (config as any).introductionYear || 3025;
+  const introductionYear = config.introductionYear || 3025;
   
   // Get gyro components from database for the specified tech base
   const gyroComponents = COMPONENT_DATABASE.gyro[techBase] || [];
@@ -96,9 +96,9 @@ export function getAvailableGyroTypes(config: UnitConfiguration, overrideTechBas
 }
 
 // PROPER IMPLEMENTATION: Use component database for heat sink types
-export function getAvailableHeatSinkTypes(config: UnitConfiguration, overrideTechBase?: TechBase): ComponentConfiguration[] {
+export function getAvailableHeatSinkTypes(config: Partial<UnitConfiguration>, overrideTechBase?: TechBase): ComponentConfiguration[] {
   const techBase = overrideTechBase || config.techBase || 'Inner Sphere';
-  const introductionYear = (config as any).introductionYear || 3025;
+  const introductionYear = config.introductionYear || 3025;
   
   // Get heat sink components from database for the specified tech base
   const heatSinkComponents = COMPONENT_DATABASE.heatsink?.[techBase] || [];

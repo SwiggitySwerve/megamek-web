@@ -83,9 +83,9 @@ export class MultiUnitStateService {
       engineRating: 200,
       runMP: 6,
       engineType: 'Standard',
-      gyroType: createComponentConfiguration('gyro', 'Standard')! as any,
-      structureType: createComponentConfiguration('structure', 'Standard')! as any,
-      armorType: createComponentConfiguration('armor', 'Standard')! as any,
+      gyroType: createComponentConfiguration('gyro', 'Standard')!,
+      structureType: createComponentConfiguration('structure', 'Standard')!,
+      armorType: createComponentConfiguration('armor', 'Standard')!,
       armorAllocation: {
         HD: { front: 9, rear: 0 },
         CT: { front: 20, rear: 6 },
@@ -97,13 +97,13 @@ export class MultiUnitStateService {
         RL: { front: 20, rear: 0 }
       },
       armorTonnage: 8.0,
-      heatSinkType: createComponentConfiguration('heatSink', 'Single')! as any,
+      heatSinkType: createComponentConfiguration('heatSink', 'Single')!,
       totalHeatSinks: 10,
       internalHeatSinks: 8,
       externalHeatSinks: 2,
       enhancements: [],
       jumpMP: 0,
-      jumpJetType: createComponentConfiguration('jumpJet', 'Standard Jump Jet')! as any,
+      jumpJetType: createComponentConfiguration('jumpJet', 'Standard Jump Jet')!,
       jumpJetCounts: {},
       hasPartialWing: false,
       mass: 50
