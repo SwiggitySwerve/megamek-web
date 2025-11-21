@@ -298,7 +298,7 @@ export class UnitStateManagerImpl implements UnitStateManager {
     const requiredFields = ['tonnage', 'engineType', 'gyroType', 'structureType', 'armorType'] as const;
     for (const field of requiredFields) {
       // Type-safe property access using proper conversion
-      const config = state.configuration as unknown as Record<string, unknown>;
+      const config = state.configuration as Record<string, unknown>;
       const value = config[field];
       if (value === undefined || value === null) {
         result.errors.push(`Missing required configuration field: ${field}`);

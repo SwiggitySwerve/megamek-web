@@ -171,7 +171,7 @@ export function UnitProvider({ children, initialConfiguration }: UnitProviderPro
       gyroType: unit.getGyroType() as GyroType,
       unallocatedEquipment: unit.getUnallocatedEquipment(),
       validation: (summary.validation || {}) as Record<string, unknown>,
-      summary: (summary.summary || {}) as unknown as Record<string, unknown>,
+      summary: (summary.summary || {}) as Record<string, unknown>,
       // Loading state
       isConfigLoaded,
       // Selection state

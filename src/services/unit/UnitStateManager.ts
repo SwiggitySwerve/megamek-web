@@ -16,16 +16,24 @@
  */
 
 import {
-  IUnitConfiguration,
-  IEquipmentAllocation,
   IEquipmentInstance,
   ICompleteUnitState,
+} from '../../types/core/UnitInterfaces';
+import {
+  IUnitConfiguration,
+  IEquipmentAllocation,
+} from '../../types/core/ValidationInterfaces';
+import {
   IServiceEvent,
   Result,
   success,
   failure,
-  EntityId
-} from '../../types/core';
+  EntityId,
+  EquipmentCategory,
+  TechBase,
+  RulesLevel
+} from '../../types/core/BaseTypes';
+import { IEquipment } from '../../types/core/EquipmentInterfaces';
 
 import { IObservableService, IService } from '../../types/core/BaseTypes';
 
@@ -625,7 +633,7 @@ export class UnitStateManager implements IUnitStateManager {
     return {
       id: `equipment_${location}_${slot}`,
       equipmentId: 'mock_equipment',
-      equipment: {} as any, // Mock equipment data
+      equipment: this.createMockEquipment(),
       slotIndex: slot,
       quantity: 1,
       configuration: {},
@@ -637,6 +645,27 @@ export class UnitStateManager implements IUnitStateManager {
       },
       location
     } as IEquipmentInstance;
+  }
+
+  private createMockEquipment(): IEquipment {
+    return {
+      id: 'mock_equipment',
+      name: 'Mock Equipment',
+      type: 'Equipment',
+      category: EquipmentCategory.EQUIPMENT,
+      techBase: TechBase.INNER_SPHERE,
+      introductionYear: 3025,
+      weight: 1,
+      slots: 1,
+      requiresAmmo: false,
+      cost: 0,
+      battleValue: 0,
+      availability: {
+        rating: 'A',
+        era: 'Star League',
+        faction: 'Common'
+      }
+    };
   }
 
   private applyBasicCriticalHit(equipment: IEquipmentInstance, damage: ICriticalHit, location: string): ICriticalHitResult {
@@ -763,7 +792,4 @@ export class UnitStateManager implements IUnitStateManager {
     };
   }
 }
-
-
-
 

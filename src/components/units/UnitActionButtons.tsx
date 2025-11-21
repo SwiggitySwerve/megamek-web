@@ -11,6 +11,7 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/router'
 import { FullUnit } from '../../types'
+import { convertFullUnitToEditableUnit } from '../../utils/unitConverter'
 import { exportUnit, downloadUnit } from '../../utils/unitExportImportProper'
 
 interface UnitActionButtonsProps {
@@ -39,24 +40,10 @@ export const UnitActionButtons: React.FC<UnitActionButtonsProps> = ({
   // Handle export functionality
   const handleExport = (format: 'json' | 'mtf' | 'auto') => {
     // Convert FullUnit to EditableUnit format for export
-    const exportUnit = {
-      ...unit,
-      // Add EditableUnit specific fields
-      armorAllocation: {},
-      equipmentPlacements: [],
-      criticalSlots: [],
-      fluffData: uData.fluff_text || {},
-      selectedQuirks: [],
-      validationState: { isValid: true, errors: [], warnings: [] },
-      editorMetadata: {
-        lastModified: new Date(),
-        isDirty: false,
-        version: '1.0'
-      }
-    }
+    const exportUnit = convertFullUnitToEditableUnit(unit)
     
     try {
-      downloadUnit(exportUnit as any, format)
+      downloadUnit(exportUnit, format)
       setShowExportMenu(false)
     } catch (error) {
       console.error('Export failed:', error)

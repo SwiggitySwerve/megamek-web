@@ -1,5 +1,7 @@
 import { FullUnit, WeaponOrEquipmentItem } from '../types';
 import { CustomizableUnit, UnitEquipmentItem, EquipmentItem } from '../types/customizer';
+import { EditableUnit } from '../types/editor';
+import { convertToIArmorAllocation } from './armorAllocation';
 
 /**
  * Safe value extraction with validation
@@ -117,6 +119,124 @@ export function convertFullUnitToCustomizable(fullUnit: FullUnit): CustomizableU
     const errorMessage = error instanceof Error ? error.message : String(error);
     throw new Error(`Failed to convert unit ${chassis} ${model}: ${errorMessage}`);
   }
+}
+
+/**
+ * Converts a FullUnit to EditableUnit for export or editing
+ */
+export function convertFullUnitToEditableUnit(unit: FullUnit): EditableUnit {
+  const uData = unit.data || {};
+  
+  // Create basic EditableUnit structure
+  // Note: This is a partial conversion focusing on fields needed for export/editing
+  // A full conversion would require mapping all system components (engine, gyro, etc.)
+  // to their ICompleteUnitConfiguration interfaces.
+  
+  // Build armor allocation map for editor
+  const armorAllocation: Record<string, number> = {};
+  if (uData.armor && uData.armor.locations) {
+      uData.armor.locations.forEach(loc => {
+          // Map location names to keys
+          const keyMap: Record<string, string> = {
+              'Head': 'head',
+              'Center Torso': 'centerTorso',
+              'Left Torso': 'leftTorso',
+              'Right Torso': 'rightTorso',
+              'Left Arm': 'leftArm',
+              'Right Arm': 'rightArm',
+              'Left Leg': 'leftLeg',
+              'Right Leg': 'rightLeg'
+          };
+          
+          const key = keyMap[loc.location];
+          if (key) {
+              armorAllocation[key] = loc.armor_points;
+              if (loc.rear_armor_points) {
+                  armorAllocation[`${key}Rear`] = loc.rear_armor_points;
+              }
+          }
+      });
+  }
+
+  return {
+      // Base identity
+      id: unit.id,
+      name: unit.model,
+      chassis: unit.chassis,
+      model: unit.model,
+      techBase: (unit.tech_base || 'Inner Sphere') as any,
+      rulesLevel: (unit.rules_level || 'Standard') as any,
+      era: unit.era,
+      tonnage: unit.mass,
+      
+      // Store original data
+      data: uData,
+      
+      // Editor specific
+      armorAllocation: {}, // This is the editor's map structure, distinct from IArmorAllocation
+      equipmentPlacements: [],
+      criticalSlots: [],
+      fluffData: uData.fluff_text || {},
+      selectedQuirks: [],
+      unallocatedEquipment: [],
+      
+      // Validation state
+      validationState: { isValid: true, errors: [], warnings: [] },
+      
+      // Metadata
+      editorMetadata: {
+          lastModified: new Date(),
+          isDirty: false,
+          version: '1.0'
+      },
+
+      // ICompleteUnitConfiguration stubs
+      // These would need full hydration for a complete editor experience
+      // For export purposes, we often rely on the 'data' property being present
+      structure: { 
+          definition: { id: 'standard', name: 'Standard', type: 'Structure', techBase: 'Inner Sphere', weightMultiplier: 1, slots: 0, cost: 0, introduction: 0 }, 
+          currentPoints: { head: 3, centerTorso: 10, leftTorso: 7, rightTorso: 7, leftArm: 5, rightArm: 5, leftLeg: 7, rightLeg: 7 },
+          maxPoints: { head: 3, centerTorso: 10, leftTorso: 7, rightTorso: 7, leftArm: 5, rightArm: 5, leftLeg: 7, rightLeg: 7 }
+      },
+      engine: { 
+          definition: { id: 'standard', name: 'Standard', type: 'Engine', techBase: 'Inner Sphere', ratingMultiplier: 1, slots: 0, cost: 0, introduction: 0 }, 
+          rating: 200, 
+          tonnage: 8.5 
+      },
+      gyro: { 
+          definition: { id: 'standard', name: 'Standard', type: 'Gyro', techBase: 'Inner Sphere', weightMultiplier: 1, slots: 4, cost: 0, introduction: 0 }, 
+          tonnage: 3 
+      },
+      cockpit: { 
+          definition: { id: 'standard', name: 'Standard', type: 'Cockpit', techBase: 'Inner Sphere', tonnage: 3, slots: 1, cost: 0, introduction: 0 }, 
+          tonnage: 3 
+      },
+      armor: { 
+          definition: { id: 'standard', name: 'Standard', type: 'Armor', techBase: 'Inner Sphere', pointsPerTon: 16, slots: 0, cost: 0, introduction: 0 }, 
+          tonnage: 10,
+          allocation: convertToIArmorAllocation(armorAllocation)
+      },
+      heatSinks: { 
+          definition: { id: 'single', name: 'Single', type: 'Heat Sink', techBase: 'Inner Sphere', dissipation: 1, slots: 1, cost: 0, introduction: 0 }, 
+          count: 10, 
+          engineHeatsinks: 10 
+      },
+      jumpJets: { 
+          definition: { id: 'standard', name: 'Standard', type: 'Jump Jet', techBase: 'Inner Sphere', weightMultiplier: 1, slots: 1, cost: 0, introduction: 0 }, 
+          count: 0 
+      },
+      
+      equipment: [],
+      fixedAllocations: [],
+      groups: [],
+      metadata: {
+          version: '1.0',
+          created: new Date(),
+          modified: new Date(),
+          checksum: '',
+          size: 0
+      }
+  } as unknown as EditableUnit; // Partial implementation cast until fully hydrated
 }
 
 /**
