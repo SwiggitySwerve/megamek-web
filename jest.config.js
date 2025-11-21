@@ -10,16 +10,16 @@ const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   moduleNameMapper: {
     // Handle module aliases (this will be automatically configured for you based on your tsconfig.json paths)
-    '^@/(.*)$': '<rootDir>/$1',
+    '^@/(.*)$': '<rootDir>/src/$1',
     // Handle CSS imports (with CSS modules)
     '^.+\\.module\\.(css|sass|scss)$': 'identity-obj-proxy',
   },
   testEnvironment: 'jsdom',
   collectCoverageFrom: [
-    'pages/api/**/*.{js,ts}',
-    'utils/**/*.{js,ts}',
-    'services/**/*.{js,ts}',
-    'components/**/*.{js,ts,jsx,tsx}',
+    'src/pages/api/**/*.{js,ts}',
+    'src/utils/**/*.{js,ts}',
+    'src/services/**/*.{js,ts}',
+    'src/components/**/*.{js,ts,jsx,tsx}',
     '!**/*.d.ts',
   ],
   testMatch: [

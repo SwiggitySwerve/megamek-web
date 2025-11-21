@@ -18,7 +18,7 @@ const nextConfig: NextConfig = {
       
       // Add specific tree-shaking rules for equipment files
       config.module.rules.push({
-        test: /data\/equipment.*\.ts$/,
+        test: /src\/data\/equipment.*\.ts$/,
         sideEffects: false,
       });
     }
@@ -44,7 +44,7 @@ const nextConfig: NextConfig = {
           
           // Separate chunk for equipment data
           equipment: {
-            test: /[\\/]data[\\/]equipment/,
+            test: /[\\/]src[\\/]data[\\/]equipment/,
             name: 'equipment',
             chunks: 'all',
             priority: 30,
@@ -52,7 +52,7 @@ const nextConfig: NextConfig = {
           
           // Separate chunk for services
           services: {
-            test: /[\\/]services[\\/]/,
+            test: /[\\/]src[\\/]services[\\/]/,
             name: 'services',
             chunks: 'all',
             priority: 25,
@@ -60,7 +60,7 @@ const nextConfig: NextConfig = {
           
           // Separate chunk for utilities
           utils: {
-            test: /[\\/]utils[\\/]/,
+            test: /[\\/]src[\\/]utils[\\/]/,
             name: 'utils',
             chunks: 'all',
             priority: 20,
@@ -68,7 +68,7 @@ const nextConfig: NextConfig = {
           
           // Separate chunk for components
           components: {
-            test: /[\\/]components[\\/]/,
+            test: /[\\/]src[\\/]components[\\/]/,
             name: 'components',
             chunks: 'all',
             priority: 15,
@@ -92,11 +92,11 @@ const nextConfig: NextConfig = {
     // Optimize module resolution for faster builds
     config.resolve.alias = {
       ...config.resolve.alias,
-      '@/services': './services',
-      '@/utils': './utils',
-      '@/components': './components',
-      '@/data': './data',
-      '@/types': './types',
+      '@/services': './src/services',
+      '@/utils': './src/utils',
+      '@/components': './src/components',
+      '@/data': './src/data',
+      '@/types': './src/types',
     };
 
     return config;
