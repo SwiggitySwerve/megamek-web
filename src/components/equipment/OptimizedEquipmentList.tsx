@@ -8,14 +8,14 @@ import {
   useOptimizedEquipmentList, 
   withPerformanceOptimization,
   PerformanceMonitor 
-} from '@/utils/performance/PerformanceOptimizer'
-import { EquipmentObject } from '@/types/criticalSlots'
+} from '../../utils/performance/PerformanceOptimizer'
+import { IEquipment } from '../../types/core/EquipmentInterfaces'
 
 interface OptimizedEquipmentListProps {
-  equipment: EquipmentObject[]
-  filterByTechBase?: (item: EquipmentObject) => boolean
-  sortByName?: (a: EquipmentObject, b: EquipmentObject) => number
-  onEquipmentSelect?: (equipment: EquipmentObject) => void
+  equipment: IEquipment[]
+  filterByTechBase?: (item: IEquipment) => boolean
+  sortByName?: (a: IEquipment, b: IEquipment) => number
+  onEquipmentSelect?: (equipment: IEquipment) => void
   selectedEquipmentId?: string | null
 }
 
@@ -87,7 +87,7 @@ function EquipmentItem({
   isSelected,
   onSelect
 }: {
-  item: EquipmentObject
+  item: IEquipment
   isSelected: boolean
   onSelect: () => void
 }) {

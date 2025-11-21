@@ -8,7 +8,7 @@
  */
 
 import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes';
-import { IComponentConfiguration } from '../../types/core/ComponentInterfaces';
+import { IComponentConfiguration } from '../../types/core/BaseTypes';
 import { getTotalInternalStructure } from '../../utils/internalStructureTable';
 
 export interface StructureValidation {

@@ -26,6 +26,7 @@ import {
   techBaseToString,
   rulesLevelToString
 } from '../../utils/typeConversion/enumConverters';
+import { TechBase as UnitTechBase, EquipmentTechBase, WeaponOrEquipmentItem, UnitConfig, CriticalSlotLocation } from '../../types/index';
 import { TechBase, RulesLevel } from '../../types/core/BaseTypes';
 import { convertApiToInternal, convertInternalToApi } from '../../utils/typeConversion/propertyMappers';
 import { convertFullUnitToCustomizable, convertFullUnitToEditableUnit } from '../../utils/unitConverter';
@@ -58,9 +59,9 @@ export class UnitConversionService implements IUnitConversionService {
       // 2. Use existing converter (which handles most of the logic)
       const editableUnit = convertFullUnitToEditableUnit(fullUnit);
 
-      return success(editableUnit);
+      return { success: true, data: editableUnit };
     } catch (error) {
-      return failure({
+      return failure<ConversionError>({
         message: error instanceof Error ? error.message : 'Unknown conversion error',
         code: 'CONVERSION_ERROR',
         source: 'FullUnit',
@@ -77,7 +78,7 @@ export class UnitConversionService implements IUnitConversionService {
     try {
       // 1. Validate input
       if (!editableUnit.id || !editableUnit.chassis || !editableUnit.model) {
-        return failure({
+        return failure<ConversionError>({
           message: 'EditableUnit missing required fields: id, chassis, or model',
           code: 'INVALID_SOURCE',
           source: 'EditableUnit',
@@ -111,7 +112,7 @@ export class UnitConversionService implements IUnitConversionService {
           chassis: editableUnit.chassis,
           model: editableUnit.model,
           mass: editableUnit.tonnage,
-          tech_base: techBaseString,
+          tech_base: techBaseString as UnitTechBase,
           rules_level: rulesLevelString,
           era: editableUnit.era,
           armor: armorLocations.length > 0 ? {
@@ -124,7 +125,7 @@ export class UnitConversionService implements IUnitConversionService {
         }
       };
 
-      return success(fullUnit);
+      return { success: true, data: fullUnit };
     } catch (error) {
       return failure({
         message: error instanceof Error ? error.message : 'Unknown conversion error',
@@ -147,259 +148,276 @@ export class UnitConversionService implements IUnitConversionService {
       if ('tech_base' in unit || 'mass' in unit) {
         const fullUnit = unit as FullUnit;
         const validation = validateFullUnit(fullUnit);
-        if (!validation.isValid) {
-          return failure({
-            message: 'Invalid FullUnit: ' + validation.errors.join(', '),
-            code: 'INVALID_SOURCE',
-            source: 'FullUnit',
-            target: 'CustomizableUnit',
-            details: { errors: validation.errors }
-          });
-        }
-        const customizable = convertFullUnitToCustomizable(fullUnit);
-        return success(customizable);
-      }
-
-      // If it's an EditableUnit, convert to FullUnit first
-      const fullUnitResult = this.toFullUnit(unit as EditableUnit);
-      if (!fullUnitResult.success) {
-        return failure({
-          message: 'Failed to convert EditableUnit to FullUnit: ' + fullUnitResult.error.message,
-          code: 'CONVERSION_ERROR',
-          source: 'EditableUnit',
-          target: 'CustomizableUnit',
-          details: { conversionError: fullUnitResult.error }
-        });
-      }
-
-      const customizable = convertFullUnitToCustomizable(fullUnitResult.data);
-      return success(customizable);
-    } catch (error) {
-      return failure({
-        message: error instanceof Error ? error.message : 'Unknown conversion error',
-        code: 'CONVERSION_ERROR',
-        source: unit.constructor.name,
-        target: 'CustomizableUnit',
-        details: { error: String(error) }
-      });
-    }
-  }
-
-  /**
-   * Convert from CustomizableUnit to FullUnit
-   */
-  fromCustomizableUnit(
-    customizableUnit: CustomizableUnit
-  ): Result<FullUnit, ConversionError> {
-    try {
-      // Validate input
-      if (!customizableUnit.id || !customizableUnit.chassis || !customizableUnit.model) {
-        return failure({
-          message: 'CustomizableUnit missing required fields: id, chassis, or model',
-          code: 'INVALID_SOURCE',
-          source: 'CustomizableUnit',
-          target: 'FullUnit'
-        });
-      }
-
-      const data = customizableUnit.data || {};
-
-      // Build FullUnit from CustomizableUnit
-      const fullUnit: FullUnit = {
-        id: String(customizableUnit.id),
-        chassis: customizableUnit.chassis,
-        model: customizableUnit.model,
-        mass: customizableUnit.mass,
-        era: data.era || 'Unknown',
-        tech_base: data.tech_base || 'Inner Sphere',
-        rules_level: data.rules_level || 'Standard',
-        source: data.source || 'Unknown',
-        mul_id: data.mul_id,
-        role: data.role,
-        data: {
-          ...data,
-          chassis: customizableUnit.chassis,
-          model: customizableUnit.model,
-          mass: customizableUnit.mass
-        }
-      };
-
-      // Validate the resulting FullUnit
-      const validation = validateFullUnit(fullUnit);
       if (!validation.isValid) {
-        return failure({
-          message: 'Invalid FullUnit after conversion: ' + validation.errors.join(', '),
-          code: 'INVALID_TARGET',
-          source: 'CustomizableUnit',
-          target: 'FullUnit',
-          details: { errors: validation.errors }
-        });
-      }
-
-      return success(fullUnit);
-    } catch (error) {
-      return failure({
-        message: error instanceof Error ? error.message : 'Unknown conversion error',
-        code: 'CONVERSION_ERROR',
-        source: 'CustomizableUnit',
-        target: 'FullUnit',
-        details: { error: String(error) }
-      });
-    }
-  }
-
-  /**
-   * Convert FullUnit to ICompleteUnitConfiguration
-   */
-  toCompleteConfiguration(
-    fullUnit: FullUnit
-  ): Result<ICompleteUnitConfiguration, ConversionError> {
-    try {
-      // Validate input
-      const validation = validateFullUnit(fullUnit);
-      if (!validation.isValid) {
-        return failure({
+        return failure<ConversionError>({
           message: 'Invalid FullUnit: ' + validation.errors.join(', '),
           code: 'INVALID_SOURCE',
           source: 'FullUnit',
-          target: 'ICompleteUnitConfiguration',
+          target: 'CustomizableUnit',
           details: { errors: validation.errors }
         });
       }
+      const customizable = convertFullUnitToCustomizable(fullUnit);
+      return { success: true, data: customizable };
+    }
 
-      // Use the API adapter which handles this conversion
-      const config = unitApiAdapter.fromApiResponse(fullUnit);
-      return success(config);
-    } catch (error) {
-      return failure({
-        message: error instanceof Error ? error.message : 'Unknown conversion error',
+    // If it's an EditableUnit, convert to FullUnit first
+    const fullUnitResult = this.toFullUnit(unit as EditableUnit);
+    if (!fullUnitResult.success) {
+      return failure<ConversionError>({
+        message: 'Failed to convert EditableUnit to FullUnit: ' + fullUnitResult.error.message,
         code: 'CONVERSION_ERROR',
+        source: 'EditableUnit',
+        target: 'CustomizableUnit',
+        details: { conversionError: fullUnitResult.error }
+      });
+    }
+
+    const customizable = convertFullUnitToCustomizable(fullUnitResult.data);
+    return { success: true, data: customizable };
+  } catch (error) {
+    return failure<ConversionError>({
+      message: error instanceof Error ? error.message : 'Unknown conversion error',
+      code: 'CONVERSION_ERROR',
+      source: unit.constructor.name,
+      target: 'CustomizableUnit',
+      details: { error: String(error) }
+    });
+  }
+}
+
+/**
+ * Convert from CustomizableUnit to FullUnit
+ */
+fromCustomizableUnit(
+  customizableUnit: CustomizableUnit
+): Result<FullUnit, ConversionError> {
+  try {
+    // Validate input
+    if (!customizableUnit.id || !customizableUnit.chassis || !customizableUnit.model) {
+      return failure<ConversionError>({
+        message: 'CustomizableUnit missing required fields: id, chassis, or model',
+        code: 'INVALID_SOURCE',
+        source: 'CustomizableUnit',
+        target: 'FullUnit'
+      });
+    }
+
+    const data = customizableUnit.data || {};
+
+    // Build FullUnit from CustomizableUnit
+    const fullUnit: FullUnit = {
+      id: String(customizableUnit.id),
+      chassis: customizableUnit.chassis,
+      model: customizableUnit.model,
+      mass: customizableUnit.mass,
+      era: data.era || 'Unknown',
+      tech_base: data.tech_base || 'Inner Sphere',
+      rules_level: data.rules_level || 'Standard',
+      source: data.source || 'Unknown',
+      mul_id: data.mul_id,
+      role: data.role,
+      data: {
+        ...data,
+        config: data.config as UnitConfig,
+        tech_base: data.tech_base as UnitTechBase,
+        weapons_and_equipment: data.weapons_and_equipment?.map(w => ({
+          ...w,
+          tech_base: (w as any).tech_base || 'IS'
+        })) as WeaponOrEquipmentItem[],
+        criticals: data.criticals?.map(c => ({
+          location: c.location,
+          slots: Array.isArray(c.slots) 
+            ? c.slots.map((s, i) => typeof s === 'string' ? {
+                index: i,
+                name: s,
+                type: s === 'Empty' ? 'empty' : 'equipment',
+                isFixed: false
+              } : s)
+            : []
+        })) as CriticalSlotLocation[],
+        chassis: customizableUnit.chassis,
+        model: customizableUnit.model,
+        mass: customizableUnit.mass
+      }
+    };
+
+    // Validate the resulting FullUnit
+    const validation = validateFullUnit(fullUnit);
+    if (!validation.isValid) {
+      return failure<ConversionError>({
+        message: 'Invalid FullUnit after conversion: ' + validation.errors.join(', '),
+        code: 'INVALID_TARGET',
+        source: 'CustomizableUnit',
+        target: 'FullUnit',
+        details: { errors: validation.errors }
+      });
+    }
+
+    return { success: true, data: fullUnit };
+  } catch (error) {
+    return failure<ConversionError>({
+      message: error instanceof Error ? error.message : 'Unknown conversion error',
+      code: 'CONVERSION_ERROR',
+      source: 'CustomizableUnit',
+      target: 'FullUnit',
+      details: { error: String(error) }
+    });
+  }
+}
+
+/**
+ * Convert FullUnit to ICompleteUnitConfiguration
+ */
+toCompleteConfiguration(
+  fullUnit: FullUnit
+): Result<ICompleteUnitConfiguration, ConversionError> {
+  try {
+    // Validate input
+    const validation = validateFullUnit(fullUnit);
+    if (!validation.isValid) {
+      return failure<ConversionError>({
+        message: 'Invalid FullUnit: ' + validation.errors.join(', '),
+        code: 'INVALID_SOURCE',
         source: 'FullUnit',
         target: 'ICompleteUnitConfiguration',
-        details: { error: String(error) }
+        details: { errors: validation.errors }
       });
     }
+
+    // Use the API adapter which handles this conversion
+    const config = unitApiAdapter.fromApiResponse(fullUnit);
+    return { success: true, data: config };
+  } catch (error) {
+    return failure<ConversionError>({
+      message: error instanceof Error ? error.message : 'Unknown conversion error',
+      code: 'CONVERSION_ERROR',
+      source: 'FullUnit',
+      target: 'ICompleteUnitConfiguration',
+      details: { error: String(error) }
+    });
   }
+}
 
-  /**
-   * Convert ICompleteUnitConfiguration to FullUnit
-   */
-  fromCompleteConfiguration(
-    config: ICompleteUnitConfiguration
-  ): Result<FullUnit, ConversionError> {
-    try {
-      // Use the API adapter which handles this conversion
-      const fullUnit = unitApiAdapter.toApiRequest(config);
-      return success(fullUnit);
-    } catch (error) {
-      return failure({
-        message: error instanceof Error ? error.message : 'Unknown conversion error',
-        code: 'CONVERSION_ERROR',
-        source: 'ICompleteUnitConfiguration',
-        target: 'FullUnit',
-        details: { error: String(error) }
-      });
-    }
+/**
+ * Convert ICompleteUnitConfiguration to FullUnit
+ */
+fromCompleteConfiguration(
+  config: ICompleteUnitConfiguration
+): Result<FullUnit, ConversionError> {
+  try {
+    // Use the API adapter which handles this conversion
+    const fullUnit = unitApiAdapter.toApiRequest(config);
+    return { success: true, data: fullUnit };
+  } catch (error) {
+    return failure<ConversionError>({
+      message: error instanceof Error ? error.message : 'Unknown conversion error',
+      code: 'CONVERSION_ERROR',
+      source: 'ICompleteUnitConfiguration',
+      target: 'FullUnit',
+      details: { error: String(error) }
+    });
   }
+}
 
-  /**
-   * Validate conversion source
-   */
-  validateSource(
-    source: unknown,
-    sourceType: 'FullUnit' | 'EditableUnit' | 'CustomizableUnit' | 'ICompleteUnitConfiguration'
-  ): Result<boolean, ConversionError> {
-    try {
-      switch (sourceType) {
-        case 'FullUnit':
-          if (!source || typeof source !== 'object') {
-            return failure({
-              message: 'Source is not an object',
-              code: 'INVALID_SOURCE_TYPE',
-              source: sourceType
-            });
-          }
-          const fullUnit = source as FullUnit;
-          const validation = validateFullUnit(fullUnit);
-          return validation.isValid
-            ? success(true)
-            : failure({
-                message: 'Invalid FullUnit: ' + validation.errors.join(', '),
-                code: 'INVALID_SOURCE',
-                source: sourceType,
-                details: { errors: validation.errors }
-              });
-
-        case 'EditableUnit':
-          if (!source || typeof source !== 'object') {
-            return failure({
-              message: 'Source is not an object',
-              code: 'INVALID_SOURCE_TYPE',
-              source: sourceType
-            });
-          }
-          const editableUnit = source as EditableUnit;
-          if (!editableUnit.id || !editableUnit.chassis || !editableUnit.model) {
-            return failure({
-              message: 'EditableUnit missing required fields',
-              code: 'INVALID_SOURCE',
-              source: sourceType
-            });
-          }
-          return success(true);
-
-        case 'CustomizableUnit':
-          if (!source || typeof source !== 'object') {
-            return failure({
-              message: 'Source is not an object',
-              code: 'INVALID_SOURCE_TYPE',
-              source: sourceType
-            });
-          }
-          const customizableUnit = source as CustomizableUnit;
-          if (!customizableUnit.id || !customizableUnit.chassis || !customizableUnit.model) {
-            return failure({
-              message: 'CustomizableUnit missing required fields',
-              code: 'INVALID_SOURCE',
-              source: sourceType
-            });
-          }
-          return success(true);
-
-        case 'ICompleteUnitConfiguration':
-          if (!source || typeof source !== 'object') {
-            return failure({
-              message: 'Source is not an object',
-              code: 'INVALID_SOURCE_TYPE',
-              source: sourceType
-            });
-          }
-          const config = source as ICompleteUnitConfiguration;
-          if (!config.id || !config.chassis || !config.model) {
-            return failure({
-              message: 'ICompleteUnitConfiguration missing required fields',
-              code: 'INVALID_SOURCE',
-              source: sourceType
-            });
-          }
-          return success(true);
-
-        default:
-          return failure({
-            message: `Unknown source type: ${sourceType}`,
-            code: 'UNKNOWN_SOURCE_TYPE',
+/**
+ * Validate conversion source
+ */
+validateSource(
+  source: unknown,
+  sourceType: 'FullUnit' | 'EditableUnit' | 'CustomizableUnit' | 'ICompleteUnitConfiguration'
+): Result<boolean, ConversionError> {
+  try {
+    switch (sourceType) {
+      case 'FullUnit':
+        if (!source || typeof source !== 'object') {
+          return failure<ConversionError>({
+            message: 'Source is not an object',
+            code: 'INVALID_SOURCE_TYPE',
             source: sourceType
           });
-      }
-    } catch (error) {
-      return failure({
-        message: error instanceof Error ? error.message : 'Validation error',
-        code: 'VALIDATION_ERROR',
-        source: sourceType,
-        details: { error: String(error) }
-      });
+        }
+        const fullUnit = source as FullUnit;
+        const validation = validateFullUnit(fullUnit);
+        return validation.isValid
+          ? { success: true, data: true }
+          : failure<ConversionError>({
+              message: 'Invalid FullUnit: ' + validation.errors.join(', '),
+              code: 'INVALID_SOURCE',
+              source: sourceType,
+              details: { errors: validation.errors }
+            });
+
+      case 'EditableUnit':
+        if (!source || typeof source !== 'object') {
+          return failure<ConversionError>({
+            message: 'Source is not an object',
+            code: 'INVALID_SOURCE_TYPE',
+            source: sourceType
+          });
+        }
+        const editableUnit = source as EditableUnit;
+        if (!editableUnit.id || !editableUnit.chassis || !editableUnit.model) {
+          return failure<ConversionError>({
+            message: 'EditableUnit missing required fields',
+            code: 'INVALID_SOURCE',
+            source: sourceType
+          });
+        }
+        return { success: true, data: true };
+
+      case 'CustomizableUnit':
+        if (!source || typeof source !== 'object') {
+          return failure<ConversionError>({
+            message: 'Source is not an object',
+            code: 'INVALID_SOURCE_TYPE',
+            source: sourceType
+          });
+        }
+        const customizableUnit = source as CustomizableUnit;
+        if (!customizableUnit.id || !customizableUnit.chassis || !customizableUnit.model) {
+          return failure<ConversionError>({
+            message: 'CustomizableUnit missing required fields',
+            code: 'INVALID_SOURCE',
+            source: sourceType
+          });
+        }
+        return { success: true, data: true };
+
+      case 'ICompleteUnitConfiguration':
+        if (!source || typeof source !== 'object') {
+          return failure<ConversionError>({
+            message: 'Source is not an object',
+            code: 'INVALID_SOURCE_TYPE',
+            source: sourceType
+          });
+        }
+        const config = source as ICompleteUnitConfiguration;
+        if (!config.id || !config.chassis || !config.model) {
+          return failure<ConversionError>({
+            message: 'ICompleteUnitConfiguration missing required fields',
+            code: 'INVALID_SOURCE',
+            source: sourceType
+          });
+        }
+        return { success: true, data: true };
+
+      default:
+        return failure<ConversionError>({
+          message: `Unknown source type: ${sourceType}`,
+          code: 'UNKNOWN_SOURCE_TYPE',
+          source: sourceType
+        });
     }
+  } catch (error) {
+    return failure<ConversionError>({
+      message: error instanceof Error ? error.message : 'Validation error',
+      code: 'VALIDATION_ERROR',
+      source: sourceType,
+      details: { error: String(error) }
+    });
   }
+}
 
   /**
    * Get conversion metadata
@@ -493,14 +511,7 @@ export class UnitConversionService implements IUnitConversionService {
    */
   private convertEquipmentToWeaponsAndEquipment(
     editableUnit: EditableUnit
-  ): Array<{
-    item_name: string;
-    item_type: string;
-    location: string;
-    tech_base?: string;
-    rear_facing?: boolean;
-    turret_mounted?: boolean;
-  }> {
+  ): WeaponOrEquipmentItem[] {
     if (!editableUnit.equipment || editableUnit.equipment.length === 0) {
       return [];
     }
@@ -509,9 +520,9 @@ export class UnitConversionService implements IUnitConversionService {
       item_name: eq.equipment.name || 'Unknown',
       item_type: eq.equipment.category || 'equipment',
       location: eq.location,
-      tech_base: 'techBase' in eq.equipment && typeof eq.equipment.techBase === 'string'
+      tech_base: ('techBase' in eq.equipment && typeof eq.equipment.techBase === 'string'
         ? eq.equipment.techBase
-        : 'IS',
+        : 'IS') as EquipmentTechBase,
       rear_facing: eq.facing === 'rear',
       turret_mounted: false // Would need to be determined from equipment data
     }));

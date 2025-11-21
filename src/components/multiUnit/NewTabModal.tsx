@@ -90,6 +90,7 @@ export function NewTabModal({ onClose, onCreate }: NewTabModalProps) {
           runMP: template.config.runMP || 6,
           engineType: 'Standard',
           gyroType: 'Standard',
+          cockpitType: 'Standard',
           structureType: 'Standard',
           armorType: 'Standard',
           armorAllocation: {

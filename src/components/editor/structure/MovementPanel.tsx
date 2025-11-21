@@ -31,7 +31,7 @@ const MovementPanel: React.FC<MovementPanelProps> = ({
   const jumpJetWeight = useMemo(() => {
     if (jumpMP === 0) return 0;
     
-    const unitTonnage = unit.mass;
+    const unitTonnage = unit.tonnage;
     let weightPerJJ = 1.0;
     
     // Weight varies by tonnage class
@@ -51,13 +51,13 @@ const MovementPanel: React.FC<MovementPanelProps> = ({
     }
     
     return jumpMP * weightPerJJ;
-  }, [jumpMP, jumpType, mechJumpBoosterMP, unit.mass]);
+  }, [jumpMP, jumpType, mechJumpBoosterMP, unit.tonnage]);
 
   // Handle walk MP change
   const handleWalkMPChange = useCallback((newWalkMP: number) => {
     if (newWalkMP < 1) return;
     
-    const maxWalkMP = Math.floor(400 / unit.mass); // Max engine rating is 400
+    const maxWalkMP = Math.floor(400 / unit.tonnage); // Max engine rating is 400
     if (newWalkMP > maxWalkMP) return;
     
     const updatedUnit = {
@@ -65,7 +65,7 @@ const MovementPanel: React.FC<MovementPanelProps> = ({
       data: {
         ...unit.data,
         movement: {
-          ...unit.data.movement,
+          ...(unit.data?.movement || {}),
           walk_mp: newWalkMP,
           run_mp: Math.ceil(newWalkMP * 1.5),
           cruise_mp: newWalkMP,
@@ -89,7 +89,7 @@ const MovementPanel: React.FC<MovementPanelProps> = ({
       data: {
         ...unit.data,
         movement: {
-          ...unit.data.movement,
+          ...(unit.data?.movement || {}),
           jump_mp: newJumpMP,
         },
       },
@@ -99,7 +99,7 @@ const MovementPanel: React.FC<MovementPanelProps> = ({
     
     // Notify parent of weight change
     if (onJumpJetWeightChange) {
-      const newWeight = calculateJumpJetWeight(newJumpMP, jumpType, mechJumpBoosterMP, unit.mass);
+      const newWeight = calculateJumpJetWeight(newJumpMP, jumpType, mechJumpBoosterMP, unit.tonnage);
       onJumpJetWeightChange(newWeight);
     }
   }, [unit, onUnitChange, onJumpJetWeightChange, walkMP, jumpType, mechJumpBoosterMP]);
@@ -111,7 +111,7 @@ const MovementPanel: React.FC<MovementPanelProps> = ({
       data: {
         ...unit.data,
         movement: {
-          ...unit.data.movement,
+          ...(unit.data?.movement || {}),
           jump_type: newJumpType,
         },
       },
@@ -121,7 +121,7 @@ const MovementPanel: React.FC<MovementPanelProps> = ({
     
     // Recalculate weight
     if (onJumpJetWeightChange) {
-      const newWeight = calculateJumpJetWeight(jumpMP, newJumpType, mechJumpBoosterMP, unit.mass);
+      const newWeight = calculateJumpJetWeight(jumpMP, newJumpType, mechJumpBoosterMP, unit.tonnage);
       onJumpJetWeightChange(newWeight);
     }
   }, [unit, onUnitChange, onJumpJetWeightChange, jumpMP, mechJumpBoosterMP]);
@@ -135,7 +135,7 @@ const MovementPanel: React.FC<MovementPanelProps> = ({
       data: {
         ...unit.data,
         movement: {
-          ...unit.data.movement,
+          ...(unit.data?.movement || {}),
           mech_jump_booster_mp: newMJBMP,
         },
       },
@@ -145,7 +145,7 @@ const MovementPanel: React.FC<MovementPanelProps> = ({
     
     // Recalculate weight
     if (onJumpJetWeightChange && jumpType === 'Mechanical Jump Booster') {
-      const newWeight = calculateJumpJetWeight(jumpMP, jumpType, newMJBMP, unit.mass);
+      const newWeight = calculateJumpJetWeight(jumpMP, jumpType, newMJBMP, unit.tonnage);
       onJumpJetWeightChange(newWeight);
     }
   }, [unit, onUnitChange, onJumpJetWeightChange, jumpMP, jumpType]);
@@ -308,7 +308,7 @@ const MovementPanel: React.FC<MovementPanelProps> = ({
 
         {/* Movement Details */}
         <div className="pt-2 border-t border-gray-200 text-xs text-gray-600 space-y-1">
-          <div>Engine Rating: {walkMP * unit.mass}</div>
+          <div>Engine Rating: {walkMP * unit.tonnage}</div>
           {jumpMP > 0 && (
             <div>Jump Jets: {jumpMP} ({jumpJetWeight} tons)</div>
           )}
@@ -318,10 +318,10 @@ const MovementPanel: React.FC<MovementPanelProps> = ({
         </div>
 
         {/* Validation Warnings */}
-        {walkMP * unit.mass > 400 && (
+        {walkMP * unit.tonnage > 400 && (
           <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded">
             <p className="text-xs text-red-700">
-              Engine rating {walkMP * unit.mass} exceeds maximum of 400!
+              Engine rating {walkMP * unit.tonnage} exceeds maximum of 400!
             </p>
           </div>
         )}

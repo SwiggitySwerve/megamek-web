@@ -343,7 +343,16 @@ export function useUnitCalculations(
   // Recalculate when unit changes
   useEffect(() => {
     refreshCalculations()
-  }, [unit.mass, unit.systemComponents, unit.data, refreshCalculations])
+  }, [
+    unit.tonnage,
+    unit.structure,
+    unit.engine,
+    unit.gyro,
+    unit.cockpit,
+    unit.heatSinks,
+    unit.data,
+    refreshCalculations
+  ])
 
   const isOverweight = useMemo(() => 
     UnitCalculationService.isOverweight(unit), [unit]

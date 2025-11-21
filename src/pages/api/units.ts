@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import mockUnits from '../../public/mockdata/mockUnits.json';
+import mockUnits from '../../../public/mockdata/mockUnits.json';
 
 interface Unit {
   id: string;

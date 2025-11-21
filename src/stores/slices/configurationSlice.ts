@@ -147,7 +147,10 @@ export const createConfigurationSlice: StateCreator<
       unitManager.deserializeCompleteState(currentTab.state);
 
       // Operate
-      unitManager.resetUnit(config);
+      unitManager.resetToBaseConfiguration();
+      if (config) {
+        unitManager.updateConfiguration(config);
+      }
 
       // Serialize
       const newState = unitManager.serializeCompleteState();

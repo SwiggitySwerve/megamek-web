@@ -1,5 +1,5 @@
 import { EquipmentDataService } from '../../utils/equipment/EquipmentDataService'
-import { CatalogItem, EquipmentCatalogItem, NormalizedTechBase, TechContext } from './types'
+import { CatalogItem, EquipmentCatalogItem, NormalizedTechBase, TechContext, EquipmentCategory } from './types'
 
 function normalizeTechBase(tb: string): NormalizedTechBase {
   if (tb === 'IS') return 'Inner Sphere'
@@ -56,7 +56,7 @@ export class EquipmentAdapter {
         pageReference: eq.pageReference,
         tags: tokenize(eq.name, eq.baseType, eq.special),
         unitType: ctx?.unitType || 'BattleMech',
-        category: eq.category as EquipmentCategory,
+        category: eq.category as unknown as EquipmentCategory,
         requiresAmmo: eq.requiresAmmo,
         baseType: eq.baseType,
         metrics: {

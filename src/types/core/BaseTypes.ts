@@ -20,126 +20,198 @@
 export type EntityId = string;
 
 /**
- * Tech base enum - strongly typed replacement for string literals
+ * Tech base type - union of string literals
  */
-export enum TechBase {
-  INNER_SPHERE = 'Inner Sphere',
-  CLAN = 'Clan',
-  MIXED_IS_CHASSIS = 'Mixed (IS Chassis)',
-  MIXED_CLAN_CHASSIS = 'Mixed (Clan Chassis)',
-  MIXED = 'Mixed',
-  BOTH = 'Both'
-}
+export type TechBase = 
+  | 'Inner Sphere' 
+  | 'Clan' 
+  | 'Mixed (IS Chassis)' 
+  | 'Mixed (Clan Chassis)' 
+  | 'Mixed' 
+  | 'Both';
 
 /**
- * Rules level enum - strongly typed replacement for string literals
+ * Tech base constants
  */
-export enum RulesLevel {
-  INTRODUCTORY = 'Introductory',
-  STANDARD = 'Standard',
-  ADVANCED = 'Advanced',
-  EXPERIMENTAL = 'Experimental'
-}
+export const TechBase = {
+  INNER_SPHERE: 'Inner Sphere',
+  CLAN: 'Clan',
+  MIXED_IS_CHASSIS: 'Mixed (IS Chassis)',
+  MIXED_CLAN_CHASSIS: 'Mixed (Clan Chassis)',
+  MIXED: 'Mixed',
+  BOTH: 'Both'
+} as const;
 
 /**
- * Technology Level enum - sophistication of the tech
+ * Rules level type - union of string literals
  */
-export enum TechLevel {
-  INTRODUCTORY = 'Introductory',
-  STANDARD = 'Standard',
-  ADVANCED = 'Advanced',
-  EXPERIMENTAL = 'Experimental'
-}
+export type RulesLevel = 
+  | 'Introductory' 
+  | 'Standard' 
+  | 'Advanced' 
+  | 'Experimental';
+
+/**
+ * Rules level constants
+ */
+export const RulesLevel = {
+  INTRODUCTORY: 'Introductory',
+  STANDARD: 'Standard',
+  ADVANCED: 'Advanced',
+  EXPERIMENTAL: 'Experimental'
+} as const;
+
+/**
+ * Technology Level type - union of string literals
+ */
+export type TechLevel = 
+  | 'Introductory' 
+  | 'Standard' 
+  | 'Advanced' 
+  | 'Experimental';
+
+/**
+ * Technology Level constants
+ */
+export const TechLevel = {
+  INTRODUCTORY: 'Introductory',
+  STANDARD: 'Standard',
+  ADVANCED: 'Advanced',
+  EXPERIMENTAL: 'Experimental'
+} as const;
 
 /**
  * Severity levels for violations and recommendations
  */
-export enum Severity {
-  CRITICAL = 'critical',
-  MAJOR = 'major',
-  MINOR = 'minor',
-  WARNING = 'warning'
-}
+export type Severity = 'critical' | 'major' | 'minor' | 'warning';
+
+export const Severity = {
+  CRITICAL: 'critical',
+  MAJOR: 'major',
+  MINOR: 'minor',
+  WARNING: 'warning'
+} as const;
 
 /**
  * Difficulty levels for operations and recommendations
  */
-export enum Difficulty {
-  EASY = 'easy',
-  MODERATE = 'moderate',
-  HARD = 'hard'
-}
+export type Difficulty = 'easy' | 'moderate' | 'hard';
+
+export const Difficulty = {
+  EASY: 'easy',
+  MODERATE: 'moderate',
+  HARD: 'hard'
+} as const;
 
 /**
  * Priority levels for recommendations and actions
  */
-export enum Priority {
-  HIGH = 'high',
-  MEDIUM = 'medium',
-  LOW = 'low'
-}
+export type Priority = 'high' | 'medium' | 'low';
+
+export const Priority = {
+  HIGH: 'high',
+  MEDIUM: 'medium',
+  LOW: 'low'
+} as const;
 
 /**
- * Component Category Enum
+ * Component Category Type
  * Represents structural systems that are part of the unit's chassis or core identity.
  */
-export enum ComponentCategory {
-  CHASSIS = 'chassis',
-  ENGINE = 'engine',
-  GYRO = 'gyro',
-  COCKPIT = 'cockpit',
-  STRUCTURE = 'structure',
-  ARMOR = 'armor',
-  HEAT_SINK = 'heatsink', // System-level heat sink config (type, etc)
-  MYOMER = 'myomer',
-  TARGETING = 'targeting',
-  MOVEMENT = 'movement' // Jump jet config, MASC, etc.
-}
+export type ComponentCategory = 
+  | 'chassis' 
+  | 'engine' 
+  | 'gyro' 
+  | 'cockpit' 
+  | 'structure' 
+  | 'armor' 
+  | 'heatsink' 
+  | 'myomer' 
+  | 'targeting' 
+  | 'movement';
+
+export const ComponentCategory = {
+  CHASSIS: 'chassis',
+  ENGINE: 'engine',
+  GYRO: 'gyro',
+  COCKPIT: 'cockpit',
+  STRUCTURE: 'structure',
+  ARMOR: 'armor',
+  HEAT_SINK: 'heatsink', // System-level heat sink config (type, etc)
+  MYOMER: 'myomer',
+  TARGETING: 'targeting',
+  MOVEMENT: 'movement' // Jump jet config, MASC, etc.
+} as const;
 
 /**
- * Equipment Category Enum
+ * Equipment Category Type
  * Represents inventory items that are placed in critical slots.
  */
-export enum EquipmentCategory {
+export type EquipmentCategory = 
+  | 'weapon' 
+  | 'ammo' 
+  | 'equipment' 
+  | 'electronics' 
+  | 'heat_sink' 
+  | 'jump_jet' 
+  | 'physical' 
+  | 'miscellaneous';
+
+export const EquipmentCategory = {
   // Weapons
-  WEAPON = 'weapon',
+  WEAPON: 'weapon',
   
   // Ammunition
-  AMMO = 'ammo',
+  AMMO: 'ammo',
   
   // Equipment
-  EQUIPMENT = 'equipment',
-  ELECTRONICS = 'electronics',
+  EQUIPMENT: 'equipment',
+  ELECTRONICS: 'electronics',
   
   // System Components placed as items (e.g. Jump Jets, Heat Sinks)
-  HEAT_SINK = 'heat_sink',
-  JUMP_JET = 'jump_jet',
+  HEAT_SINK: 'heat_sink',
+  JUMP_JET: 'jump_jet',
   
   // Physical
-  PHYSICAL = 'physical', // Hatchet, etc.
+  PHYSICAL: 'physical', // Hatchet, etc.
   
   // Misc
-  MISCELLANEOUS = 'miscellaneous'
-}
+  MISCELLANEOUS: 'miscellaneous'
+} as const;
 
 /**
  * Unit type enum
  */
-export enum UnitType {
-  BATTLEMECH = 'BattleMech',
-  INDUSTRIALMECH = 'IndustrialMech',
-  COMBAT_VEHICLE = 'Combat Vehicle',
-  SUPPORT_VEHICLE = 'Support Vehicle',
-  AEROSPACE = 'Aerospace',
-  BATTLE_ARMOR = 'Battle Armor',
-  PROTO_MECH = 'ProtoMech',
-  INFANTRY = 'Infantry',
-  DROPSHIP = 'DropShip',
-  JUMPSHIP = 'JumpShip',
-  WARSHIP = 'WarShip',
-  SPACE_STATION = 'Space Station',
-  MOBILE_STRUCTURE = 'Mobile Structure'
-}
+export type UnitType = 
+  | 'BattleMech'
+  | 'IndustrialMech'
+  | 'Combat Vehicle'
+  | 'Support Vehicle'
+  | 'Aerospace'
+  | 'Battle Armor'
+  | 'ProtoMech'
+  | 'Infantry'
+  | 'DropShip'
+  | 'JumpShip'
+  | 'WarShip'
+  | 'Space Station'
+  | 'Mobile Structure';
+
+export const UnitType = {
+  BATTLEMECH: 'BattleMech',
+  INDUSTRIALMECH: 'IndustrialMech',
+  COMBAT_VEHICLE: 'Combat Vehicle',
+  SUPPORT_VEHICLE: 'Support Vehicle',
+  AEROSPACE: 'Aerospace',
+  BATTLE_ARMOR: 'Battle Armor',
+  PROTO_MECH: 'ProtoMech',
+  INFANTRY: 'Infantry',
+  DROPSHIP: 'DropShip',
+  JUMPSHIP: 'JumpShip',
+  WARSHIP: 'WarShip',
+  SPACE_STATION: 'Space Station',
+  MOBILE_STRUCTURE: 'Mobile Structure'
+} as const;
 
 // ===== BASE ENTITY INTERFACES =====
 
@@ -300,6 +372,21 @@ export interface IRangeProfile {
   readonly medium?: number;
   readonly long?: number;
   readonly extreme?: number;
+}
+
+/**
+ * Base interface for unit metadata
+ */
+export interface IUnitMetadata {
+  readonly version: string;
+  readonly created: Date;
+  readonly modified: Date;
+  readonly checksum: string;
+  readonly size: number;
+  readonly source?: string;
+  readonly notes?: string;
+  readonly mulId?: string;
+  readonly role?: string;
 }
 
 // ===== SERVICE BASE INTERFACES =====

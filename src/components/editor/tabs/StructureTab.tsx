@@ -11,6 +11,7 @@ import React from 'react';
 import { useUnit } from '../../multiUnit/MultiUnitProvider';
 import { UnitConfiguration } from '../../../utils/criticalSlots/UnitCriticalManagerTypes';
 import { ArmorType, EngineType, GyroType, HeatSinkType, StructureType } from '../../../types/systemComponents';
+import { ComponentCategory as BaseComponentCategory, TechBase as BaseTechBase } from '../../../types/core/BaseTypes';
 import { 
   SkeletonInput,
   SkeletonSelect,
@@ -209,7 +210,7 @@ export const StructureTab: React.FC<StructureTabProps> = ({ readOnly = false }) 
     
     // Check if component system is available
     let componentsAvailable = true;
-    const testResult = isComponentAvailable('None', 'myomer', 'Inner Sphere');
+    const testResult = isComponentAvailable('None', BaseComponentCategory.MYOMER, BaseTechBase.INNER_SPHERE);
     if (testResult === undefined || testResult === null) {
       componentsAvailable = false;
     }
@@ -228,14 +229,15 @@ export const StructureTab: React.FC<StructureTabProps> = ({ readOnly = false }) 
       if (savedComponent && savedComponent !== 'None' && savedComponent !== 'Standard') {
         const configProperty = getConfigPropertyForSubsystem(subsystem as keyof TechProgression);
         if (configProperty) {
-          restorationUpdates[configProperty] = savedComponent;
+          // Safe assignment using type assertion for dynamic property access on Partial<UnitConfiguration>
+          (restorationUpdates as any)[configProperty] = savedComponent;
           console.log(`[StructureTab] 💾 ✅ Restored ${subsystem} (${techBase}) → ${savedComponent}`);
         }
       }
     });
     
     console.log(`[StructureTab] 💾 🎯 Restoration completed with ${Object.keys(restorationUpdates).length} updates`);
-    return restorationUpdates;
+    return { ...config, ...restorationUpdates };
   };
 
   // Fix property map to exclude myomer since it's now an array
@@ -266,7 +268,10 @@ export const StructureTab: React.FC<StructureTabProps> = ({ readOnly = false }) 
     if (value && typeof value === 'object' && 'type' in value) {
       return (value as { type: string }).type;
     }
-    return value || 'Standard';
+    if (typeof value === 'string') {
+      return value;
+    }
+    return 'Standard';
   }
 
   // Helper function to get config property for subsystem

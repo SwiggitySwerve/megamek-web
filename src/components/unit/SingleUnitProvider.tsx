@@ -8,7 +8,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import { UnitPersistenceService, UnitIdentifier, UnitLoadResult, generateUnitId } from '../../utils/unit/UnitPersistenceService'
 import { UnitCriticalManager } from '../../utils/criticalSlots/UnitCriticalManager'
 import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes'
-import { UnitStateManager } from '../../utils/criticalSlots/UnitStateManager'
+import { UnitStateManager, UnitSummary } from '../../utils/criticalSlots/UnitStateManager'
 import { EngineType, GyroType } from '../../types/systemComponents'
 import { EquipmentAllocation } from '../../utils/criticalSlots/CriticalSlot'
 import { MultiTabDebouncedSaveManager } from '../../utils/DebouncedSaveManager'
@@ -20,8 +20,8 @@ interface SingleUnitContextValue {
   engineType: EngineType | null
   gyroType: GyroType | null
   unallocatedEquipment: EquipmentAllocation[]
-  validation: Record<string, unknown>
-  summary: Record<string, unknown>
+  validation: unknown
+  summary: UnitSummary | null
   isConfigLoaded: boolean
   selectedEquipmentId: string | null
   
@@ -40,7 +40,7 @@ interface SingleUnitContextValue {
   resetUnit: (config?: UnitConfiguration) => void
   selectEquipment: (equipmentGroupId: string | null) => void
   assignSelectedEquipment: (location: string, slotIndex: number) => boolean
-  getDebugInfo: () => Record<string, unknown>
+  getDebugInfo: () => any
   
   // Save operations
   saveUnit: () => void
@@ -290,7 +290,12 @@ export function SingleUnitProvider({
     addTestEquipment: (equipment: EquipmentAllocation, location: string, startSlot?: number) => {
       if (!stateManager) return false
       
-      const result = stateManager.addTestEquipment(equipment, location, startSlot)
+      const testEquipment = {
+        name: equipment.equipmentData?.name || 'Unknown',
+        requiredSlots: equipment.occupiedSlots?.length || 1
+      }
+      
+      const result = stateManager.addTestEquipment(testEquipment, location, startSlot)
       
       if (result) {
         forceUpdate()

@@ -38,7 +38,7 @@ import {
   EntityId
 } from '../../types/core';
 
-import { IOptimizationImprovement } from '../../types/core/CalculationInterfaces';
+import { ICalculatedOptimizationImprovement } from '../../types/core/CalculationInterfaces';
 
 import { IObservableService, IService } from '../../types/core/BaseTypes';
 
@@ -176,7 +176,7 @@ export class CalculationOrchestrator implements ICalculationOrchestrator {
     const startTime = Date.now();
     
     try {
-      this.log('debug', `Starting unit calculations for ${config.chassisName} ${config.model}`);
+      this.log('debug', `Starting unit calculations for ${config.chassis} ${config.model}`);
 
       // Check cache first
       const cacheKey = this.generateCacheKey(config, equipment);
@@ -240,7 +240,7 @@ export class CalculationOrchestrator implements ICalculationOrchestrator {
         type: CalculationEventType.CALCULATION_COMPLETED,
         timestamp: new Date(),
         data: { 
-          unitName: `${config.chassisName} ${config.model}`,
+          unitName: `${config.chassis} ${config.model}`,
           calculationTime: Date.now() - startTime,
           overallScore: completeResult.optimization.overallScore
         }
@@ -392,7 +392,7 @@ export class CalculationOrchestrator implements ICalculationOrchestrator {
 
       if (this.movementCalculator) {
         const result = await this.movementCalculator.calculateMovementPoints(
-          config.engineRating || 0,
+          config.engine?.rating || 0,
           config.tonnage
         );
         this.endPerformanceTracking(trackerId);
@@ -641,8 +641,8 @@ export class CalculationOrchestrator implements ICalculationOrchestrator {
     const slotUtilization = slots.overallUtilization || 0;
     const movementEfficiency = movement.walkMP > 0 ? 100 : 0;
     
-    // Convert optimizations to IOptimizationImprovement format
-    const topImprovements: IOptimizationImprovement[] = optimizations.slice(0, 5).map((opt: any) => ({
+    // Convert optimizations to ICalculatedOptimizationImprovement format
+    const topImprovements: ICalculatedOptimizationImprovement[] = optimizations.slice(0, 5).map((opt: any) => ({
       category: opt.type as 'weight' | 'heat' | 'armor' | 'slots' | 'movement',
       description: opt.description,
       impact: opt.potentialImprovement || 0,
@@ -731,10 +731,10 @@ export class CalculationOrchestrator implements ICalculationOrchestrator {
     const configString = JSON.stringify({
       id: config.id,
       tonnage: config.tonnage,
-      engineRating: config.engineRating,
+      engineRating: config.engine?.rating || 0,
       techBase: config.techBase,
-      armorType: config.armorType,
-      structureType: config.structureType
+      armorType: config.armor?.definition?.type || 'Standard',
+      structureType: config.structure?.definition?.type || 'Standard'
     });
     const equipmentString = JSON.stringify(equipment.map(e => ({
       id: e.equipmentId,
@@ -824,7 +824,8 @@ export class CalculationOrchestrator implements ICalculationOrchestrator {
   // Basic calculation fallbacks
   private createBasicWeightResult(config: IUnitConfiguration, equipment: IEquipmentAllocation[]): IWeightCalculationResult {
     const chassisWeight = config.tonnage * 0.1; // 10% for chassis
-    const engineWeight = config.engineRating * 0.05; // Rough engine weight
+    const engineRating = config.engine?.rating || 0;
+    const engineWeight = engineRating * 0.05; // Rough engine weight
     const equipmentWeight = equipment.reduce((sum, eq) => sum + (eq.quantity || 1), 0) * 0.5; // Rough equipment weight
     const totalWeight = chassisWeight + engineWeight + equipmentWeight;
     
@@ -876,7 +877,8 @@ export class CalculationOrchestrator implements ICalculationOrchestrator {
   }
 
   private createBasicHeatResult(config: IUnitConfiguration, equipment: IEquipmentAllocation[]): IHeatBalanceResult {
-    const engineHeatSinks = Math.floor(config.engineRating / 25);
+    const engineRating = config.engine?.rating || 0;
+    const engineHeatSinks = Math.floor(engineRating / 25);
     const heatGeneration = equipment.length * 2; // Rough heat generation
     
     const heatDissipation = engineHeatSinks * 1;
@@ -1057,7 +1059,8 @@ export class CalculationOrchestrator implements ICalculationOrchestrator {
   }
 
   private createBasicMovementResult(config: IUnitConfiguration): IMovementPointsResult {
-    const walkMP = Math.floor(config.engineRating / config.tonnage);
+    const engineRating = config.engine?.rating || 0;
+    const walkMP = Math.floor(engineRating / config.tonnage);
     const runMP = Math.floor(walkMP * 1.5);
     
     return {
@@ -1069,7 +1072,7 @@ export class CalculationOrchestrator implements ICalculationOrchestrator {
       runMP: runMP,
       jumpMP: 0,
       sprintMP: Math.floor(runMP * 1.5),
-      engineRating: config.engineRating,
+      engineRating: config.engine?.rating || 0,
       tonnage: config.tonnage,
       efficiency: {
         walkRatio: walkMP / config.tonnage,
@@ -1088,7 +1091,3 @@ export class CalculationOrchestrator implements ICalculationOrchestrator {
     };
   }
 }
-
-
-
-

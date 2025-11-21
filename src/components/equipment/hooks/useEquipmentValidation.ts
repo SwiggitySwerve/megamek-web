@@ -73,15 +73,18 @@ export function useEquipmentValidation(): UseEquipmentValidationReturn {
 
   // Get total weight of equipment
   const getTotalEquipmentWeight = useCallback((unit: EditableUnit): number => {
-    return unit.equipmentPlacements.reduce((total, placement) => {
+    return (unit.equipmentPlacements || []).reduce((total, placement) => {
       return total + (placement.equipment.weight || 0);
     }, 0);
   }, []);
 
   // Get total heat generation
   const getTotalHeatGeneration = useCallback((unit: EditableUnit): number => {
-    return unit.equipmentPlacements.reduce((total, placement) => {
-      return total + (placement.equipment.heat || 0);
+    return (unit.equipmentPlacements || []).reduce((total, placement) => {
+      // Check heat safely from IEquipment (heatGeneration) or FullEquipment (heat)
+      const equipment = placement.equipment as any;
+      const heat = equipment.heatGeneration || equipment.heat || 0;
+      return total + heat;
     }, 0);
   }, []);
 
@@ -92,7 +95,7 @@ export function useEquipmentValidation(): UseEquipmentValidationReturn {
     const dissipationPerSink = heatSinkType === 'Double' ? 2 : 1;
     
     // Add additional heat sinks from equipment
-    const additionalHeatSinks = unit.equipmentPlacements.filter(
+    const additionalHeatSinks = (unit.equipmentPlacements || []).filter(
       p => p.equipment.name.includes('Heat Sink')
     ).length;
     
@@ -105,7 +108,7 @@ export function useEquipmentValidation(): UseEquipmentValidationReturn {
     unit: EditableUnit
   ): { valid: boolean; missing: string[] } => {
     const dependencies = EQUIPMENT_DEPENDENCIES[equipment.name] || [];
-    const existingEquipment = unit.equipmentPlacements.map(p => p.equipment.name);
+    const existingEquipment = (unit.equipmentPlacements || []).map(p => p.equipment.name);
     
     const missing = dependencies.filter(dep => !existingEquipment.includes(dep));
     
@@ -121,7 +124,7 @@ export function useEquipmentValidation(): UseEquipmentValidationReturn {
     unit: EditableUnit
   ): { valid: boolean; conflicts: string[] } => {
     const conflictsWith = EQUIPMENT_CONFLICTS[equipment.name] || [];
-    const existingEquipment = unit.equipmentPlacements.map(p => p.equipment.name);
+    const existingEquipment = (unit.equipmentPlacements || []).map(p => p.equipment.name);
     
     const conflicts = conflictsWith.filter(conflict => existingEquipment.includes(conflict));
     
@@ -169,13 +172,13 @@ export function useEquipmentValidation(): UseEquipmentValidationReturn {
     const issues: string[] = [];
     
     // Check positive quirks
-    unit.selectedQuirks?.forEach(quirk => {
+    (unit.data?.quirks?.positive || []).forEach(quirkName => {
       // Example quirk checks
-      if (quirk.name === 'Anti-Aircraft Targeting' && equipment.type === 'Ballistic Weapon') {
+      if (quirkName === 'Anti-Aircraft Targeting' && equipment.type === 'Ballistic Weapon') {
         // AA targeting improves ballistic weapons - no issue
       }
       
-      if (quirk.name === 'Improved Communications' && equipment.name === 'ECM') {
+      if (quirkName === 'Improved Communications' && equipment.name === 'ECM') {
         issues.push('ECM interferes with Improved Communications quirk');
       }
     });
@@ -207,7 +210,7 @@ export function useEquipmentValidation(): UseEquipmentValidationReturn {
     // Weight check
     if (validationOptions.validateWeight) {
       const currentWeight = getTotalEquipmentWeight(unit);
-      const availableWeight = unit.mass - currentWeight;
+      const availableWeight = unit.tonnage - currentWeight;
       
       if (equipment.weight && equipment.weight > availableWeight) {
         issues.push({
@@ -301,10 +304,10 @@ export function useEquipmentValidation(): UseEquipmentValidationReturn {
     // Check total weight
     if (validationOptions.validateWeight) {
       const totalWeight = getTotalEquipmentWeight(unit);
-      if (totalWeight > unit.mass) {
+      if (totalWeight > unit.tonnage) {
         issues.push({
           type: 'error',
-          message: `Equipment weight (${totalWeight}t) exceeds unit tonnage (${unit.mass}t)`,
+          message: `Equipment weight (${totalWeight}t) exceeds unit tonnage (${unit.tonnage}t)`,
           reason: 'weight',
         });
       }
@@ -329,8 +332,8 @@ export function useEquipmentValidation(): UseEquipmentValidationReturn {
     }
     
     // Check for orphaned dependencies
-    unit.equipmentPlacements.forEach(placement => {
-      const { valid, missing } = checkDependencies(placement.equipment, unit);
+    (unit.equipmentPlacements || []).forEach(placement => {
+      const { valid, missing } = checkDependencies(placement.equipment as any, unit);
       if (!valid) {
         issues.push({
           type: 'error',
@@ -342,7 +345,7 @@ export function useEquipmentValidation(): UseEquipmentValidationReturn {
     });
     
     // Check for mutual conflicts
-    const equipmentNames = unit.equipmentPlacements.map(p => p.equipment.name);
+    const equipmentNames = (unit.equipmentPlacements || []).map(p => p.equipment.name);
     equipmentNames.forEach((name, index) => {
       const conflicts = EQUIPMENT_CONFLICTS[name] || [];
       conflicts.forEach(conflict => {

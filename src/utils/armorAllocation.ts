@@ -402,7 +402,7 @@ export function calculateRemainingTonnage(unit: EditableUnit): number {
   // Engine weight
   const engineRating = unit.data?.engine?.rating || 200;
   const engineType = unit.data?.engine?.type || 'Standard';
-  usedTonnage += calculateEngineWeight(engineRating, totalTonnage, castToEngineType(mapEngineType(engineType)));
+  usedTonnage += calculateEngineWeight(engineRating, castToEngineType(mapEngineType(engineType)), totalTonnage);
 
   // Gyro (unchanged for now)
   const gyroType = unit.data?.gyro?.type || 'standard';

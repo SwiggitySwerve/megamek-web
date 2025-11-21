@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { EditableUnit, MECH_LOCATIONS } from '../../../types/editor';
 import { FullUnit } from '../../../types';
-import { IArmorAllocation } from '../../../types/core/UnitInterfaces';
 
 export interface ArmorLocationData {
   location: string;
@@ -57,7 +56,7 @@ export function useArmorCalculations(unit: EditableUnit | FullUnit): ArmorCalcul
         const allocation = unit.armor.allocation;
         
         // Standardize key generation (camelCase)
-        const locationKeyMap: Record<string, keyof IArmorAllocation> = {
+        const locationKeyMap: Record<string, string> = {
           'Head': 'head',
           'Center Torso': 'centerTorso',
           'Left Torso': 'leftTorso',
@@ -76,7 +75,7 @@ export function useArmorCalculations(unit: EditableUnit | FullUnit): ArmorCalcul
 
         if (hasRear) {
             // Special handling for rear armor which has specific property names in IArmorAllocation
-            let rearKey: keyof IArmorAllocation | undefined;
+            let rearKey: string | undefined;
             if (baseKey === 'centerTorso') rearKey = 'centerTorsoRear';
             else if (baseKey === 'leftTorso') rearKey = 'leftTorsoRear';
             else if (baseKey === 'rightTorso') rearKey = 'rightTorsoRear';

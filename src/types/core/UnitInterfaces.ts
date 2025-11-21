@@ -60,6 +60,17 @@ import {
     IConfigurationPreset
 } from './ValidationInterfaces';
 
+// Re-export Equipment types for backward compatibility
+export type {
+  IEquipment,
+  IWeapon,
+  IAmmunition,
+  IHeatManagementEquipment,
+  IMovementEquipment,
+  IElectronicWarfareEquipment,
+  IEquipmentQuery
+};
+
 // ===== EQUIPMENT ALLOCATION AND MANAGEMENT =====
 
 /**
@@ -175,7 +186,7 @@ export interface ICompleteUnitConfiguration {
   readonly heatSinks: IHeatSinkConfiguration; // The system type (Double vs Single)
   readonly jumpJets: IJumpJetConfiguration;   // The capability (Standard vs Improved)
   readonly enhancement?: IEnhancementConfiguration; // MASC, TSM
-
+  
   // Inventory (The Loadout)
   readonly equipment: IEquipmentInstance[]; // Weapons, Ammo, extra Heat Sinks, Jump Jets
   readonly fixedAllocations: IFixedAllocation[]; // Auto-generated from Systems

@@ -684,3 +684,159 @@ export interface IValidationSummary {
   readonly topRecommendations: IRecommendation[];
   readonly complianceGrade: 'A' | 'B' | 'C' | 'D' | 'F';
 }
+
+// ===== DEFINED SERVICES =====
+
+/**
+ * Interface for the Unit Configuration Service
+ */
+export interface IUnitConfigurationService {
+    validateConfiguration(config: ICompleteUnitConfiguration): IValidationResult;
+    calculateWeight(config: ICompleteUnitConfiguration): number;
+    calculateBV(config: ICompleteUnitConfiguration): number;
+    calculateCost(config: ICompleteUnitConfiguration): number;
+}
+
+/**
+ * Interface for the Equipment Allocation Service
+ */
+export interface IEquipmentAllocationService {
+    validateAllocation(equipment: IEquipmentInstance[], config: ICompleteUnitConfiguration): IValidationResult;
+    allocateEquipment(equipment: IEquipmentInstance, location: string, slot: number): boolean;
+    removeEquipment(equipmentId: string): boolean;
+}
+
+/**
+ * Interface for the State Persistence Service
+ */
+export interface IStatePersistenceService {
+    saveState(state: any): Promise<boolean>;
+    loadState(id: string): Promise<any>;
+    clearState(id: string): Promise<boolean>;
+}
+
+/**
+ * Interface for Configuration Summary
+ */
+export interface IConfigurationSummary {
+    totalTonnage: number;
+    usedTonnage: number;
+    remainingTonnage: number;
+    totalHeat: number;
+    dissipatedHeat: number;
+    heatEfficiency: number;
+    totalBV: number;
+    totalCost: number;
+}
+
+/**
+ * Interface for Critical Slot Management Service
+ */
+export interface ICriticalSlotManagementService {
+    getSlots(location: string): any[];
+    isSlotAvailable(location: string, slot: number): boolean;
+    allocateSlot(location: string, slot: number, content: any): boolean;
+    freeSlot(location: string, slot: number): boolean;
+}
+
+/**
+ * Interface for Unit Synchronization Service
+ */
+export interface IUnitSynchronizationService {
+    syncUnit(unit: ICompleteUnitConfiguration): Promise<boolean>;
+    registerObserver(observer: any): void;
+    unregisterObserver(observer: any): void;
+}
+
+/**
+ * Interface for Unit Snapshot
+ */
+export interface IUnitSnapshot {
+    id: string;
+    timestamp: Date;
+    configuration: ICompleteUnitConfiguration;
+    equipment: IEquipmentInstance[];
+}
+
+/**
+ * Interface for Configuration Comparison
+ */
+export interface IConfigurationComparison {
+    original: IUnitSnapshot;
+    current: IUnitSnapshot;
+    differences: IConfigurationDifference[];
+}
+
+/**
+ * Interface for Configuration Difference
+ */
+export interface IConfigurationDifference {
+    path: string;
+    oldValue: any;
+    newValue: any;
+    type: 'added' | 'removed' | 'modified';
+}
+
+/**
+ * Interface for Comparison Summary
+ */
+export interface IComparisonSummary {
+    addedComponents: number;
+    removedComponents: number;
+    modifiedComponents: number;
+    weightChange: number;
+    bvChange: number;
+    costChange: number;
+}
+
+/**
+ * Interface for Unit Configuration Observer
+ */
+export interface IUnitConfigurationObserver {
+    onConfigurationChanged(config: ICompleteUnitConfiguration): void;
+}
+
+/**
+ * Interface for Equipment Allocation Observer
+ */
+export interface IEquipmentAllocationObserver {
+    onEquipmentAllocated(equipment: IEquipmentInstance): void;
+    onEquipmentRemoved(equipment: IEquipmentInstance): void;
+}
+
+/**
+ * Interface for Critical Slot Observer
+ */
+export interface ICriticalSlotObserver {
+    onSlotAllocated(location: string, slot: number, content: any): void;
+    onSlotFreed(location: string, slot: number): void;
+}
+
+/**
+ * Interface for Configuration Factory
+ */
+export interface IConfigurationFactory {
+    createDefaultConfiguration(): ICompleteUnitConfiguration;
+    createFromTemplate(templateId: string): ICompleteUnitConfiguration;
+    createCustomConfiguration(specs: ICustomConfigurationSpecs): ICompleteUnitConfiguration;
+}
+
+/**
+ * Interface for Custom Configuration Specs
+ */
+export interface ICustomConfigurationSpecs {
+    tonnage: number;
+    techBase: TechBase;
+    rulesLevel: RulesLevel;
+    era: string;
+}
+
+/**
+ * Interface for Configuration Preset
+ */
+export interface IConfigurationPreset {
+    id: string;
+    name: string;
+    description: string;
+    configuration: ICompleteUnitConfiguration;
+}

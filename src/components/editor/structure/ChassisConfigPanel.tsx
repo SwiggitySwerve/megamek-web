@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import { EditableUnit } from '../../../types/editor';
 import { UnitConfig } from '../../../types/index';
 import { getMaxArmorPoints, getMaxArmorPointsForLocation } from '../../../utils/internalStructureTable';
+import { updateUnitSystem, updateUnitData } from '../../../utils/unit/unitEntityHelpers';
 
 interface ChassisConfig {
   tonnage: number;
@@ -78,14 +79,14 @@ const ChassisConfigPanel: React.FC<ChassisConfigPanelProps> = ({
   // Calculate structure weight
   const structureWeight = useMemo(() => {
     const structureType = STRUCTURE_TYPES.find(s => s.id === unit.data?.structure?.type) || STRUCTURE_TYPES[0];
-    return Math.ceil(unit.mass * structureType.weightMultiplier * 2) / 2; // Round to nearest 0.5
-  }, [unit.mass, unit.data?.structure?.type]);
+    return Math.ceil(unit.tonnage * structureType.weightMultiplier * 2) / 2; // Round to nearest 0.5
+  }, [unit.tonnage, unit.data?.structure?.type]);
 
   // Calculate engine rating from walk MP
   const engineRating = useMemo(() => {
     const walkMP = unit.data?.movement?.walk_mp || 1;
-    return walkMP * unit.mass;
-  }, [unit.mass, unit.data?.movement?.walk_mp]);
+    return walkMP * unit.tonnage;
+  }, [unit.tonnage, unit.data?.movement?.walk_mp]);
 
   // Calculate engine weight
   const engineWeight = useMemo(() => {
@@ -121,13 +122,13 @@ const ChassisConfigPanel: React.FC<ChassisConfigPanelProps> = ({
       }
       newArmorAllocation[location] = {
         ...newArmorAllocation[location],
-        maxArmor,
+        maxFront: maxArmor,
       };
     });
     
     const updatedUnit = {
       ...unit,
-      mass: tonnage,
+      tonnage: tonnage,
       armorAllocation: newArmorAllocation,
     };
     
@@ -137,13 +138,7 @@ const ChassisConfigPanel: React.FC<ChassisConfigPanelProps> = ({
   // Handle motive type change
   const handleMotiveTypeChange = useCallback((motiveType: string) => {
     // Update location structure based on motive type
-    const updatedUnit = {
-      ...unit,
-      data: {
-        ...unit.data,
-        config: motiveType as UnitConfig,
-      },
-    };
+    const updatedUnit = updateUnitData(unit, { config: motiveType as UnitConfig });
     
     // TODO: Update armor locations based on motive type
     // Quad adds Front/Rear legs, Tripod adds Center Leg, etc.
@@ -153,16 +148,7 @@ const ChassisConfigPanel: React.FC<ChassisConfigPanelProps> = ({
 
   // Handle structure type change
   const handleStructureTypeChange = useCallback((structureTypeId: string) => {
-    const updatedUnit = {
-      ...unit,
-      data: {
-        ...unit.data,
-        structure: {
-          ...unit.data.structure,
-          type: structureTypeId,
-        },
-      },
-    };
+    const updatedUnit = updateUnitSystem(unit, 'structure', { type: structureTypeId });
     
     onUnitChange(updatedUnit);
   }, [unit, onUnitChange]);
@@ -177,8 +163,8 @@ const ChassisConfigPanel: React.FC<ChassisConfigPanelProps> = ({
           <label className="text-xs font-medium text-gray-700 w-24">Tonnage:</label>
           <div className="flex items-center space-x-1">
             <button
-              onClick={() => handleTonnageChange(unit.mass - 5)}
-              disabled={readOnly || unit.mass <= 5}
+              onClick={() => handleTonnageChange(unit.tonnage - 5)}
+              disabled={readOnly || unit.tonnage <= 5}
               className="p-1 text-gray-600 hover:text-gray-900 disabled:opacity-50"
             >
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -187,7 +173,7 @@ const ChassisConfigPanel: React.FC<ChassisConfigPanelProps> = ({
             </button>
             <input
               type="number"
-              value={unit.mass}
+              value={unit.tonnage}
               onChange={(e) => handleTonnageChange(parseInt(e.target.value) || 5)}
               disabled={readOnly}
               className="w-16 px-2 py-1 text-xs text-center border border-gray-300 rounded"
@@ -196,8 +182,8 @@ const ChassisConfigPanel: React.FC<ChassisConfigPanelProps> = ({
               step={5}
             />
             <button
-              onClick={() => handleTonnageChange(unit.mass + 5)}
-              disabled={readOnly || unit.mass >= 200}
+              onClick={() => handleTonnageChange(unit.tonnage + 5)}
+              disabled={readOnly || unit.tonnage >= 200}
               className="p-1 text-gray-600 hover:text-gray-900 disabled:opacity-50"
             >
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -213,10 +199,7 @@ const ChassisConfigPanel: React.FC<ChassisConfigPanelProps> = ({
           <input
             type="checkbox"
             checked={unit.data?.is_omnimech || false}
-            onChange={(e) => onUnitChange({
-              ...unit,
-              data: { ...unit.data, is_omnimech: e.target.checked }
-            })}
+            onChange={(e) => onUnitChange(updateUnitData(unit, { is_omnimech: e.target.checked }))}
             disabled={readOnly}
             className="h-3 w-3"
           />
@@ -227,10 +210,7 @@ const ChassisConfigPanel: React.FC<ChassisConfigPanelProps> = ({
           <label className="text-xs font-medium text-gray-700 w-24">Base Type:</label>
           <select
             value={unit.data?.rules_level === 1 ? 'Primitive' : 'Standard'}
-            onChange={(e) => onUnitChange({
-              ...unit,
-              data: { ...unit.data, rules_level: e.target.value === 'Primitive' ? 1 : 2 }
-            })}
+            onChange={(e) => onUnitChange(updateUnitData(unit, { rules_level: e.target.value === 'Primitive' ? 1 : 2 }))}
             disabled={readOnly}
             className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded"
           >
@@ -277,13 +257,7 @@ const ChassisConfigPanel: React.FC<ChassisConfigPanelProps> = ({
           <label className="text-xs font-medium text-gray-700 w-24">Engine:</label>
           <select
             value={unit.data?.engine?.type || 'fusion'}
-            onChange={(e) => onUnitChange({
-              ...unit,
-              data: {
-                ...unit.data,
-                engine: { ...unit.data.engine, type: e.target.value }
-              }
-            })}
+            onChange={(e) => onUnitChange(updateUnitSystem(unit, 'engine', { type: e.target.value }))}
             disabled={readOnly}
             className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded"
           >
@@ -300,13 +274,7 @@ const ChassisConfigPanel: React.FC<ChassisConfigPanelProps> = ({
           <label className="text-xs font-medium text-gray-700 w-24">Gyro:</label>
           <select
             value={unit.data?.gyro?.type || 'standard'}
-            onChange={(e) => onUnitChange({
-              ...unit,
-              data: {
-                ...unit.data,
-                gyro: { ...unit.data.gyro, type: e.target.value }
-              }
-            })}
+            onChange={(e) => onUnitChange(updateUnitSystem(unit, 'gyro', { type: e.target.value }))}
             disabled={readOnly}
             className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded"
           >
@@ -323,13 +291,7 @@ const ChassisConfigPanel: React.FC<ChassisConfigPanelProps> = ({
           <label className="text-xs font-medium text-gray-700 w-24">Cockpit:</label>
           <select
             value={unit.data?.cockpit?.type || 'standard'}
-            onChange={(e) => onUnitChange({
-              ...unit,
-              data: {
-                ...unit.data,
-                cockpit: { ...unit.data.cockpit, type: e.target.value }
-              }
-            })}
+            onChange={(e) => onUnitChange(updateUnitSystem(unit, 'cockpit', { type: e.target.value }))}
             disabled={readOnly}
             className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded"
           >
@@ -346,13 +308,7 @@ const ChassisConfigPanel: React.FC<ChassisConfigPanelProps> = ({
           <label className="text-xs font-medium text-gray-700 w-24">Enhancement:</label>
           <select
             value={unit.data?.myomer?.type || 'none'}
-            onChange={(e) => onUnitChange({
-              ...unit,
-              data: {
-                ...unit.data,
-                myomer: { ...unit.data.myomer, type: e.target.value }
-              }
-            })}
+            onChange={(e) => onUnitChange(updateUnitSystem(unit, 'myomer', { type: e.target.value }))}
             disabled={readOnly}
             className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded"
           >

@@ -115,7 +115,7 @@ export class StandardWeightCalculationStrategy implements IWeightCalculationStra
 
     const potentialConfig = context as Partial<IUnitConfiguration>;
     // Check if context itself acts as configuration (legacy support)
-    const fallbackConfig = (potentialConfig.tonnage !== undefined) ? (context as IUnitConfiguration) : undefined;
+    const fallbackConfig = (potentialConfig.tonnage !== undefined) ? (context as unknown as IUnitConfiguration) : undefined;
 
     if (!contextWithData.config && !fallbackConfig) {
       throw new Error("Invalid calculation context: missing unit configuration");

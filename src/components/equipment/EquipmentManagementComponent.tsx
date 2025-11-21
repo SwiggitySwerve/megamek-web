@@ -121,8 +121,8 @@ export const EquipmentManagementComponent: React.FC<EquipmentManagementComponent
     }
 
     // Update unit with new equipment placement
-    const newPlacements = [...unit.equipmentPlacements];
-    const newCriticalSlots = [...unit.criticalSlots];
+    const newPlacements = [...(unit.equipmentPlacements || [])];
+    const newCriticalSlots = [...(unit.criticalSlots || [])];
 
     // If moving from another location, remove from old location
     if (item.sourceLocation && !item.isNew) {
@@ -153,9 +153,22 @@ export const EquipmentManagementComponent: React.FC<EquipmentManagementComponent
       }
     }
 
+    // Helper to convert FullEquipment to IEquipment compatible object
+    const equipmentAsIEquipment = {
+      ...item.equipment,
+      // Map FullEquipment properties to IEquipment
+      slots: item.equipment.space || 1,
+      category: item.equipment.type || 'Equipment',
+      techBase: item.equipment.tech_base || 'Inner Sphere',
+      requiresAmmo: item.equipment.type?.includes('Ammo') || false,
+      // Add other required properties with defaults if missing
+      introductionYear: 0,
+      rulesLevel: 'Standard',
+    } as unknown as import('../../types/core/EquipmentInterfaces').IEquipment;
+
     newPlacements.push({
       id: `${item.equipment.id}-${location}`,
-      equipment: item.equipment,
+      equipment: equipmentAsIEquipment,
       location,
       criticalSlots: slots,
     });
@@ -169,14 +182,14 @@ export const EquipmentManagementComponent: React.FC<EquipmentManagementComponent
       if (existingSlotIndex >= 0) {
         newCriticalSlots[existingSlotIndex] = {
           ...newCriticalSlots[existingSlotIndex],
-          equipment: item.equipment,
+          equipment: equipmentAsIEquipment,
           isEmpty: false,
         };
       } else {
         newCriticalSlots.push({
           location,
           slotIndex: slot,
-          equipment: item.equipment,
+          equipment: equipmentAsIEquipment,
           isFixed: false,
           isEmpty: false,
         });
@@ -242,22 +255,36 @@ export const EquipmentManagementComponent: React.FC<EquipmentManagementComponent
 
   // Handle auto-place all
   const handleAutoPlaceAll = useCallback(() => {
+    const existingPlacements = unit.equipmentPlacements || [];
     const unplacedEquipment = equipment.filter(
-      eq => !unit.equipmentPlacements.some(p => p.equipment.id === eq.id)
+      eq => !existingPlacements.some(p => p.equipment.id === eq.id)
     );
     
     const result = autoPlace(unplacedEquipment, unit, placementOptions);
     
     if (result.placements.length > 0) {
       // Convert placements to unit updates
-      const newPlacements = [...unit.equipmentPlacements];
-      const newCriticalSlots = [...unit.criticalSlots];
+      const newPlacements = [...existingPlacements];
+      const newCriticalSlots = [...(unit.criticalSlots || [])];
       
       result.placements.forEach(placement => {
         if (placement.success) {
+          // Helper to convert FullEquipment to IEquipment compatible object
+          const equipmentAsIEquipment = {
+            ...placement.equipment,
+            // Map FullEquipment properties to IEquipment
+            slots: placement.equipment.space || 1,
+            category: placement.equipment.type || 'Equipment',
+            techBase: placement.equipment.tech_base || 'Inner Sphere',
+            requiresAmmo: placement.equipment.type?.includes('Ammo') || false,
+            // Add other required properties with defaults if missing
+            introductionYear: 0,
+            rulesLevel: 'Standard',
+          } as unknown as import('../../types/core/EquipmentInterfaces').IEquipment;
+
           newPlacements.push({
             id: `${placement.equipment.id}-${placement.location}`,
-            equipment: placement.equipment,
+            equipment: equipmentAsIEquipment,
             location: placement.location,
             criticalSlots: placement.slots,
           });
@@ -270,14 +297,14 @@ export const EquipmentManagementComponent: React.FC<EquipmentManagementComponent
             if (existingIndex >= 0) {
               newCriticalSlots[existingIndex] = {
                 ...newCriticalSlots[existingIndex],
-                equipment: placement.equipment,
+                equipment: equipmentAsIEquipment,
                 isEmpty: false,
               };
             } else {
               newCriticalSlots.push({
                 location: placement.location,
                 slotIndex: slot,
-                equipment: placement.equipment,
+                equipment: equipmentAsIEquipment,
                 isFixed: false,
                 isEmpty: false,
               });
@@ -455,7 +482,7 @@ export const EquipmentManagementComponent: React.FC<EquipmentManagementComponent
               <div className="divide-y">
                 {items.map(item => {
                   const validation = validateEquipment(item, unit);
-                  const isPlaced = unit.equipmentPlacements.some(p => p.equipment.id === item.id);
+                  const isPlaced = (unit.equipmentPlacements || []).some(p => p.equipment.id === item.id);
                   
                   return (
                     <div

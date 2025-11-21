@@ -162,9 +162,10 @@ export function validateArmorAllocation(
 ): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
   
+  const tonnage = unit.tonnage || unit.mass || 0;
   // Check each location
   Object.entries(allocation).forEach(([location, armor]) => {
-    const maxArmor = getMaxArmorForLocation(location, unit.mass);
+    const maxArmor = getMaxArmorForLocation(location, tonnage);
     const totalLocationArmor = armor.front + (armor.rear || 0);
     
     if (totalLocationArmor > maxArmor) {
@@ -181,8 +182,8 @@ export function validateArmorAllocation(
     return total + armor.front + (armor.rear || 0);
   }, 0);
   
-  const armorType = unit.armorAllocation?.head?.type || { name: 'Standard', pointsPerTon: 16 } as ArmorType;
-  const armorWeight = calculateArmorWeight(totalArmorPoints, armorType);
+  const armorType = unit.armorAllocation?.head?.type || { name: 'Standard', pointsPerTon: 16 };
+  const armorWeight = calculateArmorWeight(totalArmorPoints, (armorType.name || 'Standard') as unknown as ArmorType);
   
   // This would need to check against remaining tonnage
   // For now, just return the errors found
@@ -198,7 +199,7 @@ export function calculateRemainingArmorPoints(
   unit: EditableUnit,
   currentAllocation: { [location: string]: { front: number; rear?: number } }
 ): number {
-  const armorType = unit.armorAllocation?.head?.type || { name: 'Standard', pointsPerTon: 16 } as ArmorType;
+  const armorType = unit.armorAllocation?.head?.type || { name: 'Standard', pointsPerTon: 16 };
   
   // Calculate current total
   const currentTotal = Object.values(currentAllocation).reduce((total, armor) => {
@@ -206,13 +207,14 @@ export function calculateRemainingArmorPoints(
   }, 0);
   
   // Calculate weight used
-  const currentWeight = calculateArmorWeight(currentTotal, armorType);
+  const currentWeight = calculateArmorWeight(currentTotal, (armorType.name || 'Standard') as unknown as ArmorType);
   
   // Get remaining tonnage (simplified - would need full weight calculation)
-  const remainingTonnage = unit.mass - currentWeight; // Very simplified
+  const tonnage = unit.tonnage || unit.mass || 0;
+  const remainingTonnage = tonnage - currentWeight; // Very simplified
   
   // Calculate how many more points we can add
-  const additionalPoints = Math.floor(remainingTonnage * armorType.pointsPerTon);
+  const additionalPoints = Math.floor(remainingTonnage * (armorType.pointsPerTon || 16));
   
   return Math.max(0, additionalPoints);
 }

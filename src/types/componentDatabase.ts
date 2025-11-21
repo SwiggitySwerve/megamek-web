@@ -12,6 +12,13 @@ import {
 
 import { IEquipmentConfiguration } from './core/BaseTypes';
 
+export {
+  ComponentCategory,
+  TechBase,
+  RulesLevel,
+  TechLevel
+};
+
 // ===== COMPONENT SPECIFICATION INTERFACE =====
 
 /**

@@ -42,8 +42,8 @@ const SummaryPanel: React.FC<SummaryPanelProps> = ({
 
   // Calculate remaining tonnage
   const remainingTonnage = useMemo(() => {
-    return unit.mass - totalWeight;
-  }, [unit.mass, totalWeight]);
+    return unit.tonnage - totalWeight;
+  }, [unit.tonnage, totalWeight]);
 
   // Get unit type string
   const unitType = useMemo(() => {
@@ -263,13 +263,13 @@ const SummaryPanel: React.FC<SummaryPanelProps> = ({
       <div className="space-y-1 text-xs">
         <div className="flex justify-between">
           <span className="text-gray-600">Chassis Tonnage:</span>
-          <span className="font-medium">{unit.mass} tons</span>
+          <span className="font-medium">{unit.tonnage} tons</span>
         </div>
         <div className="flex justify-between">
           <span className="text-gray-600">Total Weight Used:</span>
           <span className={`font-medium ${
-            totalWeight > unit.mass ? 'text-red-600' : 
-            totalWeight === unit.mass ? 'text-green-600' : 
+            totalWeight > unit.tonnage ? 'text-red-600' : 
+            totalWeight === unit.tonnage ? 'text-green-600' : 
             'text-blue-600'
           }`}>
             {totalWeight.toFixed(1)} tons
@@ -290,26 +290,26 @@ const SummaryPanel: React.FC<SummaryPanelProps> = ({
 
       {/* Validation Status Box */}
       <div className={`mt-3 p-2 rounded border ${
-        totalWeight > unit.mass 
+        totalWeight > unit.tonnage 
           ? 'bg-red-50 border-red-300' 
-          : totalWeight === unit.mass 
+          : totalWeight === unit.tonnage 
           ? 'bg-green-50 border-green-300' 
           : remainingTonnage < 1 
           ? 'bg-yellow-50 border-yellow-300'
           : 'bg-blue-50 border-blue-300'
       }`}>
         <p className={`text-xs font-medium ${
-          totalWeight > unit.mass 
+          totalWeight > unit.tonnage 
             ? 'text-red-700' 
-            : totalWeight === unit.mass 
+            : totalWeight === unit.tonnage 
             ? 'text-green-700' 
             : remainingTonnage < 1 
             ? 'text-yellow-700'
             : 'text-blue-700'
         }`}>
-          {totalWeight > unit.mass 
-            ? `⚠️ Overweight by ${(totalWeight - unit.mass).toFixed(1)} tons!`
-            : totalWeight === unit.mass 
+          {totalWeight > unit.tonnage 
+            ? `⚠️ Overweight by ${(totalWeight - unit.tonnage).toFixed(1)} tons!`
+            : totalWeight === unit.tonnage 
             ? '✅ Tonnage perfectly allocated'
             : remainingTonnage < 1 
             ? `⚡ ${remainingTonnage.toFixed(1)} tons free (nearly full)`

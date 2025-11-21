@@ -79,7 +79,7 @@ export interface IEquipmentModifier {
  * Weapon-specific interface
  */
 export interface IWeapon extends IEquipment {
-  readonly category: EquipmentCategory.WEAPON;
+  readonly category: typeof EquipmentCategory.WEAPON;
   readonly weaponType: IWeaponType;
   readonly damage: number | IDamageProfile;
   readonly range: IRangeProfile;

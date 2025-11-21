@@ -1,5 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { EditableUnit } from '../../../types/editor';
+import { RulesLevel } from '../../../types/core/BaseTypes';
+import { updateUnitData } from '../../../utils/unit/unitEntityHelpers';
 import { 
   getIconCache, 
   fileToBase64, 
@@ -25,23 +27,19 @@ const BasicInfoPanel: React.FC<BasicInfoPanelProps> = ({
 
   // Handle text field changes
   const handleFieldChange = useCallback((field: string, value: string | number) => {
-    const updatedUnit = {
-      ...unit,
-      data: {
-        ...unit.data,
-        [field]: value,
-      },
-    };
+    let updatedUnit = updateUnitData(unit, { [field]: value });
     
     // Special handling for certain fields
     if (field === 'chassis') {
-      updatedUnit.chassis = value as string;
+      updatedUnit = { ...updatedUnit, chassis: value as string };
     } else if (field === 'model') {
-      updatedUnit.model = value as string;
+      updatedUnit = { ...updatedUnit, model: value as string };
     } else if (field === 'tech_base') {
-      updatedUnit.tech_base = value as string;
+      updatedUnit = { ...updatedUnit, tech_base: value as string };
     } else if (field === 'era') {
-      updatedUnit.era = value as string;
+      updatedUnit = { ...updatedUnit, era: value as string };
+    } else if (field === 'rulesLevel') {
+      updatedUnit = { ...updatedUnit, rulesLevel: value as RulesLevel };
     }
     
     onUnitChange(updatedUnit);
@@ -73,15 +71,7 @@ const BasicInfoPanel: React.FC<BasicInfoPanelProps> = ({
       // Update preview and unit
       setIconPreview(resized);
       
-      const updatedUnit = {
-        ...unit,
-        data: {
-          ...unit.data,
-          icon: resized,
-        },
-      };
-      
-      onUnitChange(updatedUnit);
+      onUnitChange(updateUnitData(unit, { icon: resized }));
     } catch (error) {
       console.error('Failed to upload icon:', error);
       alert('Failed to upload icon. Please try again.');
@@ -92,15 +82,7 @@ const BasicInfoPanel: React.FC<BasicInfoPanelProps> = ({
   const handleRemoveIcon = useCallback(() => {
     setIconPreview(null);
     
-    const updatedUnit = {
-      ...unit,
-      data: {
-        ...unit.data,
-        icon: undefined,
-      },
-    };
-    
-    onUnitChange(updatedUnit);
+    onUnitChange(updateUnitData(unit, { icon: undefined }));
   }, [unit, onUnitChange]);
 
   // Handle import from cache
@@ -112,15 +94,7 @@ const BasicInfoPanel: React.FC<BasicInfoPanelProps> = ({
   const handleIconSelect = useCallback((iconData: string) => {
     setIconPreview(iconData);
     
-    const updatedUnit = {
-      ...unit,
-      data: {
-        ...unit.data,
-        icon: iconData,
-      },
-    };
-    
-    onUnitChange(updatedUnit);
+    onUnitChange(updateUnitData(unit, { icon: iconData }));
   }, [unit, onUnitChange]);
 
   return (
@@ -170,7 +144,7 @@ const BasicInfoPanel: React.FC<BasicInfoPanelProps> = ({
           <label className="text-xs font-medium text-gray-700 w-24">MUL ID:</label>
           <input
             type="text"
-            value={unit.mul_id || '-1'}
+            value={unit.data?.mul_id || '-1'}
             onChange={(e) => handleFieldChange('mul_id', e.target.value)}
             disabled={readOnly}
             className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded"
@@ -225,8 +199,8 @@ const BasicInfoPanel: React.FC<BasicInfoPanelProps> = ({
         <div className="flex items-center">
           <label className="text-xs font-medium text-gray-700 w-24">Tech Level:</label>
           <select
-            value={unit.rules_level || 'Standard'}
-            onChange={(e) => handleFieldChange('rules_level', e.target.value)}
+            value={unit.rulesLevel || 'Standard'}
+            onChange={(e) => handleFieldChange('rulesLevel', e.target.value)}
             disabled={readOnly}
             className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded"
           >
@@ -255,7 +229,7 @@ const BasicInfoPanel: React.FC<BasicInfoPanelProps> = ({
         <div className="flex items-center">
           <label className="text-xs font-medium text-gray-700 w-24">Role:</label>
           <select
-            value={unit.role || ''}
+            value={(typeof unit.data?.role === 'object' ? unit.data.role.name : unit.data?.role) || ''}
             onChange={(e) => handleFieldChange('role', e.target.value)}
             disabled={readOnly}
             className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded"

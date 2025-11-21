@@ -4,7 +4,7 @@
  */
 
 import { EquipmentObject, EquipmentAllocation } from './CriticalSlot'
-import { EngineType, GyroType, StructureType, ArmorType, HeatSinkType } from '../../types/systemComponents'
+import { EngineType, GyroType, StructureType, ArmorType, HeatSinkType, CockpitType } from '../../types/systemComponents'
 import { JumpJetType } from '../jumpJetCalculations'
 import { 
   ComponentConfiguration, 
@@ -124,6 +124,7 @@ export interface UnitConfiguration {
   
   // System components - now using simple string types
   gyroType: GyroType
+  cockpitType: CockpitType
   structureType: StructureType
   armorType: ArmorType
   

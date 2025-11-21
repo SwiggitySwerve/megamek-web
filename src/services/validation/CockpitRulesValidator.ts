@@ -36,14 +36,12 @@ export class CockpitRulesValidator {
     
     // Cockpit type might not be explicitly in UnitConfiguration in some versions, defaulting to Standard
     // If it's added later, we can access it here.
-    const cockpitType = config.cockpitType ? 
-      (typeof config.cockpitType === 'string' ? config.cockpitType : config.cockpitType.type) 
-      : 'Standard';
+    const cockpitType = config.cockpitType || 'Standard';
       
     const cockpitWeight = ValidationCalculations.calculateCockpitWeight(cockpitType);
     
     // Validate cockpit type logic (placeholders as most are Standard)
-    if (cockpitType === 'Torso-Mounted' && config.type !== 'Mech') {
+    if (cockpitType === 'Torso-Mounted Cockpit' && config.unitType !== 'BattleMech') {
        // Theoretical check
        recommendations.push('Torso-Mounted cockpits are typically for BattleMechs');
     }

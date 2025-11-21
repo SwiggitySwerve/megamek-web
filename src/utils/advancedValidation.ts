@@ -1,6 +1,7 @@
 // Advanced validation system for complete BattleTech rule compliance
 import { EditableUnit, ValidationResult, ValidationError } from '../types/editor';
 import { FullEquipment } from '../types/index';
+import { IEquipment } from '../types/core/EquipmentInterfaces';
 import { WeaponRangeValidator } from './weaponRangeValidation';
 import { calculateEngineWeight, calculateStructureWeight } from '../types/systemComponents';
 import { calculateInternalHeatSinks } from './heatSinkCalculations';
@@ -66,16 +67,17 @@ interface WeaponRange {
 }
 
 function safeGetWeaponRange(weapon: FullEquipment): WeaponRange {
-  if (weapon.range && typeof weapon.range === 'object') {
-    if (isRangeData(weapon.range)) {
+  const directRange = weapon.range as unknown;
+  if (directRange && typeof directRange === 'object') {
+    if (isRangeData(directRange)) {
       return {
-        short: weapon.range.short,
-        medium: weapon.range.medium,
-        long: weapon.range.long
+        short: directRange.short,
+        medium: directRange.medium,
+        long: directRange.long
       };
     }
     // Fallback for non-typed range
-    const range = weapon.range as Record<string, unknown>;
+    const range = directRange as Record<string, unknown>;
     return {
       short: typeof range.short === 'number' ? range.short : undefined,
       medium: typeof range.medium === 'number' ? range.medium : undefined,
@@ -160,7 +162,7 @@ export function performAdvancedValidation(
  * Validate core unit structure
  */
 function validateCoreStructure(unit: EditableUnit, result: DetailedValidationResult, context: ValidationContext) {
-  const data = unit.data;
+  const data = unit.data || {};
   
   // Mass validation
   if (!unit.mass || unit.mass < 20 || unit.mass > 100) {
@@ -199,7 +201,7 @@ function validateCoreStructure(unit: EditableUnit, result: DetailedValidationRes
  * Validate heat management systems
  */
 function validateHeatManagement(unit: EditableUnit, result: DetailedValidationResult, context: ValidationContext) {
-  const data = unit.data;
+  const data = unit.data || {};
   const heatSinks = data.heat_sinks?.count || 10;
   const engineRating = data.engine?.rating || 100;
   
@@ -217,8 +219,11 @@ function validateHeatManagement(unit: EditableUnit, result: DetailedValidationRe
   // Heat balance analysis
   const weapons = unit.equipmentPlacements?.filter(eq => isWeaponEquipment(eq.equipment)) || [];
   const totalHeatGeneration = weapons.reduce((sum, weapon) => {
-    const heat = weapon.equipment.heat || weapon.equipment.data?.heatmap || 0;
-    return sum + Number(heat);
+    // Handle both IEquipment (heatGeneration) and FullEquipment (heat/heatmap)
+    const heat = 'heatGeneration' in weapon.equipment 
+      ? (weapon.equipment as IEquipment).heatGeneration 
+      : (weapon.equipment as any).heat || (weapon.equipment as any).data?.heatmap || 0;
+    return sum + Number(heat || 0);
   }, 0);
   
   const heatSinkType = data.heat_sinks?.type || 'Single';
@@ -243,12 +248,12 @@ function validateArmorAllocation(unit: EditableUnit, result: DetailedValidationR
   
   Object.entries(armor).forEach(([location, allocation]) => {
     // Check for excessive armor
-    if (allocation.front > allocation.maxArmor) {
+    if (allocation.front > (allocation.maxFront || 0)) {
       result.criticalErrors.push({
         id: `excessive-armor-${location}`,
         field: `armor.${location}`,
         category: 'error',
-        message: `${location} armor (${allocation.front}) exceeds maximum (${allocation.maxArmor})`
+        message: `${location} armor (${allocation.front}) exceeds maximum (${allocation.maxFront})`
       });
     }
     
@@ -353,13 +358,16 @@ function analyzeWeaponLoadout(weapons: any[], result: DetailedValidationResult) 
  */
 function calculateBattleValueAndCost(unit: EditableUnit, result: DetailedValidationResult, context: ValidationContext) {
   // Basic BV calculation (simplified)
-  let battleValue = unit.mass * 10; // Base value
+  const mass = unit.tonnage || unit.mass || 0;
+  let battleValue = mass * 10; // Base value
   
   // Add weapon BV
   const weapons = unit.equipmentPlacements?.filter(eq => isWeaponEquipment(eq.equipment)) || [];
   
   weapons.forEach(weapon => {
-    const weaponBV = weapon.equipment.data?.battle_value || weapon.equipment.data?.battlevalue || 0;
+    const weaponBV = (weapon.equipment as IEquipment).battleValue || 
+                     (weapon.equipment as any).data?.battle_value || 
+                     (weapon.equipment as any).data?.battlevalue || 0;
     battleValue += Number(weaponBV);
   });
   
@@ -367,16 +375,22 @@ function calculateBattleValueAndCost(unit: EditableUnit, result: DetailedValidat
   const otherEquipment = unit.equipmentPlacements?.filter(eq => !isWeaponEquipment(eq.equipment)) || [];
   
   otherEquipment.forEach(eq => {
-    const equipmentBV = eq.equipment.data?.battle_value || eq.equipment.data?.battlevalue || 0;
+    const equipmentBV = (eq.equipment as IEquipment).battleValue || 
+                        (eq.equipment as any).data?.battle_value || 
+                        (eq.equipment as any).data?.battlevalue || 0;
     battleValue += Number(equipmentBV);
   });
   
   // Apply quirk modifiers
-  const quirks = unit.selectedQuirks || [];
+  const positiveQuirks = unit.data?.quirks?.positive || [];
+  const negativeQuirks = unit.data?.quirks?.negative || [];
+  const quirks = [...positiveQuirks, ...negativeQuirks];
+  
   quirks.forEach(quirk => {
-    if (quirk.name.toLowerCase().includes('good reputation')) {
+    const quirkName = typeof quirk === 'string' ? quirk : (quirk as any).name || '';
+    if (quirkName.toLowerCase().includes('good reputation')) {
       battleValue *= 1.1;
-    } else if (quirk.name.toLowerCase().includes('bad reputation')) {
+    } else if (quirkName.toLowerCase().includes('bad reputation')) {
       battleValue *= 0.9;
     }
   });
@@ -384,11 +398,13 @@ function calculateBattleValueAndCost(unit: EditableUnit, result: DetailedValidat
   result.battleValue = Math.round(battleValue);
   
   // Basic cost calculation (very simplified)
-  let cost = unit.mass * 10000; // Base cost per ton
+  let cost = mass * 10000; // Base cost per ton
   
   // Add equipment costs
   unit.equipmentPlacements?.forEach(eq => {
-    const equipmentCost = eq.equipment.cost || eq.equipment.data?.cost || 0;
+    const equipmentCost = (eq.equipment as IEquipment).cost || 
+                          (eq.equipment as any).data?.cost || 
+                          (eq.equipment as any).data?.cost_cbills || 0;
     cost += Number(equipmentCost);
   });
   
@@ -400,8 +416,9 @@ function calculateBattleValueAndCost(unit: EditableUnit, result: DetailedValidat
  */
 function generateOptimizationSuggestions(unit: EditableUnit, result: DetailedValidationResult, context: ValidationContext) {
   // Tonnage efficiency estimation
+  const mass = unit.tonnage || unit.mass || 0;
   const usedTonnage = estimateUsedTonnage(unit);
-  const remainingTonnage = unit.mass - usedTonnage;
+  const remainingTonnage = mass - usedTonnage;
   
   if (remainingTonnage > 1) {
     result.suggestions.push({
@@ -414,12 +431,12 @@ function generateOptimizationSuggestions(unit: EditableUnit, result: DetailedVal
   }
   
   // Speed vs armor trade-off analysis
-  const walkingMP = unit.data.movement?.walk_mp || 0;
+  const walkingMP = unit.data?.movement?.walk_mp || 0;
   const totalArmor = Object.values(unit.armorAllocation || {}).reduce(
     (sum, alloc) => sum + alloc.front + (alloc.rear || 0), 0
   );
   
-  if (walkingMP >= 6 && totalArmor < unit.mass * 2) {
+  if (walkingMP >= 6 && totalArmor < mass * 2) {
     result.suggestions.push({
       id: 'speed-vs-armor',
       category: 'armor',
@@ -433,14 +450,26 @@ function generateOptimizationSuggestions(unit: EditableUnit, result: DetailedVal
 /**
  * Helper functions
  */
-function isWeaponEquipment(equipment: FullEquipment): boolean {
+function isWeaponEquipment(equipment: FullEquipment | IEquipment): boolean {
+  // Check if IEquipment
+  if ('category' in equipment) {
+    return equipment.category === 'weapon' || ('damage' in equipment && !!equipment.damage);
+  }
+  
+  // FullEquipment
   return equipment.type === 'weapon' || 
          Boolean(equipment.damage) ||
          Boolean(equipment.data?.damage);
 }
 
-function getWeaponMaxRange(weapon: FullEquipment): number {
-  const range = safeGetWeaponRange(weapon);
+function getWeaponMaxRange(weapon: FullEquipment | IEquipment): number {
+  // Handle IEquipment with structured range
+  if ('range' in weapon && weapon.range && typeof weapon.range === 'object' && !('data' in weapon)) {
+    const r = weapon.range as any;
+    return r.long || r.medium || r.short || 0;
+  }
+
+  const range = safeGetWeaponRange(weapon as FullEquipment);
   return range.long || range.medium || range.short || 0;
 }
 
@@ -448,17 +477,18 @@ function estimateUsedTonnage(unit: EditableUnit): number {
   let usedTonnage = 0;
   
   // Engine weight
-  const engineRating = unit.data.engine?.rating || 0;
-  const engineType = unit.data.engine?.type || 'Standard';
-  usedTonnage += calculateEngineWeight(engineRating, unit.mass, castToEngineType(engineType));
+  const mass = unit.tonnage || unit.mass || 0;
+  const engineRating = unit.data?.engine?.rating || 0;
+  const engineType = unit.data?.engine?.type || 'Standard';
+  usedTonnage += calculateEngineWeight(engineRating, castToEngineType(engineType), mass);
   
   // Structure weight
-  const structureType = unit.data.structure?.type || 'Standard';
-  usedTonnage += calculateStructureWeight(unit.mass, castToStructureType(structureType));
+  const structureType = unit.data?.structure?.type || 'Standard';
+  usedTonnage += calculateStructureWeight(mass, castToStructureType(structureType));
   
   // Equipment weight
   unit.equipmentPlacements?.forEach(eq => {
-    const weight = eq.equipment.weight || eq.equipment.data?.tons || 0;
+    const weight = (eq.equipment as IEquipment).weight || (eq.equipment as any).data?.tons || 0;
     usedTonnage += Number(weight);
   });
   
@@ -466,7 +496,7 @@ function estimateUsedTonnage(unit: EditableUnit): number {
   const totalArmor = Object.values(unit.armorAllocation || {}).reduce(
     (sum, alloc) => sum + alloc.front + (alloc.rear || 0), 0
   );
-  const armorType = unit.data.armor?.type || 'Standard';
+  const armorType = unit.data?.armor?.type || 'Standard';
   usedTonnage += calculateArmorWeight(totalArmor, castToArmorType(armorType));
   
   return usedTonnage;

@@ -5,7 +5,6 @@ import { EquipmentSlice, createEquipmentSlice } from './slices/equipmentSlice';
 import { ValidationSlice, createValidationSlice } from './slices/validationSlice';
 import { CompleteUnitState, UnitConfiguration } from '../utils/criticalSlots/UnitCriticalManagerTypes';
 import { UnitCriticalManager } from '../utils/criticalSlots/UnitCriticalManager';
-import { createComponentConfiguration } from '../types/componentConfiguration';
 
 // Storage keys matching MultiUnitProvider
 const TABS_METADATA_KEY = 'battletech-tabs-metadata';
@@ -88,9 +87,10 @@ export const useUnitStore = create<UnitStore>()(
              engineRating: 200,
              runMP: 6,
              engineType: 'Standard',
-             gyroType: createComponentConfiguration('gyro', 'Standard')!,
-             structureType: createComponentConfiguration('structure', 'Standard')!,
-             armorType: createComponentConfiguration('armor', 'Standard')!,
+             gyroType: 'Standard',
+             cockpitType: 'Standard',
+             structureType: 'Standard',
+             armorType: 'Standard',
              armorAllocation: {
                 HD: { front: 9, rear: 0 },
                 CT: { front: 20, rear: 6 },
@@ -102,12 +102,12 @@ export const useUnitStore = create<UnitStore>()(
                 RL: { front: 20, rear: 0 }
              },
              armorTonnage: 8.0,
-             heatSinkType: createComponentConfiguration('heatSink', 'Single')!,
+             heatSinkType: 'Single',
              totalHeatSinks: 10,
              internalHeatSinks: 8,
              externalHeatSinks: 2,
              jumpMP: 0,
-             jumpJetType: createComponentConfiguration('jumpJet', 'Standard Jump Jet')!,
+             jumpJetType: 'Standard Jump Jet',
              jumpJetCounts: {},
              hasPartialWing: false,
              enhancements: [],
@@ -152,9 +152,10 @@ export const useUnitStore = create<UnitStore>()(
                 engineRating: 200,
                 runMP: 6,
                 engineType: 'Standard',
-                gyroType: createComponentConfiguration('gyro', 'Standard')!,
-                structureType: createComponentConfiguration('structure', 'Standard')!,
-                armorType: createComponentConfiguration('armor', 'Standard')!,
+                gyroType: 'Standard',
+                cockpitType: 'Standard',
+                structureType: 'Standard',
+                armorType: 'Standard',
                 armorAllocation: {
                     HD: { front: 9, rear: 0 },
                     CT: { front: 20, rear: 6 },
@@ -166,12 +167,12 @@ export const useUnitStore = create<UnitStore>()(
                     RL: { front: 20, rear: 0 }
                 },
                 armorTonnage: 8.0,
-                heatSinkType: createComponentConfiguration('heatSink', 'Single')!,
+                heatSinkType: 'Single',
                 totalHeatSinks: 10,
                 internalHeatSinks: 8,
                 externalHeatSinks: 2,
                 jumpMP: 0,
-                jumpJetType: createComponentConfiguration('jumpJet', 'Standard Jump Jet')!,
+                jumpJetType: 'Standard Jump Jet',
                 jumpJetCounts: {},
                 hasPartialWing: false,
                 enhancements: [],
@@ -333,4 +334,3 @@ export const useUnitStore = create<UnitStore>()(
     }
   }))
 );
-

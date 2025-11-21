@@ -104,10 +104,10 @@ export class ComponentSwitchOrchestrator {
       const resolution = validateAndResolveComponentWithMemory(
         resolvedName,
         SubsystemToDbCategory[subsystem],
-        oldTechBase,
-        newTechBase,
+        oldTechBase as TechBase,
+        newTechBase as TechBase,
         updatedMemoryState.techBaseMemory,
-        currentConfiguration.rulesLevel || RulesLevel.STANDARD
+        (currentConfiguration.rulesLevel as RulesLevel) || RulesLevel.STANDARD
       )
       wasRestoredFromMemory = resolution.wasRestored
       resolutionReason = resolution.resolutionReason

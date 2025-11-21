@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { EditableUnit } from '../../types/editor';
 import { IArmorDef } from '../../types/core/ComponentInterfaces';
-import { IArmorAllocation } from '../../types/core/UnitInterfaces';
 import { ComponentCategory, TechLevel, RulesLevel, TechBase } from '../../types/core/BaseTypes';
 import { FullUnit } from '../../types';
 import { ArmorType, ARMOR_TYPES } from '../../utils/armorTypes';

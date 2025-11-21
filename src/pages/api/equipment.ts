@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import mockEquipment from '../../public/mockdata/mockEquipment.json';
+import mockEquipment from '../../../public/mockdata/mockEquipment.json';
 
 interface Equipment {
   id: string;

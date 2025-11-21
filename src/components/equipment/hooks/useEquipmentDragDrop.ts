@@ -283,7 +283,7 @@ export function useDropZones(unit: EditableUnit) {
 
     locations.forEach(location => {
       // Find available slots in location
-      const locationSlots = unit.criticalSlots.filter(
+      const locationSlots = (unit.criticalSlots || []).filter(
         slot => slot.location === location
       );
       

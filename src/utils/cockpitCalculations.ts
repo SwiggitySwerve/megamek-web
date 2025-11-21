@@ -10,9 +10,8 @@ export const COCKPIT_WEIGHTS: Record<CockpitType, number> = {
   'Standard': 3,
   'Small': 2,
   'Command Console': 3,
-  'Torso-Mounted': 4,
-  'Interface': 2,
-  'Primitive': 5
+  'Torso-Mounted Cockpit': 4,
+  'Primitive Cockpit': 5
 };
 
 // Cockpit critical slot requirements
@@ -20,9 +19,8 @@ export const COCKPIT_SLOT_REQUIREMENTS: Record<CockpitType, { head: number; cent
   'Standard': { head: 1, centerTorso: 0 },
   'Small': { head: 1, centerTorso: 0 },
   'Command Console': { head: 2, centerTorso: 0 },
-  'Torso-Mounted': { head: 0, centerTorso: 1 },
-  'Interface': { head: 1, centerTorso: 0 },
-  'Primitive': { head: 5, centerTorso: 0 }
+  'Torso-Mounted Cockpit': { head: 0, centerTorso: 1 },
+  'Primitive Cockpit': { head: 5, centerTorso: 0 }
 };
 
 // Cockpit technology restrictions
@@ -43,16 +41,12 @@ export const COCKPIT_TECH_RESTRICTIONS: Record<CockpitType, {
     techBase: ['Both'], 
     rulesLevel: ['Advanced', 'Experimental'] 
   },
-  'Torso-Mounted': { 
+  'Torso-Mounted Cockpit': { 
     techBase: ['Both'], 
     rulesLevel: ['Advanced', 'Experimental'],
     incompatibleWith: ['XL Gyro']
   },
-  'Interface': { 
-    techBase: ['Both'], 
-    rulesLevel: ['Experimental'] 
-  },
-  'Primitive': { 
+  'Primitive Cockpit': { 
     techBase: ['Both'], 
     rulesLevel: ['Standard', 'Tournament', 'Advanced', 'Experimental'] 
   }
@@ -82,17 +76,12 @@ export const COCKPIT_SPECIAL_PROPERTIES: Record<CockpitType, {
     initiativeBonus: -2,     // -2 to initiative (better)
     commandBonus: 1          // Can coordinate other units
   },
-  'Torso-Mounted': { 
+  'Torso-Mounted Cockpit': { 
     ejectionCapable: false,  // No ejection
     lifeSupport: true,
     pilotingModifier: 1      // +1 penalty to piloting
   },
-  'Interface': { 
-    ejectionCapable: false,  // No ejection
-    lifeSupport: false,      // No life support
-    consciousness: false     // Pilot unconscious during operation
-  },
-  'Primitive': { 
+  'Primitive Cockpit': { 
     ejectionCapable: false,  // No ejection
     lifeSupport: true,
     pilotingModifier: 1      // +1 penalty to piloting
@@ -178,9 +167,9 @@ export function getCockpitRequirements(type: CockpitType): string[] {
   }
   
   // Interface cockpit requires neural interface
-  if (type === 'Interface') {
-    requirements.push('Neural Interface');
-  }
+  // if (type === 'Interface') {
+  //   requirements.push('Neural Interface');
+  // }
   
   return requirements;
 }
@@ -214,9 +203,9 @@ export function getCockpitComponents(type: CockpitType): string[] {
   const components: string[] = [];
   
   // All cockpits include basic components
-  if (type !== 'Interface') {
+  // if (type !== 'Interface') {
     components.push('Life Support');
-  }
+  // }
   components.push('Sensors');
   components.push('Cockpit');
   

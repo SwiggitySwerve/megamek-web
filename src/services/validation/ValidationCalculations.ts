@@ -5,7 +5,7 @@
  */
 
 import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes';
-import { IComponentConfiguration } from '../../types/core/ComponentInterfaces';
+import { IComponentConfiguration } from '../../types/core/BaseTypes';
 import { getTotalInternalStructure, getMaxArmorPoints } from '../../utils/internalStructureTable';
 import { calculateGyroWeight } from '../../types/systemComponents';
 import { calculateInternalHeatSinks } from '../../utils/heatSinkCalculations';
@@ -13,7 +13,7 @@ import { EngineType, GyroType } from '../../types/systemComponents';
 
 // Type-safe casting functions
 function castToEngineType(engineType: string): EngineType {
-  const validTypes: EngineType[] = ['Standard', 'XL (IS)', 'XL (Clan)', 'Light', 'XXL', 'Compact', 'ICE', 'Fuel Cell'];
+  const validTypes: EngineType[] = ['Standard', 'XL', 'Light', 'XXL', 'Compact', 'ICE', 'Fuel Cell'];
   return validTypes.includes(engineType as EngineType) ? engineType as EngineType : 'Standard';
 }
 

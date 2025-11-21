@@ -203,7 +203,6 @@ export class WeightCalculationService implements IWeightCalculationService {
     
     switch (engineType) {
       case 'XL':
-      case 'XL (Clan)':
         weight *= 0.5;
         efficiency = 2.0;
         break;
@@ -364,7 +363,7 @@ export class WeightCalculationService implements IWeightCalculationService {
   private extractEquipmentWeight(equipment: IEquipmentInstance[]): number {
     return equipment.reduce((total, item) => {
       // Exclude ammunition from equipment weight (it's calculated separately)
-      if (!item?.equipment || item.equipment.type === 'ammunition' || item.equipment.category === 'ammunition') return total;
+      if (!item?.equipment || item.equipment.type === 'ammunition' || item.equipment.category === 'ammo') return total;
       return total + (item.equipment.weight || 0) * (item.quantity || 1);
     }, 0);
   }
@@ -372,7 +371,7 @@ export class WeightCalculationService implements IWeightCalculationService {
   private extractAmmoWeight(equipment: IEquipmentInstance[]): number {
     return equipment.reduce((total, item) => {
       // Include ONLY ammunition
-      if (!item?.equipment || (item.equipment.type !== 'ammunition' && item.equipment.category !== 'ammunition')) return total;
+      if (!item?.equipment || (item.equipment.type !== 'ammunition' && item.equipment.category !== 'ammo')) return total;
       return total + (item.equipment.weight || 0) * (item.quantity || 1);
     }, 0);
   }

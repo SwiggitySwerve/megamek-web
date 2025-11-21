@@ -1,11 +1,12 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import { EditableUnit, CriticalSlotAssignment } from '../../types/editor';
 import { FullEquipment } from '../../types';
+import { IEquipment } from '../../types/core/EquipmentInterfaces';
 
 interface CriticalAllocationVisualizerProps {
   unit: EditableUnit;
   onSlotClick?: (location: string, slotIndex: number) => void;
-  onEquipmentClick?: (equipment: FullEquipment, location: string) => void;
+  onEquipmentClick?: (equipment: IEquipment | FullEquipment, location: string) => void;
   highlightedEquipment?: string;
   showDamage?: boolean;
   compact?: boolean;
@@ -77,7 +78,8 @@ export const CriticalAllocationVisualizer: React.FC<CriticalAllocationVisualizer
       const slots: (CriticalSlotAssignment | null)[] = new Array(maxSlots).fill(null);
       
       // Fill in assigned slots
-      unit.criticalSlots
+      const slotsList = unit.criticalSlots || [];
+      slotsList
         .filter(slot => slot.location === location)
         .forEach(slot => {
           if (slot.slotIndex < maxSlots) {
@@ -90,14 +92,16 @@ export const CriticalAllocationVisualizer: React.FC<CriticalAllocationVisualizer
   }, [unit.criticalSlots]);
 
   // Get equipment color
-  const getEquipmentColor = useCallback((equipment?: FullEquipment): string => {
+  const getEquipmentColor = useCallback((equipment?: IEquipment | FullEquipment): string => {
     if (!equipment) return '#e5e7eb'; // gray-200
     
+    const eqAny = equipment as any;
+
     // Check for specific equipment types
     if (equipment.type.includes('Weapon')) {
-      if (equipment.data?.weapon_type === 'Energy') return EQUIPMENT_COLORS['Energy Weapon'];
-      if (equipment.data?.weapon_type === 'Ballistic') return EQUIPMENT_COLORS['Ballistic Weapon'];
-      if (equipment.data?.weapon_type === 'Missile') return EQUIPMENT_COLORS['Missile Weapon'];
+      if (eqAny.data?.weapon_type === 'Energy') return EQUIPMENT_COLORS['Energy Weapon'];
+      if (eqAny.data?.weapon_type === 'Ballistic') return EQUIPMENT_COLORS['Ballistic Weapon'];
+      if (eqAny.data?.weapon_type === 'Missile') return EQUIPMENT_COLORS['Missile Weapon'];
     }
     
     return EQUIPMENT_COLORS[equipment.type] || EQUIPMENT_COLORS['Equipment'];
@@ -156,7 +160,8 @@ export const CriticalAllocationVisualizer: React.FC<CriticalAllocationVisualizer
 
   // Handle slot click
   const handleSlotClick = useCallback((location: string, slotIndex: number) => {
-    const slot = unit.criticalSlots.find(
+    const slotsList = unit.criticalSlots || [];
+    const slot = slotsList.find(
       s => s.location === location && s.slotIndex === slotIndex
     );
     
@@ -271,10 +276,11 @@ export const CriticalAllocationVisualizer: React.FC<CriticalAllocationVisualizer
 
   // Calculate usage statistics
   const usageStats = useMemo(() => {
+    const slotsList = unit.criticalSlots || [];
     const totalSlots = Object.values(LOCATION_SLOT_COUNTS).reduce((a, b) => a + b, 0);
-    const usedSlots = unit.criticalSlots.filter(s => !s.isEmpty).length;
-    const weaponSlots = unit.criticalSlots.filter(s => s.equipment?.type.includes('Weapon')).length;
-    const ammoSlots = unit.criticalSlots.filter(s => s.equipment?.type === 'Ammunition').length;
+    const usedSlots = slotsList.filter(s => !s.isEmpty).length;
+    const weaponSlots = slotsList.filter(s => s.equipment?.type.includes('Weapon')).length;
+    const ammoSlots = slotsList.filter(s => s.equipment?.type === 'Ammunition').length;
     const equipmentSlots = usedSlots - weaponSlots - ammoSlots;
     
     return {
@@ -340,7 +346,8 @@ export const CriticalAllocationVisualizer: React.FC<CriticalAllocationVisualizer
         }}>
           <div className="bg-gray-900 text-white text-sm rounded px-3 py-2 shadow-lg">
             {(() => {
-              const slot = unit.criticalSlots.find(
+              const slotsList = unit.criticalSlots || [];
+              const slot = slotsList.find(
                 s => s.location === hoveredSlot.location && s.slotIndex === hoveredSlot.index
               );
               
@@ -351,7 +358,7 @@ export const CriticalAllocationVisualizer: React.FC<CriticalAllocationVisualizer
                   <div>
                     <div className="font-medium">{slot.equipment.name}</div>
                     <div className="text-xs text-gray-300">
-                      {slot.equipment.weight}t • {slot.equipment.space || 1} slots
+                      {slot.equipment.weight}t • {slot.equipment.slots || 1} slots
                     </div>
                   </div>
                 );

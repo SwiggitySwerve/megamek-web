@@ -4,7 +4,7 @@
  * Extracted from EquipmentAllocationService.ts
  */
 
-import { EquipmentAllocation } from '../../utils/criticalSlots/CriticalSlot';
+import { EquipmentAllocation } from '../../../utils/criticalSlots/CriticalSlot';
 
 // =============================================================================
 // Core Placement Types

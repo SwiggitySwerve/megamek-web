@@ -298,8 +298,16 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({ readOnly = false }) =>
     }
   }, [memoryState, enhancedConfig, applyMemoryRestoration, updateConfiguration])
 
+  if (!enhancedConfig) {
+    return (
+      <div className="h-full flex items-center justify-center bg-slate-900">
+        <div className="text-slate-400">Loading unit configuration...</div>
+      </div>
+    )
+  }
+
   // Calculate current era and determine tech base status
-  const currentEra = getEraForYear(enhancedConfig.introductionYear)
+  const currentEra = getEraForYear(enhancedConfig.introductionYear || 3025)
   const isMixedTechEnabled = (enhancedConfig.techBase as string) === 'Mixed'
   const primaryTechBase = enhancedConfig.techBase // Use the actual tech base setting
   // Fix: isMixed should be true if master tech base is Mixed
@@ -418,7 +426,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({ readOnly = false }) =>
           {/* Right Column: Tech Rating (1/3 width) */}
           <div className="lg:col-span-1">
             <TechRatingPanel
-              techRating={enhancedConfig.techRating}
+              techRating={enhancedConfig.techRating as any}
               introductionYear={enhancedConfig.introductionYear || 3025}
             />
           </div>

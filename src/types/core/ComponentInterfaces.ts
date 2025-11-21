@@ -34,7 +34,7 @@ export interface ISystemComponent extends IComponentConfiguration {
  * Engine definition (The "Concept" of an engine type, e.g. "XL Engine")
  */
 export interface IEngineDef extends ISystemComponent {
-  readonly category: ComponentCategory.ENGINE;
+  readonly category: typeof ComponentCategory.ENGINE;
   readonly weightMultiplier: number; // Multiplier or function based on rating
   readonly criticalSlots: IEngineSlotRequirements;
   readonly heatSinkCapacity: number; // Free heat sinks in engine
@@ -57,7 +57,7 @@ export interface IEngineSurvivability {
  * Gyro definition
  */
 export interface IGyroDef extends ISystemComponent {
-  readonly category: ComponentCategory.GYRO;
+  readonly category: typeof ComponentCategory.GYRO;
   readonly weightMultiplier: number; // Usually relative to engine rating
   readonly criticalSlots: number;
 }
@@ -68,7 +68,7 @@ export interface IGyroDef extends ISystemComponent {
  * Cockpit definition
  */
 export interface ICockpitDef extends ISystemComponent {
-  readonly category: ComponentCategory.COCKPIT;
+  readonly category: typeof ComponentCategory.COCKPIT;
   readonly weight: number;
   readonly criticalSlots: number;
   readonly sensors: ISensorDef;
@@ -90,7 +90,7 @@ export interface ILifeSupportDef {
  * Internal Structure definition
  */
 export interface IStructureDef extends ISystemComponent {
-  readonly category: ComponentCategory.STRUCTURE;
+  readonly category: typeof ComponentCategory.STRUCTURE;
   readonly weightMultiplier: number; // e.g. 0.1 for Standard, 0.05 for Endo
   readonly criticalSlots: number; // Total slots required to be placed
 }
@@ -101,7 +101,7 @@ export interface IStructureDef extends ISystemComponent {
  * Armor definition
  */
 export interface IArmorDef extends ISystemComponent {
-  readonly category: ComponentCategory.ARMOR;
+  readonly category: typeof ComponentCategory.ARMOR;
   readonly pointsPerTon: number;
   readonly criticalSlots: number;
   readonly maxPointsPerLocationMultiplier: number;
@@ -113,7 +113,7 @@ export interface IArmorDef extends ISystemComponent {
  * Heat Sink System definition (The TYPE of heat sink used, e.g. Double, Single)
  */
 export interface IHeatSinkDef extends ISystemComponent {
-  readonly category: ComponentCategory.HEAT_SINK;
+  readonly category: typeof ComponentCategory.HEAT_SINK;
   readonly dissipation: number;
   readonly weightPerSink: number;
   readonly slotsPerSink: number;
@@ -125,7 +125,7 @@ export interface IHeatSinkDef extends ISystemComponent {
  * Jump Jet System definition (The TYPE of jump jet, e.g. Standard, Improved)
  */
 export interface IJumpJetDef extends ISystemComponent {
-  readonly category: ComponentCategory.MOVEMENT;
+  readonly category: typeof ComponentCategory.MOVEMENT;
   readonly weightPerJetMultiplier: number; // Often based on mech weight
   readonly slotsPerJet: number;
 }

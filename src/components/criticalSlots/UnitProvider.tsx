@@ -4,7 +4,7 @@
  */
 
 import React, { createContext, useContext, useMemo, useReducer, useEffect, useRef, useCallback, useState } from 'react'
-import { UnitStateManager } from '../../utils/criticalSlots/UnitStateManager'
+import { UnitStateManager, UnitSummary } from '../../utils/criticalSlots/UnitStateManager'
 import { UnitCriticalManager } from '../../utils/criticalSlots/UnitCriticalManager'
 import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes'
 import { EngineType, GyroType } from '../../types/systemComponents'
@@ -16,7 +16,7 @@ interface UnitContextValue {
   gyroType: GyroType
   unallocatedEquipment: EquipmentAllocation[]
   validation: Record<string, unknown>
-  summary: Record<string, unknown>
+  summary: UnitSummary
   // Loading state
   isConfigLoaded: boolean
   // Selection state
@@ -171,7 +171,7 @@ export function UnitProvider({ children, initialConfiguration }: UnitProviderPro
       gyroType: unit.getGyroType() as GyroType,
       unallocatedEquipment: unit.getUnallocatedEquipment(),
       validation: (summary.validation || {}) as Record<string, unknown>,
-      summary: (summary.summary || {}) as Record<string, unknown>,
+      summary: summary.summary,
       // Loading state
       isConfigLoaded,
       // Selection state

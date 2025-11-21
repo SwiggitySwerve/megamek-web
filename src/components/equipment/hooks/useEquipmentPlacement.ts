@@ -219,7 +219,12 @@ export function useEquipmentPlacement(): UseEquipmentPlacementReturn {
   const getLocationHeat = useCallback((location: string, unit: EditableUnit): number => {
     const locationSlots = getCriticalSlotsForLocation(location, unit.criticalSlots || []);
     return locationSlots.reduce((total, slot) => {
-      return total + (slot.equipment?.heat || 0);
+      const equipment = slot.equipment;
+      if (!equipment) return total;
+      
+      // Check heatGeneration or heat property safely
+      const heat = 'heatGeneration' in equipment ? equipment.heatGeneration : ('heat' in equipment ? (equipment as any).heat : 0);
+      return total + (heat || 0);
     }, 0);
   }, [getCriticalSlotsForLocation]);
 
@@ -391,27 +396,40 @@ export function useEquipmentPlacement(): UseEquipmentPlacementReturn {
       if (suggestions.length > 0) {
         const bestSuggestion = suggestions[0];
         
+        // Helper to convert FullEquipment to IEquipment compatible object
+        const equipmentAsIEquipment = {
+          ...item,
+          slots: item.space || 1,
+          category: item.type || 'Equipment',
+          techBase: item.tech_base || 'Inner Sphere',
+          requiresAmmo: item.type?.includes('Ammo') || false,
+          introductionYear: 0,
+          rulesLevel: 'Standard',
+        } as unknown as import('../../../types/core/EquipmentInterfaces').IEquipment;
+
         // Place equipment in working unit's critical slots
         bestSuggestion.slots.forEach(slotIndex => {
-          const existingSlotIndex = workingUnit.criticalSlots.findIndex(
+          const criticalSlots = workingUnit.criticalSlots || [];
+          const existingSlotIndex = criticalSlots.findIndex(
             slot => slot.location === bestSuggestion.location && slot.slotIndex === slotIndex
           );
           
           if (existingSlotIndex >= 0) {
-            workingUnit.criticalSlots[existingSlotIndex] = {
-              ...workingUnit.criticalSlots[existingSlotIndex],
-              equipment: item,
+            criticalSlots[existingSlotIndex] = {
+              ...criticalSlots[existingSlotIndex],
+              equipment: equipmentAsIEquipment,
               isEmpty: false,
             };
           } else {
-            workingUnit.criticalSlots.push({
+            criticalSlots.push({
               location: bestSuggestion.location,
               slotIndex,
-              equipment: item,
+              equipment: equipmentAsIEquipment,
               isFixed: false,
               isEmpty: false,
             });
           }
+          workingUnit.criticalSlots = criticalSlots;
         });
 
         placements.push({
@@ -466,8 +484,8 @@ export function useEquipmentPlacement(): UseEquipmentPlacementReturn {
     const isSupercharger = equipment.name?.toLowerCase().includes('supercharger') || equipment.type === 'Supercharger';
     if (isSupercharger) {
       // Derive engine and gyro types from unit
-      const engineType = unit.engineType || 'Standard';
-      const gyroValue = unit.gyroType || 'Standard';
+      const engineType = unit.engine?.definition?.type || 'Standard';
+      const gyroValue = unit.gyro?.definition?.type || 'Standard';
       
       // Safely extract techBase
       let techBase: TechBase = TechBase.INNER_SPHERE;
@@ -476,9 +494,9 @@ export function useEquipmentPlacement(): UseEquipmentPlacementReturn {
       }
 
       const gyroType: CoreComponentConfiguration =
-        typeof gyroValue === 'string' ? { type: gyroValue, techBase: techBase } : gyroValue;
+        typeof gyroValue === 'string' ? { type: gyroValue, techBase: techBase } : { type: gyroValue, techBase: techBase };
 
-      const engineSlots = SystemComponentRules.getEngineAllocation(engineType, gyroType);
+      const engineSlots = SystemComponentRules.getEngineAllocation(engineType as EngineType, gyroType);
       const hasEngineSlotsInLocation = (
         (location === 'Center Torso' && engineSlots.centerTorso.length > 0) ||
         (location === 'Left Torso' && engineSlots.leftTorso.length > 0) ||
@@ -518,15 +536,15 @@ export function useEquipmentPlacement(): UseEquipmentPlacementReturn {
     // Collect current equipment placements
     const equipmentByLocation = new Map<string, FullEquipment[]>();
     
-    unit.criticalSlots.forEach(slot => {
+    (unit.criticalSlots || []).forEach(slot => {
       if (slot.equipment && !slot.isFixed) {
         if (!equipmentByLocation.has(slot.location)) {
           equipmentByLocation.set(slot.location, []);
         }
         const locationEquipment = equipmentByLocation.get(slot.location)!;
         if (!locationEquipment.find(eq => eq.id === slot.equipment!.id)) {
-          locationEquipment.push(slot.equipment);
-          currentPlacements.push({ equipment: slot.equipment, location: slot.location });
+          locationEquipment.push(slot.equipment as any);
+          currentPlacements.push({ equipment: slot.equipment as any, location: slot.location });
         }
       }
     });
@@ -544,7 +562,7 @@ export function useEquipmentPlacement(): UseEquipmentPlacementReturn {
 
     currentPlacements.forEach(({ equipment, location: currentLocation }) => {
       // Remove equipment from current location in working unit
-      workingUnit.criticalSlots = workingUnit.criticalSlots.map(slot => {
+      workingUnit.criticalSlots = (workingUnit.criticalSlots || []).map(slot => {
         if (slot.location === currentLocation && slot.equipment?.id === equipment.id) {
           return { ...slot, equipment: undefined, isEmpty: true };
         }
@@ -570,26 +588,29 @@ export function useEquipmentPlacement(): UseEquipmentPlacementReturn {
           
           // Update working unit with new placement
           suggestions[0].slots.forEach(slotIndex => {
-            const existingSlotIndex = workingUnit.criticalSlots.findIndex(
+            const criticalSlots = workingUnit.criticalSlots || [];
+            const existingSlotIndex = criticalSlots.findIndex(
               slot => slot.location === bestLocation && slot.slotIndex === slotIndex
             );
             
             if (existingSlotIndex >= 0) {
-              workingUnit.criticalSlots[existingSlotIndex] = {
-                ...workingUnit.criticalSlots[existingSlotIndex],
-                equipment,
+              criticalSlots[existingSlotIndex] = {
+                ...criticalSlots[existingSlotIndex],
+                equipment: equipment as any,
                 isEmpty: false,
               };
             }
+            workingUnit.criticalSlots = criticalSlots;
           });
         } else {
           // Keep in current location - restore the equipment
-          workingUnit.criticalSlots = workingUnit.criticalSlots.map(slot => {
+          const criticalSlots = workingUnit.criticalSlots || [];
+          workingUnit.criticalSlots = criticalSlots.map(slot => {
             if (slot.location === currentLocation && 
-                unit.criticalSlots.find(s => s.location === slot.location && 
+                (unit.criticalSlots || []).find(s => s.location === slot.location && 
                                             s.slotIndex === slot.slotIndex && 
                                             s.equipment?.id === equipment.id)) {
-              return { ...slot, equipment, isEmpty: false };
+              return { ...slot, equipment: equipment as any, isEmpty: false };
             }
             return slot;
           });

@@ -22,7 +22,11 @@ import {
   Result
 } from './BaseTypes';
 
-import { IUnitConfiguration, IEquipmentAllocation } from './ValidationInterfaces';
+import { 
+  IUnitConfiguration, 
+  IEquipmentAllocation
+  // ILocationSlotUtilization removed from import to avoid conflict
+} from './ValidationInterfaces';
 
 // ===== CALCULATION STRATEGY INTERFACES =====
 
@@ -814,15 +818,15 @@ export interface ISlotAvailabilityConstraint {
  */
 export interface ISlotUtilizationResult extends ICalculationResult {
   readonly overallUtilization: number;
-  readonly locationUtilization: ILocationSlotUtilization[];
+  readonly locationUtilization: ICalculatedLocationUtilization[];
   readonly efficiency: ISlotEfficiency;
   readonly optimization: ISlotOptimization;
 }
 
 /**
- * Location slot utilization
+ * Location slot utilization (Renamed to avoid conflict with ValidationInterfaces)
  */
-export interface ILocationSlotUtilization {
+export interface ICalculatedLocationUtilization {
   readonly location: string;
   readonly available: number;
   readonly used: number;
@@ -1067,13 +1071,13 @@ export interface IOptimizationSummary {
   readonly armorOptimization: number;
   readonly slotOptimization: number;
   readonly movementOptimization: number;
-  readonly topImprovements: IOptimizationImprovement[];
+  readonly topImprovements: ICalculatedOptimizationImprovement[];
 }
 
 /**
- * Optimization improvement
+ * Optimization improvement (Renamed to avoid conflict with ValidationInterfaces)
  */
-export interface IOptimizationImprovement {
+export interface ICalculatedOptimizationImprovement {
   readonly category: 'weight' | 'heat' | 'armor' | 'slots' | 'movement';
   readonly description: string;
   readonly impact: number;

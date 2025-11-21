@@ -8,7 +8,7 @@ import React, { useEffect, useState } from 'react';
 import { useUnitStore } from '../../stores/unitStore';
 import { useUnitStoreIntegration } from '../../hooks/useUnitStoreIntegration';
 import { UnitCriticalManager } from '../../utils/criticalSlots/UnitCriticalManager';
-import { UnitStateManager } from '../../utils/criticalSlots/UnitStateManager';
+import { UnitStateManager, UnitSummary } from '../../utils/criticalSlots/UnitStateManager';
 import { UnitConfiguration, UnitValidationResult } from '../../utils/criticalSlots/UnitCriticalManagerTypes';
 import { EngineType, GyroType, StructureType, ArmorType, HeatSinkType } from '../../types/systemComponents';
 import { EquipmentAllocation } from '../../utils/criticalSlots/CriticalSlot';
@@ -47,7 +47,7 @@ export interface MultiUnitContextValue {
   gyroType: GyroType | null;
   unallocatedEquipment: EquipmentAllocation[];
   validation: UnitValidationResult | null;
-  summary: Record<string, unknown>;
+  summary: UnitSummary | null;
   isConfigLoaded: boolean;
   selectedEquipmentId: string | null;
   unitVersion: number;
@@ -194,7 +194,7 @@ export interface UseUnitReturn {
   gyroType: GyroType;
   unallocatedEquipment: EquipmentAllocation[];
   validation: UnitValidationResult | null;
-  summary: Record<string, unknown>;
+  summary: UnitSummary | null;
   isConfigLoaded: boolean;
   selectedEquipmentId: string | null;
   unitVersion: number;
@@ -225,26 +225,49 @@ export function useUnit(): UseUnitReturn {
     if (typeof window === 'undefined') {
          // SSR safety - return a minimal valid structure
          const emptyConfig: UnitConfiguration = {
+           chassis: 'New',
+           model: 'Unit',
+           unitType: 'BattleMech',
            tonnage: 100,
+           mass: 100, // Legacy alias
            engineRating: 300,
            walkMP: 3,
            runMP: 5,
            jumpMP: 0,
            techBase: 'Inner Sphere',
            engineType: 'Standard',
-           gyroType: { type: 'Standard', techBase: 'Inner Sphere' },
-           structureType: { type: 'Standard', techBase: 'Inner Sphere' },
-           armorType: { type: 'Standard', techBase: 'Inner Sphere' },
-           heatSinkType: { type: 'Single', techBase: 'Inner Sphere' }
+           gyroType: 'Standard',
+           cockpitType: 'Standard',
+           structureType: 'Standard',
+           armorType: 'Standard',
+           heatSinkType: 'Single',
+           jumpJetType: 'Standard Jump Jet',
+           jumpJetCounts: {},
+           hasPartialWing: false,
+           armorAllocation: {
+             HD: { front: 0, rear: 0 },
+             CT: { front: 0, rear: 0 },
+             LT: { front: 0, rear: 0 },
+             RT: { front: 0, rear: 0 },
+             LA: { front: 0, rear: 0 },
+             RA: { front: 0, rear: 0 },
+             LL: { front: 0, rear: 0 },
+             RL: { front: 0, rear: 0 }
+           },
+           armorTonnage: 0,
+           totalHeatSinks: 10,
+           internalHeatSinks: 10,
+           externalHeatSinks: 0,
+           enhancements: []
          };
          const dummyUnit = new UnitCriticalManager(emptyConfig);
          return {
            unit: dummyUnit,
            engineType: 'Standard',
-           gyroType: { type: 'Standard', techBase: 'Inner Sphere' },
+           gyroType: 'Standard',
            unallocatedEquipment: [],
            validation: null,
-           summary: {},
+           summary: null,
            isConfigLoaded: false,
            selectedEquipmentId: null,
            unitVersion: 0,

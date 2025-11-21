@@ -18,6 +18,7 @@ export * from './CalculationInterfaces';
 
 // ===== EQUIPMENT AND STATE INTERFACES =====
 export * from './EquipmentInterfaces';
+export * from './UnitInterfaces';
 
 // ===== STRUCTURE AND STATUS =====
 export * from './ComponentStructure';

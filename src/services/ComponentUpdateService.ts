@@ -8,8 +8,8 @@
 
 import { ComponentConfiguration } from '../types/componentConfiguration'
 import { UnitConfiguration } from '../utils/criticalSlots/UnitCriticalManagerTypes'
-import { EngineType } from '../utils/criticalSlots/SystemComponentRules'
-import { IComponentConfiguration } from '../types/core/ComponentInterfaces'
+import { EngineType } from '../types/systemComponents'
+import { IComponentConfiguration } from '../types/core/BaseTypes'
 import { TechBase } from '../types/core/BaseTypes'
 
 export interface ComponentUpdateResult {
@@ -52,22 +52,22 @@ export class ComponentUpdateService {
     // Update the specific component
     switch (componentType) {
       case 'structure':
-        newConfiguration.structureType = this.normalizeComponentValue(newValue, currentConfiguration.techBase)
+        newConfiguration.structureType = (typeof newValue === 'string' ? newValue : newValue.type) as any
         break
       case 'armor':
-        newConfiguration.armorType = this.normalizeComponentValue(newValue, currentConfiguration.techBase)
+        newConfiguration.armorType = (typeof newValue === 'string' ? newValue : newValue.type) as any
         break
       case 'engine':
         newConfiguration.engineType = (typeof newValue === 'string' ? newValue : newValue.type) as EngineType
         break
       case 'gyro':
-        newConfiguration.gyroType = this.normalizeComponentValue(newValue, currentConfiguration.techBase)
+        newConfiguration.gyroType = (typeof newValue === 'string' ? newValue : newValue.type) as any
         break
       case 'heatSink':
-        newConfiguration.heatSinkType = this.normalizeComponentValue(newValue, currentConfiguration.techBase)
+        newConfiguration.heatSinkType = (typeof newValue === 'string' ? newValue : newValue.type) as any
         break
       case 'jumpJet':
-        newConfiguration.jumpJetType = this.normalizeComponentValue(newValue, currentConfiguration.techBase)
+        newConfiguration.jumpJetType = (typeof newValue === 'string' ? newValue : newValue.type)
         break
       default:
         return {
@@ -180,12 +180,12 @@ export class ComponentUpdateService {
     }
     
     // Component-specific validation
-    const structureType = config.structureType ? (typeof config.structureType === 'string' ? config.structureType : config.structureType.type) : '';
+    const structureType = config.structureType || '';
     if (structureType === 'Endo Steel' && config.techBase === 'Clan') {
       warnings.push('Clan Endo Steel detected - will be converted to Endo Steel (Clan)')
     }
     
-    const armorType = config.armorType ? (typeof config.armorType === 'string' ? config.armorType : config.armorType.type) : '';
+    const armorType = config.armorType || '';
     if (armorType === 'Ferro-Fibrous' && config.techBase === 'Clan') {
       warnings.push('Clan Ferro-Fibrous detected - will be converted to Ferro-Fibrous (Clan)')
     }

@@ -142,10 +142,11 @@ export class TechLevelRulesValidator {
   static validateMixedTech(
     config: UnitConfiguration, 
     equipment: any[], 
-    context: TechLevelValidationContext
+    context: Partial<TechLevelValidationContext> = {}
   ) {
+    const ctx = { ...this.DEFAULT_CONTEXT, ...context };
     const components = ComponentManager.getAllComponents(config, equipment);
-    return MixedTechManager.validateMixedTech(config, components, context);
+    return MixedTechManager.validateMixedTech(config, components, ctx);
   }
 
   /**
@@ -155,10 +156,11 @@ export class TechLevelRulesValidator {
     config: UnitConfiguration, 
     equipment: any[], 
     era: string,
-    context: TechLevelValidationContext
+    context: Partial<TechLevelValidationContext> = {}
   ) {
+    const ctx = { ...this.DEFAULT_CONTEXT, ...context };
     const components = ComponentManager.getAllComponents(config, equipment);
-    return EraManager.validateEraRestrictions(config, components, era, context);
+    return EraManager.validateEraRestrictions(config, components, era, ctx);
   }
 
   /**
@@ -167,10 +169,11 @@ export class TechLevelRulesValidator {
   static validateAvailabilityRating(
     equipment: any[], 
     config: UnitConfiguration,
-    context: TechLevelValidationContext
+    context: Partial<TechLevelValidationContext> = {}
   ) {
+    const ctx = { ...this.DEFAULT_CONTEXT, ...context };
     const components = ComponentManager.getAllComponents(config, equipment);
-    return AvailabilityManager.validateAvailabilityRating(components, config, context);
+    return AvailabilityManager.validateAvailabilityRating(components, config, ctx);
   }
 
   /**
@@ -178,11 +181,12 @@ export class TechLevelRulesValidator {
    */
   static validateTechBaseCompliance(
     config: UnitConfiguration, 
-    equipment: any[],
-    context: TechLevelValidationContext
+    equipment: any[], 
+    context: Partial<TechLevelValidationContext> = {}
   ) {
+    const ctx = { ...this.DEFAULT_CONTEXT, ...context };
     const components = ComponentManager.getAllComponents(config, equipment);
-    return TechBaseManager.validateTechBaseCompliance(config, components, context);
+    return TechBaseManager.validateTechBaseCompliance(config, components, ctx);
   }
 
   /**

@@ -13,7 +13,6 @@ import { TabContentWrapper } from '../../components/common/TabContentWrapper';
 
 // Import equipment components
 import { EquipmentTray } from '../../components/criticalSlots/EquipmentTray';
-import { EquipmentAllocationDebugPanel } from '../../components/criticalSlots/EquipmentAllocationDebugPanel';
 
 // Import Overview tab
 import { OverviewTab } from '../../components/overview/OverviewTab';
@@ -30,7 +29,7 @@ import { ResetConfirmationDialog } from '../../components/common/ResetConfirmati
 
 // Inner component that uses the V2 data model with V1 UI design
 function CustomizerV2Content() {
-  const { unit, unitVersion } = useUnit();
+  const { unit, unitVersion, getDebugInfo } = useUnit();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<string>('overview');
   const [isEquipmentTrayExpanded, setIsEquipmentTrayExpanded] = useState(false);
@@ -318,8 +317,11 @@ function CustomizerV2Content() {
 
       {/* Conditional Debug Panel */}
       {isDebugVisible && (
-        <div className="fixed bottom-4 right-4 w-96 h-64 bg-slate-800 border border-slate-600 rounded-lg shadow-lg z-50">
-          <EquipmentAllocationDebugPanel />
+        <div className="fixed bottom-4 right-4 w-96 h-64 bg-slate-800 border border-slate-600 rounded-lg shadow-lg z-50 p-4 text-slate-300">
+          Debug Info:
+          <pre className="text-xs overflow-auto h-full">
+            {JSON.stringify(getDebugInfo(), null, 2)}
+          </pre>
         </div>
       )}
 

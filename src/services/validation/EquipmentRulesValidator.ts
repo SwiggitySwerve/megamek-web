@@ -43,10 +43,11 @@ export class EquipmentRulesValidator {
     const specialEquipment = equipment.filter(eq => {
       if (!eq.equipmentData) return false;
       const data = eq.equipmentData;
+      // @ts-ignore - category may exist on legacy data
       return data.category === 'special' || 
              data.type === 'equipment' ||
              // Use safe check for type property on allocation itself
-             ('type' in eq && eq.type === 'equipment');
+             ('type' in eq && (eq as any).type === 'equipment');
     });
     
     const violations: SpecialEquipmentViolation[] = [];

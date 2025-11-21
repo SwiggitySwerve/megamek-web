@@ -340,7 +340,7 @@ export class ValidationManager {
     }
 
     // Artemis dependency: warn if no compatible missile weapons present
-    const baseType = (equipment.equipmentData?.baseType || '').toString().toLowerCase();
+    const baseType = ((equipment.equipmentData as any)?.baseType || '').toString().toLowerCase();
     if (baseType.includes('artemis')) {
       const hasMissile = (config.weapons || []).some((w: any) => {
         const n = (w?.name || '').toString().toLowerCase();

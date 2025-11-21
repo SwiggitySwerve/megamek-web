@@ -25,8 +25,8 @@ const HeatSinksPanel: React.FC<HeatSinksPanelProps> = ({
   // Calculate engine rating
   const engineRating = useMemo(() => {
     const walkMP = unit.data?.movement?.walk_mp || 1;
-    return walkMP * unit.mass;
-  }, [unit.mass, unit.data?.movement?.walk_mp]);
+    return walkMP * unit.tonnage;
+  }, [unit.tonnage, unit.data?.movement?.walk_mp]);
 
   // Calculate free heat sinks from engine
   const engineFreeHeatSinks = useMemo(() => {
@@ -86,7 +86,7 @@ const HeatSinksPanel: React.FC<HeatSinksPanelProps> = ({
       data: {
         ...unit.data,
         heat_sinks: {
-          ...unit.data.heat_sinks,
+          ...(unit.data?.heat_sinks || {}),
           count,
         },
       },
@@ -108,7 +108,7 @@ const HeatSinksPanel: React.FC<HeatSinksPanelProps> = ({
       data: {
         ...unit.data,
         heat_sinks: {
-          ...unit.data.heat_sinks,
+          ...(unit.data?.heat_sinks || {}),
           type,
           dissipation_per_sink: type.includes('double') ? 2 : 1,
         },

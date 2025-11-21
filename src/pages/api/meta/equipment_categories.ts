@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import mockEquipmentCategories from '../../../public/mockdata/mockEquipmentCategories.json';
+import mockEquipmentCategories from '../../../../public/mockdata/mockEquipmentCategories.json';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {

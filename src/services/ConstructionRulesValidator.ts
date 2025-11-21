@@ -227,6 +227,15 @@ export interface RuleViolation {
   suggestedFix: string;
 }
 
+export interface ViolationSummary {
+  totalViolations: number;
+  criticalViolations: number;
+  majorViolations: number;
+  minorViolations: number;
+  violationsByCategory: { [category: string]: number };
+  topViolations: RuleViolation[];
+}
+
 export interface RecommendationSummary {
   totalRecommendations: number;
   criticalRecommendations: number;
@@ -518,11 +527,11 @@ export class ConstructionRulesValidatorImpl implements ConstructionRulesValidato
   }
   
   validateWeaponRules(equipment: EquipmentAllocation[], config: UnitConfiguration): WeaponValidation {
-    return WeaponRulesValidator.validateWeaponRules(equipment, config);
+    return WeaponRulesValidator.validateWeaponRules(config, equipment.map(e => e.equipmentData));
   }
 
   validateAmmoRules(equipment: EquipmentAllocation[], config: UnitConfiguration): AmmoValidation {
-    return AmmoRulesValidator.validateAmmoRules(equipment, config);
+    return AmmoRulesValidator.validateAmmoRules(config, equipment.map(e => e.equipmentData));
   }
 
   validateSpecialEquipmentRules(equipment: EquipmentAllocation[], config: UnitConfiguration): SpecialEquipmentValidation {
@@ -538,7 +547,7 @@ export class ConstructionRulesValidatorImpl implements ConstructionRulesValidato
   }
   
   validateEraRestrictions(config: UnitConfiguration, equipment: EquipmentAllocation[]): EraValidation {
-    return TechLevelRulesValidator.validateEraRestrictions(config, equipment);
+    return TechLevelRulesValidator.validateEraRestrictions(config, equipment, config.era || 'Succession Wars');
   }
   
   validateAvailabilityRating(equipment: EquipmentAllocation[], config: UnitConfiguration): AvailabilityValidation {

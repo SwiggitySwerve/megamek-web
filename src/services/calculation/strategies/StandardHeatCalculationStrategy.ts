@@ -163,7 +163,7 @@ export class StandardHeatCalculationStrategy implements IHeatCalculationStrategy
 
     const potentialConfig = context as Partial<IUnitConfiguration>;
     // Check if context itself acts as configuration (legacy support)
-    const fallbackConfig = (potentialConfig.engineRating !== undefined) ? (context as IUnitConfiguration) : undefined;
+    const fallbackConfig = (potentialConfig.engine?.rating !== undefined) ? (context as unknown as IUnitConfiguration) : undefined;
 
     if (!contextWithData.config && !fallbackConfig) {
       throw new Error("Invalid calculation context: missing unit configuration");
@@ -289,7 +289,7 @@ export class StandardHeatCalculationStrategy implements IHeatCalculationStrategy
     try {
       this.log('debug', 'Calculating heat dissipation capacity');
 
-      const engineRating = config.engineRating;
+      const engineRating = config.engine.rating;
       const heatSinkData = StandardHeatCalculationStrategy.getHeatSinkData(config);
 
       // Calculate engine heat sinks (free with engine)

@@ -59,7 +59,7 @@ export class CriticalSlotRulesValidator {
       // We try to improve it slightly if possible, or keep simplified if data is missing.
       
       const slotsInLocation = equipment.filter(e => e.location === location)
-                                       .reduce((sum, e) => sum + (e.equipmentData?.criticals || 1), 0);
+                                       .reduce((sum, e) => sum + (e.equipmentData?.requiredSlots || 1), 0);
 
       const used = slotsInLocation;
       const available = slotCounts[index];
