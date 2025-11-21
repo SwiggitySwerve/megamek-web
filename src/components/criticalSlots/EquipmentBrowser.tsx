@@ -6,7 +6,7 @@
 
 import React, { useState, useMemo } from 'react'
 import { EquipmentObject } from '../../utils/criticalSlots/CriticalSlot'
-import { ALL_EQUIPMENT_VARIANTS, Equipment, TechBase } from '../../data/equipment'
+import { ALL_EQUIPMENT_VARIANTS, Equipment, TechBase, EquipmentVariant } from '../../data/equipment'
 
 // Props interface for optional integration
 interface EquipmentBrowserProps {
@@ -143,7 +143,7 @@ function flattenLocalEquipment(): LocalEquipmentVariant[] {
           }
 
           // Type assertion for variant
-          const typedVariant = variant as any;
+          const typedVariant = variant as EquipmentVariant;
 
           // Validate required variant fields
           if (typeof typedVariant.weight !== 'number' || typeof typedVariant.crits !== 'number') {

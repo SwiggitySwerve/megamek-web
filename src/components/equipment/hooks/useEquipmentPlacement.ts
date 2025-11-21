@@ -3,6 +3,8 @@ import { FullEquipment } from '../../../types';
 import { EditableUnit, CriticalSlotAssignment } from '../../../types/editor';
 import { SystemComponentRules } from '../../../utils/criticalSlots/SystemComponentRules';
 import { ComponentConfiguration as CoreComponentConfiguration } from '../../../types/componentConfiguration';
+import { EngineType, GyroType } from '../../../types/systemComponents';
+import { TechBase } from '../../../types/core/BaseTypes';
 
 export interface PlacementOptions {
   strategy: 'balanced' | 'concentrated' | 'distributed' | 'manual';
@@ -464,12 +466,19 @@ export function useEquipmentPlacement(): UseEquipmentPlacementReturn {
     const isSupercharger = equipment.name?.toLowerCase().includes('supercharger') || equipment.type === 'Supercharger';
     if (isSupercharger) {
       // Derive engine and gyro types from unit
-      const engineType = (unit as any)?.engineType || 'Standard';
-      const gyroValue = (unit as any)?.gyroType || 'Standard';
-      const gyroType: CoreComponentConfiguration =
-        typeof gyroValue === 'string' ? { type: gyroValue, techBase: (unit as any)?.techBase || 'Inner Sphere' } : gyroValue;
+      const engineType = unit.engineType || 'Standard';
+      const gyroValue = unit.gyroType || 'Standard';
+      
+      // Safely extract techBase
+      let techBase: TechBase = TechBase.INNER_SPHERE;
+      if (unit.techBase === 'Clan') {
+        techBase = TechBase.CLAN;
+      }
 
-      const engineSlots = SystemComponentRules.getEngineAllocation(engineType as any, gyroType);
+      const gyroType: CoreComponentConfiguration =
+        typeof gyroValue === 'string' ? { type: gyroValue, techBase: techBase } : gyroValue;
+
+      const engineSlots = SystemComponentRules.getEngineAllocation(engineType, gyroType);
       const hasEngineSlotsInLocation = (
         (location === 'Center Torso' && engineSlots.centerTorso.length > 0) ||
         (location === 'Left Torso' && engineSlots.leftTorso.length > 0) ||

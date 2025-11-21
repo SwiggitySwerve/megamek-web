@@ -2,7 +2,7 @@ import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { FullEquipment } from '../../types';
 import { EditableUnit } from '../../types/editor';
 import { useEquipmentFiltering } from './hooks/useEquipmentFiltering';
-import { useEquipmentPlacement } from './hooks/useEquipmentPlacement';
+import { useEquipmentPlacement, PlacementOptions } from './hooks/useEquipmentPlacement';
 import { useEquipmentValidation } from './hooks/useEquipmentValidation';
 import { useEquipmentDragDrop, useDropZones, DragItem } from './hooks/useEquipmentDragDrop';
 // Icon components
@@ -377,7 +377,7 @@ export const EquipmentManagementComponent: React.FC<EquipmentManagementComponent
               <label className="block text-sm font-medium mb-1">Tech Base</label>
               <select
                 value={filters.techBase[0] || ''}
-                onChange={(e) => setFilter('techBase', e.target.value ? [e.target.value as any] : [])}
+                onChange={(e) => setFilter('techBase', e.target.value ? [e.target.value as 'Inner Sphere' | 'Clan' | 'Both'] : [])}
                 className="w-full px-2 py-1 border rounded"
               >
                 <option value="">All</option>
@@ -555,7 +555,7 @@ export const EquipmentManagementComponent: React.FC<EquipmentManagementComponent
               <label className="block text-sm font-medium mb-1">Strategy</label>
               <select
                 value={placementOptions.strategy}
-                onChange={(e) => setPlacementOptions({ strategy: e.target.value as any })}
+                onChange={(e) => setPlacementOptions({ strategy: e.target.value as PlacementOptions['strategy'] })}
                 className="w-full px-2 py-1 border rounded text-sm"
               >
                 <option value="balanced">Balanced</option>
@@ -569,7 +569,7 @@ export const EquipmentManagementComponent: React.FC<EquipmentManagementComponent
               <label className="block text-sm font-medium mb-1">Prioritize</label>
               <select
                 value={placementOptions.prioritize}
-                onChange={(e) => setPlacementOptions({ prioritize: e.target.value as any })}
+                onChange={(e) => setPlacementOptions({ prioritize: e.target.value as PlacementOptions['prioritize'] })}
                 className="w-full px-2 py-1 border rounded text-sm"
               >
                 <option value="protection">Protection</option>

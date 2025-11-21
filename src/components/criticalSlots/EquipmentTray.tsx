@@ -80,7 +80,7 @@ function EquipmentTrayItem({ equipment, index, onRemove, readOnly = false }: Equ
     
     // Check for configuration components via componentType field if available
     // We use a type guard or check property existence safely
-    const componentType = 'componentType' in eq ? (eq as any).componentType : undefined;
+    const componentType = eq.componentType;
     
     const isConfigComponent = componentType === 'structure' || 
                              componentType === 'armor' ||
@@ -145,7 +145,7 @@ function EquipmentTrayItem({ equipment, index, onRemove, readOnly = false }: Equ
     
     if (isConfigurationComponent(equipment)) {
       const eq = equipment.equipmentData;
-      const componentType = 'componentType' in eq ? (eq as any).componentType : undefined;
+      const componentType = eq.componentType;
       const name = equipmentData.name.toLowerCase();
       let tabName = 'Structure';
       let reason = 'Configuration component';

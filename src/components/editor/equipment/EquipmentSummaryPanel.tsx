@@ -1,5 +1,7 @@
 import React from 'react';
-import { EditableUnit, ValidationError } from '../../../types/editor';
+import { EditableUnit, ValidationError, EquipmentPlacement } from '../../../types/editor';
+import { IEquipment } from '../../../types/core/EquipmentInterfaces';
+import { getEquipmentHeatGenerated, getEquipmentWeight } from '../../../utils/equipmentTypeHelpers';
 
 interface EquipmentStats {
   totalWeight: number;
@@ -24,12 +26,13 @@ const EquipmentSummaryPanel: React.FC<EquipmentSummaryPanelProps> = ({
   compact = true,
 }) => {
   // Calculate remaining capacity
-  const remainingWeight = unit.mass - equipmentStats.totalWeight;
+  const unitMass = unit.mass ?? unit.tonnage ?? 0;
+  const remainingWeight = unitMass - equipmentStats.totalWeight;
   const isOverweight = remainingWeight < 0;
 
   // Calculate heat generation and dissipation
   const heatGenerated = (unit.equipmentPlacements || []).reduce((sum, placement) => {
-    return sum + (placement.equipment.heat || 0);
+    return sum + getEquipmentHeatGenerated(placement.equipment);
   }, 0);
 
   const heatDissipated = (unit.data?.heat_sinks?.count || 10) * 
@@ -39,11 +42,11 @@ const EquipmentSummaryPanel: React.FC<EquipmentSummaryPanelProps> = ({
 
   // Get equipment by category
   const equipmentByCategory = (unit.equipmentPlacements || []).reduce((acc, placement) => {
-    const category = placement.equipment.data?.category || placement.equipment.type || 'Other';
+    const category = placement.equipment.category || placement.equipment.type || 'Other';
     if (!acc[category]) acc[category] = [];
     acc[category].push(placement);
     return acc;
-  }, {} as Record<string, any[]>);
+  }, {} as Record<string, EquipmentPlacement[]>);
 
   return (
     <div className="equipment-summary-panel space-y-4">
@@ -55,7 +58,7 @@ const EquipmentSummaryPanel: React.FC<EquipmentSummaryPanelProps> = ({
         <div className="space-y-2 text-xs">
           <div className="flex justify-between">
             <span className="text-gray-600">Unit Tonnage:</span>
-            <span className="font-medium">{unit.mass}t</span>
+            <span className="font-medium">{unitMass}t</span>
           </div>
           <div className="flex justify-between">
             <span className="text-gray-600">Equipment Weight:</span>
@@ -72,7 +75,7 @@ const EquipmentSummaryPanel: React.FC<EquipmentSummaryPanelProps> = ({
           <div className="mt-3">
             <div className="flex justify-between text-xs text-gray-600 mb-1">
               <span>Weight Usage</span>
-              <span>{((equipmentStats.totalWeight / unit.mass) * 100).toFixed(1)}%</span>
+              <span>{(unitMass > 0 ? (equipmentStats.totalWeight / unitMass) * 100 : 0).toFixed(1)}%</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div
@@ -80,7 +83,7 @@ const EquipmentSummaryPanel: React.FC<EquipmentSummaryPanelProps> = ({
                   isOverweight ? 'bg-red-500' : 'bg-blue-500'
                 }`}
                 style={{
-                  width: `${Math.min((equipmentStats.totalWeight / unit.mass) * 100, 100)}%`,
+                  width: `${Math.min(unitMass > 0 ? (equipmentStats.totalWeight / unitMass) * 100 : 0, 100)}%`,
                 }}
               />
             </div>

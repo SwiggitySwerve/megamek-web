@@ -161,7 +161,7 @@ export function useEquipmentFiltering(
         const techBase = item.tech_base;
         // Type-safe tech base matching
         const validTechBases: Array<'Inner Sphere' | 'Clan' | 'Both'> = ['Inner Sphere', 'Clan', 'Both'];
-        const safeTechBase = validTechBases.includes(techBase as any) ? techBase as 'Inner Sphere' | 'Clan' | 'Both' : 'Inner Sphere';
+        const safeTechBase = (validTechBases as readonly string[]).includes(techBase || '') ? techBase as 'Inner Sphere' | 'Clan' | 'Both' : 'Inner Sphere';
         
         const matchesTechBase = 
           filters.techBase.includes(safeTechBase) ||

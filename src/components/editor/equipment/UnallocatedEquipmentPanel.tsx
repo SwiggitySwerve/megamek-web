@@ -1,6 +1,12 @@
 import React from 'react';
-import { EditableUnit, MECH_LOCATIONS } from '../../../types/editor';
-import { ValidationError } from '../../../types/editor';
+import { EditableUnit, MECH_LOCATIONS, ValidationError } from '../../../types/editor';
+import { IEquipment } from '../../../types/core/EquipmentInterfaces';
+import { 
+  getEquipmentSlots, 
+  getEquipmentDamage, 
+  getEquipmentHeatGenerated,
+  getEquipmentWeight
+} from '../../../utils/equipmentTypeHelpers';
 
 interface UnallocatedEquipmentPanelProps {
   unit: EditableUnit;
@@ -62,9 +68,9 @@ const UnallocatedEquipmentPanel: React.FC<UnallocatedEquipmentPanelProps> = ({
                   {placement.equipment.name}
                 </h4>
                 <div className="text-xs text-gray-600 mt-1">
-                  {placement.equipment.weight}t • {placement.equipment.space} slots
-                  {placement.equipment.damage && ` • ${placement.equipment.damage} dmg`}
-                  {placement.equipment.heat && ` • ${placement.equipment.heat} heat`}
+                  {placement.equipment.weight}t • {getEquipmentSlots(placement.equipment)} slots
+                  {getEquipmentDamage(placement.equipment) !== undefined && ` • ${getEquipmentDamage(placement.equipment)} dmg`}
+                  {getEquipmentHeatGenerated(placement.equipment) !== 0 && ` • ${getEquipmentHeatGenerated(placement.equipment)} heat`}
                 </div>
               </div>
               
@@ -166,13 +172,13 @@ const UnallocatedEquipmentPanel: React.FC<UnallocatedEquipmentPanelProps> = ({
             <div className="flex justify-between">
               <span className="text-gray-600">Total Weight:</span>
               <span className="font-medium">
-                {unallocatedEquipment.reduce((sum, p) => sum + (p.equipment.weight || 0), 0).toFixed(1)}t
+                {unallocatedEquipment.reduce((sum, p) => sum + getEquipmentWeight(p.equipment), 0).toFixed(1)}t
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Total Slots:</span>
               <span className="font-medium">
-                {unallocatedEquipment.reduce((sum, p) => sum + (p.equipment.space || 0), 0)}
+                {unallocatedEquipment.reduce((sum, p) => sum + getEquipmentSlots(p.equipment), 0)}
               </span>
             </div>
           </div>

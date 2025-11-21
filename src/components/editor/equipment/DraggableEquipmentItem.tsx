@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { useDrag } from 'react-dnd';
 import { FullEquipment } from '../../../types';
 import { DraggedEquipment, DragItemType } from '../dnd/types';
+import { EquipmentCategory } from '../../../types/core/BaseTypes';
 import { isSpecialComponent } from '../../../types/systemComponents';
 import { getEquipmentColorClasses } from '../../../utils/equipmentColors';
 import styles from './DraggableEquipmentItem.module.css';
@@ -50,7 +51,7 @@ export const DraggableEquipmentItem: React.FC<DraggableEquipmentItemProps> = ({
     weight: equipment.weight || 0,
     criticalSlots: critSlots,
     location: currentLocation,
-    category: equipment.type as any,
+    category: equipment.type as EquipmentCategory,
     techBase: equipment.tech_base,
     damage: equipment.damage,
     heat: equipment.heat,
