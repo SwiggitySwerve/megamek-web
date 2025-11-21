@@ -2,6 +2,7 @@ import { ICompleteUnitConfiguration, IEquipmentInstance } from './core/UnitInter
 import { IEquipment, IWeapon } from './core/EquipmentInterfaces';
 import { ComponentCategory, TechBase, EntityId } from './core/BaseTypes';
 import { IArmorDef, ISystemComponent } from './core/ComponentInterfaces';
+import type { UnitData } from './index';
 
 // Core Editor Types
 export type EditorTab = 'structure' | 'equipment' | 'criticals' | 'fluff' | 'quirks' | 'preview';
@@ -40,6 +41,25 @@ export interface EditableUnit extends ICompleteUnitConfiguration {
   
   // Unallocated equipment (Staging area)
   unallocatedEquipment: IEquipmentInstance[];
+  
+  // Pilot/Crew (Optional)
+  pilot?: {
+    name: string;
+    pilotingSkill: number;
+    gunnerySkill: number;
+  };
+
+  // Game State (Optional - for simulation/preview)
+  currentMovementPoints?: number;
+  currentTerrain?: string;
+
+  // Extended editor state
+  data?: Partial<UnitData>;
+  tech_base?: string;
+  mass?: number;
+  armorAllocation?: ArmorAllocationMap;
+  equipmentPlacements?: EquipmentPlacement[];
+  criticalSlots?: CriticalSlotAssignment[];
 }
 
 // Fluff Content
@@ -94,6 +114,40 @@ export interface LocationArmor {
   maxRear: number;
   armorType: IArmorDef;
 }
+
+export interface EquipmentPlacement {
+  id: string;
+  equipment: IEquipment;
+  location: string;
+  criticalSlots: number[];
+  isFixed?: boolean;
+  isRearMounted?: boolean;
+}
+
+export interface CriticalSlotAssignment {
+  location: string;
+  slotIndex: number;
+  isFixed: boolean;
+  isEmpty: boolean;
+  equipment?: IEquipment;
+  systemType?: 'engine' | 'gyro' | 'cockpit' | 'lifesupport' | 'sensors' | 'actuator';
+}
+
+export interface ArmorAllocationType {
+  id?: string;
+  name: string;
+  pointsPerTon?: number;
+  criticalSlots?: number;
+  hasRearArmor?: boolean;
+}
+
+export type ArmorAllocationMap = Record<string, {
+  front: number;
+  rear?: number;
+  maxFront?: number;
+  maxRear?: number;
+  type: ArmorAllocationType;
+}>;
 
 // Equipment Filters for UI
 export interface EquipmentFilters {

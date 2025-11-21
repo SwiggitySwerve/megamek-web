@@ -141,6 +141,9 @@ export interface UnitConfiguration {
   // Enhancement systems
   enhancements: ComponentConfiguration[] // Movement enhancement systems (MASC, TSM, Supercharger, etc.)
   
+  // Optional equipment list for validation context
+  weapons?: EquipmentObject[]
+  
   // Legacy compatibility
   mass: number                       // Alias for tonnage
   

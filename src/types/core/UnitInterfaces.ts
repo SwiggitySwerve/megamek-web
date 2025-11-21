@@ -154,6 +154,59 @@ export interface ICompleteUnitConfiguration {
   
   readonly groups: IEquipmentGroup[];
   readonly metadata: IUnitMetadata;
+  
+  // Battle Armor Transport
+  readonly mountedBattleArmor?: MountedBattleArmor[];
+  readonly hasOmniMounts?: boolean;
+  
+  // LAM Configuration
+  readonly lamConfiguration?: ILAMConfiguration;
+
+  // ProtoMech Configuration
+  readonly protoMechScale?: number;
+  
+  // QuadVee Configuration
+  readonly quadVeeConfiguration?: IQuadVeeConfiguration;
+}
+
+/**
+ * QuadVee Mode
+ */
+export type QuadVeeMode = 'Mech' | 'Vehicle';
+
+/**
+ * QuadVee Configuration
+ */
+export interface IQuadVeeConfiguration {
+  readonly currentMode: QuadVeeMode;
+  readonly conversionEquipmentDamaged?: boolean;
+  readonly lastTransformation?: number;
+}
+
+/**
+ * LAM Mode
+ */
+export type LAMMode = 'BattleMech' | 'AirMech' | 'Fighter';
+
+/**
+ * LAM Configuration
+ */
+export interface ILAMConfiguration {
+  readonly currentMode: LAMMode;
+  readonly currentFuel?: number;
+  readonly structureMass?: number; // Conversion gear mass
+}
+
+/**
+ * Mounted Battle Armor
+ */
+export interface MountedBattleArmor {
+  readonly id: string;
+  readonly name: string;
+  readonly squad: string;
+  readonly troopers: number;
+  readonly location: string;
+  readonly isOmniMount: boolean;
 }
 
 /**

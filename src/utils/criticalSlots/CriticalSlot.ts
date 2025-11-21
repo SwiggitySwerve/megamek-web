@@ -34,6 +34,7 @@ export interface EquipmentObject {
   // Location restrictions
   allowedLocations?: string[] // Static restrictions - simple whitelist
   locationRestrictions?: LocationRestrictions // Dynamic restrictions - complex validation
+  componentType?: string // For identifying special component types (structure, armor, etc)
 }
 
 export interface EquipmentAllocation {

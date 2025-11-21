@@ -5,7 +5,7 @@
  * and proper BattleTech rules implementation.
  */
 
-import { CompleteCriticalSlotBreakdown, SimplifiedCriticalSlotBreakdown } from './CriticalSlotTypes';
+import { CompleteCriticalSlotBreakdown, SimplifiedCriticalSlotBreakdown, ActuatorComponent } from './CriticalSlotTypes';
 import { UnitConfiguration } from './UnitCriticalManager';
 import { ComponentConfiguration } from '../../types/componentConfiguration';
 
@@ -460,9 +460,9 @@ export function createExampleCriticalSlotBreakdown(): CompleteCriticalSlotBreakd
           // All 16 actuators (4 per limb)
           ...Array.from({ length: 16 }, (_, i) => ({
             type: 'actuator' as const,
-            actuatorType: ['shoulder', 'upperArm', 'lowerArm', 'hand', 'hip', 'upperLeg', 'lowerLeg', 'foot'][i % 8] as any,
+            actuatorType: ['shoulder', 'upperArm', 'lowerArm', 'hand', 'hip', 'upperLeg', 'lowerLeg', 'foot'][i % 8] as ActuatorComponent['actuatorType'],
             slots: 1,
-            location: ['leftArm', 'rightArm', 'leftLeg', 'rightLeg'][Math.floor(i / 4)] as any,
+            location: ['leftArm', 'rightArm', 'leftLeg', 'rightLeg'][Math.floor(i / 4)] as ActuatorComponent['location'],
             weight: 0,
             removable: i < 8 // Arms are removable, legs are not
           }))
