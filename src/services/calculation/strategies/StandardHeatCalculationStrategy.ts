@@ -161,8 +161,16 @@ export class StandardHeatCalculationStrategy implements IHeatCalculationStrategy
       equipment?: IEquipmentAllocation[];
     };
 
+    const potentialConfig = context as Partial<IUnitConfiguration>;
+    // Check if context itself acts as configuration (legacy support)
+    const fallbackConfig = (potentialConfig.engineRating !== undefined) ? (context as IUnitConfiguration) : undefined;
+
+    if (!contextWithData.config && !fallbackConfig) {
+      throw new Error("Invalid calculation context: missing unit configuration");
+    }
+
     return {
-      config: contextWithData.config || (context as unknown as IUnitConfiguration),
+      config: contextWithData.config || fallbackConfig!,
       equipment: contextWithData.equipment || []
     };
   }

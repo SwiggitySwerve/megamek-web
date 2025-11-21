@@ -274,7 +274,7 @@ export function migrateUnitToSystemComponents(
       slotsArray.forEach((slot, index) => {
                             if (locationSlots[index]) {
             // Handle both old and new formats with type-safe property access
-            const slotRecord = slot as unknown as Record<string, unknown>;
+            const slotRecord = slot as Record<string, unknown>;
             const slotName = String(slotRecord.name || slotRecord.content || '-Empty-');
             
             // Convert empty indicators to standard format

@@ -197,7 +197,7 @@ export class WeaponValidationService {
         if (!item) return
         
         // Type-safe property access for equipment validation
-        const itemRecord = item as unknown as Record<string, unknown>
+        const itemRecord = item as Record<string, unknown>
         
         // Check if this is a weapon using type-safe property access
         const isWeapon = this.WEAPON_CATEGORIES.some(category => 
