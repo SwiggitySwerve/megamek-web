@@ -56,7 +56,20 @@ export function usePerformanceMonitor(componentName: string) {
       const renderTime = endTime - startTime
       
                    // CRITICAL: Safe memory usage access
-      const memoryUsage = (performance as any).memory?.usedJSHeapSize || 0
+      // The performance.memory API is non-standard and only available in Chrome/Chromium-based browsers
+      // We define a custom interface for it to satisfy TypeScript
+      interface PerformanceMemory {
+        usedJSHeapSize: number;
+        totalJSHeapSize: number;
+        jsHeapSizeLimit: number;
+      }
+
+      interface ExtendedPerformance extends Performance {
+        memory?: PerformanceMemory;
+      }
+      
+      const perf = performance as ExtendedPerformance;
+      const memoryUsage = perf.memory?.usedJSHeapSize || 0;
       
       metrics.current = {
         renderTime,
