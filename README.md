@@ -76,6 +76,19 @@ The application provides REST API endpoints for accessing data:
 └── public/mockdata/    # Mock data for development
 ```
 
+## Project Documentation & Status
+
+**🚨 CRITICAL REFERENCES (Start Here)**
+
+*   **[🎯 PRIORITIZED WORK](docs/PRIORITIZED_WORK.md)**: Master list of active tasks and priorities.
+*   **[⚡ QUICK REFERENCE](docs/QUICK_REFERENCE.md)**: High-level index and cheat sheet.
+*   **[🏗️ 2025 REFACTOR HANDOFF](docs/HANDOFF_REFACTOR_2025.md)**: Core architectural reference.
+*   **[📅 IMPLEMENTATION PLAN](docs/implementation/2025-hand-off-implementation-plan.md)**: Step-by-step execution plan.
+
+**Additional Active Guides**
+*   **[Naming Conventions](docs/refactoring/NAMING_REFACTORING_PLAN.md)**: Standardized naming guide.
+*   **[Cleanup Candidates](docs/project-history/CLEANUP_CANDIDATES.md)**: List of code scheduled for deletion/refactoring.
+
 ## BattleTech Rules Documentation
 
 **⚠️ IMPORTANT for Developers and AI Agents**: This project implements official BattleTech construction rules. Always reference the rules documentation when working on BattleTech-related code.
