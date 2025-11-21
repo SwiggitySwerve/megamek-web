@@ -1,6 +1,13 @@
 import React, { useCallback, useMemo } from 'react';
 import { EditableUnit } from '../../../types/editor';
+import { IEquipment } from '../../../types/core/EquipmentInterfaces';
 import { calculateInternalHeatSinksForEngine } from '../../../utils/heatSinkCalculations';
+
+// Interface for equipment with heat properties to avoid 'as any'
+interface EquipmentWithHeat extends IEquipment {
+  heat?: number;
+  data?: { heatmap?: number };
+}
 
 interface HeatSinksPanelProps {
   unit: EditableUnit;
@@ -53,8 +60,9 @@ const HeatSinksPanel: React.FC<HeatSinksPanelProps> = ({
     
     // Add heat from weapons
     unit.equipmentPlacements?.forEach(placement => {
-      const equipmentHeat = (placement.equipment as any).heat || 
-                           placement.equipment.data?.heatmap || 0;
+      const eq = placement.equipment as EquipmentWithHeat;
+      const equipmentHeat = eq.heat || 
+                           eq.data?.heatmap || 0;
       heat += Number(equipmentHeat);
     });
     

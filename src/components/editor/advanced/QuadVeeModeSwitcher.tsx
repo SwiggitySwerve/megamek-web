@@ -1,11 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import { EditableUnit } from '../../../types/editor';
-
-export type QuadVeeMode = 'Mech' | 'Vehicle';
+import { QuadVeeMode } from '../../../types/core/UnitInterfaces';
 
 interface QuadVeeModeSwitcherProps {
   unit: EditableUnit;
-  onModeChange: (mode: QuadVeeMode) => void;
+  onModeChange?: (mode: QuadVeeMode) => void;
   onUnitChange: (unit: EditableUnit) => void;
   readOnly?: boolean;
 }
@@ -54,13 +53,14 @@ const QuadVeeModeSwitcher: React.FC<QuadVeeModeSwitcherProps> = ({
     // Simulate transformation time (faster than LAM)
     setTimeout(() => {
       setCurrentMode(newMode);
-      onModeChange(newMode);
+      if (onModeChange) {
+        onModeChange(newMode);
+      }
 
       // Update unit configuration
-      const updatedUnit = {
+      const updatedUnit: EditableUnit = {
         ...unit,
         quadVeeConfiguration: {
-          ...unit.quadVeeConfiguration,
           currentMode: newMode,
           lastTransformation: Date.now(),
           conversionEquipmentDamaged: unit.quadVeeConfiguration?.conversionEquipmentDamaged || false,
@@ -222,7 +222,7 @@ const QuadVeeModeSwitcher: React.FC<QuadVeeModeSwitcherProps> = ({
           <strong>Warning:</strong> Conversion equipment is damaged. Transformation unavailable.
         </div>
       )}
-      {unit.currentMovementPoints && unit.currentMovementPoints > 0 && (
+      {unit.currentMovementPoints !== undefined && unit.currentMovementPoints > 0 && (
         <div className="mt-3 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-700">
           <strong>Note:</strong> Unit must be stationary to transform.
         </div>

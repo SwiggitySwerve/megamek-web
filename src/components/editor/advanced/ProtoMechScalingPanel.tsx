@@ -104,21 +104,51 @@ const ProtoMechScalingPanel: React.FC<ProtoMechScalingPanelProps> = ({
 
     setSelectedScale(newScale);
     
-    const updatedUnit = {
+    const newData = scaleData[newScale as keyof typeof scaleData];
+    const totalArmor = newData.armorPoints;
+
+    // Distribute armor points to standard locations for compatibility
+    // ProtoMechs effectively have: Head, Torso, Arms, Legs.
+    // We'll map to standard mech locations.
+    
+    // Heuristic distribution:
+    // Head: ~10% (min 2)
+    // CT: ~40%
+    // Arms: ~15% each
+    // Legs: ~15% each
+    
+    const head = Math.max(2, Math.floor(totalArmor * 0.1));
+    const arms = Math.floor(totalArmor * 0.15);
+    const legs = Math.floor(totalArmor * 0.15);
+    
+    // Remainder goes to Center Torso (Main Body)
+    const used = head + (arms * 2) + (legs * 2);
+    const torso = Math.max(0, totalArmor - used);
+
+    const armorAllocation = {
+      head,
+      centerTorso: torso,
+      centerTorsoRear: 0, // ProtoMechs typically don't have rear armor in the same way
+      leftTorso: 0,
+      leftTorsoRear: 0,
+      rightTorso: 0,
+      rightTorsoRear: 0,
+      leftArm: arms,
+      rightArm: arms,
+      leftLeg: legs,
+      rightLeg: legs,
+    };
+
+    const updatedUnit: EditableUnit = {
       ...unit,
       protoMechScale: newScale,
-      mass: newScale,
-      // Update armor and critical slots based on scale
-      armorAllocation: {
-        ...unit.armorAllocation,
-        'Torso': {
-          front: Math.min(unit.armorAllocation['Torso']?.front || 0, scaleData[newScale as keyof typeof scaleData].armorPoints),
-          maxArmor: scaleData[newScale as keyof typeof scaleData].armorPoints,
-          type: unit.armorAllocation['Torso']?.type || { id: 'standard', name: 'Standard', pointsPerTon: 16, criticalSlots: 0, techLevel: 1, isClan: true, isInner: false },
-        },
-      },
-      // Update critical slots
-      maxCriticalSlots: scaleData[newScale as keyof typeof scaleData].criticalSlots,
+      tonnage: newScale,
+      armor: {
+        ...unit.armor,
+        allocation: armorAllocation,
+        // Approximate armor tonnage contribution if needed, though usually integral for ProtoMechs
+        tonnage: Math.ceil(totalArmor / 16 * 10) / 10 
+      }
     };
 
     onUnitChange(updatedUnit);

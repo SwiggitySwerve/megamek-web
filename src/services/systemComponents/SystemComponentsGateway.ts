@@ -7,7 +7,7 @@
  */
 
 import { SystemComponentsService, ComponentQueryCriteria, ValidationResult } from './SystemComponentsService'
-import { UnitContext, createDefaultUnitContext } from './calculations/UnitContext'
+import { UnitContext, createDefaultUnitContext, UnitType } from './calculations/UnitContext'
 import { EngineVariant } from './adapters/EngineAdapter'
 import { GyroVariant } from './adapters/GyroAdapter'
 import { StructureVariant } from './adapters/StructureAdapter'
@@ -137,7 +137,7 @@ export const SystemComponentsGateway = {
       ...createDefaultUnitContext(),
       tonnage: criteria.unitTonnage,
       techBase: criteria.techBase,
-      unitType: criteria.unitType as any,
+      unitType: criteria.unitType as UnitType,
       constructionYear: criteria.availableByYear || 3025
     }
 

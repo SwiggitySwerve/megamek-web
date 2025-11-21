@@ -60,7 +60,7 @@ export class CalculationEngine {
         return this.evaluateMath(expression, context)
 
       default:
-        throw new Error(`Unknown expression type: ${(expression as any).type}`)
+        throw new Error(`Unknown expression type: ${(expression as { type: string }).type}`)
     }
   }
 
@@ -148,7 +148,7 @@ export class CalculationEngine {
         return !this.evaluateCondition(condition.condition, ctx)
 
       default:
-        throw new Error(`Unknown condition type: ${(condition as any).type}`)
+        throw new Error(`Unknown condition type: ${(condition as { type: string }).type}`)
     }
   }
 

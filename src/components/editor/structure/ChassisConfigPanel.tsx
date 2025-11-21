@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { EditableUnit } from '../../../types/editor';
+import { UnitConfig } from '../../../types/index';
 import { getMaxArmorPoints, getMaxArmorPointsForLocation } from '../../../utils/internalStructureTable';
 
 interface ChassisConfig {
@@ -140,7 +141,7 @@ const ChassisConfigPanel: React.FC<ChassisConfigPanelProps> = ({
       ...unit,
       data: {
         ...unit.data,
-        config: motiveType as any,
+        config: motiveType as UnitConfig,
       },
     };
     

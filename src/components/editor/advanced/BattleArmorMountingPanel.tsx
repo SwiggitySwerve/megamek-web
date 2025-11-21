@@ -1,14 +1,6 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { EditableUnit } from '../../../types/editor';
-
-interface MountedBattleArmor {
-  id: string;
-  name: string;
-  squad: string;
-  troopers: number;
-  location: string;
-  isOmniMount: boolean;
-}
+import { MountedBattleArmor } from '../../../types/core/UnitInterfaces';
 
 interface BattleArmorMountingPanelProps {
   unit: EditableUnit;
@@ -25,23 +17,27 @@ const BattleArmorMountingPanel: React.FC<BattleArmorMountingPanelProps> = ({
     unit.mountedBattleArmor || []
   );
 
+  useEffect(() => {
+    setMountedBA(unit.mountedBattleArmor || []);
+  }, [unit.mountedBattleArmor]);
+
   // Battle Armor mounting locations based on mech type
   const getMountingLocations = useCallback(() => {
     const baseLocations = ['Center Torso', 'Left Torso', 'Right Torso'];
     
-    // Check if unit has quad or tripod configuration based on critical locations
-    const hasFrontLegs = unit.data?.criticals?.some(crit => 
-      crit.location.includes('Front Left Leg') || crit.location.includes('Front Right Leg')
-    );
+    // Heuristic for Quad mech since we don't have direct access to critical slots structure here easily
+    // properly without ICompleteUnitState.
+    // TODO: Use a more robust way to determine Quad vs Biped
+    const isQuad = unit.chassis.toLowerCase().includes('quad') || unit.model.toLowerCase().includes('quad');
     
-    if (hasFrontLegs) {
+    if (isQuad) {
       // Quad mech
       return [...baseLocations, 'Front Left Leg', 'Front Right Leg', 'Rear Left Leg', 'Rear Right Leg'];
     } else {
       // Default to Biped (most common)
       return [...baseLocations, 'Left Arm', 'Right Arm', 'Left Leg', 'Right Leg'];
     }
-  }, [unit.data?.criticals]);
+  }, [unit.chassis, unit.model]);
 
   // Maximum BA that can be mounted per location
   const getMaxTroopersPerLocation = (location: string): number => {
@@ -64,6 +60,47 @@ const BattleArmorMountingPanel: React.FC<BattleArmorMountingPanelProps> = ({
     onUnitChange(updatedUnit);
   }, [mountedBA, unit, onUnitChange]);
 
+  // Check if location can accept more BA
+  const canMountAtLocation = useCallback((location: string): boolean => {
+    const currentAtLocation = mountedBA
+      .filter(ba => ba.location === location)
+      .reduce((sum, ba) => sum + ba.troopers, 0);
+    
+    return currentAtLocation < getMaxTroopersPerLocation(location);
+  }, [mountedBA]);
+
+  // Handle mounting BA from available types
+  const handleMountNewBA = useCallback((baType: { name: string, squad: number }) => {
+    if (readOnly) return;
+
+    // Find first valid location
+    const locations = getMountingLocations();
+    let targetLocation = '';
+
+    for (const loc of locations) {
+      if (canMountAtLocation(loc)) {
+        targetLocation = loc;
+        break;
+      }
+    }
+
+    if (!targetLocation) {
+      // No available locations
+      return;
+    }
+
+    const newBA: MountedBattleArmor = {
+      id: `ba-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      name: baType.name,
+      squad: `Squad ${mountedBA.length + 1}`,
+      troopers: baType.squad,
+      location: targetLocation,
+      isOmniMount: unit.hasOmniMounts || false,
+    };
+
+    handleMountBA(newBA);
+  }, [mountedBA, unit.hasOmniMounts, readOnly, getMountingLocations, canMountAtLocation, handleMountBA]);
+
   // Handle dismounting BA
   const handleDismountBA = useCallback((baId: string) => {
     const newMountedBA = mountedBA.filter(ba => ba.id !== baId);
@@ -76,15 +113,6 @@ const BattleArmorMountingPanel: React.FC<BattleArmorMountingPanelProps> = ({
     
     onUnitChange(updatedUnit);
   }, [mountedBA, unit, onUnitChange]);
-
-  // Check if location can accept more BA
-  const canMountAtLocation = (location: string): boolean => {
-    const currentAtLocation = mountedBA
-      .filter(ba => ba.location === location)
-      .reduce((sum, ba) => sum + ba.troopers, 0);
-    
-    return currentAtLocation < getMaxTroopersPerLocation(location);
-  };
 
   // Calculate total weight of mounted BA
   const getTotalBAWeight = (): number => {
@@ -172,12 +200,21 @@ const BattleArmorMountingPanel: React.FC<BattleArmorMountingPanelProps> = ({
           ].map((baType) => (
             <div
               key={baType.name}
-              className="p-2 bg-gray-50 rounded-lg border border-gray-200"
+              className="p-2 bg-gray-50 rounded-lg border border-gray-200 flex flex-col justify-between"
             >
-              <h5 className="text-xs font-medium text-gray-900">{baType.name}</h5>
-              <p className="text-xs text-gray-600">
-                {baType.weight}t per trooper, Squad: {baType.squad}
-              </p>
+              <div>
+                <h5 className="text-xs font-medium text-gray-900">{baType.name}</h5>
+                <p className="text-xs text-gray-600 mb-2">
+                  {baType.weight}t per trooper, Squad: {baType.squad}
+                </p>
+              </div>
+              <button
+                onClick={() => handleMountNewBA(baType)}
+                disabled={readOnly}
+                className="w-full py-1 px-2 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Mount
+              </button>
             </div>
           ))}
         </div>
