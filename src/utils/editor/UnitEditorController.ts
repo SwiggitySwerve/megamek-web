@@ -9,6 +9,8 @@ import { UnitCalculationService, PerformanceMetrics } from './UnitCalculationSer
 import { UnitValidationService, ValidationResult, ValidationContext } from './UnitValidationService'
 import { TabManagerService, TabManagerState, TabManagerOptions } from './TabManagerService'
 import { NextRouter } from 'next/router'
+import { getTonnage, getTechBase } from '../typeConversion/propertyAccessors'
+import { techBaseToString } from '../typeConversion/enumConverters'
 
 export interface EditorAction {
   type: string
@@ -487,8 +489,8 @@ export class UnitEditorController {
    * Generate default system components for unit
    */
   private static generateDefaultSystemComponents(unit: EditableUnit): any {
-    const mass = unit.mass || 50
-    const techBase = unit.tech_base || 'Inner Sphere'
+    const mass = getTonnage(unit, 50)
+    const techBase = techBaseToString(getTechBase(unit))
 
     return {
       engine: {
@@ -536,7 +538,7 @@ export class UnitEditorController {
       allocation[location] = {
         front: 0,
         rear: 0,
-        maxArmor: this.getMaxArmorForLocation(location, unit.mass || 50),
+        maxArmor: this.getMaxArmorForLocation(location, getTonnage(unit, 50)),
         type: { id: 'standard', name: 'Standard' }
       }
     })

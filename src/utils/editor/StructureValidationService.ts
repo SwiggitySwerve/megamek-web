@@ -8,6 +8,8 @@
  */
 
 import { EditableUnit, ValidationError } from '../../types/editor'
+import { getTonnage, getTechBase } from '../typeConversion/propertyAccessors'
+import { techBaseToString } from '../typeConversion/enumConverters'
 
 export interface StructureValidationContext {
   strictMode: boolean
@@ -161,7 +163,8 @@ export class StructureValidationService {
 
     const armor = unit.data.armor
     let totalArmor = 0
-    const maxArmor = this.calculateMaxArmor(unit.mass || 50)
+    const tonnage = getTonnage(unit, 50)
+    const maxArmor = this.calculateMaxArmor(tonnage)
 
     // Validate armor locations
     if (armor.locations) {
@@ -208,7 +211,8 @@ export class StructureValidationService {
         }
 
         // Check location-specific armor limits
-        const maxArmorForLocation = this.getMaxArmorForLocation(locationName, unit.mass || 50)
+        const tonnage = getTonnage(unit, 50)
+        const maxArmorForLocation = this.getMaxArmorForLocation(locationName, tonnage)
         
         if (context.enforceArmorLimits) {
           // Special case for head armor (absolute limit of 9)
@@ -351,10 +355,11 @@ export class StructureValidationService {
 
     // Get structure information from system components
     const structureType = unit.systemComponents?.structure?.type || 'Standard'
-    const tonnage = unit.mass || 50
+    const tonnage = getTonnage(unit, 50)
+    const unitTechBase = techBaseToString(getTechBase(unit))
     const structureIntegrity = this.calculateStructureIntegrity(tonnage, structureType)
     const weightCompliance = this.validateStructureWeight(tonnage, structureType)
-    const typeCompatibility = this.validateStructureTypeCompatibility(structureType, unit.tech_base)
+    const typeCompatibility = this.validateStructureTypeCompatibility(structureType, unitTechBase)
 
     // Validate structure type
     if (!this.isValidStructureType(structureType)) {
@@ -381,7 +386,7 @@ export class StructureValidationService {
       warnings.push({
         id: 'structure-tech-mismatch',
         category: 'warning',
-        message: `Structure type ${structureType} may not be compatible with ${unit.tech_base} tech base`,
+        message: `Structure type ${structureType} may not be compatible with ${unitTechBase} tech base`,
         field: 'systemComponents.structure.type',
       })
     }
@@ -468,7 +473,8 @@ export class StructureValidationService {
     }
 
     // Calculate efficiency and coverage
-    const efficiency = this.calculateArmorEfficiency(armor, unit.mass || 50)
+    const tonnage = getTonnage(unit, 50)
+    const efficiency = this.calculateArmorEfficiency(armor, tonnage)
     const coverage = this.analyzeCoverageBalance(armor)
 
     return {

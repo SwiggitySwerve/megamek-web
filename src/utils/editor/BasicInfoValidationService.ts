@@ -8,6 +8,8 @@
  */
 
 import { EditableUnit, ValidationError } from '../../types/editor'
+import { getTonnage, getTechBase } from '../typeConversion/propertyAccessors'
+import { techBaseToString } from '../typeConversion/enumConverters'
 
 export interface BasicInfoValidationContext {
   strictMode: boolean
@@ -73,8 +75,9 @@ export class BasicInfoValidationService {
       errors.push(modelResult.error)
     }
 
-    // Mass validation
-    const massResult = this.validateMassField(unit.mass, ctx)
+    // Mass validation - use property accessor to handle both camelCase and snake_case
+    const tonnage = getTonnage(unit, 50)
+    const massResult = this.validateMassField(tonnage, ctx)
     if (massResult.error) {
       if (massResult.error.category === 'error') {
         errors.push(massResult.error)
@@ -84,11 +87,13 @@ export class BasicInfoValidationService {
     }
 
     // Additional mass-related warnings
-    const massWarnings = this.validateMassRanges(unit.mass, ctx)
+    const massWarnings = this.validateMassRanges(tonnage, ctx)
     warnings.push(...massWarnings)
 
-    // Tech base validation
-    const techBaseResult = this.validateTechBaseField(unit.tech_base, ctx)
+    // Tech base validation - use property accessor to handle both camelCase and snake_case
+    const techBase = getTechBase(unit)
+    const techBaseString = techBaseToString(techBase)
+    const techBaseResult = this.validateTechBaseField(techBaseString, ctx)
     if (!techBaseResult.isValid && techBaseResult.error) {
       errors.push(techBaseResult.error)
     }

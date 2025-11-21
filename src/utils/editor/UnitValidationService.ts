@@ -10,6 +10,8 @@ import { EngineValidationService } from './EngineValidationService'
 import { WeaponValidationService } from './WeaponValidationService'
 import { StructureValidationService } from './StructureValidationService'
 import { FieldValidationService, FieldValidationResult } from './FieldValidationService'
+import { hasTechBase, getTonnage, hasTonnage, getTechBase } from '../typeConversion/propertyAccessors'
+import { techBaseToString } from '../typeConversion/enumConverters'
 
 export interface ValidationContext {
   strictMode: boolean
@@ -140,17 +142,18 @@ export class UnitValidationService {
       })
     }
 
-    // Mass validation
-    if (!unit.mass || unit.mass <= 0) {
+    // Mass validation - use property accessor to handle both camelCase and snake_case
+    const tonnage = getTonnage(unit, 0)
+    if (!hasTonnage(unit) || tonnage <= 0) {
       errors.push({
         id: 'invalid-mass',
         category: 'error',
         message: 'Unit mass must be greater than 0',
-        field: 'mass',
+        field: 'tonnage', // Use camelCase field name
       })
     } else {
       // Check if mass follows BattleTech tonnage increments (5-ton steps)
-      if (unit.mass % 5 !== 0) {
+      if (tonnage % 5 !== 0) {
         if (context.strictMode) {
           errors.push({
             id: 'invalid-tonnage-increment',
@@ -169,14 +172,14 @@ export class UnitValidationService {
       }
 
       // Check tonnage ranges
-      if (unit.mass < 20) {
+      if (tonnage < 20) {
         warnings.push({
           id: 'light-tonnage',
           category: 'warning',
           message: 'Unit mass below 20 tons is very light for a BattleMech',
-          field: 'mass',
+          field: 'tonnage', // Use camelCase field name
         })
-      } else if (unit.mass > 100) {
+      } else if (tonnage > 100) {
         if (context.strictMode) {
           errors.push({
             id: 'excessive-tonnage',
@@ -195,13 +198,13 @@ export class UnitValidationService {
       }
     }
 
-    // Tech base validation
-    if (!unit.tech_base) {
+    // Tech base validation - use property accessor to handle both camelCase and snake_case
+    if (!hasTechBase(unit)) {
       errors.push({
         id: 'missing-tech-base',
         category: 'error',
         message: 'Tech base must be specified',
-        field: 'tech_base',
+        field: 'techBase', // Use camelCase field name
       })
     }
 
@@ -301,7 +304,8 @@ export class UnitValidationService {
       const weightBreakdown = UnitCalculationService.calculateWeightBreakdown(unit)
       
       if (weightBreakdown.isOverweight) {
-        const overweight = weightBreakdown.total - (unit.mass || 0)
+        const tonnage = getTonnage(unit, 0)
+        const overweight = weightBreakdown.total - tonnage
         errors.push({
           id: 'unit-overweight',
           category: 'error',
@@ -462,7 +466,8 @@ export class UnitValidationService {
     const errors: ValidationError[] = []
     const warnings: ValidationError[] = []
 
-    const unitTechBase = unit.tech_base
+    const unitTechBase = getTechBase(unit)
+    const unitTechBaseString = techBaseToString(unitTechBase)
 
     // Check system components tech compatibility
     if (unit.systemComponents) {
@@ -470,7 +475,7 @@ export class UnitValidationService {
 
       // Engine tech base validation
       if (components.engine) {
-        if (unitTechBase === 'Inner Sphere' && components.engine.type.includes('Clan')) {
+        if (unitTechBaseString === 'Inner Sphere' && components.engine.type.includes('Clan')) {
           if (context.strictMode) {
             errors.push({
               id: 'engine-tech-mismatch',
@@ -605,8 +610,10 @@ export class UnitValidationService {
       case 'model':
         return FieldValidationService.validateModelField(value, ctx)
       case 'mass':
+      case 'tonnage': // Support both for backward compatibility
         return FieldValidationService.validateMassField(value, ctx)
       case 'tech_base':
+      case 'techBase': // Support both for backward compatibility
         return FieldValidationService.validateTechBaseField(value, ctx)
       case 'era':
         return FieldValidationService.validateEraField(value, ctx)
@@ -615,7 +622,7 @@ export class UnitValidationService {
       case 'engineRating':
         // Engine rating validation requires mass and walk speed for cross-validation
         // For now, delegate to basic validation since walkSpeed isn't easily accessible
-        const mass = unit.mass || 0
+        const mass = getTonnage(unit, 0)
         const walkSpeed = 0 // TODO: Extract walk speed from unit configuration
         return FieldValidationService.validateEngineRatingField(value, mass, walkSpeed, ctx)
       default:
