@@ -8,6 +8,8 @@
  */
 
 import { EditableUnit, ValidationError } from '../../types/editor'
+import { getTechBase, getTonnage } from '../typeConversion/propertyAccessors'
+import { techBaseToString } from '../typeConversion/enumConverters'
 
 export interface EngineValidationContext {
   strictMode: boolean
@@ -77,7 +79,7 @@ export class EngineValidationService {
     }
 
     const engine = unit.systemComponents.engine
-    const unitMass = unit.mass || 50
+    const unitMass = getTonnage(unit, 50)
 
     // Basic engine rating validation
     const ratingValidation = this.validateEngineRating(engine.rating, ctx)
@@ -89,8 +91,9 @@ export class EngineValidationService {
     errors.push(...movementValidation.errors)
     warnings.push(...movementValidation.warnings)
 
-    // Engine type validation
-    const typeValidation = this.validateEngineType(engine.type, unit.tech_base, ctx)
+    // Engine type validation - use property accessor
+    const unitTechBase = techBaseToString(getTechBase(unit))
+    const typeValidation = this.validateEngineType(engine.type, unitTechBase, ctx)
     errors.push(...typeValidation.errors)
     warnings.push(...typeValidation.warnings)
 
@@ -479,12 +482,12 @@ export class EngineValidationService {
     unit: EditableUnit,
     targetWalkMP?: number
   ): Array<{ type: string, rating: number, benefits: string[], tradeoffs: string[] }> {
-    if (!unit.systemComponents?.engine || !unit.mass) {
+    const unitMass = getTonnage(unit, 0)
+    if (!unit.systemComponents?.engine || !unitMass) {
       return []
     }
 
     const currentRating = unit.systemComponents.engine.rating
-    const unitMass = unit.mass
     const target = targetWalkMP || Math.floor(currentRating / unitMass)
     const targetRating = unitMass * target
 
@@ -500,14 +503,14 @@ export class EngineValidationService {
 
     // XL engine option
     suggestions.push({
-      type: unit.tech_base === 'Clan' ? 'Clan XL Engine' : 'XL Engine',
+      type: techBaseToString(getTechBase(unit)) === 'Clan' ? 'Clan XL Engine' : 'XL Engine',
       rating: targetRating,
       benefits: ['50% weight savings', 'More space for equipment'],
       tradeoffs: ['Vulnerable to side torso hits', 'Higher cost']
     })
 
     // Light engine option (if available)
-    if (unit.tech_base === 'Inner Sphere') {
+    if (techBaseToString(getTechBase(unit)) === 'Inner Sphere') {
       suggestions.push({
         type: 'Light Engine',
         rating: targetRating,

@@ -9,6 +9,8 @@
 
 import { EditableUnit, ValidationError } from '../../types/editor'
 import { EngineValidationService } from './EngineValidationService'
+import { getTechBase, getTonnage } from '../typeConversion/propertyAccessors'
+import { techBaseToString } from '../typeConversion/enumConverters'
 
 export interface SystemValidationContext {
   strictMode: boolean
@@ -170,7 +172,7 @@ export class SystemValidationService {
     if (heatSinks.type) {
       const techCompatibility = this.validateHeatSinkTechCompatibility(
         heatSinks.type,
-        unit.tech_base,
+        techBaseToString(getTechBase(unit)),
         context
       )
       errors.push(...techCompatibility.errors)
@@ -328,7 +330,8 @@ export class SystemValidationService {
     }
 
     // Warn about low heat dissipation for heavy weapons
-    if (totalDissipation < 20 && unit.mass && unit.mass > 50) {
+    const tonnage = getTonnage(unit, 0)
+    if (totalDissipation < 20 && tonnage > 50) {
       warnings.push({
         id: 'low-heat-dissipation',
         category: 'warning',
@@ -444,7 +447,7 @@ export class SystemValidationService {
     const warnings: ValidationError[] = []
 
     // Industrial cockpit restrictions
-    if (cockpit.type === 'Industrial' && unit.tech_base === 'Clan') {
+    if (cockpit.type === 'Industrial' && techBaseToString(getTechBase(unit)) === 'Clan') {
       if (context.strictMode) {
         errors.push({
           id: 'industrial-cockpit-clan',
@@ -463,7 +466,8 @@ export class SystemValidationService {
     }
 
     // Small cockpit weight restrictions
-    if (cockpit.type === 'Small' && unit.mass && unit.mass > 55) {
+    const tonnage = getTonnage(unit, 0)
+    if (cockpit.type === 'Small' && tonnage > 55) {
       warnings.push({
         id: 'small-cockpit-heavy-mech',
         category: 'warning',
@@ -557,13 +561,15 @@ export class SystemValidationService {
     }
 
     // Adjust requirements based on unit characteristics
-    if (unit.mass && unit.mass < 20) {
+    const tonnage = getTonnage(unit, 0)
+    if (tonnage < 20) {
       requirements.incompatibleComponents.push('Standard Gyro (too heavy)')
     }
 
-    if (unit.tech_base === 'Clan') {
+    const unitTechBase = techBaseToString(getTechBase(unit))
+    if (unitTechBase === 'Clan') {
       requirements.techBaseConstraints.push('Clan technology compatible')
-    } else if (unit.tech_base === 'Inner Sphere') {
+    } else if (unitTechBase === 'Inner Sphere') {
       requirements.techBaseConstraints.push('Inner Sphere technology compatible')
     }
 

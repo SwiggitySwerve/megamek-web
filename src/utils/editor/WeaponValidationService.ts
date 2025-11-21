@@ -8,6 +8,8 @@
  */
 
 import { EditableUnit, ValidationError } from '../../types/editor'
+import { getTechBase } from '../typeConversion/propertyAccessors'
+import { techBaseToString } from '../typeConversion/enumConverters'
 
 export interface WeaponValidationContext {
   strictMode: boolean
@@ -303,7 +305,7 @@ export class WeaponValidationService {
     const incompatibleItems: string[] = []
     const suggestions: string[] = []
 
-    const unitTechBase = unit.tech_base
+    const unitTechBase = techBaseToString(getTechBase(unit))
 
     if (!unitTechBase) {
       errors.push({

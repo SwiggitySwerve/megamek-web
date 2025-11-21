@@ -55,8 +55,15 @@ export interface EditableUnit extends ICompleteUnitConfiguration {
 
   // Extended editor state
   data?: Partial<UnitData>;
+  
+  // Legacy properties (deprecated - use camelCase from ICompleteUnitConfiguration instead)
+  // Prefer: techBase, rulesLevel, tonnage from ICompleteUnitConfiguration
+  /** @deprecated Use techBase from ICompleteUnitConfiguration */
   tech_base?: string;
+  /** @deprecated Use tonnage from ICompleteUnitConfiguration */
   mass?: number;
+  
+  // Editor-specific properties
   armorAllocation?: ArmorAllocationMap;
   equipmentPlacements?: EquipmentPlacement[];
   criticalSlots?: CriticalSlotAssignment[];

@@ -6,7 +6,8 @@
 
 import { EditableUnit } from '../../types/editor'
 import { calculateHeatGeneration, calculateEquipmentWeight, calculateCriticalSlots, calculateEquipmentBV } from '../equipmentData'
-import { calculateGyroWeight } from '../../types/systemComponents';
+import { calculateGyroWeight } from '../../types/systemComponents'
+import { getTonnage } from '../typeConversion/propertyAccessors'
 
 export interface WeightBreakdown {
   structure: number
@@ -147,7 +148,7 @@ export class UnitCalculationService {
       utilizationPercentage: 0
     }
 
-    const unitMass = unit.mass || 50
+    const unitMass = getTonnage(unit, 50)
 
     // Structure weight calculation
     if (opts.useSystemComponents && unit.systemComponents?.structure) {
@@ -253,7 +254,7 @@ export class UnitCalculationService {
     unit: EditableUnit,
     options: Partial<UnitCalculationOptions> = {}
   ): BattleValueBreakdown {
-    const unitMass = unit.mass || 50
+    const unitMass = getTonnage(unit, 50)
     
     // Base BV calculation (simplified)
     const base = unitMass * 2
@@ -299,7 +300,7 @@ export class UnitCalculationService {
     unit: EditableUnit,
     options: Partial<UnitCalculationOptions> = {}
   ): CostBreakdown {
-    const unitMass = unit.mass || 50
+    const unitMass = getTonnage(unit, 50)
     
     // Base cost (chassis and basic systems)
     const base = unitMass * 10000
@@ -499,7 +500,7 @@ export class UnitCalculationService {
    */
   static isOverweight(unit: EditableUnit): boolean {
     const currentWeight = this.quickWeightCalculation(unit)
-    return currentWeight > (unit.mass || 0)
+    return currentWeight > getTonnage(unit, 0)
   }
 
   /**
