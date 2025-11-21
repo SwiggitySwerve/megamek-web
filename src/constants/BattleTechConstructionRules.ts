@@ -208,7 +208,19 @@ export const ENGINE_CRITICAL_SLOTS = {
   'XL': 12,
   'Light': 4,
   'Compact': 3,
-  'XXL': 20
+  'XXL': 20,
+  'ICE': 6,
+  'Fuel Cell': 6
+} as const;
+
+/**
+ * Gyro critical slots
+ */
+export const GYRO_CRITICAL_SLOTS = {
+  'Standard': 4,
+  'Compact': 2,
+  'XL': 6,
+  'Heavy-Duty': 4
 } as const;
 
 // =============================================================================
@@ -287,8 +299,11 @@ export function isValidHeatSinkType(heatSinkType: string): boolean {
 // TYPE DEFINITIONS
 // =============================================================================
 
+import { TechBase as TechBaseEnum } from '../types/core/BaseTypes';
+
 export type ArmorType = keyof typeof ARMOR_POINTS_PER_TON;
 export type StructureType = keyof typeof STRUCTURE_WEIGHT_MULTIPLIER;
 export type HeatSinkType = keyof typeof HEAT_SINK_DISSIPATION;
 export type EngineType = keyof typeof ENGINE_CRITICAL_SLOTS;
-export type TechBase = 'Inner Sphere' | 'Clan' | 'Both';
+export type GyroType = keyof typeof GYRO_CRITICAL_SLOTS;
+export type TechBase = TechBaseEnum | 'Inner Sphere' | 'Clan' | 'Both';
