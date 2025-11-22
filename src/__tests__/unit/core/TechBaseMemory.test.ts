@@ -4,7 +4,7 @@ import {
   validateAndResolveComponentWithMemory,
   getRememberedComponent
 } from '../../../utils/techBaseMemory';
-import { ComponentMemoryState } from '../../../types/componentDatabase';
+import { ComponentMemoryState } from '../../../types/core/ComponentDatabase';
 import { ComponentCategory, TechBase } from '../../../types/core/BaseTypes';
 
 // Mock componentDatabaseHelpers to avoid complex dependency

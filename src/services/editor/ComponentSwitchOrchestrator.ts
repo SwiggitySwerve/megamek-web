@@ -1,6 +1,6 @@
 import { CatalogGateway } from '../catalog/CatalogGateway'
 import { ComponentCategory as CatalogComponentCategory, TechContext } from '../catalog/types'
-import { ComponentMemoryState, COMPONENT_CATEGORIES, TECH_BASES, TechBaseMemory } from '../../types/componentDatabase'
+import { ComponentMemoryState, COMPONENT_CATEGORIES, TECH_BASES, TechBaseMemory } from '../../types/core/ComponentDatabase'
 import { validateAndResolveComponentWithMemory, createDefaultMemory } from '../../utils/techBaseMemory'
 import { ComponentCategory as DbComponentCategory, RulesLevel, TechBase } from '../../types/core/BaseTypes'
 import { UnitConfiguration } from '../../utils/criticalSlots/UnitCriticalManagerTypes'

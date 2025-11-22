@@ -43,7 +43,7 @@ import {
 import {
   TechBaseMemory,
   ComponentMemoryState
-} from '../../../types/componentDatabase';
+} from '../../../types/core/ComponentDatabase';
 
 // Import ComponentConfiguration helpers
 import { 

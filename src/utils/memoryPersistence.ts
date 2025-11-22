@@ -6,7 +6,7 @@
 import {
   ComponentMemoryState,
   TechBaseMemory
-} from '../types/componentDatabase';
+} from '../types/core/ComponentDatabase';
 
 import {
   MEMORY_VERSION,

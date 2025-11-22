@@ -10,7 +10,7 @@
 
 import React from 'react'
 import { TechProgression } from '../../utils/techProgression'
-import { ComponentMemoryState } from '../../types/componentDatabase'
+import { ComponentMemoryState } from '../../types/core/ComponentDatabase'
 
 interface TechProgressionPanelProps {
   techProgression: TechProgression

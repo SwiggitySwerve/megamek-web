@@ -30,7 +30,7 @@ import {
 } from '../../utils/componentAvailability'
 import {
   ComponentMemoryState
-} from '../../types/componentDatabase'
+} from '../../types/core/ComponentDatabase'
 import {
   validateAndResolveComponentWithMemory,
   initializeMemoryFromConfiguration

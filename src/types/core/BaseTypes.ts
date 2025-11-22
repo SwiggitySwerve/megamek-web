@@ -213,6 +213,15 @@ export const UnitType = {
   MOBILE_STRUCTURE: 'Mobile Structure'
 } as const;
 
+// ===== SPECIFIC COMPONENT TYPES (Moved from legacy systemComponents.ts) =====
+
+export type EngineType = 'Standard' | 'XL' | 'Light' | 'XXL' | 'Compact' | 'ICE' | 'Fuel Cell' | 'XL (IS)' | 'XL (Clan)';
+export type GyroType = 'Standard' | 'XL' | 'Compact' | 'Heavy-Duty';
+export type CockpitType = 'Standard' | 'Small' | 'Command Console' | 'Torso-Mounted Cockpit' | 'Primitive Cockpit';
+export type StructureType = 'Standard' | 'Endo Steel' | 'Endo Steel (Clan)' | 'Composite' | 'Reinforced' | 'Industrial' | 'Endo Steel (IS)';
+export type ArmorType = 'Standard' | 'Ferro-Fibrous' | 'Ferro-Fibrous (Clan)' | 'Light Ferro-Fibrous' | 'Heavy Ferro-Fibrous' | 'Stealth' | 'Reactive' | 'Reflective' | 'Hardened';
+export type HeatSinkType = 'Single' | 'Double' | 'Double (Clan)' | 'Double (IS)' | 'Compact' | 'Compact (Clan)' | 'Laser' | 'Laser (Clan)';
+
 // ===== BASE ENTITY INTERFACES =====
 
 /**

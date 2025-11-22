@@ -9,6 +9,17 @@
 
 // ===== BASE TYPES =====
 export * from './BaseTypes';
+export * from './ApplicationTypes'; // View/DTO Types
+
+// ===== COMPONENT DEFINITIONS =====
+export * from './ComponentInterfaces'; // System Component Definitions
+export * from './ComponentDatabase';   // Component Database & Schema
+export * from './ComponentPlacement';  // Component Placement Rules
+export * from './ComponentStructure';  // Structural Logic
+
+// ===== EQUIPMENT AND STATE INTERFACES =====
+export * from './EquipmentInterfaces';
+export * from './UnitInterfaces';
 
 // ===== VALIDATION INTERFACES =====
 export * from './ValidationInterfaces';
@@ -16,12 +27,7 @@ export * from './ValidationInterfaces';
 // ===== CALCULATION INTERFACES =====
 export * from './CalculationInterfaces';
 
-// ===== EQUIPMENT AND STATE INTERFACES =====
-export * from './EquipmentInterfaces';
-export * from './UnitInterfaces';
-
-// ===== STRUCTURE AND STATUS =====
-export * from './ComponentStructure';
+// ===== STATUS AND UTILS =====
 export * from './TechStatus';
 
 // ===== TYPE COMPATIBILITY ALIASES =====
@@ -217,9 +223,9 @@ export function migrateToTypedConfiguration(legacy: any): Result<ICompleteUnitCo
       engine: {
         definition: {
             category: 'engine',
-             // @ts-ignore
+            // @ts-ignore
             type: legacy.engineType || 'Standard',
-             // @ts-ignore
+            // @ts-ignore
             rating: legacy.engineRating || 100
         } as any,
         rating: legacy.engineRating || 100,
@@ -391,12 +397,16 @@ export function createServiceRegistry(): IServiceRegistry {
 export function validateTypes(): boolean {
   console.log('🔍 BattleTech Editor Type System Validation');
   console.log('✅ BaseTypes loaded');
+  console.log('✅ ApplicationTypes loaded');
+  console.log('✅ ComponentInterfaces loaded');
+  console.log('✅ ComponentDatabase loaded');
+  console.log('✅ ComponentPlacement loaded');
   console.log('✅ ValidationInterfaces loaded');
   console.log('✅ CalculationInterfaces loaded');
   console.log('✅ EquipmentInterfaces loaded');
-  console.log('✅ UnitInterfaces loaded (Updated)');
-  console.log('✅ ComponentStructure loaded (New)');
-  console.log('✅ TechStatus loaded (New)');
+  console.log('✅ UnitInterfaces loaded');
+  console.log('✅ ComponentStructure loaded');
+  console.log('✅ TechStatus loaded');
   console.log('🎯 Type system ready for SOLID refactoring');
   
   return true;
@@ -408,8 +418,8 @@ if (typeof window !== 'undefined') {
 }
 
 // ===== TYPE SYSTEM VERSION =====
-export const TYPE_SYSTEM_VERSION = '1.1.0'; // Bumped version
-export const MIGRATION_SUPPORTED_VERSIONS = ['0.9.x', '1.0.x'];
+export const TYPE_SYSTEM_VERSION = '1.2.0'; // Bumped version
+export const MIGRATION_SUPPORTED_VERSIONS = ['0.9.x', '1.0.x', '1.1.x'];
 
 /**
  * Type system metadata
@@ -425,7 +435,9 @@ export const TypeSystemInfo = {
     'SOLID principle enablement',
     'Legacy migration support',
     'Mixed Tech Support',
-    'Dynamic Component Structure'
+    'Dynamic Component Structure',
+    'Integrated Component Database',
+    'Application Layer DTOs'
   ],
   benefits: [
     'Eliminates "as any" type casting',
@@ -434,6 +446,7 @@ export const TypeSystemInfo = {
     'Catches type errors at compile time',
     'Facilitates safe refactoring',
     'Improves code maintainability',
-    'Supports any unit type (Mech, Vehicle, etc)'
+    'Supports any unit type (Mech, Vehicle, etc)',
+    'Clean architectural separation'
   ]
 } as const;

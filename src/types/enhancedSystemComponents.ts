@@ -1,6 +1,9 @@
 /**
  * Enhanced System Components Data Model
  * Extended structure with tech base awareness and construction rules validation
+ * 
+ * @deprecated
+ * Use `src/types/core/ComponentInterfaces.ts` instead.
  */
 
 import { 
@@ -10,47 +13,57 @@ import {
   CockpitComponent, 
   StructureComponent, 
   ArmorComponent, 
-  HeatSinkComponent,
-  EngineType,
-  HeatSinkType 
+  HeatSinkComponent
 } from './systemComponents';
 
-// Enhanced tech base types
-export type TechBase = 'Inner Sphere' | 'Clan' | 'Mixed (IS Chassis)' | 'Mixed (Clan Chassis)';
-export type TechLevel = 'Introductory' | 'Standard' | 'Advanced' | 'Experimental';
+import {
+  EngineType,
+  HeatSinkType,
+  TechBase,
+  TechLevel
+} from './core/BaseTypes';
+
+export { TechBase, TechLevel };
 
 // Enhanced component interfaces with tech base awareness
+/** @deprecated */
 export interface EnhancedEngineComponent extends EngineComponent {
   techBase: 'Inner Sphere' | 'Clan' | 'Both';
   specification: EngineSpecification;
 }
 
+/** @deprecated */
 export interface EnhancedHeatSinkComponent extends HeatSinkComponent {
   techBase: 'Inner Sphere' | 'Clan' | 'Both';
   specification: HeatSinkSpecification;
 }
 
+/** @deprecated */
 export interface EnhancedStructureComponent extends StructureComponent {
   techBase: 'Inner Sphere' | 'Clan' | 'Both';
   specification: StructureSpecification;
 }
 
+/** @deprecated */
 export interface EnhancedArmorComponent extends ArmorComponent {
   techBase: 'Inner Sphere' | 'Clan' | 'Both';
   specification: ArmorSpecification;
 }
 
+/** @deprecated */
 export interface EnhancedGyroComponent extends GyroComponent {
   techBase: 'Inner Sphere' | 'Clan' | 'Both';
   specification: GyroSpecification;
 }
 
+/** @deprecated */
 export interface EnhancedCockpitComponent extends CockpitComponent {
   techBase: 'Inner Sphere' | 'Clan' | 'Both';
   specification: CockpitSpecification;
 }
 
 // Enhanced system components interface
+/** @deprecated */
 export interface EnhancedSystemComponents extends SystemComponents {
   techBase: TechBase;
   techLevel: TechLevel;
@@ -66,6 +79,7 @@ export interface EnhancedSystemComponents extends SystemComponents {
 }
 
 // Component specifications
+/** @deprecated */
 export interface EngineSpecification {
   techBase: 'Inner Sphere' | 'Clan' | 'Both';
   weightMultiplier: number;
@@ -85,6 +99,7 @@ export interface EngineSpecification {
   extinctionYear?: number;
 }
 
+/** @deprecated */
 export interface HeatSinkSpecification {
   techBase: 'Inner Sphere' | 'Clan' | 'Both';
   dissipation: number;
@@ -96,6 +111,7 @@ export interface HeatSinkSpecification {
   extinctionYear?: number;
 }
 
+/** @deprecated */
 export interface StructureSpecification {
   techBase: 'Inner Sphere' | 'Clan' | 'Both';
   weightMultiplier: number;
@@ -107,6 +123,7 @@ export interface StructureSpecification {
   extinctionYear?: number;
 }
 
+/** @deprecated */
 export interface ArmorSpecification {
   techBase: 'Inner Sphere' | 'Clan' | 'Both';
   weightMultiplier: number;
@@ -118,6 +135,7 @@ export interface ArmorSpecification {
   extinctionYear?: number;
 }
 
+/** @deprecated */
 export interface GyroSpecification {
   techBase: 'Inner Sphere' | 'Clan' | 'Both';
   weightMultiplier: number;
@@ -128,6 +146,7 @@ export interface GyroSpecification {
   extinctionYear?: number;
 }
 
+/** @deprecated */
 export interface CockpitSpecification {
   techBase: 'Inner Sphere' | 'Clan' | 'Both';
   weight: number;
@@ -139,6 +158,7 @@ export interface CockpitSpecification {
 }
 
 // Construction context for validation
+/** @deprecated */
 export interface ConstructionContext {
   mechTonnage: number;
   techBase: TechBase;
@@ -149,6 +169,7 @@ export interface ConstructionContext {
 }
 
 // Validation results
+/** @deprecated */
 export interface ConstructionValidationResult {
   isValid: boolean;
   errors: string[];
@@ -159,12 +180,14 @@ export interface ConstructionValidationResult {
   costCalculation: CostCalculation | null;
 }
 
+/** @deprecated */
 export interface TechBaseViolation {
   component: string;
   violation: 'tech_base_mismatch' | 'era_unavailable' | 'tech_level_incompatible';
   details: string;
 }
 
+/** @deprecated */
 export interface SlotViolation {
   location: string;
   required: number;
@@ -172,18 +195,21 @@ export interface SlotViolation {
   component: string;
 }
 
+/** @deprecated */
 export interface WeightViolation {
   type: 'overweight' | 'invalid_modifier';
   excess?: number;
   details: string;
 }
 
+/** @deprecated */
 export interface CostCalculation {
   totalCost: number;
   breakdown: CostBreakdown;
   modifiers: CostModifier[];
 }
 
+/** @deprecated */
 export interface CostBreakdown {
   chassis: number;
   engine: number;
@@ -196,6 +222,7 @@ export interface CostBreakdown {
   mixedTechPenalty: number;
 }
 
+/** @deprecated */
 export interface CostModifier {
   type: string;
   description: string;
@@ -204,6 +231,7 @@ export interface CostModifier {
 }
 
 // Change impact analysis
+/** @deprecated */
 export interface ConstructionChangeImpact {
   slotImpact: SlotChangeImpact;
   weightImpact: WeightChangeImpact;
@@ -211,12 +239,14 @@ export interface ConstructionChangeImpact {
   techCompatibilityImpact: TechCompatibilityImpact;
 }
 
+/** @deprecated */
 export interface SlotChangeImpact {
   displacedEquipment: EquipmentAllocation[];
   newSlotRequirements: { [location: string]: number };
   availabilityChange: { [location: string]: number };
 }
 
+/** @deprecated */
 export interface WeightChangeImpact {
   weightDelta: number;
   newTotalWeight: number;
@@ -224,18 +254,21 @@ export interface WeightChangeImpact {
   violations: WeightViolation[];
 }
 
+/** @deprecated */
 export interface CostChangeImpact {
   costDelta: number;
   newTotalCost: number;
   affectedSystems: string[];
 }
 
+/** @deprecated */
 export interface TechCompatibilityImpact {
   compatibilityChanges: string[];
   newRestrictions: string[];
   removedRestrictions: string[];
 }
 
+/** @deprecated */
 export interface EquipmentAllocation {
   equipmentData: any; // Will be defined when integrating with equipment system
   location: string;
@@ -243,6 +276,7 @@ export interface EquipmentAllocation {
 }
 
 // Component change tracking
+/** @deprecated */
 export interface ComponentChange {
   componentType: 'engine' | 'gyro' | 'structure' | 'armor' | 'heatSink' | 'cockpit';
   oldValue: any;
@@ -250,6 +284,7 @@ export interface ComponentChange {
 }
 
 // Component options for UI
+/** @deprecated */
 export interface ComponentOption {
   id: string
   name: string
@@ -265,6 +300,7 @@ export interface ComponentOption {
   }
 }
 
+/** @deprecated */
 export interface EquipmentCompatibilityResult {
   isCompatible: boolean
   issues: string[]
@@ -275,6 +311,7 @@ export interface EquipmentCompatibilityResult {
 export type ComponentType = 'engine' | 'gyro' | 'structure' | 'armor' | 'heatSink' | 'cockpit';
 
 // Tech compatibility utilities
+/** @deprecated */
 export interface TechCompatibilityResult {
   isCompatible: boolean;
   restrictions: string[];
@@ -283,12 +320,14 @@ export interface TechCompatibilityResult {
 }
 
 // Mixed tech rules
+/** @deprecated */
 export interface MixedTechPenalties {
   battleValueMultiplier: number;
   costMultiplier: number;
   additionalRestrictions: string[];
 }
 
+/** @deprecated */
 export interface MixedTechValidationResult {
   isValid: boolean;
   errors: string[];
@@ -297,6 +336,7 @@ export interface MixedTechValidationResult {
 }
 
 // Era availability
+/** @deprecated */
 export interface EraAvailability {
   available: boolean;
   rating: 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'X';
@@ -305,6 +345,7 @@ export interface EraAvailability {
 }
 
 // Enhanced utility functions
+/** @deprecated */
 export function isTechBaseCompatible(
   componentTechBase: string, 
   chassisTechBase: TechBase
@@ -318,6 +359,7 @@ export function isTechBaseCompatible(
   return compatibilityRules[componentTechBase]?.includes(chassisTechBase) || false;
 }
 
+/** @deprecated */
 export function getTechBaseFromEngineType(engineType: EngineType): 'Inner Sphere' | 'Clan' | 'Both' {
   if (engineType === 'XL (IS)' || engineType === 'Light') {
     return 'Inner Sphere';
@@ -327,6 +369,7 @@ export function getTechBaseFromEngineType(engineType: EngineType): 'Inner Sphere
   return 'Both';
 }
 
+/** @deprecated */
 export function getTechBaseFromHeatSinkType(heatSinkType: HeatSinkType): 'Inner Sphere' | 'Clan' | 'Both' {
   if (heatSinkType === 'Double (IS)') {
     return 'Inner Sphere';
@@ -336,10 +379,12 @@ export function getTechBaseFromHeatSinkType(heatSinkType: HeatSinkType): 'Inner 
   return 'Both';
 }
 
+/** @deprecated */
 export function isAdvancedTechnology(techLevel: TechLevel): boolean {
   return techLevel === 'Advanced' || techLevel === 'Experimental';
 }
 
+/** @deprecated */
 export function isTechLevelCompatible(
   componentTechLevel: TechLevel, 
   contextTechLevel: TechLevel
@@ -351,6 +396,7 @@ export function isTechLevelCompatible(
 }
 
 // Engine survivability utility
+/** @deprecated */
 export function getEngineSurvivabilityDescription(engineType: EngineType): string {
   if (engineType === 'XL (IS)') {
     return 'Destroyed if either side torso is lost';
@@ -365,6 +411,7 @@ export function getEngineSurvivabilityDescription(engineType: EngineType): strin
 }
 
 // Heat sink efficiency utility
+/** @deprecated */
 export function getHeatSinkEfficiency(heatSinkType: HeatSinkType): number {
   const efficiencyMap: { [key in HeatSinkType]: number } = {
     'Single': 1.0,           // 1 dissipation / 1 slot = 1.0

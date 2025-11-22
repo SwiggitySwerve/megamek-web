@@ -13,7 +13,7 @@ import {
   RulesLevel,
   COMPONENT_CATEGORIES,
   TECH_BASES
-} from '../types/componentDatabase';
+} from '../types/core/ComponentDatabase';
 
 import {
   getDefaultComponent,

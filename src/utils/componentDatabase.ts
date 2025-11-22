@@ -9,7 +9,7 @@ import {
   TechLevel, 
   TechBase,
   ComponentCategory
-} from '../types/componentDatabase';
+} from '../types/core/ComponentDatabase';
 
 // ===== RICH COMPONENT DATABASE =====
 
