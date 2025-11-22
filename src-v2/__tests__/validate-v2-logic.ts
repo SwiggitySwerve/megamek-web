@@ -6,14 +6,14 @@
  * Run with: npx tsx src-v2/validate-v2-logic.ts
  */
 
-import { TechBase, RulesLevel } from './types/TechBase';
-import { StructureType, EngineType, GyroType, CockpitType, ArmorType } from './types/SystemComponents';
-import { StructureMechanics } from './mechanics/Structure';
-import { EngineMechanics } from './mechanics/Engine';
-import { CriticalSlotMechanics, MechLocation } from './mechanics/CriticalSlots';
-import { MechValidator } from './mechanics/Validation';
-import { WEAPONS_DB } from './data/weapons';
-import { IMechLabState, DEFAULT_MECH_STATE } from './features/mech-lab/store/MechLabState';
+import { TechBase, RulesLevel } from '../types/TechBase';
+import { StructureType, EngineType, GyroType, CockpitType, ArmorType } from '../types/SystemComponents';
+import { StructureMechanics } from '../mechanics/Structure';
+import { EngineMechanics } from '../mechanics/Engine';
+import { CriticalSlotMechanics, MechLocation } from '../mechanics/CriticalSlots';
+import { MechValidator } from '../mechanics/Validation';
+import { WEAPONS_DB } from '../data/weapons';
+import { IMechLabState, DEFAULT_MECH_STATE } from '../features/mech-lab/store/MechLabState';
 
 console.log('=== Validating v2 Mech Lab Logic ===');
 

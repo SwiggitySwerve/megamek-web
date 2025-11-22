@@ -4,13 +4,13 @@
  * Run with: npx ts-node src-v2/verify-v2-foundation.ts
  */
 
-import { TechBase, RulesLevel } from './types/TechBase';
-import { ComponentType } from './types/ComponentType';
-import { EngineType, GyroType, CockpitType, StructureType, ArmorType, HeatSinkType } from './types/SystemComponents';
-import { StructureMechanics } from './mechanics/Structure';
-import { EngineMechanics } from './mechanics/Engine';
-import { GyroMechanics } from './mechanics/Gyro';
-import { ArmorMechanics } from './mechanics/Armor';
+import { TechBase, RulesLevel } from '../types/TechBase';
+import { ComponentType } from '../types/ComponentType';
+import { EngineType, GyroType, CockpitType, StructureType, ArmorType, HeatSinkType } from '../types/SystemComponents';
+import { StructureMechanics } from '../mechanics/Structure';
+import { EngineMechanics } from '../mechanics/Engine';
+import { GyroMechanics } from '../mechanics/Gyro';
+import { ArmorMechanics } from '../mechanics/Armor';
 
 console.log('=== Verifying v2 Mech Creator Foundation ===');
 
