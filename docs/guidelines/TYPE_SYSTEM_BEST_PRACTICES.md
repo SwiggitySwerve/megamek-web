@@ -159,3 +159,13 @@ This report catalogs:
 
 Use this report to prioritize refactoring efforts and track migration progress.
 
+---
+
+## 9. Related Guidelines
+
+For general code style, formatting, and React patterns, see:
+- **[CODE_STYLING_BEST_PRACTICES.md](./CODE_STYLING_BEST_PRACTICES.md)** - Comprehensive code style guide covering TypeScript conventions, React patterns, formatting standards, and more
+
+For an overview of all guidelines:
+- **[README.md](./README.md)** - Guidelines directory overview and quick reference
+

@@ -103,7 +103,10 @@ Architecture documentation:
 - `SpecialComponentManagerConsolidation.md` - Component manager consolidation
 
 ### 📁 `guidelines/`
-Development guidelines:
+Development guidelines and best practices:
+- **[README.md](./guidelines/README.md)** ⭐ **START HERE** - Guidelines overview and quick reference
+- `CODE_STYLING_BEST_PRACTICES.md` ⭐ - Comprehensive code style guide (TypeScript, React, formatting)
+- `TYPE_SYSTEM_BEST_PRACTICES.md` ⭐ - Type system standards and migration guide
 - `DOCUMENTATION_GUIDELINES.md` - Documentation standards
 - `CUSTOM_INSTRUCTIONS_FOR_DOCUMENTATION.md` - Custom documentation instructions
 - `DROPDOWN_MIGRATION_EXAMPLES.md` - Migration examples
