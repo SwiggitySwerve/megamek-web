@@ -1,6 +1,6 @@
 # BattleTech Editor v2 (Alpha)
 
-This directory (`src-v2`) contains the re-engineered core for the BattleTech Unit Creator. It is designed to replace the legacy logic in `src/` with a strictly typed, SOLID-compliant implementation.
+This directory (`src`) contains the re-engineered core for the BattleTech Unit Creator. The legacy implementation has been moved to `src-old/` for reference. This new implementation uses strictly typed, SOLID-compliant architecture.
 
 ## 🎯 Design Philosophy
 
@@ -30,12 +30,16 @@ This directory (`src-v2`) contains the re-engineered core for the BattleTech Uni
     - `store/`: React Hook-based state store (`useMechLabStore`).
     - `components/`: Modular UI panels (Engine, Structure, Paper Doll).
 
+## Legacy Code
+
+The previous implementation has been preserved in `src-old/` for reference and migration purposes. It will be removed once all functionality has been successfully ported to the new architecture.
+
 ## 🛠️ Usage
 
 The entry point is `features/mech-lab/components/MechDashboard.tsx`. This component provides a self-contained UI for editing a Mech.
 
 ```tsx
-import { MechDashboard } from 'src-v2/features/mech-lab/components/MechDashboard';
+import { MechDashboard } from 'src/features/mech-lab/components/MechDashboard';
 
 // ... in your router or app
 <MechDashboard />
@@ -49,6 +53,6 @@ Validation scripts are located in `__tests__/`.
 
 Run with:
 ```bash
-npx tsx src-v2/__tests__/validate-v2-logic.ts
+npx tsx src/__tests__/validate-v2-logic.ts
 ```
 

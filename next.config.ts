@@ -16,9 +16,9 @@ const nextConfig: NextConfig = {
     if (!dev) {
       config.optimization.sideEffects = false;
       
-      // Add specific tree-shaking rules for equipment files
+      // Add specific tree-shaking rules for data files
       config.module.rules.push({
-        test: /src\/data\/equipment.*\.ts$/,
+        test: /src\/data.*\.ts$/,
         sideEffects: false,
       });
     }
@@ -42,34 +42,34 @@ const nextConfig: NextConfig = {
         cacheGroups: {
           ...config.optimization.splitChunks.cacheGroups,
           
-          // Separate chunk for equipment data
-          equipment: {
-            test: /[\\/]src[\\/]data[\\/]equipment/,
-            name: 'equipment',
+          // Separate chunk for data
+          data: {
+            test: /[\\/]src[\\/]data[\\/]/,
+            name: 'data',
             chunks: 'all',
             priority: 30,
           },
           
-          // Separate chunk for services
-          services: {
-            test: /[\\/]src[\\/]services[\\/]/,
-            name: 'services',
+          // Separate chunk for mechanics
+          mechanics: {
+            test: /[\\/]src[\\/]mechanics[\\/]/,
+            name: 'mechanics',
             chunks: 'all',
             priority: 25,
           },
           
-          // Separate chunk for utilities
-          utils: {
-            test: /[\\/]src[\\/]utils[\\/]/,
-            name: 'utils',
+          // Separate chunk for features
+          features: {
+            test: /[\\/]src[\\/]features[\\/]/,
+            name: 'features',
             chunks: 'all',
             priority: 20,
           },
           
-          // Separate chunk for components
-          components: {
-            test: /[\\/]src[\\/]components[\\/]/,
-            name: 'components',
+          // Separate chunk for types
+          types: {
+            test: /[\\/]src[\\/]types[\\/]/,
+            name: 'types',
             chunks: 'all',
             priority: 15,
           },
@@ -92,9 +92,8 @@ const nextConfig: NextConfig = {
     // Optimize module resolution for faster builds
     config.resolve.alias = {
       ...config.resolve.alias,
-      '@/services': './src/services',
-      '@/utils': './src/utils',
-      '@/components': './src/components',
+      '@/features': './src/features',
+      '@/mechanics': './src/mechanics',
       '@/data': './src/data',
       '@/types': './src/types',
     };
