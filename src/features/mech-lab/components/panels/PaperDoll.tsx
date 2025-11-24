@@ -6,8 +6,13 @@
 
 import React, { useMemo, useState } from 'react';
 import { useMechLabStore } from '../../hooks/useMechLabStore';
-import { CriticalSlotMechanics, MechLocation, ILocationSlots, ICriticalSlot } from '../../../../mechanics/CriticalSlots';
+import {
+  CriticalSlotMechanics,
+  MechLocation,
+  ILocationSlots,
+} from '../../../../mechanics/CriticalSlots';
 import { getWeaponById } from '../../../../data/weapons';
+import { IMechLabActions, IMechLabState } from '../../store/MechLabState';
 
 const LOCATION_ORDER = [
   MechLocation.HEAD,
@@ -20,20 +25,33 @@ const LOCATION_ORDER = [
   MechLocation.LEFT_LEG,
 ];
 
-export const PaperDoll: React.FC = () => {
-  const { state, actions } = useMechLabStore();
+interface PaperDollProps {
+  state?: IMechLabState;
+  actions?: IMechLabActions;
+}
+
+export const PaperDoll: React.FC<PaperDollProps> = ({ state, actions }) => {
+  const store = useMechLabStore();
+  const resolvedState = state ?? store.state;
+  const resolvedActions = actions ?? store.actions;
   const [selectedEquipmentId, setSelectedEquipmentId] = useState<string | null>(null);
 
   // Generate Layout
   const layout = useMemo(() => {
     return CriticalSlotMechanics.generateBaseLayout(
-      state.techBase,
-      state.engineType,
-      state.gyroType,
-      state.cockpitType,
-      state.equipment
+      resolvedState.techBase,
+      resolvedState.engineType,
+      resolvedState.gyroType,
+      resolvedState.cockpitType,
+      resolvedState.equipment
     );
-  }, [state.techBase, state.engineType, state.gyroType, state.cockpitType, state.equipment]);
+  }, [
+    resolvedState.techBase,
+    resolvedState.engineType,
+    resolvedState.gyroType,
+    resolvedState.cockpitType,
+    resolvedState.equipment,
+  ]);
 
   const handleSlotClick = (location: MechLocation, slotIndex: number) => {
     if (selectedEquipmentId) {
@@ -46,7 +64,7 @@ export const PaperDoll: React.FC = () => {
       );
 
       if (canPlace) {
-        actions.assignEquipment(selectedEquipmentId, location, slotIndex);
+        resolvedActions.assignEquipment(selectedEquipmentId, location, slotIndex);
         setSelectedEquipmentId(null); // Deselect after placement
       } else {
         alert("Cannot place item here: Slot occupied or insufficient space.");
@@ -56,13 +74,13 @@ export const PaperDoll: React.FC = () => {
       // For now, simple unassign on click if it's equipment
       const slot = layout[location].slots[slotIndex - 1];
       if (slot.equipmentInstanceId) {
-        actions.unassignEquipment(slot.equipmentInstanceId);
+        resolvedActions.unassignEquipment(slot.equipmentInstanceId);
       }
     }
   };
 
   // Filter unallocated equipment for selection list
-  const unallocatedEquipment = state.equipment.filter(e => e.location === 'unallocated');
+  const unallocatedEquipment = resolvedState.equipment.filter(e => e.location === 'unallocated');
 
   return (
     <div className="grid grid-cols-1 gap-6">

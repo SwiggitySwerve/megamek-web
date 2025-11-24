@@ -5,133 +5,72 @@
  */
 
 import { useState, useCallback, useMemo } from 'react';
-import { IMechLabState, DEFAULT_MECH_STATE, IInstalledEquipmentState } from '../store/MechLabState';
+import {
+  IMechLabState,
+  DEFAULT_MECH_STATE,
+  IInstalledEquipmentState,
+  IMechLabActions,
+} from '../store/MechLabState';
 import { TechBase } from '../../../types/TechBase';
-import { WeightOps } from '../../../mechanics/WeightOps';
-import { EngineType, GyroType, StructureType, ArmorType } from '../../../types/SystemComponents';
-import { getWeaponById } from '../../../data/weapons';
+import {
+  EngineType,
+  GyroType,
+  StructureType,
+  ArmorType,
+  CockpitType,
+  HeatSinkType,
+} from '../../../types/SystemComponents';
+import { calculateMechLabMetrics, IMechLabMetrics } from '../store/MechLabMetrics';
 
 export function useMechLabStore(initialState: IMechLabState = DEFAULT_MECH_STATE) {
   const [state, setState] = useState<IMechLabState>(initialState);
 
-  // --- Actions ---
+  const metrics = useMemo<IMechLabMetrics>(() => calculateMechLabMetrics(state), [state]);
 
-  const setTonnage = useCallback((tonnage: number) => {
-    setState(prev => ({ ...prev, tonnage }));
-  }, []);
+  const actions = useMemo<IMechLabActions>(() => ({
+    setTonnage: (tonnage: number) => setState(prev => ({ ...prev, tonnage })),
+    setTechBase: (techBase: TechBase) => setState(prev => ({ ...prev, techBase })),
+    setWalkingMP: (mp: number) => setState(prev => ({ ...prev, walkingMP: mp })),
+    setStructureType: (type: StructureType) => setState(prev => ({ ...prev, structureType: type })),
+    setEngineType: (type: EngineType) => setState(prev => ({ ...prev, engineType: type })),
+    setGyroType: (type: GyroType) => setState(prev => ({ ...prev, gyroType: type })),
+    setCockpitType: (type: CockpitType) => setState(prev => ({ ...prev, cockpitType: type })),
+    setArmorType: (type: ArmorType) => setState(prev => ({ ...prev, armorType: type })),
+    setHeatSinkType: (type: HeatSinkType) => setState(prev => ({ ...prev, heatSinkType: type })),
+    addEquipment: (equipmentId: string) => {
+      setState(prev => {
+        const newItem: IInstalledEquipmentState = {
+          id: crypto.randomUUID(),
+          equipmentId,
+          location: 'unallocated',
+          slotIndex: -1,
+          count: 1,
+          slotsAllocated: 0,
+        };
+        return { ...prev, equipment: [...prev.equipment, newItem] };
+      });
+    },
+    removeEquipment: (instanceId: string) =>
+      setState(prev => ({
+        ...prev,
+        equipment: prev.equipment.filter(e => e.id !== instanceId),
+      })),
+    assignEquipment: (instanceId: string, location: string, slotIndex: number) =>
+      setState(prev => ({
+        ...prev,
+        equipment: prev.equipment.map(item =>
+          item.id === instanceId ? { ...item, location, slotIndex } : item
+        ),
+      })),
+    unassignEquipment: (instanceId: string) =>
+      setState(prev => ({
+        ...prev,
+        equipment: prev.equipment.map(item =>
+          item.id === instanceId ? { ...item, location: 'unallocated', slotIndex: -1 } : item
+        ),
+      })),
+  }), [setState]);
 
-  const setTechBase = useCallback((techBase: TechBase) => {
-    setState(prev => ({ ...prev, techBase }));
-  }, []);
-
-  const setWalkingMP = useCallback((mp: number) => {
-    setState(prev => ({ ...prev, walkingMP: mp }));
-  }, []);
-
-  const setStructureType = useCallback((type: StructureType) => {
-    setState(prev => ({ ...prev, structureType: type }));
-  }, []);
-
-  const setEngineType = useCallback((type: EngineType) => {
-    setState(prev => ({ ...prev, engineType: type }));
-  }, []);
-
-  const addEquipment = useCallback((equipmentId: string) => {
-    setState(prev => {
-      const newItem: IInstalledEquipmentState = {
-        id: crypto.randomUUID(),
-        equipmentId,
-        location: 'unallocated',
-        slotIndex: -1,
-        count: 1,
-        slotsAllocated: 0, // Default
-      };
-      return { ...prev, equipment: [...prev.equipment, newItem] };
-    });
-  }, []);
-
-  const removeEquipment = useCallback((instanceId: string) => {
-    setState(prev => ({
-      ...prev,
-      equipment: prev.equipment.filter(e => e.id !== instanceId)
-    }));
-  }, []);
-
-  // --- Derived Metrics Calculation ---
-
-  const metrics = useMemo(() => {
-    // 1. Structure Weight
-    const structureWeight = WeightOps.calculateStructureWeight(state.tonnage, state.structureType);
-
-    // 2. Engine Weight
-    const rating = state.walkingMP * state.tonnage; // Simple rating calc
-    const engineWeight = WeightOps.calculateEngineWeight(state.engineType, rating);
-
-    // 3. Gyro Weight
-    const gyroWeight = WeightOps.calculateGyroWeight(state.gyroType, rating);
-
-    // 4. Cockpit Weight
-    const cockpitWeight = WeightOps.calculateCockpitWeight(state.cockpitType);
-
-    // 5. Equipment Weight
-    const equipmentWeight = state.equipment.reduce((total, item) => {
-      const def = getWeaponById(item.equipmentId);
-      return total + (def ? def.weight * item.count : 0);
-    }, 0);
-
-    // 6. Total Weight
-    const currentWeight = structureWeight + engineWeight + gyroWeight + cockpitWeight + equipmentWeight;
-
-    const remainingTonnage = state.tonnage - currentWeight;
-
-    return {
-      structureWeight,
-      engineWeight,
-      gyroWeight,
-      cockpitWeight,
-      equipmentWeight,
-      currentWeight,
-      remainingTonnage,
-      engineRating: rating,
-    };
-  }, [state]);
-
-  const assignEquipment = useCallback((instanceId: string, location: string, slotIndex: number) => {
-    setState(prev => ({
-      ...prev,
-      equipment: prev.equipment.map(item =>
-        item.id === instanceId
-          ? { ...item, location, slotIndex }
-          : item
-      )
-    }));
-  }, []);
-
-  const unassignEquipment = useCallback((instanceId: string) => {
-    setState(prev => ({
-      ...prev,
-      equipment: prev.equipment.map(item =>
-        item.id === instanceId
-          ? { ...item, location: 'unallocated', slotIndex: -1 }
-          : item
-      )
-    }));
-  }, []);
-
-  return {
-    state,
-    metrics,
-    actions: {
-      setTonnage,
-      setTechBase,
-      setWalkingMP,
-      setStructureType,
-      setEngineType,
-      addEquipment,
-      removeEquipment,
-      assignEquipment,
-      unassignEquipment,
-    }
-  };
+  return { state, metrics, actions };
 }
 

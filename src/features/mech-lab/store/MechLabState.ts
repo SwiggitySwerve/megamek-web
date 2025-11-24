@@ -4,7 +4,14 @@
  */
 
 import { TechBase, RulesLevel } from '../../../types/TechBase';
-import { EngineType, GyroType, CockpitType, StructureType, ArmorType, HeatSinkType } from '../../../types/SystemComponents';
+import {
+  EngineType,
+  GyroType,
+  CockpitType,
+  StructureType,
+  ArmorType,
+  HeatSinkType,
+} from '../../../types/SystemComponents';
 import { IEquipment } from '../../../types/Equipment';
 
 export interface IMechLabState {
@@ -51,6 +58,22 @@ export interface ISlotState {
   index: number;
   content: string | null; // null = empty, string = equipment ID or system name (e.g. "Engine")
   isDynamic: boolean; // True if occupied by dynamic component (Engine, Gyro)
+}
+
+export interface IMechLabActions {
+  setTonnage(tonnage: number): void;
+  setTechBase(techBase: TechBase): void;
+  setWalkingMP(mp: number): void;
+  setStructureType(type: StructureType): void;
+  setEngineType(type: EngineType): void;
+  setGyroType(type: GyroType): void;
+  setCockpitType(type: CockpitType): void;
+  setArmorType(type: ArmorType): void;
+  setHeatSinkType(type: HeatSinkType): void;
+  addEquipment(equipmentId: string): void;
+  removeEquipment(instanceId: string): void;
+  assignEquipment(instanceId: string, location: string, slotIndex: number): void;
+  unassignEquipment(instanceId: string): void;
 }
 
 export const DEFAULT_MECH_STATE: IMechLabState = {

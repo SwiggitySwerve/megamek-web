@@ -7,13 +7,27 @@ import React from 'react';
 import { useMechLabStore } from '../../hooks/useMechLabStore';
 import { StructureType } from '../../../../types/SystemComponents';
 import { StructureMechanics } from '../../../../mechanics/Structure';
+import { IMechLabActions, IMechLabState } from '../../store/MechLabState';
 
-export const StructurePanel: React.FC = () => {
-  const { state, actions } = useMechLabStore();
+interface StructurePanelProps {
+  state?: IMechLabState;
+  actions?: IMechLabActions;
+}
 
-  const structureWeight = StructureMechanics.calculateWeight(state.tonnage, state.structureType);
-  const structureSlots = StructureMechanics.getRequiredSlots(state.structureType, state.techBase);
-  const structurePoints = StructureMechanics.getPoints(state.tonnage);
+export const StructurePanel: React.FC<StructurePanelProps> = ({ state, actions }) => {
+  const store = useMechLabStore();
+  const resolvedState = state ?? store.state;
+  const resolvedActions = actions ?? store.actions;
+
+  const structureWeight = StructureMechanics.calculateWeight(
+    resolvedState.tonnage,
+    resolvedState.structureType
+  );
+  const structureSlots = StructureMechanics.getRequiredSlots(
+    resolvedState.structureType,
+    resolvedState.techBase
+  );
+  const structurePoints = StructureMechanics.getPoints(resolvedState.tonnage);
 
   return (
     <section className="bg-gray-800 p-4 rounded-lg border border-gray-700">
@@ -27,8 +41,8 @@ export const StructurePanel: React.FC = () => {
         <div className="flex flex-col gap-2">
           <select 
             className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:ring-2 focus:ring-blue-500"
-            value={state.structureType}
-            onChange={(e) => actions.setStructureType(e.target.value as StructureType)}
+            value={resolvedState.structureType}
+            onChange={(e) => resolvedActions.setStructureType(e.target.value as StructureType)}
           >
             {Object.values(StructureType).map(st => (
               <option key={st} value={st}>{st}</option>

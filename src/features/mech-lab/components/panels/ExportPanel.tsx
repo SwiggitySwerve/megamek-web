@@ -5,16 +5,25 @@
 
 import React from 'react';
 import { useMechLabStore } from '../../hooks/useMechLabStore';
+import { IMechLabState } from '../../store/MechLabState';
+import { IMechLabMetrics } from '../../store/MechLabMetrics';
 
-export const ExportPanel: React.FC = () => {
-  const { state, metrics } = useMechLabStore();
+interface ExportPanelProps {
+  state?: IMechLabState;
+  metrics?: IMechLabMetrics;
+}
+
+export const ExportPanel: React.FC<ExportPanelProps> = ({ state, metrics }) => {
+  const store = useMechLabStore();
+  const resolvedState = state ?? store.state;
+  const resolvedMetrics = metrics ?? store.metrics;
 
   const handleExport = () => {
     const exportData = {
-      ...state,
+      ...resolvedState,
       _meta: {
         exportedAt: new Date().toISOString(),
-        metrics,
+        metrics: resolvedMetrics,
         version: '2.0.0-alpha'
       }
     };
@@ -23,7 +32,7 @@ export const ExportPanel: React.FC = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${state.name.replace(/\s+/g, '_')}_${state.model}.json`;
+    a.download = `${resolvedState.name.replace(/\s+/g, '_')}_${resolvedState.model}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

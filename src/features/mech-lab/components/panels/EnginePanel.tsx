@@ -8,13 +8,24 @@ import { useMechLabStore } from '../../hooks/useMechLabStore';
 import { EngineType, GyroType } from '../../../../types/SystemComponents';
 import { EngineMechanics } from '../../../../mechanics/Engine';
 import { GyroMechanics } from '../../../../mechanics/Gyro';
+import { IMechLabActions, IMechLabState } from '../../store/MechLabState';
+import { IMechLabMetrics } from '../../store/MechLabMetrics';
 
-export const EnginePanel: React.FC = () => {
-  const { state, metrics, actions } = useMechLabStore();
+interface EnginePanelProps {
+  state?: IMechLabState;
+  metrics?: IMechLabMetrics;
+  actions?: IMechLabActions;
+}
 
-  const engineSlots = EngineMechanics.getRequiredSlots(state.engineType, state.techBase);
-  const gyroSlots = GyroMechanics.getRequiredSlots(state.gyroType);
-  const internalHS = EngineMechanics.calculateInternalHeatSinks(metrics.engineRating);
+export const EnginePanel: React.FC<EnginePanelProps> = ({ state, metrics, actions }) => {
+  const store = useMechLabStore();
+  const resolvedState = state ?? store.state;
+  const resolvedMetrics = metrics ?? store.metrics;
+  const resolvedActions = actions ?? store.actions;
+
+  const engineSlots = EngineMechanics.getRequiredSlots(resolvedState.engineType, resolvedState.techBase);
+  const gyroSlots = GyroMechanics.getRequiredSlots(resolvedState.gyroType);
+  const internalHS = EngineMechanics.calculateInternalHeatSinks(resolvedMetrics.engineRating);
 
   return (
     <section className="bg-gray-800 p-4 rounded-lg border border-gray-700">
@@ -29,8 +40,8 @@ export const EnginePanel: React.FC = () => {
           <input 
             type="number"
             className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white text-center font-mono text-lg focus:ring-2 focus:ring-blue-500"
-            value={state.walkingMP}
-            onChange={(e) => actions.setWalkingMP(Math.max(1, Number(e.target.value)))}
+            value={resolvedState.walkingMP}
+            onChange={(e) => resolvedActions.setWalkingMP(Math.max(1, Number(e.target.value)))}
             min={1}
             max={15}
           />
@@ -38,7 +49,7 @@ export const EnginePanel: React.FC = () => {
         <div>
           <label className="block text-xs uppercase text-gray-500 mb-1">Running MP</label>
           <div className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-2 text-gray-300 text-center font-mono text-lg">
-            {Math.ceil(state.walkingMP * 1.5)}
+            {Math.ceil(resolvedState.walkingMP * 1.5)}
           </div>
         </div>
       </div>
@@ -48,8 +59,8 @@ export const EnginePanel: React.FC = () => {
         <label className="block text-xs uppercase text-gray-500 mb-1">Engine Type</label>
         <select 
           className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white mb-2 focus:ring-2 focus:ring-blue-500"
-          value={state.engineType}
-          onChange={(e) => actions.setEngineType(e.target.value as EngineType)}
+          value={resolvedState.engineType}
+          onChange={(e) => resolvedActions.setEngineType(e.target.value as EngineType)}
         >
           {Object.values(EngineType).map(et => (
             <option key={et} value={et}>{et}</option>
@@ -59,11 +70,11 @@ export const EnginePanel: React.FC = () => {
         <div className="bg-gray-900/50 p-3 rounded border border-gray-700 text-sm space-y-2">
           <div className="flex justify-between">
             <span className="text-gray-400">Rating</span>
-            <span className="font-mono font-bold">{metrics.engineRating}</span>
+            <span className="font-mono font-bold">{resolvedMetrics.engineRating}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-gray-400">Weight</span>
-            <span className="font-mono text-green-400">{metrics.engineWeight} tons</span>
+            <span className="font-mono text-green-400">{resolvedMetrics.engineWeight} tons</span>
           </div>
           <div className="flex justify-between">
             <span className="text-gray-400">Slots (CT/Side)</span>
@@ -81,9 +92,8 @@ export const EnginePanel: React.FC = () => {
         <label className="block text-xs uppercase text-gray-500 mb-1">Gyro Type</label>
         <select 
           className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white mb-2 focus:ring-2 focus:ring-blue-500"
-          value={state.gyroType}
-          // Add setGyroType to store actions first! For now assumes standard
-          disabled={true} 
+          value={resolvedState.gyroType}
+          onChange={(e) => resolvedActions.setGyroType(e.target.value as GyroType)}
         >
           {Object.values(GyroType).map(gt => (
             <option key={gt} value={gt}>{gt}</option>
@@ -91,7 +101,7 @@ export const EnginePanel: React.FC = () => {
         </select>
         
         <div className="flex justify-between text-sm px-1">
-          <span className="text-gray-400">Weight: <span className="text-green-400">{metrics.gyroWeight} tons</span></span>
+          <span className="text-gray-400">Weight: <span className="text-green-400">{resolvedMetrics.gyroWeight} tons</span></span>
           <span className="text-gray-400">Slots: <span className="text-yellow-400">{gyroSlots}</span></span>
         </div>
       </div>
