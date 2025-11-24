@@ -4,12 +4,14 @@
  * Can be upgraded to Redux/Zustand later if complexity grows.
  */
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import {
   IMechLabState,
   DEFAULT_MECH_STATE,
   IInstalledEquipmentState,
   IMechLabActions,
+  ArmorLocation,
+  IArmorSegmentAllocation,
 } from '../store/MechLabState';
 import { TechBase } from '../../../types/TechBase';
 import {
@@ -22,7 +24,15 @@ import {
 } from '../../../types/SystemComponents';
 import { calculateMechLabMetrics, IMechLabMetrics } from '../store/MechLabMetrics';
 
-export function useMechLabStore(initialState: IMechLabState = DEFAULT_MECH_STATE) {
+interface IUseMechLabStoreResult {
+  state: IMechLabState;
+  metrics: IMechLabMetrics;
+  actions: IMechLabActions;
+}
+
+export function useMechLabStore(
+  initialState: IMechLabState = DEFAULT_MECH_STATE
+): IUseMechLabStoreResult {
   const [state, setState] = useState<IMechLabState>(initialState);
 
   const metrics = useMemo<IMechLabMetrics>(() => calculateMechLabMetrics(state), [state]);
@@ -37,6 +47,15 @@ export function useMechLabStore(initialState: IMechLabState = DEFAULT_MECH_STATE
     setCockpitType: (type: CockpitType) => setState(prev => ({ ...prev, cockpitType: type })),
     setArmorType: (type: ArmorType) => setState(prev => ({ ...prev, armorType: type })),
     setHeatSinkType: (type: HeatSinkType) => setState(prev => ({ ...prev, heatSinkType: type })),
+    setArmorAllocation: (location: ArmorLocation, allocation: IArmorSegmentAllocation) =>
+      setState(prev => ({
+        ...prev,
+        armorAllocation: {
+          ...prev.armorAllocation,
+          [location]: allocation,
+        },
+      })),
+    setFluffNotes: (notes: string) => setState(prev => ({ ...prev, fluffNotes: notes })),
     addEquipment: (equipmentId: string) => {
       setState(prev => {
         const newItem: IInstalledEquipmentState = {

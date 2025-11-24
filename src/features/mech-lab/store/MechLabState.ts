@@ -12,7 +12,33 @@ import {
   ArmorType,
   HeatSinkType,
 } from '../../../types/SystemComponents';
-import { IEquipment } from '../../../types/Equipment';
+
+export const ARMOR_LOCATIONS = [
+  { id: 'HD', label: 'Head', hasRear: false },
+  { id: 'CT', label: 'Center Torso', hasRear: true },
+  { id: 'LT', label: 'Left Torso', hasRear: true },
+  { id: 'RT', label: 'Right Torso', hasRear: true },
+  { id: 'LA', label: 'Left Arm', hasRear: false },
+  { id: 'RA', label: 'Right Arm', hasRear: false },
+  { id: 'LL', label: 'Left Leg', hasRear: false },
+  { id: 'RL', label: 'Right Leg', hasRear: false },
+] as const;
+
+export type ArmorLocation = (typeof ARMOR_LOCATIONS)[number]['id'];
+
+export interface IArmorSegmentAllocation {
+  front: number;
+  rear?: number;
+}
+
+export const createEmptyArmorAllocation = (): Record<ArmorLocation, IArmorSegmentAllocation> =>
+  ARMOR_LOCATIONS.reduce<Record<ArmorLocation, IArmorSegmentAllocation>>((acc, location) => {
+    acc[location.id as ArmorLocation] = {
+      front: 0,
+      ...(location.hasRear ? { rear: 0 } : {}),
+    };
+    return acc;
+  }, {} as Record<ArmorLocation, IArmorSegmentAllocation>);
 
 export interface IMechLabState {
   // Metadata
@@ -34,9 +60,10 @@ export interface IMechLabState {
   heatSinkType: HeatSinkType;
 
   // Allocations
-  armorAllocation: Record<string, number>;
+  armorAllocation: Record<ArmorLocation, IArmorSegmentAllocation>;
   equipment: IInstalledEquipmentState[];
   criticalSlots: Record<string, ISlotState[]>; // Location -> Slots
+  fluffNotes: string;
 
   // Validation & Metrics (Derived)
   currentWeight: number;
@@ -70,6 +97,8 @@ export interface IMechLabActions {
   setCockpitType(type: CockpitType): void;
   setArmorType(type: ArmorType): void;
   setHeatSinkType(type: HeatSinkType): void;
+  setArmorAllocation(location: ArmorLocation, allocation: IArmorSegmentAllocation): void;
+  setFluffNotes(notes: string): void;
   addEquipment(equipmentId: string): void;
   removeEquipment(instanceId: string): void;
   assignEquipment(instanceId: string, location: string, slotIndex: number): void;
@@ -89,9 +118,10 @@ export const DEFAULT_MECH_STATE: IMechLabState = {
   cockpitType: CockpitType.STANDARD,
   armorType: ArmorType.STANDARD,
   heatSinkType: HeatSinkType.SINGLE,
-  armorAllocation: {},
+  armorAllocation: createEmptyArmorAllocation(),
   equipment: [],
   criticalSlots: {},
+  fluffNotes: '',
   currentWeight: 0,
   isValid: false,
   validationErrors: [],

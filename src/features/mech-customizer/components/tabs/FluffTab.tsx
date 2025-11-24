@@ -6,6 +6,7 @@ import { useCustomizerStore } from '../../store/useCustomizerStore';
 export const FluffTab: React.FC = () => {
   const unit = useCustomizerStore(state => state.unit);
   const updateUnit = useCustomizerStore(state => state.updateUnit);
+  const setFluffNotes = useCustomizerStore(state => state.setFluffNotes);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -28,13 +29,25 @@ export const FluffTab: React.FC = () => {
             onChange={event => updateUnit({ model: event.target.value })}
           />
         </div>
-        <div className="text-sm text-slate-400 bg-slate-800/60 rounded p-3">
-          <p className="text-slate-300 font-semibold mb-1">Narrative Metadata</p>
-          <p>
-            Fluff editing will store variant notes, notable pilots, and deployment history. The new
-            project keeps this tab reserved so we can wire storage once the data contract is ready.
-          </p>
+      </section>
+
+      <section className="bg-slate-900 border border-slate-800 rounded-lg p-4 space-y-3">
+        <div className="flex items-center justify-between">
+          <label className="text-xs uppercase text-slate-400">Deployment Notes</label>
+          <span className="text-[10px] text-slate-500">{unit.fluffNotes.length}/2000</span>
         </div>
+        <textarea
+          className="w-full min-h-[220px] bg-slate-800 border border-slate-700 rounded px-3 py-2 text-slate-100"
+          placeholder="Document famous pilots, notable engagements, factory notes, etc."
+          value={unit.fluffNotes}
+          maxLength={2000}
+          onChange={event => setFluffNotes(event.target.value)}
+        />
+        <p className="text-[11px] text-slate-500">
+          Fluff notes travel with exports and give context to anyone loading the design in the
+          future. Markdown is supported in downstream tooling, so feel free to use headings or
+          bullet lists.
+        </p>
       </section>
     </div>
   );

@@ -1,4 +1,8 @@
-import { DEFAULT_MECH_STATE, IMechLabState } from '../features/mech-lab/store/MechLabState';
+import {
+  DEFAULT_MECH_STATE,
+  IMechLabState,
+  createEmptyArmorAllocation,
+} from '../features/mech-lab/store/MechLabState';
 import { calculateMechLabMetrics } from '../features/mech-lab/store/MechLabMetrics';
 import { MechValidator } from '../mechanics/Validation';
 
@@ -17,7 +21,8 @@ export interface ICustomizerResetResult {
   success: boolean;
 }
 
-const cloneState = (state: IMechLabState): IMechLabState => JSON.parse(JSON.stringify(state));
+const cloneState = (state: IMechLabState): IMechLabState =>
+  JSON.parse(JSON.stringify(state)) as IMechLabState;
 
 const normalizeStateMeta = (state: IMechLabState): IMechLabState => {
   const metrics = calculateMechLabMetrics(state);
@@ -52,7 +57,7 @@ export class CustomizerResetService {
       removedEquipment = workingState.equipment.length;
       resetState.equipment = [];
       resetState.criticalSlots = {};
-      resetState.armorAllocation = {};
+      resetState.armorAllocation = createEmptyArmorAllocation();
       return {
         state: normalizeStateMeta(resetState),
         removedEquipment,
@@ -76,6 +81,10 @@ export class CustomizerResetService {
       removedEquipment = workingState.equipment.length - retained.length;
       workingState.equipment = retained;
       workingState.criticalSlots = {};
+    }
+
+    if (options.resetArmorAllocation) {
+      workingState.armorAllocation = createEmptyArmorAllocation();
     }
 
     return {

@@ -55,6 +55,32 @@ interface CustomizerStoreActions extends IMechLabActions {
 
 export type CustomizerStore = CustomizerStoreState & CustomizerStoreActions;
 
+type CustomizerActions = Pick<
+  IMechLabActions,
+  | 'setTonnage'
+  | 'setTechBase'
+  | 'setWalkingMP'
+  | 'setStructureType'
+  | 'setEngineType'
+  | 'setGyroType'
+  | 'setCockpitType'
+  | 'setArmorType'
+  | 'setHeatSinkType'
+  | 'setArmorAllocation'
+  | 'setFluffNotes'
+  | 'addEquipment'
+  | 'removeEquipment'
+  | 'assignEquipment'
+  | 'unassignEquipment'
+>;
+
+interface ICustomizerViewModel {
+  unit: IMechLabState;
+  metrics: IMechLabMetrics;
+  validation: IValidationResult;
+  actions: CustomizerActions;
+}
+
 const enrichState = (unit: IMechLabState) => {
   const metrics = calculateMechLabMetrics(unit);
   const validation = MechValidator.validate(unit, metrics.currentWeight);
@@ -120,6 +146,15 @@ export const useCustomizerStore = create<CustomizerStore>((set, get) => {
     setArmorType: (type: ArmorType) => applyUnitUpdate(unit => ({ ...unit, armorType: type })),
     setHeatSinkType: (type: HeatSinkType) =>
       applyUnitUpdate(unit => ({ ...unit, heatSinkType: type })),
+    setArmorAllocation: (location, allocation) =>
+      applyUnitUpdate(unit => ({
+        ...unit,
+        armorAllocation: {
+          ...unit.armorAllocation,
+          [location]: allocation,
+        },
+      })),
+    setFluffNotes: (notes: string) => applyUnitUpdate(unit => ({ ...unit, fluffNotes: notes })),
     addEquipment: (equipmentId: string) =>
       applyUnitUpdate(unit => ({
         ...unit,
@@ -167,11 +202,11 @@ export const useCustomizerStore = create<CustomizerStore>((set, get) => {
   };
 });
 
-export const useCustomizerViewModel = () => {
+export const useCustomizerViewModel = (): ICustomizerViewModel => {
   const unit = useCustomizerStore(state => state.unit);
   const metrics = useCustomizerStore(state => state.metrics);
   const validation = useCustomizerStore(state => state.validation);
-  const actions = useCustomizerStore(
+  const actions = useCustomizerStore<CustomizerActions>(
     ({
       setTonnage,
       setTechBase,
