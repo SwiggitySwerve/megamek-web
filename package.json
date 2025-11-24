@@ -7,7 +7,7 @@
     "build": "next build",
     "build:analyze": "ANALYZE=true next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint --max-warnings=0 --ext .ts,.tsx src",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",

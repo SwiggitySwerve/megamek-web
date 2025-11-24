@@ -23,7 +23,7 @@ export class GyroMechanics {
     }
     
     const multiplier = GYRO_WEIGHT_MULTIPLIERS[type];
-    let weight = standardWeight * multiplier;
+    const weight = standardWeight * multiplier;
     
     // Rounding: "Round up to the nearest 0.5 ton"
     return Math.ceil(weight * 2) / 2;

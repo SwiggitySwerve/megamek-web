@@ -1,7 +1,7 @@
 import { MechValidator } from '../Validation';
 import { IMechLabState, DEFAULT_MECH_STATE } from '../../features/mech-lab/store/MechLabState';
 import { TechBase, RulesLevel } from '../../types/TechBase';
-import { EngineType, GyroType, CockpitType, StructureType, ArmorType, HeatSinkType } from '../../types/SystemComponents';
+import { EngineType, StructureType } from '../../types/SystemComponents';
 
 describe('MechValidator', () => {
     let state: IMechLabState;

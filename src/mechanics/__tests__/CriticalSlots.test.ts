@@ -1,4 +1,4 @@
-import { CriticalSlots, LOCATIONS } from '../CriticalSlots';
+import { CriticalSlots } from '../CriticalSlots';
 import { EngineType, GyroType, CockpitType } from '../../types/SystemComponents';
 import { TechBase } from '../../types/TechBase';
 

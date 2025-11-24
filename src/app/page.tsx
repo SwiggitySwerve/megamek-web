@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-export default function Home() {
+export default function Home(): JSX.Element {
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center gap-4">
       <h1 className="text-3xl font-bold">BattleTech Unit Customizer</h1>

@@ -6,8 +6,8 @@
  * Run with: npx tsx src-v2/validate-v2-logic.ts
  */
 
-import { TechBase, RulesLevel } from '../types/TechBase';
-import { StructureType, EngineType, GyroType, CockpitType, ArmorType } from '../types/SystemComponents';
+import { TechBase } from '../types/TechBase';
+import { StructureType, EngineType } from '../types/SystemComponents';
 import { StructureMechanics } from '../mechanics/Structure';
 import { EngineMechanics } from '../mechanics/Engine';
 import { CriticalSlotMechanics, MechLocation } from '../mechanics/CriticalSlots';
@@ -18,7 +18,7 @@ import { IMechLabState, DEFAULT_MECH_STATE } from '../features/mech-lab/store/Me
 console.log('=== Validating v2 Mech Lab Logic ===');
 
 // 1. Initial State
-let state: IMechLabState = {
+const state: IMechLabState = {
   ...DEFAULT_MECH_STATE,
   tonnage: 55, // Medium Mech (Griffin/Shadow Hawk size)
   walkingMP: 5,
@@ -71,7 +71,6 @@ const layout = CriticalSlotMechanics.generateBaseLayout(
 // Try to place LRM 10 in Right Torso (needs 2 slots)
 // RT has 12 slots. 1-12 free? No, usually empty.
 // Check standard layout.
-const rt = layout[MechLocation.RIGHT_TORSO];
 const canPlaceLRM = CriticalSlotMechanics.canPlaceEquipment(layout, MechLocation.RIGHT_TORSO, 1, lrm10.id);
 
 if (canPlaceLRM) {

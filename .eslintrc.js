@@ -65,10 +65,11 @@ module.exports = {
     },
   },
   ignorePatterns: [
-    "**/node_modules/**",
-    "**/.next/**",
-    "**/out/**",
-    "**/dist/**",
-    "battletech-editor-app/src/app_disabled/**",
+    '**/node_modules/**',
+    '**/.next/**',
+    '**/out/**',
+    '**/dist/**',
+    'battletech-editor-app/src/app_disabled/**',
+    'src-old/**',
   ],
 }; 

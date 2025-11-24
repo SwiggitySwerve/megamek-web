@@ -5,9 +5,8 @@
  */
 
 import { IMechLabState } from '../features/mech-lab/store/MechLabState';
-import { WeightOps } from './WeightOps';
 import { TechBase, RulesLevel } from '../types/TechBase';
-import { EngineType, GyroType, CockpitType, StructureType, ArmorType, HeatSinkType } from '../types/SystemComponents';
+import { EngineType, GyroType, CockpitType, StructureType, ArmorType } from '../types/SystemComponents';
 
 export interface IValidationResult {
   isValid: boolean;
@@ -53,7 +52,7 @@ export class MechValidator {
     };
   }
 
-  private static validateEngine(state: IMechLabState, errors: string[], warnings: string[]) {
+  private static validateEngine(state: IMechLabState, errors: string[], _warnings: string[]) {
     // Engine Rating = Walking MP * Tonnage
     const requiredRating = state.walkingMP * state.tonnage;
 
@@ -104,7 +103,6 @@ export class MechValidator {
 
   private static validateArmor(state: IMechLabState, errors: string[]) {
     // Max Armor Check
-    const maxArmor = WeightOps.getMaxArmorPoints(state.tonnage);
     // We need total armor points from state.
     // state.armorAllocation is Record<string, number> (or {front, rear}?)
     // Let's assume simple number for now or we need a helper to sum it up.
@@ -116,7 +114,7 @@ export class MechValidator {
     }
   }
 
-  private static validateTechBase(state: IMechLabState, errors: string[]) {
+  private static validateTechBase(state: IMechLabState, _errors: string[]) {
     if (state.techBase === TechBase.MIXED && state.rulesLevel !== RulesLevel.EXPERIMENTAL && state.rulesLevel !== RulesLevel.ADVANCED) {
       // Mixed tech usually requires Advanced or Experimental
       // errors.push('Mixed Tech requires Advanced or Experimental rules.');

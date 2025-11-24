@@ -4,9 +4,8 @@
  * Run with: npx ts-node src-v2/verify-v2-foundation.ts
  */
 
-import { TechBase, RulesLevel } from '../types/TechBase';
-import { ComponentType } from '../types/ComponentType';
-import { EngineType, GyroType, CockpitType, StructureType, ArmorType, HeatSinkType } from '../types/SystemComponents';
+import { TechBase } from '../types/TechBase';
+import { EngineType, GyroType, StructureType } from '../types/SystemComponents';
 import { StructureMechanics } from '../mechanics/Structure';
 import { EngineMechanics } from '../mechanics/Engine';
 import { GyroMechanics } from '../mechanics/Gyro';

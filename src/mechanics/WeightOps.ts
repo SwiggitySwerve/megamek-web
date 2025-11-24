@@ -13,7 +13,6 @@ import {
     JumpJetType
 } from '../types/SystemComponents';
 import {
-    STRUCTURE_WEIGHT_MULTIPLIER,
     ARMOR_POINTS_PER_TON,
     calculateEngineWeight as rulesCalculateEngineWeight,
     calculateGyroWeight as rulesCalculateGyroWeight,

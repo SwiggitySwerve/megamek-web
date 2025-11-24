@@ -33,7 +33,7 @@ export class EngineMechanics {
     // 25 * 4 = 100. 20 * 3 = 60.
     // Yes. The table should cover all valid ratings.
     
-    let baseWeight = standardWeight;
+    const baseWeight = standardWeight;
     if (baseWeight === undefined) {
        // Fallback logic if rating is > 400 or weird.
        // For now throw or approximate.
@@ -51,7 +51,7 @@ export class EngineMechanics {
     // Rounding rules for engines:
     // XL/Light: "Divide the weight of the standard engine by 2 (XL) or 0.75 (Light)... Round up to nearest 0.5 ton."
     
-    let finalWeight = baseWeight * multiplier;
+    const finalWeight = baseWeight * multiplier;
     
     // Special handling for specific types if needed, but usually it's strictly round up to 0.5.
     // Base weights are already 0.5 increments.

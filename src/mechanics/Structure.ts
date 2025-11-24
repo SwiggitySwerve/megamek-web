@@ -5,7 +5,7 @@
 
 import { StructureType } from '../types/SystemComponents';
 import { TechBase } from '../types/TechBase';
-import { INTERNAL_STRUCTURE_PER_TONNAGE } from '../data/InternalStructureTables';
+import { INTERNAL_STRUCTURE_PER_TONNAGE, IInternalStructurePoints } from '../data/InternalStructureTables';
 import { STRUCTURE_WEIGHT_MULTIPLIERS, STRUCTURE_SLOTS_REQUIRED } from '../data/StructureTables';
 
 export class StructureMechanics {
@@ -47,7 +47,7 @@ export class StructureMechanics {
   /**
    * Get the internal structure points for a given tonnage.
    */
-  public static getPoints(tonnage: number) {
+  public static getPoints(tonnage: number): IInternalStructurePoints {
     const points = INTERNAL_STRUCTURE_PER_TONNAGE[tonnage];
     if (!points) {
       throw new Error(`Unsupported tonnage: ${tonnage}`);
