@@ -40,7 +40,20 @@ description: Current mech customizer + mech lab architecture overview for Battle
   - `criticals`: interactive paper doll.
   - `fluff`: chassis metadata + narrative notes.
 
-## 3. Reset & Persistence
+## 3. UI Design System
+
+- **Tokens:** `tailwind.config.ts` + `src/app/globals.css` define canonical surfaces (`surface.base`, `surface.panel`, etc.), accent colors, text roles, radii, and shadows. New CSS variables mirror the TechManual “dark hangar” palette so every component references the same values.  
+- **Primitives:** Shared components live in `src/ui/`:
+  - `Surface` — semantic container with variants (base, sunken, raised, overlay).
+  - `Button` — primary/secondary/ghost/danger variants with sizing + loading states.
+  - `Tabs` — accessible tab strip used by the customizer and future compendiums.
+  - `StatCard` — consistent value/label tiles for weight, armor, slot metrics.
+  - `FormField` — typed label/helper/error wrapper for inputs and selectors.
+- **Global Styles:** `src/app/globals.css` wires Tailwind’s base/components/utilities to the token set, defines custom scrollbar styling (used by the equipment tray) and enforces typography defaults.
+
+All new UI work should compose these primitives before layering feature-specific layout. When a new presentation pattern emerges, add a primitive instead of rewriting Tailwind class stacks.
+
+## 4. Reset & Persistence
 
 ### CustomizerResetService
 - `src/services/CustomizerResetService.ts` provides `reset(state, { mode })` with three modes:
@@ -54,7 +67,7 @@ description: Current mech customizer + mech lab architecture overview for Battle
 - Fluff notes stored as freeform text (`fluffNotes`).
 - Tabs read/write localStorage key `mech-customizer-active-tab` for continuity.
 
-## 4. Documented Patterns
+## 5. Documented Patterns
 
 ### Component Update Flow (Legacy)
 - Docs under `docs-old/architecture/ComponentUpdateArchitecture.md` describe the prior MultiUnitProvider + ComponentUpdateService architecture (SRP, adapters, SOLID). Use it solely for historical context—new work should target the Zustand-based store.
@@ -62,21 +75,21 @@ description: Current mech customizer + mech lab architecture overview for Battle
 ### Special Component Managers
 - `docs-old/architecture/SpecialComponentManagerConsolidation.md` and `ComponentUpdateArchitecture.md` explain past TypeScript services (ComponentUpdateService, adapters, MultiUnitProvider). Use these if you need to port logic; otherwise rely on the new mechanics modules + store actions.
 
-## 5. Testing & Validation Hooks
+## 6. Testing & Validation Hooks
 
 - Jest suites live under `src/mechanics/__tests__` and `src/features/mech-customizer/store/__tests__`.
 - WeightOps tests ensure constants match `BattleTechConstructionRules`.
 - Critical slot tests verify dynamic slot allocation for XL engines and equipment placement.
 - Customizer store tests cover tonnage updates, equipment addition, reset modes, and armor allocation.
 
-## 6. Future Enhancements
+## 7. Future Enhancements
 
 - Align any remaining legacy helper services with the new mechanics layer (if they are still required for backend use cases).
 - Expand `CustomizerResetService` to support partial resets (e.g., only arms/legs).
 - Add undo/redo capabilities by snapshotting `IMechLabState` transitions.
 - Integrate asynchronous persistence (API sync) via middleware on the Zustand store.
 
-## 7. File Map (New Source of Truth)
+## 8. File Map (New Source of Truth)
 
 | Concern                     | Primary Files                                                 |
 |-----------------------------|---------------------------------------------------------------|
