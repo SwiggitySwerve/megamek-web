@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Surface } from '../../ui';
+import type { ReactElement } from 'react';
 
 const sections = [
   {
@@ -19,7 +20,7 @@ const sections = [
   },
 ];
 
-export default function CompendiumIndexPage(): JSX.Element {
+export default function CompendiumIndexPage(): ReactElement {
   return (
     <div className="p-6 space-y-6">
       <div className="space-y-2">

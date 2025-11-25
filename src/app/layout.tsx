@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactNode, ReactElement } from 'react';
 import './globals.css';
 
 export const metadata = {
@@ -10,7 +10,7 @@ export default function RootLayout({
   children,
 }: {
   children: ReactNode;
-}): JSX.Element {
+}): ReactElement {
   return (
     <html lang="en">
       <body className="bg-[var(--surface-base)] text-[var(--text-primary)]">

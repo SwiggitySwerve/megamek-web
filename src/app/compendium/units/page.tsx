@@ -1,7 +1,8 @@
 import { CompendiumSources } from '../../../features/compendium/data/CompendiumSources';
 import { CompendiumBrowser } from '../../../features/compendium/components/CompendiumBrowser';
+import type { ReactElement } from 'react';
 
-export default function UnitsCompendiumPage(): JSX.Element {
+export default function UnitsCompendiumPage(): ReactElement {
   const entries = CompendiumSources.getUnitEntries();
 
   return (

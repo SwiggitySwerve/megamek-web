@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { shallow } from 'zustand/shallow';
 import {
   DEFAULT_MECH_STATE,
   IMechLabActions,
@@ -206,7 +205,7 @@ export const useCustomizerViewModel = (): ICustomizerViewModel => {
   const unit = useCustomizerStore(state => state.unit);
   const metrics = useCustomizerStore(state => state.metrics);
   const validation = useCustomizerStore(state => state.validation);
-  const actions = useCustomizerStore<CustomizerActions>(
+  const actions = useCustomizerStore(
     ({
       setTonnage,
       setTechBase,
@@ -239,8 +238,7 @@ export const useCustomizerViewModel = (): ICustomizerViewModel => {
       removeEquipment,
       assignEquipment,
       unassignEquipment,
-    }),
-    shallow
+    })
   );
 
   return { unit, metrics, validation, actions };

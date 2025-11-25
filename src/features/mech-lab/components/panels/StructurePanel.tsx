@@ -68,35 +68,35 @@ export const StructurePanel: React.FC<StructurePanelProps> = ({ state, actions }
         <div className="grid grid-cols-3 gap-2 text-center text-xs">
           <div className="bg-gray-700 p-2 rounded col-start-2">
             <div className="text-gray-400">Head</div>
-            <div className="font-mono font-bold">{structurePoints.hd}</div>
+            <div className="font-mono font-bold">{structurePoints.HD}</div>
           </div>
           <div className="bg-gray-700 p-2 rounded col-start-1 row-start-2">
             <div className="text-gray-400">L. Torso</div>
-            <div className="font-mono font-bold">{structurePoints.lt}</div>
+            <div className="font-mono font-bold">{structurePoints.LT}</div>
           </div>
           <div className="bg-gray-700 p-2 rounded col-start-2 row-start-2 border border-blue-500/30">
             <div className="text-gray-400">C. Torso</div>
-            <div className="font-mono font-bold text-blue-300">{structurePoints.ct}</div>
+            <div className="font-mono font-bold text-blue-300">{structurePoints.CT}</div>
           </div>
           <div className="bg-gray-700 p-2 rounded col-start-3 row-start-2">
             <div className="text-gray-400">R. Torso</div>
-            <div className="font-mono font-bold">{structurePoints.rt}</div>
+            <div className="font-mono font-bold">{structurePoints.RT}</div>
           </div>
           <div className="bg-gray-700 p-2 rounded col-start-1 row-start-3">
             <div className="text-gray-400">L. Arm</div>
-            <div className="font-mono font-bold">{structurePoints.la}</div>
+            <div className="font-mono font-bold">{structurePoints.LA}</div>
           </div>
           <div className="bg-gray-700 p-2 rounded col-start-3 row-start-3">
             <div className="text-gray-400">R. Arm</div>
-            <div className="font-mono font-bold">{structurePoints.ra}</div>
+            <div className="font-mono font-bold">{structurePoints.RA}</div>
           </div>
           <div className="bg-gray-700 p-2 rounded col-start-1 row-start-4">
             <div className="text-gray-400">L. Leg</div>
-            <div className="font-mono font-bold">{structurePoints.ll}</div>
+            <div className="font-mono font-bold">{structurePoints.LL}</div>
           </div>
           <div className="bg-gray-700 p-2 rounded col-start-3 row-start-4">
             <div className="text-gray-400">R. Leg</div>
-            <div className="font-mono font-bold">{structurePoints.rl}</div>
+            <div className="font-mono font-bold">{structurePoints.RL}</div>
           </div>
         </div>
       </div>

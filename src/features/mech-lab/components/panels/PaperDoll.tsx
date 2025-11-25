@@ -60,7 +60,7 @@ export const PaperDoll: React.FC<PaperDollProps> = ({ state, actions }) => {
         layout,
         location,
         slotIndex,
-        state.equipment.find(e => e.id === selectedEquipmentId)?.equipmentId || ''
+        resolvedState.equipment.find(e => e.id === selectedEquipmentId)?.equipmentId || ''
       );
 
       if (canPlace) {

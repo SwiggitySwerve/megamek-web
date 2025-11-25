@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import type { ChangeEvent } from 'react';
+import type { ChangeEvent, ReactElement } from 'react';
 import { CompendiumCategory, ICompendiumEntry } from '../types';
 import { TechBase, RulesLevel } from '../../../types/TechBase';
 import { Surface, Button } from '../../../ui';
@@ -35,7 +35,7 @@ export interface CompendiumBrowserProps<
 
 export function CompendiumBrowser<
   TEntry extends ICompendiumEntry<CompendiumCategory, unknown>,
->({ entries, title, description, emptyState = 'No results match your filters.' }: CompendiumBrowserProps<TEntry>): JSX.Element {
+>({ entries, title, description, emptyState = 'No results match your filters.' }: CompendiumBrowserProps<TEntry>): ReactElement {
   const [query, setQuery] = useState('');
   const [techFilter, setTechFilter] = useState<TechBaseFilter>('all');
   const [rulesFilter, setRulesFilter] = useState<RulesFilter>('all');
