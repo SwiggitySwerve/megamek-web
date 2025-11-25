@@ -362,7 +362,7 @@ export function EquipmentBrowser({
   actionButtonLabel = "Add to unit",
   actionButtonIcon = "+",
   className = ""
-}: EquipmentBrowserProps = {}) {
+}: EquipmentBrowserProps): JSX.Element {
   // Filters
   const [searchTerm, setSearchTerm] = useState('')
   const [categoryFilter, setCategoryFilter] = useState<string>('all')
