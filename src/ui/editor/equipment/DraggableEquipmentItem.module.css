@@ -1,0 +1,150 @@
+.container {
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 0.25rem;
+  padding: 0.25rem;
+  cursor: move;
+  transition: all 0.15s;
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Prevent text selection on all child elements */
+.container * {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.container:hover {
+  filter: brightness(1.15);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transform: translateY(-1px);
+}
+
+.dragging {
+  cursor: grabbing;
+  opacity: 0.5;
+}
+
+.compact {
+  padding: 0.125rem 0.25rem;
+}
+
+.dragHandle {
+  color: #6b7280;
+  font-size: 0.625rem;
+  line-height: 1;
+  user-select: none;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.nameSection {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  flex: 1;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.name {
+  font-size: 0.625rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  user-select: none;
+  line-height: 1.2;
+}
+
+.techBase {
+  font-size: 0.625rem;
+  color: #60a5fa;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.removeButton {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: #6b7280;
+  font-size: 0.875rem;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 0.125rem;
+  transition: all 0.2s;
+}
+
+.removeButton:hover {
+  background: #7f1d1d;
+  color: #ef4444;
+}
+
+.details {
+  margin-top: 0.125rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.stats {
+  font-size: 0.5rem;
+  color: #9ca3af;
+  line-height: 1.2;
+}
+
+.totals {
+  font-size: 0.5rem;
+  color: #6b7280;
+  font-style: italic;
+  line-height: 1.2;
+}
+
+.location {
+  margin-top: 0.125rem;
+  padding-top: 0.125rem;
+  border-top: 1px solid #374151;
+  font-size: 0.5rem;
+  display: flex;
+  gap: 0.125rem;
+}
+
+.locationLabel {
+  color: #6b7280;
+}
+
+.locationName {
+  color: #9ca3af;
+  font-weight: 500;
+}
