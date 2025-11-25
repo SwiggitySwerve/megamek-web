@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 import { Surface } from './Surface';
 import { classNames } from './utils/classNames';
 
@@ -26,7 +26,7 @@ export const StatCard = ({
   icon,
   tone = 'neutral',
   className,
-}: StatCardProps): JSX.Element => (
+}: StatCardProps): ReactElement => (
   <Surface padding="sm" className={classNames('flex flex-col gap-2', className)}>
     <div className="flex items-center gap-2 text-[var(--text-muted)] text-xs uppercase tracking-wide">
       {icon && <span className="text-[var(--text-secondary)]">{icon}</span>}

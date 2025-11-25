@@ -1,4 +1,4 @@
-import type { ComponentPropsWithoutRef, ReactNode } from 'react';
+import type { ComponentPropsWithoutRef, ReactElement, ReactNode } from 'react';
 import { classNames } from './utils/classNames';
 
 type SurfaceVariant = 'base' | 'sunken' | 'raised' | 'overlay';
@@ -32,7 +32,7 @@ export const Surface = ({
   className,
   children,
   ...rest
-}: SurfaceProps): JSX.Element => (
+}: SurfaceProps): ReactElement => (
   <div
     className={classNames(
       'rounded-2xl transition-colors duration-200',

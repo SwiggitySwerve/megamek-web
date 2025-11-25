@@ -1,21 +1,26 @@
-import type { ReactNode } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 import { classNames } from './utils/classNames';
 
-export interface TabOption {
-  readonly id: string;
+export interface TabOption<T extends string = string> {
+  readonly id: T;
   readonly label: string;
   readonly icon?: ReactNode;
   readonly count?: number;
 }
 
-interface TabsProps {
-  readonly tabs: ReadonlyArray<TabOption>;
-  readonly activeTab: string;
-  readonly onChange: (tabId: string) => void;
+interface TabsProps<T extends string = string> {
+  readonly tabs: ReadonlyArray<TabOption<T>>;
+  readonly activeTab: T;
+  readonly onChange: (tabId: T) => void;
   readonly className?: string;
 }
 
-export const Tabs = ({ tabs, activeTab, onChange, className }: TabsProps): JSX.Element => {
+export const Tabs = <T extends string = string>({
+  tabs,
+  activeTab,
+  onChange,
+  className,
+}: TabsProps<T>): ReactElement => {
   return (
     <div
       className={classNames(

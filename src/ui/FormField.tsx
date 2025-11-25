@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 import { classNames } from './utils/classNames';
 
 export interface FormFieldProps {
@@ -19,7 +19,7 @@ export const FormField = ({
   children,
   className,
   inline = false,
-}: FormFieldProps): JSX.Element => (
+}: FormFieldProps): ReactElement => (
   <div
     className={classNames(
       'space-y-2',
