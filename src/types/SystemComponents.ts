@@ -4,7 +4,9 @@
  */
 
 import { TechBase, RulesLevel } from './TechBase';
-import { ComponentType } from './ComponentType';
+import { ComponentCategory, ComponentType } from './ComponentType';
+import { StructureMechanics } from '../mechanics/Structure';
+import { STRUCTURE_SLOTS_REQUIRED } from '../data/StructureTables';
 
 export interface ISystemComponent {
   readonly name: string;
@@ -21,6 +23,8 @@ export interface ISystemComponent {
 export enum EngineType {
   STANDARD = 'Standard',
   XL = 'XL',
+  XL_INNER_SPHERE = 'XL (IS)',
+  XL_CLAN = 'XL (Clan)',
   LIGHT = 'Light',
   XXL = 'XXL',
   COMPACT = 'Compact',
@@ -88,10 +92,30 @@ export interface ICockpit extends ISystemComponent {
 export enum StructureType {
   STANDARD = 'Standard',
   ENDO_STEEL = 'Endo Steel',
+  ENDO_STEEL_IS = 'Endo Steel (IS)',
   ENDO_STEEL_CLAN = 'Endo Steel (Clan)',
   COMPOSITE = 'Composite',
   REINFORCED = 'Reinforced',
   INDUSTRIAL = 'Industrial',
+}
+
+/**
+ * Calculate structure weight for a given tonnage and structure type
+ */
+export function calculateStructureWeight(tonnage: number, type: StructureType): number {
+  return StructureMechanics.calculateWeight(tonnage, type);
+}
+
+/**
+ * Get critical slots required for structure type (defaults to Inner Sphere)
+ */
+export function getStructureSlots(type: StructureType): number {
+  const techMap = STRUCTURE_SLOTS_REQUIRED[type];
+  if (!techMap) {
+    return 0;
+  }
+  // Default to Inner Sphere if tech base not specified
+  return techMap[TechBase.INNER_SPHERE] || 0;
 }
 
 export interface IStructure extends ISystemComponent {
@@ -125,6 +149,23 @@ export interface IArmor extends ISystemComponent {
   readonly totalPoints: number;
   readonly maxPoints: number;
   readonly criticalSlots: number; // Slots required (e.g. 14 for Ferro)
+  readonly pointsByLocation: Record<string, number>;
+  readonly maxPointsByLocation?: Record<string, number>;
+}
+
+export interface IArmorDef {
+  readonly id: string;
+  readonly name: string;
+  readonly type: string;
+  readonly category: ComponentCategory;
+  readonly pointsPerTon: number;
+  readonly criticalSlots: number;
+  readonly techBase?: TechBase | 'Both';
+  readonly techLevel?: string;
+  readonly rulesLevel?: RulesLevel;
+  readonly costMultiplier?: number;
+  readonly maxPointsPerLocationMultiplier?: number;
+  readonly introductionYear?: number;
 }
 
 // =============================================================================
@@ -134,8 +175,12 @@ export interface IArmor extends ISystemComponent {
 export enum HeatSinkType {
   SINGLE = 'Single',
   DOUBLE = 'Double',
+  DOUBLE_IS = 'Double (IS)',
+  DOUBLE_CLAN = 'Double (Clan)',
   COMPACT = 'Compact',
+  COMPACT_CLAN = 'Compact (Clan)',
   LASER = 'Laser',
+  LASER_CLAN = 'Laser (Clan)',
 }
 
 export interface IHeatSinkSystem extends ISystemComponent {

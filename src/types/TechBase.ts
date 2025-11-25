@@ -17,3 +17,10 @@ export enum RulesLevel {
   EXPERIMENTAL = 'Experimental',
 }
 
+export enum TechLevel {
+  INTRODUCTORY = 'Introductory',
+  STANDARD = 'Standard',
+  ADVANCED = 'Advanced',
+  EXPERIMENTAL = 'Experimental',
+}
+
