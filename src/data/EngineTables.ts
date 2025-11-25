@@ -9,6 +9,8 @@ import { TechBase } from '../types/TechBase';
 export const ENGINE_WEIGHT_MULTIPLIERS: Record<EngineType, number> = {
   [EngineType.STANDARD]: 1.0,
   [EngineType.XL]: 0.5,
+  [EngineType.XL_INNER_SPHERE]: 0.5,
+  [EngineType.XL_CLAN]: 0.5,
   [EngineType.LIGHT]: 0.75,
   [EngineType.XXL]: 0.333,
   [EngineType.COMPACT]: 1.5,
@@ -44,6 +46,16 @@ export const ENGINE_SLOTS: Record<EngineType, Record<TechBase, IEngineSlotConfig
     [TechBase.INNER_SPHERE]: { ct: 6, sideTorso: 3 },
     [TechBase.CLAN]: { ct: 6, sideTorso: 2 },
     [TechBase.MIXED]: { ct: 6, sideTorso: 3 },
+  },
+  [EngineType.XL_INNER_SPHERE]: {
+    [TechBase.INNER_SPHERE]: { ct: 6, sideTorso: 3 },
+    [TechBase.CLAN]: { ct: 6, sideTorso: 3 },
+    [TechBase.MIXED]: { ct: 6, sideTorso: 3 },
+  },
+  [EngineType.XL_CLAN]: {
+    [TechBase.INNER_SPHERE]: { ct: 6, sideTorso: 2 },
+    [TechBase.CLAN]: { ct: 6, sideTorso: 2 },
+    [TechBase.MIXED]: { ct: 6, sideTorso: 2 },
   },
   [EngineType.LIGHT]: {
     [TechBase.INNER_SPHERE]: { ct: 6, sideTorso: 2 },

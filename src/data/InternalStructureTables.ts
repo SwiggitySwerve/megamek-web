@@ -5,33 +5,33 @@
  */
 
 export interface IInternalStructurePoints {
-  readonly hd: number;  // Head
-  readonly ct: number;  // Center Torso
-  readonly lt: number;  // Left Torso
-  readonly rt: number;  // Right Torso
-  readonly la: number;  // Left Arm
-  readonly ra: number;  // Right Arm
-  readonly ll: number;  // Left Leg
-  readonly rl: number;  // Right Leg
+  readonly HD: number; // Head
+  readonly CT: number; // Center Torso
+  readonly LT: number; // Left Torso
+  readonly RT: number; // Right Torso
+  readonly LA: number; // Left Arm
+  readonly RA: number; // Right Arm
+  readonly LL: number; // Left Leg
+  readonly RL: number; // Right Leg
 }
 
 export const INTERNAL_STRUCTURE_PER_TONNAGE: Record<number, IInternalStructurePoints> = {
-  20: { hd: 3, ct: 7, lt: 5, rt: 5, la: 4, ra: 4, ll: 5, rl: 5 },
-  25: { hd: 3, ct: 8, lt: 6, rt: 6, la: 4, ra: 4, ll: 6, rl: 6 },
-  30: { hd: 3, ct: 10, lt: 7, rt: 7, la: 5, ra: 5, ll: 7, rl: 7 },
-  35: { hd: 3, ct: 11, lt: 8, rt: 8, la: 6, ra: 6, ll: 8, rl: 8 },
-  40: { hd: 3, ct: 12, lt: 10, rt: 10, la: 6, ra: 6, ll: 10, rl: 10 },
-  45: { hd: 3, ct: 14, lt: 11, rt: 11, la: 7, ra: 7, ll: 11, rl: 11 },
-  50: { hd: 3, ct: 16, lt: 11, rt: 11, la: 9, ra: 9, ll: 11, rl: 11 },
-  55: { hd: 3, ct: 18, lt: 13, rt: 13, la: 9, ra: 9, ll: 13, rl: 13 },
-  60: { hd: 3, ct: 20, lt: 14, rt: 14, la: 10, ra: 10, ll: 14, rl: 14 },
-  65: { hd: 3, ct: 21, lt: 15, rt: 15, la: 10, ra: 10, ll: 15, rl: 15 },
-  70: { hd: 3, ct: 22, lt: 15, rt: 15, la: 11, ra: 11, ll: 15, rl: 15 },
-  75: { hd: 3, ct: 24, lt: 17, rt: 17, la: 13, ra: 13, ll: 17, rl: 17 },
-  80: { hd: 3, ct: 25, lt: 17, rt: 17, la: 13, ra: 13, ll: 17, rl: 17 },
-  85: { hd: 3, ct: 27, lt: 18, rt: 18, la: 14, ra: 14, ll: 18, rl: 18 },
-  90: { hd: 3, ct: 29, lt: 19, rt: 19, la: 15, ra: 15, ll: 19, rl: 19 },
-  95: { hd: 3, ct: 31, lt: 20, rt: 20, la: 17, ra: 17, ll: 20, RL: 20 },
-  100: { hd: 3, ct: 32, lt: 21, rt: 21, la: 17, ra: 17, ll: 21, RL: 21 },
+  20: { HD: 3, CT: 7, LT: 5, RT: 5, LA: 4, RA: 4, LL: 5, RL: 5 },
+  25: { HD: 3, CT: 8, LT: 6, RT: 6, LA: 4, RA: 4, LL: 6, RL: 6 },
+  30: { HD: 3, CT: 10, LT: 7, RT: 7, LA: 5, RA: 5, LL: 7, RL: 7 },
+  35: { HD: 3, CT: 11, LT: 8, RT: 8, LA: 6, RA: 6, LL: 8, RL: 8 },
+  40: { HD: 3, CT: 12, LT: 10, RT: 10, LA: 6, RA: 6, LL: 10, RL: 10 },
+  45: { HD: 3, CT: 14, LT: 11, RT: 11, LA: 7, RA: 7, LL: 11, RL: 11 },
+  50: { HD: 3, CT: 16, LT: 11, RT: 11, LA: 9, RA: 9, LL: 11, RL: 11 },
+  55: { HD: 3, CT: 18, LT: 13, RT: 13, LA: 9, RA: 9, LL: 13, RL: 13 },
+  60: { HD: 3, CT: 20, LT: 14, RT: 14, LA: 10, RA: 10, LL: 14, RL: 14 },
+  65: { HD: 3, CT: 21, LT: 15, RT: 15, LA: 10, RA: 10, LL: 15, RL: 15 },
+  70: { HD: 3, CT: 22, LT: 15, RT: 15, LA: 11, RA: 11, LL: 15, RL: 15 },
+  75: { HD: 3, CT: 24, LT: 17, RT: 17, LA: 13, RA: 13, LL: 17, RL: 17 },
+  80: { HD: 3, CT: 25, LT: 17, RT: 17, LA: 13, RA: 13, LL: 17, RL: 17 },
+  85: { HD: 3, CT: 27, LT: 18, RT: 18, LA: 14, RA: 14, LL: 18, RL: 18 },
+  90: { HD: 3, CT: 29, LT: 19, RT: 19, LA: 15, RA: 15, LL: 19, RL: 19 },
+  95: { HD: 3, CT: 31, LT: 20, RT: 20, LA: 17, RA: 17, LL: 20, RL: 20 },
+  100: { HD: 3, CT: 32, LT: 21, RT: 21, LA: 17, RA: 17, LL: 21, RL: 21 },
 };
 
