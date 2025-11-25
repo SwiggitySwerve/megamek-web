@@ -17,15 +17,17 @@
     "moduleResolution": "bundler", // Changed from "node" to "bundler" as recommended for modern TS/Next.js
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
-    "baseUrl": ".", // Added
+    "jsx": "react-jsx",
+    "baseUrl": "./src", // Added
     "plugins": [ // Added from a common Next.js setup, can be adjusted
       {
         "name": "next"
       }
     ],
     "paths": { // Added common alias example, can be removed if not used
-      "@/*": ["./*"]
+      "@/*": [
+        "./*"
+      ]
     }
   },
   "include": [
@@ -33,9 +35,16 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts" // Added for Next.js 13+ type generation
+    ,
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
-    "scripts/unused/**/*"
+    "scripts/unused/**/*",
+    "scripts/data-migration/**/*",
+    "backup-before-refactor-*/**/*",
+    "desktop/**/*",
+    "src/components/.disabled/**/*",
+    "**/.disabled/**/*"
   ]
 }

@@ -10,7 +10,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { Equipment } from '../../data/equipment/types';
+import { Equipment } from '../../src/data/equipment/types';
 
 // Migration configuration
 interface MigrationConfig {
@@ -115,18 +115,18 @@ const MIGRATION_RULES: CategoryRule[] = [
     category: 'Ballistic Weapons',
     subcategory: 'Ultra Autocannons',
     filename: 'ballistic-weapons-ultra-acs.ts',
-    filter: (eq) => eq.category === 'Ballistic Weapons' && eq.baseType &&
-      eq.baseType.includes('Ultra AC'),
+    filter: (eq) => Boolean(eq.category === 'Ballistic Weapons' && eq.baseType &&
+      eq.baseType.includes('Ultra AC')),
     description: 'Ultra Autocannon variants'
   },
   {
     category: 'Ballistic Weapons',
     subcategory: 'LB-X Autocannons',
     filename: 'ballistic-weapons-lbx-acs.ts',
-    filter: (eq) => eq.category === 'Ballistic Weapons' && eq.baseType &&
+    filter: (eq) => Boolean(eq.category === 'Ballistic Weapons' && eq.baseType &&
       eq.baseType.includes('LB') && 
       eq.baseType.includes('X') && 
-      eq.baseType.includes('AC'),
+      eq.baseType.includes('AC')),
     description: 'LB-X Autocannon variants'
   },
   {
@@ -595,9 +595,9 @@ export { EquipmentMigrationScript, MIGRATION_RULES };
 // CLI execution
 if (require.main === module) {
   const config: MigrationConfig = {
-    sourceDir: path.join(__dirname, '../../data/equipment'),
-    targetDir: path.join(__dirname, '../../data/equipment-migrated'),
-    backupDir: path.join(__dirname, '../../data/equipment-backup'),
+    sourceDir: path.join(__dirname, '../../src/data/equipment'),
+    targetDir: path.join(__dirname, '../../src/data/equipment-migrated'),
+    backupDir: path.join(__dirname, '../../src/data/equipment-backup'),
     validateIntegrity: true
   };
 

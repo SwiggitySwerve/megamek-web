@@ -1,0 +1,130 @@
+# BattleTech Editor - Agent Rules and Guidelines
+
+## 🚨 **CRITICAL: BattleTech Rules Documentation**
+
+**ALWAYS reference BattleTech construction rules when working on this project.**
+
+### **Primary Rules Documentation**
+- **Master Index**: `docs/battletech/agents/00-INDEX.md`
+- **Construction Rules**: `docs/battletech/agents/01-construction-rules.md`
+- **Quick Reference**: `docs/battletech/reference/quick-reference.md`
+- **Full Guides**: `docs/battletech/battletech_*.md`
+
+### **When to Reference Rules**
+- Implementing or modifying construction calculations
+- Adding validation logic
+- Working with equipment placement
+- Calculating weights, structure, or armor
+- Implementing tech level restrictions
+- Working with critical slots
+- Any BattleTech rule-related code
+
+### **Code References**
+- **Single Source of Truth**: `constants/BattleTechConstructionRules.ts`
+- **Validation**: `services/ConstructionRulesValidator.ts`
+- **Validators**: `services/validation/*.ts`
+
+---
+
+## 🛡️ **Code Standards**
+
+### **Type Safety**
+- ALWAYS use concrete types, never `as any`
+- Use defined interfaces and types from `types/` directory
+- Use base objects from `getAvailable*` utilities for dropdowns
+- Prefer full canonical objects over string types
+
+### **Forbidden Patterns**
+- **NO `as any` Casting**: Silences compiler errors but causes runtime crashes.
+- **NO `as unknown as` Double Casting**: Bypasses type safety entirely. Use type guards or conversion functions.
+- **NO Legacy Imports**: Do not import from `types/systemComponents.ts`. Use `types/core`.
+- **NO Magic Strings**: Use constants (e.g., `TechBase.INNER_SPHERE`) instead of literals.
+- **NO Direct Property Access on `unknown`**: Use `isValid*` type guards first.
+
+### **Architecture**
+- Follow SOLID principles
+- Single Responsibility Principle - one class, one reason to change
+- Services end with `Service`, Managers for orchestration only
+- Validators end with `Validator`
+- Interfaces start with `I` prefix
+
+### **Naming Conventions**
+- NO `ServiceImpl`, `V2`, `V3`, `Refactored` suffixes
+- NO `Manager` for business logic (use `Service`)
+- Use descriptive, clear names
+
+---
+
+## 🏗️ **BattleTech Rule Implementation**
+
+### **Construction Rules**
+All construction calculations MUST match official BattleTech TechManual rules:
+- Structure weight: 10% of tonnage (standard) / 5% (Endo Steel)
+- Armor maximum: 2x structure points (except head = 9)
+- Engine heat sinks: Rating / 25 (no minimum)
+- Minimum total heat sinks: MAX(10, heat-generating weapons)
+
+### **Validation Rules**
+All validation MUST enforce BattleTech rules:
+- Weight limits cannot be exceeded
+- Armor maximums per location
+- Critical slot capacity (78 total, location-specific)
+- Tech base compatibility
+- Era restrictions
+
+### **Code Location**
+- **Constants**: `constants/BattleTechConstructionRules.ts` - Single source of truth
+- **Validation**: `services/validation/*.ts` - Rule enforcement
+- **Calculations**: `utils/constructionRules/*.ts` - Rule calculations
+
+---
+
+## 📂 **Documentation Structure**
+
+### **Rules Documentation**
+```
+docs/battletech/
+├── agents/              # Structured rule documentation
+│   ├── 00-INDEX.md      # START HERE - Master index
+│   └── *.md             # Category-specific rules
+├── reference/           # Quick lookup tables
+└── battletech_*.md      # Comprehensive guides
+```
+
+### **Before Making Changes**
+1. Read relevant rules documentation
+2. Check `constants/BattleTechConstructionRules.ts`
+3. Review validation services
+4. Ensure changes match official rules
+
+---
+
+## ⚠️ **Important Reminders**
+
+1. **BattleTech Rules are IMMUTABLE** - They come from the official TechManual
+2. **Single Source of Truth** - `BattleTechConstructionRules.ts` contains all constants
+3. **Always Validate** - Use validation services, don't bypass them
+4. **Type Safety First** - No `as any`, use proper types
+5. **SOLID Architecture** - Follow established patterns
+
+---
+
+🔍 **Quick Lookup**
+
+### **Common Rules**
+- **Structure**: 10% of tonnage (standard), 5% (Endo Steel)
+- **Armor Max**: Head = 9, Others = 2x structure
+- **Critical Slots**: 78 total (6 head, 12 CT, 12x2 torso, 12x2 arms, 6x2 legs)
+- **Engine Heat Sinks**: Rating / 25 (no minimum)
+- **Min Total Heat Sinks**: MAX(10, heat-generating weapons)
+
+### **Key Files**
+- Rules: `constants/BattleTechConstructionRules.ts`
+- Validation: `services/ConstructionRulesValidator.ts`
+- Documentation: `docs/battletech/agents/00-INDEX.md`
+
+---
+
+**Last Updated**: 2025-01-XX
+**Version**: 1.1
+

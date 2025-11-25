@@ -49,3 +49,18 @@ yarn-error.log*
 temp-*
 *_results.json
 *_analysis_*.json
+
+# Build logs (historical - keep but don't add more)
+BUILD_*.txt
+build*.txt
+build*.log
+final*.txt
+success*.txt
+
+# Prevent new test files in root
+/test-*.js
+/test-*.ts
+/test-*.html
+
+# Disabled file backups
+**/*.disabled
