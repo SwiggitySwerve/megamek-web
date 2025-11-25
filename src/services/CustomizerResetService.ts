@@ -11,6 +11,7 @@ export type CustomizerResetMode = 'full' | 'equipment' | 'configuration';
 export interface ICustomizerResetOptions {
   mode?: CustomizerResetMode;
   preserveEquipmentIds?: string[];
+  resetArmorAllocation?: boolean;
 }
 
 export interface ICustomizerResetResult {
