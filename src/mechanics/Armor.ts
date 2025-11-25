@@ -21,13 +21,13 @@ export class ArmorMechanics {
     const headMax = 9;
     
     // All other locations are 2x Structure
-    const ct = structure.ct * 2;
-    const lt = structure.lt * 2;
-    const rt = structure.rt * 2;
-    const la = structure.la * 2;
-    const ra = structure.ra * 2;
-    const ll = structure.ll * 2;
-    const rl = structure.rl * 2;
+    const ct = structure.CT * 2;
+    const lt = structure.LT * 2;
+    const rt = structure.RT * 2;
+    const la = structure.LA * 2;
+    const ra = structure.RA * 2;
+    const ll = structure.LL * 2;
+    const rl = structure.RL * 2;
     
     return headMax + ct + lt + rt + la + ra + ll + rl;
   }
