@@ -9,18 +9,17 @@ import {
   rulesLevelToString,
   stringToTechBaseWithDefault,
   stringToRulesLevelWithDefault,
+  stringToTechBaseFilter,
+  stringToTechBaseFilterWithDefault,
+  techBaseFilterToString,
 } from '../../../utils/typeConversion/enumConverters';
-import { TechBase, RulesLevel } from '../../../types/core/BaseTypes';
+import { TechBase, TechBaseFilter, RulesLevel } from '../../../types/core/BaseTypes';
 
 describe('enumConverters', () => {
   describe('stringToTechBase', () => {
     it('should convert valid tech base strings', () => {
       expect(stringToTechBase('Inner Sphere')).toBe(TechBase.INNER_SPHERE);
       expect(stringToTechBase('Clan')).toBe(TechBase.CLAN);
-      expect(stringToTechBase('Mixed (IS Chassis)')).toBe(TechBase.MIXED_IS_CHASSIS);
-      expect(stringToTechBase('Mixed (Clan Chassis)')).toBe(TechBase.MIXED_CLAN_CHASSIS);
-      expect(stringToTechBase('Mixed')).toBe(TechBase.MIXED);
-      expect(stringToTechBase('Both')).toBe(TechBase.BOTH);
     });
 
     it('should handle whitespace', () => {
@@ -44,10 +43,31 @@ describe('enumConverters', () => {
     it('should convert enum to string', () => {
       expect(techBaseToString(TechBase.INNER_SPHERE)).toBe('Inner Sphere');
       expect(techBaseToString(TechBase.CLAN)).toBe('Clan');
-      expect(techBaseToString(TechBase.MIXED_IS_CHASSIS)).toBe('Mixed (IS Chassis)');
-      expect(techBaseToString(TechBase.MIXED_CLAN_CHASSIS)).toBe('Mixed (Clan Chassis)');
-      expect(techBaseToString(TechBase.MIXED)).toBe('Mixed');
-      expect(techBaseToString(TechBase.BOTH)).toBe('Both');
+    });
+  });
+
+  describe('stringToTechBaseFilter', () => {
+    it('should convert valid filter strings', () => {
+      expect(stringToTechBaseFilter('Inner Sphere')).toBe(TechBaseFilter.INNER_SPHERE);
+      expect(stringToTechBaseFilter('Clan')).toBe(TechBaseFilter.CLAN);
+      expect(stringToTechBaseFilter('Mixed')).toBe(TechBaseFilter.MIXED);
+    });
+
+    it('should return null for invalid values', () => {
+      expect(stringToTechBaseFilter('Unknown')).toBeNull();
+    });
+
+    it('should return null for null/undefined', () => {
+      expect(stringToTechBaseFilter(null)).toBeNull();
+      expect(stringToTechBaseFilter(undefined)).toBeNull();
+    });
+  });
+
+  describe('techBaseFilterToString', () => {
+    it('should convert filter enum to string', () => {
+      expect(techBaseFilterToString(TechBaseFilter.INNER_SPHERE)).toBe('Inner Sphere');
+      expect(techBaseFilterToString(TechBaseFilter.CLAN)).toBe('Clan');
+      expect(techBaseFilterToString(TechBaseFilter.MIXED)).toBe('Mixed');
     });
   });
 
@@ -104,6 +124,21 @@ describe('enumConverters', () => {
 
     it('should use custom default', () => {
       expect(stringToTechBaseWithDefault('Invalid', TechBase.CLAN)).toBe(TechBase.CLAN);
+    });
+  });
+
+  describe('stringToTechBaseFilterWithDefault', () => {
+    it('should return converted value for valid input', () => {
+      expect(stringToTechBaseFilterWithDefault('Mixed')).toBe(TechBaseFilter.MIXED);
+    });
+
+    it('should return default for invalid input', () => {
+      expect(stringToTechBaseFilterWithDefault('Invalid')).toBe(TechBaseFilter.INNER_SPHERE);
+      expect(stringToTechBaseFilterWithDefault(null)).toBe(TechBaseFilter.INNER_SPHERE);
+    });
+
+    it('should use custom default', () => {
+      expect(stringToTechBaseFilterWithDefault('Invalid', TechBaseFilter.CLAN)).toBe(TechBaseFilter.CLAN);
     });
   });
 

@@ -17,6 +17,9 @@ export {
   stringToTechBase,
   stringToTechBaseWithDefault,
   techBaseToString,
+  stringToTechBaseFilter,
+  stringToTechBaseFilterWithDefault,
+  techBaseFilterToString,
   stringToRulesLevel,
   stringToRulesLevelWithDefault,
   rulesLevelToString

@@ -5,7 +5,7 @@
  * Extracted from TechLevelRulesValidator.ts for better modularity and testability.
  */
 
-import { 
+import {
   MixedTechValidation,
   MixedTechRules,
   CompatibilityMatrix,
@@ -14,6 +14,7 @@ import {
 } from '../types/TechLevelTypes';
 import { UnitConfiguration } from '../../../utils/criticalSlots/UnitCriticalManagerTypes';
 import { TechBaseManager } from './TechBaseManager';
+import { TechBase } from '@/types';
 
 export class MixedTechManager {
   /**
@@ -30,10 +31,10 @@ export class MixedTechManager {
     
     // Count tech base components
     for (const component of components) {
-      const techBase = component.techBase || 'Inner Sphere';
-      if (techBase === 'Inner Sphere' || techBase === 'Star League') {
+      const techBase = component.techBase || TechBase.INNER_SPHERE;
+      if (techBase === TechBase.INNER_SPHERE || techBase === 'Star League') {
         innerSphereComponents++;
-      } else if (techBase === 'Clan') {
+      } else if (techBase === TechBase.CLAN) {
         clanComponents++;
       }
     }
@@ -87,9 +88,9 @@ export class MixedTechManager {
     const violations: string[] = [];
     
     // Check for common incompatible combinations
-    const clanWeapons = components.filter(c => c.category === 'weapon' && c.techBase === 'Clan');
+    const clanWeapons = components.filter(c => c.category === 'weapon' && c.techBase === TechBase.CLAN);
     const isTargetingComputer = components.some(c => 
-      c.name.toLowerCase().includes('targeting computer') && c.techBase === 'Inner Sphere'
+      c.name.toLowerCase().includes('targeting computer') && c.techBase === TechBase.INNER_SPHERE
     );
     
     if (clanWeapons.length > 0 && isTargetingComputer) {
@@ -105,9 +106,9 @@ export class MixedTechManager {
     
     // Check for Clan XL engines with Inner Sphere components
     const clanXLEngine = components.some(c => 
-      c.name.toLowerCase().includes('xl engine') && c.techBase === 'Clan'
+      c.name.toLowerCase().includes('xl engine') && c.techBase === TechBase.CLAN
     );
-    const innerSphereComponents = components.filter(c => c.techBase === 'Inner Sphere');
+    const innerSphereComponents = components.filter(c => c.techBase === TechBase.INNER_SPHERE);
     
     if (clanXLEngine && innerSphereComponents.length > 0) {
       violations.push('Clan XL engine with Inner Sphere components may have integration issues');

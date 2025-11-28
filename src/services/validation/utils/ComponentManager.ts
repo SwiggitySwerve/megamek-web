@@ -7,6 +7,7 @@
 
 import { ComponentInfo } from '../types/TechLevelTypes';
 import { UnitConfiguration } from '../../../utils/criticalSlots/UnitCriticalManagerTypes';
+import { TechBase } from '@/types';
 
 export class ComponentManager {
   /**
@@ -14,7 +15,7 @@ export class ComponentManager {
    */
   static getAllComponents(config: UnitConfiguration, equipment: any[]): ComponentInfo[] {
     const components: ComponentInfo[] = [];
-    const unitTechBase = config.techBase || 'Inner Sphere';
+    const unitTechBase = config.techBase || TechBase.INNER_SPHERE;
     
     // Add system components with proper tech base inheritance
     components.push({
@@ -76,7 +77,7 @@ export class ComponentManager {
     const counts: { [techBase: string]: number } = {};
     
     components.forEach(component => {
-      const techBase = component.techBase || 'Inner Sphere';
+      const techBase = component.techBase || TechBase.INNER_SPHERE;
       counts[techBase] = (counts[techBase] || 0) + 1;
     });
     
@@ -111,7 +112,7 @@ export class ComponentManager {
    * Get unique tech bases from components
    */
   static getUniqueTechBases(components: ComponentInfo[]): string[] {
-    const techBases = new Set(components.map(c => c.techBase || 'Inner Sphere'));
+    const techBases = new Set(components.map(c => c.techBase || TechBase.INNER_SPHERE));
     return Array.from(techBases);
   }
 
@@ -155,7 +156,7 @@ export class ComponentManager {
     const groups: { [techBase: string]: ComponentInfo[] } = {};
     
     components.forEach(component => {
-      const techBase = component.techBase || 'Inner Sphere';
+      const techBase = component.techBase || TechBase.INNER_SPHERE;
       if (!groups[techBase]) {
         groups[techBase] = [];
       }

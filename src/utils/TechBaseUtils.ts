@@ -1,4 +1,4 @@
-import { TechBase } from '../types/core/BaseTypes';
+import { TechBase, TechBaseFilter } from '../types/core/BaseTypes';
 
 export type TechBaseCode = 'IS' | 'Clan' | 'Mixed';
 
@@ -6,7 +6,10 @@ export const TechBaseUtil = {
   /**
    * Normalize a tech base string to the standard TechBase type
    */
-  normalize(input: string): TechBase {
+  normalize(input: string | null | undefined, fallback: TechBase = TechBase.INNER_SPHERE): TechBase {
+    if (!input) {
+      return fallback;
+    }
     const normalized = input.trim();
     if (normalized === 'IS' || normalized === 'Inner Sphere' || normalized === TechBase.INNER_SPHERE) {
       return TechBase.INNER_SPHERE;
@@ -14,45 +17,44 @@ export const TechBaseUtil = {
     if (normalized === 'Clan' || normalized === TechBase.CLAN) {
       return TechBase.CLAN;
     }
-    if (normalized === 'Mixed' || normalized === TechBase.MIXED) {
-        return TechBase.MIXED;
-    }
-    if (normalized === 'Both' || normalized === TechBase.BOTH) {
-        return TechBase.BOTH;
+    if (normalized.startsWith('Mixed') || normalized === 'Both') {
+      console.warn(`Mixed tech input "${input}" cannot be used as a concrete tech base; defaulting to ${fallback}`);
+      return fallback;
     }
     
-    // Handle mixed subtypes if needed, or default to IS
-    console.warn(`Unknown tech base: ${input}, defaulting to Inner Sphere`);
-    return TechBase.INNER_SPHERE;
+    console.warn(`Unknown tech base: ${input}, defaulting to ${fallback}`);
+    return fallback;
   },
 
   /**
-   * Convert a TechBase to its code representation
+   * Convert a TechBase or filter to its code representation
    */
-  toCode(techBase: TechBase): TechBaseCode {
+  toCode(techBase: TechBase | TechBaseFilter): TechBaseCode {
       switch(techBase) {
-          case TechBase.INNER_SPHERE: return 'IS';
+          case TechBaseFilter.MIXED: return 'Mixed';
           case TechBase.CLAN: return 'Clan';
-          case TechBase.MIXED: 
-          case TechBase.MIXED_IS_CHASSIS:
-          case TechBase.MIXED_CLAN_CHASSIS:
-            return 'Mixed';
+          case TechBase.INNER_SPHERE:
           default: return 'IS';
       }
   },
 
   /**
-   * Check if a string is a valid TechBase
+   * Check if a string is a valid tech base or shorthand
    */
   isValid(input: string): boolean {
-       const values: string[] = Object.values(TechBase);
-       return values.includes(input) || input === 'IS';
+       const values: string[] = [
+        TechBase.INNER_SPHERE,
+        TechBase.CLAN,
+        TechBaseFilter.MIXED,
+        'IS',
+      ];
+       return values.includes(input);
   },
 
   /**
-   * Get all valid tech bases
+   * Get all valid tech bases for filtering
    */
-  all(): TechBase[] {
-      return Object.values(TechBase);
+  all(): Array<TechBase | TechBaseFilter> {
+      return [TechBase.INNER_SPHERE, TechBase.CLAN, TechBaseFilter.MIXED];
   }
 };

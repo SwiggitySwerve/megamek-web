@@ -28,7 +28,7 @@ const ARMOR_TYPE_OPTIONS = Object.entries(ARMOR_SPECIFICATIONS).map(([key, spec]
   costMultiplier: spec.costMultiplier || 1,
   maxPointsPerLocationMultiplier: 1,
   type: spec.type,
-  techBase: spec.techBase === TechBase.BOTH ? TechBase.INNER_SPHERE : (spec.techBase as TechBase),
+  techBase: spec.techBase === 'Both' ? TechBase.INNER_SPHERE : (spec.techBase as TechBase),
   description: spec.description
 } as IArmorDef));
 

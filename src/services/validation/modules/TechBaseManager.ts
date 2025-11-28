@@ -5,7 +5,7 @@
  * Extracted from TechLevelRulesValidator.ts for better modularity and testability.
  */
 
-import { 
+import {
   TechBaseCompliance,
   ComponentTechBase,
   TechBaseConflict,
@@ -14,27 +14,28 @@ import {
   TechLevelValidationContext
 } from '../types/TechLevelTypes';
 import { UnitConfiguration } from '../../../utils/criticalSlots/UnitCriticalManagerTypes';
+import { TechBase, TechBaseFilter } from '@/types';
 
 export class TechBaseManager {
   // Tech base compatibility matrix
   private static readonly TECH_COMPATIBILITY: CompatibilityMatrix = {
-    'Inner Sphere': {
-      compatible: ['Inner Sphere', 'Star League'],
-      restricted: ['Clan'],
+    [TechBase.INNER_SPHERE]: {
+      compatible: [TechBase.INNER_SPHERE, 'Star League'],
+      restricted: [TechBase.CLAN],
       forbidden: ['Alien', 'Prototype']
     },
-    'Clan': {
-      compatible: ['Clan', 'Star League'],
-      restricted: ['Inner Sphere'],
+    [TechBase.CLAN]: {
+      compatible: [TechBase.CLAN, 'Star League'],
+      restricted: [TechBase.INNER_SPHERE],
       forbidden: ['Alien', 'Prototype']
     },
-    'Mixed': {
-      compatible: ['Inner Sphere', 'Clan', 'Star League', 'Mixed'],
+    [TechBaseFilter.MIXED]: {
+      compatible: [TechBase.INNER_SPHERE, TechBase.CLAN, 'Star League', TechBaseFilter.MIXED],
       restricted: [],
       forbidden: ['Alien']
     },
     'Star League': {
-      compatible: ['Inner Sphere', 'Clan', 'Star League'],
+      compatible: [TechBase.INNER_SPHERE, TechBase.CLAN, 'Star League'],
       restricted: [],
       forbidden: ['Alien', 'Prototype']
     }
@@ -48,12 +49,12 @@ export class TechBaseManager {
     components: ComponentInfo[],
     context: TechLevelValidationContext
   ): TechBaseCompliance {
-    const unitTechBase = config.techBase || 'Inner Sphere';
+    const unitTechBase = (config.techBase || TechBaseFilter.INNER_SPHERE) as TechBaseFilter;
     const componentTechBases: ComponentTechBase[] = [];
     const conflicts: TechBaseConflict[] = [];
     
     for (const component of components) {
-      const componentTechBase = component.techBase || 'Inner Sphere';
+      const componentTechBase = component.techBase || TechBase.INNER_SPHERE;
       const isCompliant = this.isTechBaseCompatible(unitTechBase, componentTechBase, context);
       
       componentTechBases.push({
@@ -98,7 +99,10 @@ export class TechBaseManager {
    * Check if a component tech base is compatible with unit tech base
    */
   static isTechBaseCompatible(unitTechBase: string, componentTechBase: string, context: TechLevelValidationContext): boolean {
-    if (unitTechBase === 'Mixed' || context.allowMixedTech) {
+    if (componentTechBase === 'Both' || componentTechBase === 'Mixed') {
+      return true;
+    }
+    if (unitTechBase === TechBaseFilter.MIXED || context.allowMixedTech) {
       return true; // Mixed tech allows everything
     }
     
@@ -131,11 +135,11 @@ export class TechBaseManager {
    * Get suggested resolution for a tech base conflict
    */
   static getConflictResolution(unitTechBase: string, componentTechBase: string): string {
-    if (unitTechBase === 'Inner Sphere' && componentTechBase === 'Clan') {
+    if (unitTechBase === TechBaseFilter.INNER_SPHERE && componentTechBase === TechBase.CLAN) {
       return 'Replace with Inner Sphere equivalent or enable mixed tech';
     }
     
-    if (unitTechBase === 'Clan' && componentTechBase === 'Inner Sphere') {
+    if (unitTechBase === TechBaseFilter.CLAN && componentTechBase === TechBase.INNER_SPHERE) {
       return 'Replace with Clan equivalent or enable mixed tech';
     }
     
@@ -189,8 +193,8 @@ export class TechBaseManager {
     const violations: string[] = [];
     
     // Check for common incompatible combinations
-    const clanWeapons = components.filter(c => c.category === 'weapon' && c.techBase === 'Clan');
-    const isTargetingComputer = components.some(c => c.name.toLowerCase().includes('targeting computer') && c.techBase === 'Inner Sphere');
+    const clanWeapons = components.filter(c => c.category === 'weapon' && c.techBase === TechBase.CLAN);
+    const isTargetingComputer = components.some(c => c.name.toLowerCase().includes('targeting computer') && c.techBase === TechBase.INNER_SPHERE);
     
     if (clanWeapons.length > 0 && isTargetingComputer) {
       violations.push('Clan weapons with Inner Sphere targeting computer detected');

@@ -5,7 +5,7 @@
  * with proper validation and error handling.
  */
 
-import { TechBase, RulesLevel } from '../../types/core/BaseTypes';
+import { TechBase, TechBaseFilter, RulesLevel } from '../../types/core/BaseTypes';
 
 /**
  * Converts string to TechBase enum with validation
@@ -20,10 +20,6 @@ export function stringToTechBase(value: string | undefined | null): TechBase | n
   const mapping: Record<string, TechBase> = {
     'Inner Sphere': TechBase.INNER_SPHERE,
     'Clan': TechBase.CLAN,
-    'Mixed (IS Chassis)': TechBase.MIXED_IS_CHASSIS,
-    'Mixed (Clan Chassis)': TechBase.MIXED_CLAN_CHASSIS,
-    'Mixed': TechBase.MIXED,
-    'Both': TechBase.BOTH,
   };
   
   return mapping[normalized] ?? null;
@@ -37,6 +33,24 @@ export function stringToTechBase(value: string | undefined | null): TechBase | n
  */
 export function techBaseToString(techBase: TechBase): string {
   return techBase;
+}
+
+/**
+ * Converts string to TechBaseFilter enum with validation
+ */
+export function stringToTechBaseFilter(value: string | undefined | null): TechBaseFilter | null {
+  if (!value) return null;
+  const normalized = value.trim();
+  const mapping: Record<string, TechBaseFilter> = {
+    'Inner Sphere': TechBaseFilter.INNER_SPHERE,
+    'Clan': TechBaseFilter.CLAN,
+    'Mixed': TechBaseFilter.MIXED,
+  };
+  return mapping[normalized] ?? null;
+}
+
+export function techBaseFilterToString(filter: TechBaseFilter): string {
+  return filter;
 }
 
 /**
@@ -114,4 +128,14 @@ export function stringToTechBaseWithDefault(
   defaultValue: TechBase = TechBase.INNER_SPHERE
 ): TechBase {
   return stringToTechBase(value) ?? defaultValue;
+}
+
+/**
+ * Converts string to TechBaseFilter enum with default fallback
+ */
+export function stringToTechBaseFilterWithDefault(
+  value: string | undefined | null,
+  defaultValue: TechBaseFilter = TechBaseFilter.INNER_SPHERE
+): TechBaseFilter {
+  return stringToTechBaseFilter(value) ?? defaultValue;
 }
