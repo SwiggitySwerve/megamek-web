@@ -144,7 +144,7 @@ Percentage values SHALL be validated within 0-100 range.
 ### Requirement: Tech Base Compatibility Validation
 Components SHALL be validated for tech base compatibility.
 
-**Rationale**: Mixing technology bases has specific rules that must be enforced.
+**Rationale**: Mixing tech bases has specific rules that must be enforced.
 
 **Priority**: High
 
@@ -939,7 +939,7 @@ All error messages SHALL follow these formats for consistency:
 
 ---
 
-## Technology Base Variants
+## Tech Base Variants
 
 ### Inner Sphere Implementation
 **No special rules** - Validation patterns apply uniformly to all tech bases.

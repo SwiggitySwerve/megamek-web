@@ -438,7 +438,7 @@ This document consolidates ALL validation rules from all BattleTech Editor speci
 
 **Source**: Era & Temporal System (spec.md, lines 496-511)
 
-**User Action**: Verify era classification matches the introduction year
+**User Action**: Validate era classification matches the introduction year
 
 ---
 
@@ -591,7 +591,7 @@ This document consolidates ALL validation rules from all BattleTech Editor speci
 
 ---
 
-### VAL-RULES-002: Tournament Legality
+### VAL-RULES-002: Advanced Rules Legality
 **Rule**: Experimental components cannot be used in tournament play
 
 **Severity**: Warning
@@ -1515,7 +1515,7 @@ This document consolidates ALL validation rules from all BattleTech Editor speci
 - Zero armor on location
 - Minimal rear armor (<10%)
 - Head armor below maximum (9)
-- Tournament legality concerns
+- Competitive tournament legality concerns (Advanced rules or lower)
 - Experimental components
 - Mixed tech configuration
 
@@ -1535,7 +1535,7 @@ This document consolidates ALL validation rules from all BattleTech Editor speci
            ├─> 5. Structure Selection
            │   └─> 7. Armor Allocation (depends on structure points)
            └─> 6. Heat Sink Base Count (depends on engine rating)
-               └─> 8. Additional Heat Sinks (minimum 10 total)
+               └─> 8. External Heat Sinks (minimum 10 total)
                    └─> 9. Equipment & Weapons
                        └─> 10. Critical Slot Validation
                            └─> 11. Final Weight Validation

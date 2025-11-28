@@ -842,7 +842,7 @@ if (heatSinkConfig.heatSinkType === HeatSinkType.COMPACT &&
 
 ---
 
-## Technology Base Variants
+## Tech Base Variants
 
 See [Tech Base Variants Reference](../tech-base-variants-reference/spec.md) for general Inner Sphere vs Clan differences and the "3-2 Pattern" for slot differences.
 

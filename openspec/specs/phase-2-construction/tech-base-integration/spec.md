@@ -38,7 +38,7 @@ The Tech Base Integration System defines how a unit's declared tech base affects
 - **Mixed Tech Unit**: Unit declared as "Mixed" that can independently select IS or Clan for each system component category
 - **Tech Base Locking**: Automatic constraint where IS units can only use IS system components, Clan units only Clan system components
 - **Tech Rating**: Availability rating (A-X) that increases when mixing IS and Clan components
-- **Tournament Legality**: Units with Mixed Tech or certain advanced components may be restricted in tournament play
+- **Advanced Rules Legality**: Units with Mixed Tech or certain advanced components may be restricted in tournament play
 
 **Terminology Note**: This spec uses "system component" to refer to fixed/required system components (engine, gyro, internal structure, armor, cockpit, actuators) that are locked by tech base. "Equipment" refers to removable items (weapons, ammunition, heat sinks, jump jets) that are tech-base independent. See `openspec/TERMINOLOGY_GLOSSARY.md` for canonical definitions.
 
@@ -428,7 +428,7 @@ The system SHALL validate that system components match their declared tech base 
 
 ---
 
-### Requirement: Tournament Legality Assessment
+### Requirement: Advanced Rules Legality Assessment
 The system SHALL assess and report tournament legality based on tech base mixing and component selections.
 
 **Rationale**: Many BattleTech tournaments restrict Mixed Tech units or certain advanced technologies.
@@ -440,12 +440,12 @@ The system SHALL assess and report tournament legality based on tech base mixing
 **AND** all components are Standard rules level
 **AND** no Clan equipment
 **WHEN** assessing tournament legality
-**THEN** the unit SHALL be marked as "Tournament Legal: Standard"
+**THEN** the unit SHALL be marked as "Tournament-legal: Standard"
 
 #### Scenario: Mixed Tech tournament restriction
 **GIVEN** a unit with techBase = TechBaseFilter.MIXED
 **WHEN** assessing tournament legality
-**THEN** the unit SHALL be marked as "Tournament Legal: Advanced/Experimental"
+**THEN** the unit SHALL be marked as "Tournament-legal: Advanced/Experimental"
 **AND** a note SHALL indicate "Mixed Tech may be restricted in some tournaments"
 
 #### Scenario: Clan equipment on IS unit
@@ -899,7 +899,7 @@ function validateComponentAvailability(
 
 ---
 
-## Technology Base Variants
+## Tech Base Variants
 
 This specification IS the authoritative source for tech base integration and mixed tech rules.
 
@@ -1315,7 +1315,7 @@ const techRating = calculateTechRating(unit);
 - **TechManual**: Pages 207-208 - Mixed Tech Rules
 - **TechManual**: Pages 109-111 - Tech Base and Technology Advancement
 - **Strategic Operations**: Pages 128-131 - Advanced Tech Base Rules
-- **Campaign Operations**: Pages 42-45 - Tournament Legality and Tech Ratings
+- **Campaign Operations**: Pages 42-45 - Advanced Rules Legality and Tech Ratings
 - **Interstellar Operations**: Pages 68-70 - Tech Base Progression Tables
 
 ### Related Documentation

@@ -425,7 +425,7 @@ interface IArmorType extends ITechBaseEntity, ISlottedComponent {
   readonly criticalSlots: number;
 
   /**
-   * Technology base classification
+   * Tech base classification
    */
   readonly techBase: TechBase;
 
@@ -900,7 +900,7 @@ for (const loc of torsoLocations) {
 
 ---
 
-## Technology Base Variants
+## Tech Base Variants
 
 See [Tech Base Variants Reference](../tech-base-variants-reference/spec.md) for general Inner Sphere vs Clan differences and the "14-7 Pattern" for distributed slots.
 

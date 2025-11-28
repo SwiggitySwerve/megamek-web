@@ -40,7 +40,7 @@ Defines the rules complexity classification system for BattleTech components and
 ### Requirement: Rules Level Enumeration
 The system SHALL define four distinct rules levels with clear hierarchy.
 
-**Rationale**: Official BattleTech rules define four complexity levels. This classification affects game balance and competitive play.
+**Rationale**: Official BattleTech rules define four rules levels. This classification affects game balance and competitive play.
 
 **Priority**: Critical
 
@@ -62,7 +62,7 @@ The system SHALL define four distinct rules levels with clear hierarchy.
 ### Requirement: Component Classification
 All components SHALL declare a rules level via ITechBaseEntity interface.
 
-**Rationale**: Every component has a defined complexity level in official rules.
+**Rationale**: Every component has a defined rules level in official rules.
 
 **Priority**: Critical
 
@@ -103,11 +103,11 @@ The system SHALL support filtering components by maximum allowed rules level.
 ### Requirement: Competitive Play Validation
 The system SHALL validate tournament legality based on rules level.
 
-**Rationale**: Tournament play has specific rules about allowed technology levels.
+**Rationale**: Competitive tournament play has specific rules about Advanced and lower technology allowed technology levels.
 
 **Priority**: Medium
 
-#### Scenario: Tournament validation
+#### Scenario: Tournament-legality validation
 **GIVEN** a unit configured for tournament play
 **WHEN** validating component legality
 **THEN** INTRODUCTORY components SHALL be valid
@@ -172,7 +172,7 @@ if (!Object.values(RulesLevel).includes(component.rulesLevel)) {
 
 **User Action**: Assign a valid RulesLevel to the component
 
-### Validation: Tournament Legality
+### Validation: Advanced Rules Legality
 **Rule**: Experimental components cannot be used in tournament play
 
 **Severity**: Warning
@@ -239,7 +239,7 @@ if (unit.isTournamentUnit && component.rulesLevel === RulesLevel.EXPERIMENTAL) {
 **Characteristics**:
 - Increased rules complexity
 - Specialized equipment
-- Tournament legal but complex
+- Tournament-legal (Advanced rules) but complex
 - Requires rulebook references
 
 **Example Components**:
@@ -324,7 +324,7 @@ function matchesRulesFilter(
 
 ---
 
-## Technology Base Variants
+## Tech Base Variants
 
 ### Inner Sphere Implementation
 **No special rules** - Inner Sphere components use the same rules level classifications.
@@ -344,7 +344,7 @@ function matchesRulesFilter(
 ### Defines
 - **Rules level classification logic**: How components are classified by complexity
 - **Rules level hierarchy**: Establishes progression from basic to advanced complexity (Introductory → Standard → Advanced → Experimental)
-- **Tournament legality rules**: Experimental components not tournament legal
+- **Tournament-legality rules**: Experimental components not tournament legal
 - **Filtering logic**: How to match components against rules level filters
 - **Complexity progression**: Increasing rules overhead from simplest to most complex
 
@@ -492,7 +492,7 @@ function onRulesFilterChange(filter: RulesLevelFilter) {
 ### Related Documentation
 - `openspec/specs/phase-1-foundation/core-enumerations/spec.md` - RulesLevel and RulesLevelFilter enum definitions
 - `openspec/specs/core-entity-types/spec.md` - ITechBaseEntity interface
-- `openspec/specs/tech-base-system/spec.md` - Technology base classification
+- `openspec/specs/tech-base-system/spec.md` - Tech base classification
 - `openspec/specs/era-temporal-system/spec.md` - Technology availability by era
 
 ### Code References

@@ -357,7 +357,7 @@ if (component.era !== expectedEra) {
 
 ---
 
-## Technology Base Variants
+## Tech Base Variants
 
 ### Inner Sphere Implementation
 **No special rules** - Inner Sphere components use the same temporal system.
@@ -532,8 +532,8 @@ function validateUnitForCampaign(
         severity: 'error',
         message: `${component.name} is ${reason} in year ${campaignYear}`,
         component: component.id,
-        introYear: component.introductionYear,
-        extinctYear: component.extinctionYear
+        introductionYear: component.introductionYear,
+        extinctionYear: component.extinctionYear
       });
     }
   }

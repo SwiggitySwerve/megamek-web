@@ -315,7 +315,7 @@ const invalid: ISlottedComponent = {
 **Rule**: Some components occupy zero slots (slotless equipment). This is valid.
 
 ```typescript
-const heatsink: ISlottedComponent = {
+const heatSink: ISlottedComponent = {
   criticalSlots: 0  // Valid - some equipment is slotless
 };
 ```
@@ -417,7 +417,7 @@ function validatePropertyNames(obj: any): boolean {
 
 ---
 
-## Technology Base Variants
+## Tech Base Variants
 
 ### Inner Sphere Implementation
 **No special rules** - Weight and slots use same validation regardless of tech base.

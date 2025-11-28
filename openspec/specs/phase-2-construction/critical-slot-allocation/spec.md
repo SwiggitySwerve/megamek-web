@@ -1065,7 +1065,7 @@ if (isRearFacing && !torsoLocations.includes(location)) {
 
 ---
 
-## Technology Base Variants
+## Tech Base Variants
 
 See [Tech Base Variants Reference](../tech-base-variants-reference/spec.md) for general Inner Sphere vs Clan differences affecting slot allocation patterns.
 

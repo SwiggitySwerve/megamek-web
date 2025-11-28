@@ -11,11 +11,11 @@
 ## Overview
 
 ### Purpose
-Defines the core enumeration types used throughout the BattleTech Editor specifications. Establishes a single source of truth for shared enumerations including technology base classification, rules complexity levels, historical eras, and filtering options.
+Defines the core enumeration types used throughout the BattleTech Editor specifications. Establishes a single source of truth for shared enumerations including tech base classification, rules rules levels, historical eras, and filtering options.
 
 ### Scope
 **In Scope:**
-- Technology base enumerations (TechBase, UnitTechBase, TechBaseFilter)
+- Tech base enumerations (TechBase, UnitTechBase, TechBaseFilter)
 - Rules complexity enumerations (RulesLevel, RulesLevelFilter)
 - Historical era enumeration (Era)
 - Enumeration validation and type guards
@@ -38,8 +38,8 @@ Defines the core enumeration types used throughout the BattleTech Editor specifi
 
 ## Requirements
 
-### Requirement: Technology Base Core Enumerations
-The system SHALL define technology base enumerations for components and units.
+### Requirement: Tech Base Core Enumerations
+The system SHALL define tech base enumerations for components and units.
 
 **Rationale**: BattleTech distinguishes between Inner Sphere and Clan technology. Components have binary tech base while units can be mixed.
 
@@ -67,7 +67,7 @@ The system SHALL define technology base enumerations for components and units.
 ### Requirement: Rules Level Enumerations
 The system SHALL define rules complexity classification enumerations.
 
-**Rationale**: BattleTech components have different complexity levels affecting gameplay and tournament legality.
+**Rationale**: BattleTech components have different rules levels affecting gameplay and tournament legality.
 
 **Priority**: Critical
 
@@ -139,7 +139,7 @@ All enumeration values SHALL be immutable constants.
 
 ```typescript
 /**
- * Technology base classification for components
+ * Tech base classification for components
  *
  * Binary classification of component origin. Every component is either
  * Inner Sphere or Clan technology.
@@ -159,7 +159,7 @@ enum TechBase {
 }
 
 /**
- * Technology base classification for units
+ * Tech base classification for units
  *
  * Extends TechBase to support mixed technology units that contain
  * both Inner Sphere and Clan components.
@@ -185,7 +185,7 @@ enum UnitTechBase {
 }
 
 /**
- * Technology base filter for UI component selection
+ * Tech base filter for UI component selection
  *
  * Supports filtering components by tech base with an ALL option
  * to show components from all tech bases.
@@ -215,35 +215,35 @@ enum TechBaseFilter {
 /**
  * Rules complexity classification
  *
- * Defines the complexity level and competitive play legality of components.
+ * Defines the rules level and competitive play legality of components.
  * Levels form a hierarchy: INTRODUCTORY < STANDARD < ADVANCED < EXPERIMENTAL
  */
 enum RulesLevel {
   /**
    * Introductory rules - basic game components
    * Used for new players and simplified gameplay
-   * Always tournament legal
+   * Always tournament-legal
    */
   INTRODUCTORY = 'Introductory',
 
   /**
    * Standard rules - common components
    * Most widely used in standard gameplay
-   * Always tournament legal
+   * Always tournament-legal
    */
   STANDARD = 'Standard',
 
   /**
    * Advanced rules - complex components
    * Advanced technology with additional rules overhead
-   * Tournament legal but adds complexity
+   * Tournament-legal (Advanced rules) but adds complexity
    */
   ADVANCED = 'Advanced',
 
   /**
    * Experimental rules - bleeding edge technology
    * Experimental or prototype technology
-   * NOT tournament legal - playtest/campaign only
+   * NOT tournament-legal - playtest/campaign only
    */
   EXPERIMENTAL = 'Experimental'
 }
@@ -501,28 +501,28 @@ function isValidEra(value: unknown): value is Era {
 **INTRODUCTORY**
 - Display Value: "Introductory"
 - Complexity: Lowest
-- Tournament Legal: Yes
+- Tournament-legal: Yes (Introductory rules)
 - Description: Basic components for new players
 - Hierarchy Level: 1
 
 **STANDARD**
 - Display Value: "Standard"
 - Complexity: Low-Medium
-- Tournament Legal: Yes
+- Tournament-legal: Yes (Standard rules)
 - Description: Common components in standard play
 - Hierarchy Level: 2
 
 **ADVANCED**
 - Display Value: "Advanced"
 - Complexity: Medium-High
-- Tournament Legal: Yes
+- Tournament-legal: Yes (Advanced rules)
 - Description: Complex components with additional rules
 - Hierarchy Level: 3
 
 **EXPERIMENTAL**
 - Display Value: "Experimental"
 - Complexity: Highest
-- Tournament Legal: No
+- Tournament-legal: No (playtest/campaign only)
 - Description: Prototype/experimental technology
 - Hierarchy Level: 4
 
@@ -541,7 +541,7 @@ function isValidEra(value: unknown): value is Era {
 **ADVANCED**
 - Display Value: "Advanced"
 - Shows: INTRODUCTORY + STANDARD + ADVANCED
-- Usage: Tournament legal components
+- Usage: Tournament-legal (Advanced or lower) components
 
 **ALL**
 - Display Value: "All"
@@ -772,7 +772,7 @@ function matchesFilters(
 - **TechBase enum**: Binary technology classification (INNER_SPHERE, CLAN) - authoritative source
 - **UnitTechBase enum**: Unit technology classification (INNER_SPHERE, CLAN, MIXED) - authoritative source
 - **TechBaseFilter enum**: UI filtering for tech base (INNER_SPHERE, CLAN, MIXED, ALL) - authoritative source
-- **RulesLevel enum**: Rules complexity levels (INTRODUCTORY, STANDARD, ADVANCED, EXPERIMENTAL) - authoritative source
+- **RulesLevel enum**: Rules rules levels (INTRODUCTORY, STANDARD, ADVANCED, EXPERIMENTAL) - authoritative source
 - **RulesLevelFilter enum**: UI filtering for rules levels (INTRODUCTORY, STANDARD, ADVANCED, ALL) - authoritative source
 - **Era enum**: Historical eras (AGE_OF_WAR through DARK_AGE) - authoritative source
 - **Type guard functions**: isValidTechBase(), isValidUnitTechBase(), isValidTechBaseFilter(), isValidRulesLevel(), isValidRulesLevelFilter(), isValidEra()
@@ -1061,7 +1061,7 @@ console.log(`${gaussRifle.name} was introduced in the ${era}`);
 ## References
 
 ### Official BattleTech Rules
-- **TechManual**: Pages 6-10 - Technology base and rules level definitions
+- **TechManual**: Pages 6-10 - Tech base and rules level definitions
 - **Total Warfare**: Pages 6-7 - Rules levels overview
 - **Era Digest**: Complete era definitions and technology availability
 - **Interstellar Operations**: Pages 20-30 - Historical timelines

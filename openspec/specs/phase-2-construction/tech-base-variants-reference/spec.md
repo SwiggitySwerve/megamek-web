@@ -1,4 +1,4 @@
-# Technology Base Variants Reference
+# Tech Base Variants Reference
 
 **Status**: Active
 **Version**: 1.0
@@ -10,7 +10,7 @@
 ## Overview
 
 ### Purpose
-This document provides the authoritative reference for understanding technology base (Inner Sphere vs Clan) differences across BattleMech construction systems. All Phase 2 construction specifications reference this document for general tech base variant principles.
+This document provides the authoritative reference for understanding tech base (Inner Sphere vs Clan) differences across BattleMech construction systems. All Phase 2 construction specifications reference this document for general tech base variant principles.
 
 ### Scope
 **In Scope:**
@@ -100,7 +100,7 @@ Clan technology represents unbroken technological advancement from the Star Leag
 
 ### Pattern 4: Rules Level Differences
 
-**Description**: Same component classified at different rules complexity levels.
+**Description**: Same component classified at different rules rules levels.
 
 **Common in**: XL Engines, Double Heat Sinks
 
@@ -360,7 +360,7 @@ Do NOT reference for:
 Replace verbose "Technology Base Variants" sections with:
 
 ```markdown
-## Technology Base Variants
+## Tech Base Variants
 
 See [Tech Base Variants Reference](../tech-base-variants-reference/spec.md)
 for general Inner Sphere vs Clan differences and common patterns.

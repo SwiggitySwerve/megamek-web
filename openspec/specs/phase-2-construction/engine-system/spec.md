@@ -382,7 +382,7 @@ The system SHALL enforce tech base restrictions per engine type.
 **AND** Clan engine in mixed mech uses Clan rules
 
 ### Requirement: Rules Level Classification
-The system SHALL classify engines by rules complexity level.
+The system SHALL classify engines by rules rules level.
 
 **Rationale**: Engine availability varies by campaign rules complexity.
 
@@ -860,7 +860,7 @@ if (engine.integralHeatSinks !== expectedIntegral) {
 
 ---
 
-## Technology Base Variants
+## Tech Base Variants
 
 See [Tech Base Variants Reference](../tech-base-variants-reference/spec.md) for general Inner Sphere vs Clan differences, the "3-2 Pattern" for slot differences, and philosophy behind tech base variations.
 

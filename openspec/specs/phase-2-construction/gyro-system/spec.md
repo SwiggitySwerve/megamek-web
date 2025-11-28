@@ -180,7 +180,7 @@ Gyro slots SHALL be placed immediately after the engine's first slot group in th
 **AND** no second engine slot group exists
 
 ### Requirement: Tech Base Availability
-Gyro types SHALL have different availability based on technology base and era.
+Gyro types SHALL have different availability based on tech base and era.
 
 **Rationale**: Advanced gyro types were introduced at different times and by different factions.
 
@@ -384,7 +384,7 @@ interface IGyroPlacement {
 | `id` | `string` | Yes | Unique identifier | Non-empty string | - |
 | `name` | `string` | Yes | Display name | Non-empty string | - |
 | `gyroType` | `GyroType` | Yes | Gyro classification | Standard, XL, Compact, Heavy-Duty | Standard |
-| `techBase` | `TechBase` | Yes | Technology base | INNER_SPHERE, CLAN | INNER_SPHERE |
+| `techBase` | `TechBase` | Yes | Tech base | INNER_SPHERE, CLAN | INNER_SPHERE |
 | `rulesLevel` | `RulesLevel` | Yes | Rules complexity | INTRODUCTORY, STANDARD, ADVANCED, EXPERIMENTAL | - |
 | `criticalSlots` | `number` | Yes | CT slots required | 2, 4, or 6 | 4 |
 | `weightMultiplier` | `number` | Yes | Weight calculation multiplier | 0.5, 1.0, 1.5, 2.0 | 1.0 |
@@ -665,7 +665,7 @@ function validateGyroEngineCompatibility(
 
 ---
 
-## Technology Base Variants
+## Tech Base Variants
 
 See [Tech Base Variants Reference](../tech-base-variants-reference/spec.md) for general Inner Sphere vs Clan differences and common patterns.
 
@@ -920,28 +920,28 @@ const gyroComparison = [
   {
     type: 'Standard',
     weight: baseGyroWeight * 1.0,  // 3.0 tons
-    slots: 4,
+    criticalSlots: 4,
     cost: 300000 * 3,              // 900,000 C-Bills
     special: 'Baseline configuration'
   },
   {
     type: 'XL',
     weight: baseGyroWeight * 0.5,  // 1.5 tons (saves 1.5 tons!)
-    slots: 6,                      // +2 slots penalty
+    criticalSlots: 6,                      // +2 slots penalty
     cost: 750000 * 3,              // 2,250,000 C-Bills
     special: 'Weight savings, more vulnerable'
   },
   {
     type: 'Compact',
     weight: baseGyroWeight * 1.5,  // 4.5 tons (+1.5 tons penalty)
-    slots: 2,                      // -2 slots benefit!
+    criticalSlots: 2,                      // -2 slots benefit!
     cost: 400000 * 3,              // 1,200,000 C-Bills
     special: 'Frees CT space, +1 piloting penalty'
   },
   {
     type: 'Heavy-Duty',
     weight: baseGyroWeight * 2.0,  // 6.0 tons (+3.0 tons penalty)
-    slots: 4,                      // Same as Standard
+    criticalSlots: 4,                      // Same as Standard
     cost: 500000 * 3,              // 1,500,000 C-Bills
     special: '+1 critical hit resistance'
   }

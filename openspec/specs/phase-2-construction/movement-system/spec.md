@@ -1385,7 +1385,7 @@ if (walkMP <= 2) {
 
 ---
 
-## Technology Base Variants
+## Tech Base Variants
 
 See [Tech Base Variants Reference](../tech-base-variants-reference/spec.md) for general Inner Sphere vs Clan differences.
 

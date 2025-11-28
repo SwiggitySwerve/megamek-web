@@ -11,7 +11,7 @@
 ## Overview
 
 ### Purpose
-This document serves as the SINGLE SOURCE OF TRUTH for all technology base differences between Inner Sphere and Clan. All tech base rules, component variations, patterns, and validation logic are consolidated here to eliminate duplication and ensure consistency across the application.
+This document serves as the SINGLE SOURCE OF TRUTH for all tech base differences between Inner Sphere and Clan. All tech base rules, component variations, patterns, and validation logic are consolidated here to eliminate duplication and ensure consistency across the application.
 
 ### Scope
 **In Scope:**
@@ -302,7 +302,7 @@ Clan Mech (same config):
 
 ### Pattern 6: Rules Level Difference
 
-**Definition**: Same component classified at different rules complexity levels between IS and Clan
+**Definition**: Same component classified at different rules rules levels between IS and Clan
 
 **Applies To**:
 - XL Engine (IS: Advanced, Clan: Standard)
@@ -495,7 +495,7 @@ Every BattleMech must declare one of three tech base options:
 - **Structural Components**: ALL must be Inner Sphere variants
 - **Equipment**: Can be any tech base (see Equipment Rules below)
 - **Tech Rating**: Based on IS component ratings
-- **Tournament Legality**: Standard (if using Introductory/Standard components)
+- **Advanced Rules Legality**: Standard (if using Introductory/Standard components)
 
 **Structural Component Locking**:
 ```
@@ -515,7 +515,7 @@ LOCKED to Inner Sphere:
 - **Structural Components**: ALL must be Clan variants
 - **Equipment**: Can be any tech base (see Equipment Rules below)
 - **Tech Rating**: Based on Clan component ratings (typically lower)
-- **Tournament Legality**: Standard (if using Introductory/Standard components)
+- **Advanced Rules Legality**: Standard (if using Introductory/Standard components)
 
 **Structural Component Locking**:
 ```
@@ -538,7 +538,7 @@ LOCKED to Clan:
 - **Structural Components**: EACH category independently selects IS or Clan
 - **Equipment**: Can be any tech base
 - **Tech Rating**: Calculated with Mixed Tech penalty (+1 rating)
-- **Tournament Legality**: Advanced or Restricted (mixed tech limited in tournaments)
+- **Advanced Rules Legality**: Advanced or Restricted (mixed tech limited in tournaments)
 - **Battle Value**: 1.25× multiplier applied
 
 **Independent Category Selection**:
@@ -1090,7 +1090,7 @@ function validateIntroductionYear(
 | **Mixed Tech Consistency** | Mixed Tech Units | Error | Missing category tech base or category set to MIXED |
 | **Type Consistency** | Heat Sinks | Error | Mixed types (e.g., some IS DHS, some Clan DHS) |
 | **Introduction Year** | All Components | Error | Component not yet invented in construction year |
-| **Tournament Legality** | Complete Unit | Warning | Mixed tech or advanced components may be restricted |
+| **Advanced Rules Legality** | Complete Unit | Warning | Mixed tech or advanced components may be restricted |
 
 ---
 
@@ -1219,7 +1219,7 @@ Question: "Can I use a Light Engine on a Clan mech?"
 - [Tech Base Variants Reference](../tech-base-variants-reference/spec.md) - General philosophy and patterns
 - [Tech Base Integration](../tech-base-integration/spec.md) - Unit-level rules and mixed tech mechanics
 - [Engine System](../engine-system/spec.md) - Engine type details and formulas
-- [Gyro System](../gyro-system/spec.md) - Gyroscope specifications
+- [Gyro System](../gyro-system/spec.md) - Gyro specifications
 - [Heat Sink System](../heat-sink-system/spec.md) - Heat sink types and integration
 - [Internal Structure System](../internal-structure-system/spec.md) - Structure types and weights
 - [Armor System](../armor-system/spec.md) - Armor types and efficiency
@@ -1228,7 +1228,7 @@ Question: "Can I use a Light Engine on a Clan mech?"
 - [Critical Slot Allocation](../critical-slot-allocation/spec.md) - Slot placement rules
 
 ### Official BattleTech Sources
-- **TechManual**: Pages 85-106 - Technology base differences and mixed tech rules
+- **TechManual**: Pages 85-106 - Tech base differences and mixed tech rules
 - **Total Warfare**: Pages 128-132 - Tech base overview
 - **Strategic Operations**: Pages 125-135 - Advanced tech base rules
 - **Interstellar Operations**: Pages 136-145 - Tech progression and extinction
@@ -1265,7 +1265,7 @@ const clanXLSideSlots = 2;
 
 **Example Spec Reference**:
 ```markdown
-## Technology Base Variants
+## Tech Base Variants
 
 See [Tech Base Rules Matrix](../tech-base-rules-matrix/spec.md) for complete
 tech base comparison. This component follows the "3-2 Pattern" for slot allocation.

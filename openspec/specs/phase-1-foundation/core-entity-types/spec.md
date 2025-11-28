@@ -31,7 +31,7 @@ Defines the foundational interface hierarchy for all entities in the BattleTech 
 
 ### Key Concepts
 - **Entity**: Any identifiable object in the system with an ID and name
-- **Tech Base Entity**: Entity with technology base classification (Inner Sphere or Clan)
+- **Tech Base Entity**: Entity with tech base classification (Inner Sphere or Clan)
 - **Composition**: Combining multiple interfaces using TypeScript intersection types
 - **Type Guard**: Runtime function to validate object shape matches interface
 
@@ -60,9 +60,9 @@ All entities in the system SHALL extend from IEntity, providing universal identi
 **AND** the name property SHALL be used for display
 
 ### Requirement: Tech Base Classification
-All components and equipment SHALL implement ITechBaseEntity to declare their technology base.
+All components and equipment SHALL implement ITechBaseEntity to declare their tech base.
 
-**Rationale**: Technology base is fundamental to BattleTech rules, affecting availability, compatibility, and construction constraints.
+**Rationale**: Tech base is fundamental to BattleTech rules, affecting availability, compatibility, and construction constraints.
 
 **Priority**: Critical
 
@@ -181,16 +181,16 @@ interface IEntity {
 }
 
 /**
- * Entity with technology base classification
+ * Entity with tech base classification
  */
 interface ITechBaseEntity extends IEntity {
   /**
-   * Technology base (Inner Sphere or Clan)
+   * Tech base (Inner Sphere or Clan)
    */
   readonly techBase: TechBase;
 
   /**
-   * Rules complexity level
+   * Rules rules level
    */
   readonly rulesLevel: RulesLevel;
 }
@@ -292,7 +292,7 @@ interface IDocumentedEntity {
 |----------|------|----------|-------------|--------------|---------|
 | `id` | `string` | Yes | Unique identifier | Non-empty string | - |
 | `name` | `string` | Yes | Human-readable name | Non-empty string | - |
-| `techBase` | `TechBase` | Yes* | Technology base | INNER_SPHERE, CLAN | - |
+| `techBase` | `TechBase` | Yes* | Tech base | INNER_SPHERE, CLAN | - |
 | `rulesLevel` | `RulesLevel` | Yes* | Rules complexity | Enum value | - |
 | `weight` | `number` | Yes** | Weight in tons | >= 0 | - |
 | `criticalSlots` | `number` | Yes** | Critical slots | Integer >= 0 | - |
@@ -396,7 +396,7 @@ if (entity.extinctionYear !== undefined &&
 
 ---
 
-## Technology Base Variants
+## Tech Base Variants
 
 ### Inner Sphere Implementation
 **No special rules** - Inner Sphere entities use base interface definitions as specified.
@@ -413,7 +413,7 @@ if (entity.extinctionYear !== undefined &&
 
 ### Defines
 - **IEntity**: Base interface for all identifiable entities (id, name)
-- **ITechBaseEntity**: Entity with technology base classification (extends IEntity, adds techBase, rulesLevel)
+- **ITechBaseEntity**: Entity with tech base classification (extends IEntity, adds techBase, rulesLevel)
 - **IWeightedComponent**: Component with physical mass (weight property)
 - **ISlottedComponent**: Component requiring critical slot space (criticalSlots property)
 - **IPlaceableComponent**: Composition interface with both weight and slots (extends IWeightedComponent + ISlottedComponent)

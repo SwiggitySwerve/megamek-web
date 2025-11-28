@@ -566,7 +566,7 @@ interface ICockpit extends ITechBaseEntity, ISlottedComponent {
   readonly criticalSlots: number;
 
   /**
-   * Technology base (Inner Sphere, Clan, or Both)
+   * Tech base (Inner Sphere, Clan, or Both)
    * @example TechBase.BOTH
    */
   readonly techBase: TechBase;
@@ -730,7 +730,7 @@ interface ICockpitViolation {
 | `cockpitType` | `CockpitType` | Yes | Type of cockpit | Standard, Small, Command Console, Torso-Mounted, Primitive | Standard |
 | `weight` | `number` | Yes | Weight in tons | 2.0, 3.0, 4.0, 5.0 | 3.0 |
 | `criticalSlots` | `number` | Yes | Cockpit component slots | 1 or 2 | 1 |
-| `techBase` | `TechBase` | Yes | Technology base | INNER_SPHERE, CLAN, BOTH | BOTH |
+| `techBase` | `TechBase` | Yes | Tech base | INNER_SPHERE, CLAN, BOTH | BOTH |
 | `rulesLevel` | `RulesLevel` | Yes | Rules level | STANDARD, ADVANCED, EXPERIMENTAL | STANDARD |
 | `ejectionCapable` | `boolean` | Yes | Has ejection system | true, false | true |
 | `initiativeModifier` | `number` | No | Initiative modifier | -2 to 0 | 0 |
@@ -1000,7 +1000,7 @@ if (Math.abs(actualWeight - expectedWeight) > 0.01) {
 
 ---
 
-## Technology Base Variants
+## Tech Base Variants
 
 See [Tech Base Variants Reference](../tech-base-variants-reference/spec.md) for general Inner Sphere vs Clan differences.
 

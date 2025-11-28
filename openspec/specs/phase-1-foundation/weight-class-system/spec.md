@@ -617,7 +617,7 @@ function validateTonnage(tonnage: number): ValidationResult {
 
 ---
 
-## Technology Base Variants
+## Tech Base Variants
 
 ### Inner Sphere Implementation
 **No special rules** - Weight classes and tonnage validation are identical for Inner Sphere mechs.
@@ -628,7 +628,7 @@ function validateTonnage(tonnage: number): ValidationResult {
 **Note**: While Clan mechs may achieve better performance at the same tonnage (due to lighter, more efficient components), the weight class boundaries and tonnage rules remain unchanged.
 
 ### Mixed Tech Rules
-**No special rules** - Weight classification is independent of technology base. Mixed tech mechs use the same weight class system as pure tech base mechs.
+**No special rules** - Weight classification is independent of tech base. Mixed tech mechs use the same weight class system as pure tech base mechs.
 
 ---
 
