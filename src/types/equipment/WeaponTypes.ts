@@ -1,7 +1,7 @@
 /**
  * Weapon Type Definitions
  * 
- * Defines all standard BattleTech weapon types and categories.
+ * Comprehensive BattleTech weapon types and data.
  * 
  * @spec openspec/changes/implement-phase3-equipment/specs/weapon-system/spec.md
  */
@@ -25,11 +25,14 @@ export enum WeaponCategory {
  */
 export enum EnergyWeaponType {
   LASER = 'Laser',
-  PPC = 'PPC',
-  PULSE_LASER = 'Pulse Laser',
   ER_LASER = 'ER Laser',
+  PULSE_LASER = 'Pulse Laser',
+  ER_PULSE_LASER = 'ER Pulse Laser',
+  HEAVY_LASER = 'Heavy Laser',
+  PPC = 'PPC',
   FLAMER = 'Flamer',
   PLASMA_RIFLE = 'Plasma Rifle',
+  AMS = 'Anti-Missile System',
 }
 
 /**
@@ -37,11 +40,14 @@ export enum EnergyWeaponType {
  */
 export enum BallisticWeaponType {
   AUTOCANNON = 'Autocannon',
+  ULTRA_AC = 'Ultra AC',
+  LB_X_AC = 'LB-X AC',
+  ROTARY_AC = 'Rotary AC',
+  LIGHT_AC = 'Light AC',
+  HYPER_VELOCITY_AC = 'Hyper-Velocity AC',
   MACHINE_GUN = 'Machine Gun',
   GAUSS = 'Gauss Rifle',
-  LB_X_AC = 'LB-X AC',
-  ULTRA_AC = 'Ultra AC',
-  ROTARY_AC = 'Rotary AC',
+  AMS = 'Anti-Missile System',
 }
 
 /**
@@ -53,8 +59,11 @@ export enum MissileWeaponType {
   MRM = 'MRM',
   STREAK_SRM = 'Streak SRM',
   STREAK_LRM = 'Streak LRM',
-  NARC = 'NARC',
   ATM = 'ATM',
+  MML = 'MML',
+  THUNDERBOLT = 'Thunderbolt',
+  NARC = 'NARC',
+  INARC = 'iNARC',
 }
 
 /**
@@ -78,7 +87,7 @@ export interface IWeapon {
   readonly subType: string;
   readonly techBase: TechBase;
   readonly rulesLevel: RulesLevel;
-  readonly damage: number | string; // string for "special" weapons like LRMs
+  readonly damage: number | string;
   readonly heat: number;
   readonly ranges: WeaponRanges;
   readonly weight: number;
@@ -87,13 +96,18 @@ export interface IWeapon {
   readonly costCBills: number;
   readonly battleValue: number;
   readonly introductionYear: number;
+  readonly isExplosive?: boolean;
+  readonly special?: readonly string[];
 }
 
+// ============================================================================
+// ENERGY WEAPONS
+// ============================================================================
+
 /**
- * Standard weapon definitions - Energy weapons
+ * Standard Lasers
  */
-export const ENERGY_WEAPONS: readonly IWeapon[] = [
-  // Standard Lasers
+export const STANDARD_LASERS: readonly IWeapon[] = [
   {
     id: 'small-laser',
     name: 'Small Laser',
@@ -142,7 +156,13 @@ export const ENERGY_WEAPONS: readonly IWeapon[] = [
     battleValue: 123,
     introductionYear: 2316,
   },
-  // ER Lasers
+] as const;
+
+/**
+ * Extended Range Lasers
+ */
+export const ER_LASERS: readonly IWeapon[] = [
+  // Inner Sphere ER Lasers
   {
     id: 'er-small-laser',
     name: 'ER Small Laser',
@@ -193,6 +213,22 @@ export const ENERGY_WEAPONS: readonly IWeapon[] = [
   },
   // Clan ER Lasers
   {
+    id: 'clan-er-micro-laser',
+    name: 'ER Micro Laser (Clan)',
+    category: WeaponCategory.ENERGY,
+    subType: EnergyWeaponType.ER_LASER,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 2,
+    heat: 1,
+    ranges: { minimum: 0, short: 1, medium: 2, long: 4 },
+    weight: 0.25,
+    criticalSlots: 1,
+    costCBills: 10000,
+    battleValue: 7,
+    introductionYear: 3060,
+  },
+  {
     id: 'clan-er-small-laser',
     name: 'ER Small Laser (Clan)',
     category: WeaponCategory.ENERGY,
@@ -240,7 +276,196 @@ export const ENERGY_WEAPONS: readonly IWeapon[] = [
     battleValue: 248,
     introductionYear: 2820,
   },
-  // PPCs
+] as const;
+
+/**
+ * Pulse Lasers
+ */
+export const PULSE_LASERS: readonly IWeapon[] = [
+  // Inner Sphere Pulse Lasers
+  {
+    id: 'small-pulse-laser',
+    name: 'Small Pulse Laser',
+    category: WeaponCategory.ENERGY,
+    subType: EnergyWeaponType.PULSE_LASER,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 3,
+    heat: 2,
+    ranges: { minimum: 0, short: 1, medium: 2, long: 3 },
+    weight: 1,
+    criticalSlots: 1,
+    costCBills: 16000,
+    battleValue: 12,
+    introductionYear: 2609,
+    special: ['-2 to-hit modifier'],
+  },
+  {
+    id: 'medium-pulse-laser',
+    name: 'Medium Pulse Laser',
+    category: WeaponCategory.ENERGY,
+    subType: EnergyWeaponType.PULSE_LASER,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 6,
+    heat: 4,
+    ranges: { minimum: 0, short: 2, medium: 4, long: 6 },
+    weight: 2,
+    criticalSlots: 1,
+    costCBills: 60000,
+    battleValue: 48,
+    introductionYear: 2609,
+    special: ['-2 to-hit modifier'],
+  },
+  {
+    id: 'large-pulse-laser',
+    name: 'Large Pulse Laser',
+    category: WeaponCategory.ENERGY,
+    subType: EnergyWeaponType.PULSE_LASER,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 9,
+    heat: 10,
+    ranges: { minimum: 0, short: 3, medium: 7, long: 10 },
+    weight: 7,
+    criticalSlots: 2,
+    costCBills: 175000,
+    battleValue: 119,
+    introductionYear: 2609,
+    special: ['-2 to-hit modifier'],
+  },
+  // Clan Pulse Lasers
+  {
+    id: 'clan-micro-pulse-laser',
+    name: 'Micro Pulse Laser (Clan)',
+    category: WeaponCategory.ENERGY,
+    subType: EnergyWeaponType.PULSE_LASER,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 3,
+    heat: 1,
+    ranges: { minimum: 0, short: 1, medium: 2, long: 3 },
+    weight: 0.5,
+    criticalSlots: 1,
+    costCBills: 12500,
+    battleValue: 12,
+    introductionYear: 3060,
+    special: ['-2 to-hit modifier'],
+  },
+  {
+    id: 'clan-small-pulse-laser',
+    name: 'Small Pulse Laser (Clan)',
+    category: WeaponCategory.ENERGY,
+    subType: EnergyWeaponType.PULSE_LASER,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 3,
+    heat: 2,
+    ranges: { minimum: 0, short: 2, medium: 4, long: 6 },
+    weight: 1,
+    criticalSlots: 1,
+    costCBills: 16000,
+    battleValue: 24,
+    introductionYear: 2829,
+    special: ['-2 to-hit modifier'],
+  },
+  {
+    id: 'clan-medium-pulse-laser',
+    name: 'Medium Pulse Laser (Clan)',
+    category: WeaponCategory.ENERGY,
+    subType: EnergyWeaponType.PULSE_LASER,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 7,
+    heat: 4,
+    ranges: { minimum: 0, short: 4, medium: 8, long: 12 },
+    weight: 2,
+    criticalSlots: 1,
+    costCBills: 60000,
+    battleValue: 111,
+    introductionYear: 2829,
+    special: ['-2 to-hit modifier'],
+  },
+  {
+    id: 'clan-large-pulse-laser',
+    name: 'Large Pulse Laser (Clan)',
+    category: WeaponCategory.ENERGY,
+    subType: EnergyWeaponType.PULSE_LASER,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 10,
+    heat: 10,
+    ranges: { minimum: 0, short: 6, medium: 14, long: 20 },
+    weight: 6,
+    criticalSlots: 2,
+    costCBills: 175000,
+    battleValue: 265,
+    introductionYear: 2829,
+    special: ['-2 to-hit modifier'],
+  },
+] as const;
+
+/**
+ * Heavy Lasers
+ */
+export const HEAVY_LASERS: readonly IWeapon[] = [
+  {
+    id: 'small-heavy-laser',
+    name: 'Small Heavy Laser (Clan)',
+    category: WeaponCategory.ENERGY,
+    subType: EnergyWeaponType.HEAVY_LASER,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.ADVANCED,
+    damage: 6,
+    heat: 3,
+    ranges: { minimum: 0, short: 1, medium: 2, long: 3 },
+    weight: 0.5,
+    criticalSlots: 1,
+    costCBills: 20000,
+    battleValue: 15,
+    introductionYear: 3059,
+    special: ['+1 to-hit modifier'],
+  },
+  {
+    id: 'medium-heavy-laser',
+    name: 'Medium Heavy Laser (Clan)',
+    category: WeaponCategory.ENERGY,
+    subType: EnergyWeaponType.HEAVY_LASER,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.ADVANCED,
+    damage: 10,
+    heat: 7,
+    ranges: { minimum: 0, short: 3, medium: 6, long: 9 },
+    weight: 1,
+    criticalSlots: 2,
+    costCBills: 100000,
+    battleValue: 76,
+    introductionYear: 3059,
+    special: ['+1 to-hit modifier'],
+  },
+  {
+    id: 'large-heavy-laser',
+    name: 'Large Heavy Laser (Clan)',
+    category: WeaponCategory.ENERGY,
+    subType: EnergyWeaponType.HEAVY_LASER,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.ADVANCED,
+    damage: 16,
+    heat: 18,
+    ranges: { minimum: 0, short: 5, medium: 10, long: 15 },
+    weight: 4,
+    criticalSlots: 3,
+    costCBills: 250000,
+    battleValue: 244,
+    introductionYear: 3059,
+    special: ['+1 to-hit modifier'],
+  },
+] as const;
+
+/**
+ * PPCs
+ */
+export const PPCS: readonly IWeapon[] = [
   {
     id: 'ppc',
     name: 'PPC',
@@ -274,6 +499,54 @@ export const ENERGY_WEAPONS: readonly IWeapon[] = [
     introductionYear: 2751,
   },
   {
+    id: 'light-ppc',
+    name: 'Light PPC',
+    category: WeaponCategory.ENERGY,
+    subType: EnergyWeaponType.PPC,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 5,
+    heat: 5,
+    ranges: { minimum: 3, short: 6, medium: 12, long: 18 },
+    weight: 3,
+    criticalSlots: 2,
+    costCBills: 150000,
+    battleValue: 88,
+    introductionYear: 3067,
+  },
+  {
+    id: 'heavy-ppc',
+    name: 'Heavy PPC',
+    category: WeaponCategory.ENERGY,
+    subType: EnergyWeaponType.PPC,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 15,
+    heat: 15,
+    ranges: { minimum: 3, short: 6, medium: 12, long: 18 },
+    weight: 10,
+    criticalSlots: 4,
+    costCBills: 250000,
+    battleValue: 295,
+    introductionYear: 3067,
+  },
+  {
+    id: 'snub-nose-ppc',
+    name: 'Snub-Nose PPC',
+    category: WeaponCategory.ENERGY,
+    subType: EnergyWeaponType.PPC,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 10,
+    heat: 10,
+    ranges: { minimum: 0, short: 5, medium: 10, long: 15 },
+    weight: 6,
+    criticalSlots: 2,
+    costCBills: 165000,
+    battleValue: 165,
+    introductionYear: 3067,
+  },
+  {
     id: 'clan-er-ppc',
     name: 'ER PPC (Clan)',
     category: WeaponCategory.ENERGY,
@@ -289,7 +562,12 @@ export const ENERGY_WEAPONS: readonly IWeapon[] = [
     battleValue: 412,
     introductionYear: 2824,
   },
-  // Flamers
+] as const;
+
+/**
+ * Flamers
+ */
+export const FLAMERS: readonly IWeapon[] = [
   {
     id: 'flamer',
     name: 'Flamer',
@@ -305,14 +583,123 @@ export const ENERGY_WEAPONS: readonly IWeapon[] = [
     costCBills: 7500,
     battleValue: 6,
     introductionYear: 2025,
+    special: ['Causes 2 heat to target'],
+  },
+  {
+    id: 'heavy-flamer',
+    name: 'Heavy Flamer',
+    category: WeaponCategory.ENERGY,
+    subType: EnergyWeaponType.FLAMER,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.ADVANCED,
+    damage: 4,
+    heat: 5,
+    ranges: { minimum: 0, short: 2, medium: 3, long: 4 },
+    weight: 1.5,
+    criticalSlots: 1,
+    costCBills: 11250,
+    battleValue: 15,
+    introductionYear: 3068,
+    special: ['Causes 4 heat to target'],
+  },
+  {
+    id: 'vehicle-flamer',
+    name: 'Vehicle Flamer',
+    category: WeaponCategory.ENERGY,
+    subType: EnergyWeaponType.FLAMER,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.INTRODUCTORY,
+    damage: 2,
+    heat: 3,
+    ranges: { minimum: 0, short: 1, medium: 2, long: 3 },
+    weight: 0.5,
+    criticalSlots: 1,
+    ammoPerTon: 20,
+    costCBills: 7500,
+    battleValue: 5,
+    introductionYear: 1950,
+    special: ['Causes 2 heat to target', 'Requires ammo'],
+  },
+  {
+    id: 'clan-flamer',
+    name: 'Flamer (Clan)',
+    category: WeaponCategory.ENERGY,
+    subType: EnergyWeaponType.FLAMER,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 2,
+    heat: 3,
+    ranges: { minimum: 0, short: 1, medium: 2, long: 3 },
+    weight: 0.5,
+    criticalSlots: 1,
+    costCBills: 7500,
+    battleValue: 6,
+    introductionYear: 2827,
+    special: ['Causes 2 heat to target'],
   },
 ] as const;
 
 /**
- * Standard weapon definitions - Ballistic weapons
+ * Laser AMS
  */
-export const BALLISTIC_WEAPONS: readonly IWeapon[] = [
-  // Autocannons
+export const LASER_AMS: readonly IWeapon[] = [
+  {
+    id: 'laser-ams',
+    name: 'Laser Anti-Missile System',
+    category: WeaponCategory.ENERGY,
+    subType: EnergyWeaponType.AMS,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.ADVANCED,
+    damage: 0,
+    heat: 7,
+    ranges: { minimum: 0, short: 1, medium: 1, long: 1 },
+    weight: 1.5,
+    criticalSlots: 2,
+    costCBills: 225000,
+    battleValue: 45,
+    introductionYear: 3059,
+    special: ['Defensive', 'No ammo required'],
+  },
+  {
+    id: 'clan-laser-ams',
+    name: 'Laser Anti-Missile System (Clan)',
+    category: WeaponCategory.ENERGY,
+    subType: EnergyWeaponType.AMS,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.ADVANCED,
+    damage: 0,
+    heat: 5,
+    ranges: { minimum: 0, short: 1, medium: 1, long: 1 },
+    weight: 1,
+    criticalSlots: 1,
+    costCBills: 225000,
+    battleValue: 45,
+    introductionYear: 3048,
+    special: ['Defensive', 'No ammo required'],
+  },
+] as const;
+
+/**
+ * All energy weapons combined
+ */
+export const ENERGY_WEAPONS: readonly IWeapon[] = [
+  ...STANDARD_LASERS,
+  ...ER_LASERS,
+  ...PULSE_LASERS,
+  ...HEAVY_LASERS,
+  ...PPCS,
+  ...FLAMERS,
+  ...LASER_AMS,
+] as const;
+
+// ============================================================================
+// BALLISTIC WEAPONS
+// ============================================================================
+
+/**
+ * Standard Autocannons
+ */
+export const AUTOCANNONS: readonly IWeapon[] = [
   {
     id: 'ac-2',
     name: 'AC/2',
@@ -381,7 +768,396 @@ export const BALLISTIC_WEAPONS: readonly IWeapon[] = [
     battleValue: 178,
     introductionYear: 2500,
   },
-  // Gauss Rifles
+] as const;
+
+/**
+ * Ultra Autocannons
+ */
+export const ULTRA_AUTOCANNONS: readonly IWeapon[] = [
+  {
+    id: 'uac-2',
+    name: 'Ultra AC/2',
+    category: WeaponCategory.BALLISTIC,
+    subType: BallisticWeaponType.ULTRA_AC,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 2,
+    heat: 1,
+    ranges: { minimum: 3, short: 8, medium: 17, long: 25 },
+    weight: 7,
+    criticalSlots: 3,
+    ammoPerTon: 45,
+    costCBills: 120000,
+    battleValue: 56,
+    introductionYear: 3057,
+    special: ['Can fire twice'],
+  },
+  {
+    id: 'uac-5',
+    name: 'Ultra AC/5',
+    category: WeaponCategory.BALLISTIC,
+    subType: BallisticWeaponType.ULTRA_AC,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 5,
+    heat: 1,
+    ranges: { minimum: 2, short: 6, medium: 13, long: 20 },
+    weight: 9,
+    criticalSlots: 5,
+    ammoPerTon: 20,
+    costCBills: 200000,
+    battleValue: 112,
+    introductionYear: 3057,
+    special: ['Can fire twice'],
+  },
+  {
+    id: 'uac-10',
+    name: 'Ultra AC/10',
+    category: WeaponCategory.BALLISTIC,
+    subType: BallisticWeaponType.ULTRA_AC,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 10,
+    heat: 4,
+    ranges: { minimum: 0, short: 6, medium: 12, long: 18 },
+    weight: 13,
+    criticalSlots: 7,
+    ammoPerTon: 10,
+    costCBills: 320000,
+    battleValue: 210,
+    introductionYear: 3057,
+    special: ['Can fire twice'],
+  },
+  {
+    id: 'uac-20',
+    name: 'Ultra AC/20',
+    category: WeaponCategory.BALLISTIC,
+    subType: BallisticWeaponType.ULTRA_AC,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 20,
+    heat: 8,
+    ranges: { minimum: 0, short: 3, medium: 7, long: 10 },
+    weight: 15,
+    criticalSlots: 10,
+    ammoPerTon: 5,
+    costCBills: 480000,
+    battleValue: 281,
+    introductionYear: 3060,
+    special: ['Can fire twice'],
+  },
+  // Clan Ultra ACs
+  {
+    id: 'clan-uac-2',
+    name: 'Ultra AC/2 (Clan)',
+    category: WeaponCategory.BALLISTIC,
+    subType: BallisticWeaponType.ULTRA_AC,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 2,
+    heat: 1,
+    ranges: { minimum: 2, short: 9, medium: 18, long: 27 },
+    weight: 5,
+    criticalSlots: 2,
+    ammoPerTon: 45,
+    costCBills: 120000,
+    battleValue: 62,
+    introductionYear: 2827,
+    special: ['Can fire twice'],
+  },
+  {
+    id: 'clan-uac-5',
+    name: 'Ultra AC/5 (Clan)',
+    category: WeaponCategory.BALLISTIC,
+    subType: BallisticWeaponType.ULTRA_AC,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 5,
+    heat: 1,
+    ranges: { minimum: 0, short: 7, medium: 14, long: 21 },
+    weight: 7,
+    criticalSlots: 3,
+    ammoPerTon: 20,
+    costCBills: 200000,
+    battleValue: 122,
+    introductionYear: 2825,
+    special: ['Can fire twice'],
+  },
+  {
+    id: 'clan-uac-10',
+    name: 'Ultra AC/10 (Clan)',
+    category: WeaponCategory.BALLISTIC,
+    subType: BallisticWeaponType.ULTRA_AC,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 10,
+    heat: 3,
+    ranges: { minimum: 0, short: 6, medium: 12, long: 18 },
+    weight: 10,
+    criticalSlots: 4,
+    ammoPerTon: 10,
+    costCBills: 320000,
+    battleValue: 210,
+    introductionYear: 2825,
+    special: ['Can fire twice'],
+  },
+  {
+    id: 'clan-uac-20',
+    name: 'Ultra AC/20 (Clan)',
+    category: WeaponCategory.BALLISTIC,
+    subType: BallisticWeaponType.ULTRA_AC,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 20,
+    heat: 7,
+    ranges: { minimum: 0, short: 4, medium: 8, long: 12 },
+    weight: 12,
+    criticalSlots: 8,
+    ammoPerTon: 5,
+    costCBills: 480000,
+    battleValue: 335,
+    introductionYear: 2825,
+    special: ['Can fire twice'],
+  },
+] as const;
+
+/**
+ * LB-X Autocannons
+ */
+export const LBX_AUTOCANNONS: readonly IWeapon[] = [
+  {
+    id: 'lb-2-x-ac',
+    name: 'LB 2-X AC',
+    category: WeaponCategory.BALLISTIC,
+    subType: BallisticWeaponType.LB_X_AC,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 2,
+    heat: 1,
+    ranges: { minimum: 4, short: 9, medium: 18, long: 27 },
+    weight: 6,
+    criticalSlots: 4,
+    ammoPerTon: 45,
+    costCBills: 150000,
+    battleValue: 42,
+    introductionYear: 3058,
+    special: ['Cluster ammo available'],
+  },
+  {
+    id: 'lb-5-x-ac',
+    name: 'LB 5-X AC',
+    category: WeaponCategory.BALLISTIC,
+    subType: BallisticWeaponType.LB_X_AC,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 5,
+    heat: 1,
+    ranges: { minimum: 3, short: 7, medium: 14, long: 21 },
+    weight: 8,
+    criticalSlots: 5,
+    ammoPerTon: 20,
+    costCBills: 250000,
+    battleValue: 83,
+    introductionYear: 3058,
+    special: ['Cluster ammo available'],
+  },
+  {
+    id: 'lb-10-x-ac',
+    name: 'LB 10-X AC',
+    category: WeaponCategory.BALLISTIC,
+    subType: BallisticWeaponType.LB_X_AC,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 10,
+    heat: 2,
+    ranges: { minimum: 0, short: 6, medium: 12, long: 18 },
+    weight: 11,
+    criticalSlots: 6,
+    ammoPerTon: 10,
+    costCBills: 400000,
+    battleValue: 148,
+    introductionYear: 3044,
+    special: ['Cluster ammo available'],
+  },
+  {
+    id: 'lb-20-x-ac',
+    name: 'LB 20-X AC',
+    category: WeaponCategory.BALLISTIC,
+    subType: BallisticWeaponType.LB_X_AC,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 20,
+    heat: 6,
+    ranges: { minimum: 0, short: 4, medium: 8, long: 12 },
+    weight: 14,
+    criticalSlots: 11,
+    ammoPerTon: 5,
+    costCBills: 600000,
+    battleValue: 237,
+    introductionYear: 3058,
+    special: ['Cluster ammo available'],
+  },
+  // Clan LB-X
+  {
+    id: 'clan-lb-2-x-ac',
+    name: 'LB 2-X AC (Clan)',
+    category: WeaponCategory.BALLISTIC,
+    subType: BallisticWeaponType.LB_X_AC,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 2,
+    heat: 1,
+    ranges: { minimum: 4, short: 10, medium: 20, long: 30 },
+    weight: 5,
+    criticalSlots: 3,
+    ammoPerTon: 45,
+    costCBills: 150000,
+    battleValue: 47,
+    introductionYear: 2826,
+    special: ['Cluster ammo available'],
+  },
+  {
+    id: 'clan-lb-5-x-ac',
+    name: 'LB 5-X AC (Clan)',
+    category: WeaponCategory.BALLISTIC,
+    subType: BallisticWeaponType.LB_X_AC,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 5,
+    heat: 1,
+    ranges: { minimum: 3, short: 8, medium: 15, long: 24 },
+    weight: 7,
+    criticalSlots: 4,
+    ammoPerTon: 20,
+    costCBills: 250000,
+    battleValue: 93,
+    introductionYear: 2825,
+    special: ['Cluster ammo available'],
+  },
+  {
+    id: 'clan-lb-10-x-ac',
+    name: 'LB 10-X AC (Clan)',
+    category: WeaponCategory.BALLISTIC,
+    subType: BallisticWeaponType.LB_X_AC,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 10,
+    heat: 2,
+    ranges: { minimum: 0, short: 6, medium: 12, long: 18 },
+    weight: 10,
+    criticalSlots: 5,
+    ammoPerTon: 10,
+    costCBills: 400000,
+    battleValue: 148,
+    introductionYear: 2595,
+    special: ['Cluster ammo available'],
+  },
+  {
+    id: 'clan-lb-20-x-ac',
+    name: 'LB 20-X AC (Clan)',
+    category: WeaponCategory.BALLISTIC,
+    subType: BallisticWeaponType.LB_X_AC,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 20,
+    heat: 6,
+    ranges: { minimum: 0, short: 4, medium: 8, long: 12 },
+    weight: 12,
+    criticalSlots: 9,
+    ammoPerTon: 5,
+    costCBills: 600000,
+    battleValue: 237,
+    introductionYear: 2826,
+    special: ['Cluster ammo available'],
+  },
+] as const;
+
+/**
+ * Rotary Autocannons
+ */
+export const ROTARY_AUTOCANNONS: readonly IWeapon[] = [
+  {
+    id: 'rac-2',
+    name: 'Rotary AC/2',
+    category: WeaponCategory.BALLISTIC,
+    subType: BallisticWeaponType.ROTARY_AC,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 2,
+    heat: 1,
+    ranges: { minimum: 0, short: 6, medium: 12, long: 18 },
+    weight: 8,
+    criticalSlots: 3,
+    ammoPerTon: 45,
+    costCBills: 175000,
+    battleValue: 118,
+    introductionYear: 3062,
+    special: ['Can fire 1-6 shots'],
+  },
+  {
+    id: 'rac-5',
+    name: 'Rotary AC/5',
+    category: WeaponCategory.BALLISTIC,
+    subType: BallisticWeaponType.ROTARY_AC,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 5,
+    heat: 1,
+    ranges: { minimum: 0, short: 5, medium: 10, long: 15 },
+    weight: 10,
+    criticalSlots: 6,
+    ammoPerTon: 20,
+    costCBills: 275000,
+    battleValue: 247,
+    introductionYear: 3062,
+    special: ['Can fire 1-6 shots'],
+  },
+] as const;
+
+/**
+ * Light Autocannons
+ */
+export const LIGHT_AUTOCANNONS: readonly IWeapon[] = [
+  {
+    id: 'lac-2',
+    name: 'Light AC/2',
+    category: WeaponCategory.BALLISTIC,
+    subType: BallisticWeaponType.LIGHT_AC,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 2,
+    heat: 1,
+    ranges: { minimum: 0, short: 6, medium: 12, long: 18 },
+    weight: 4,
+    criticalSlots: 1,
+    ammoPerTon: 45,
+    costCBills: 100000,
+    battleValue: 30,
+    introductionYear: 3068,
+  },
+  {
+    id: 'lac-5',
+    name: 'Light AC/5',
+    category: WeaponCategory.BALLISTIC,
+    subType: BallisticWeaponType.LIGHT_AC,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 5,
+    heat: 1,
+    ranges: { minimum: 0, short: 5, medium: 10, long: 15 },
+    weight: 5,
+    criticalSlots: 2,
+    ammoPerTon: 20,
+    costCBills: 150000,
+    battleValue: 62,
+    introductionYear: 3068,
+  },
+] as const;
+
+/**
+ * Gauss Rifles
+ */
+export const GAUSS_RIFLES: readonly IWeapon[] = [
   {
     id: 'gauss-rifle',
     name: 'Gauss Rifle',
@@ -398,6 +1174,61 @@ export const BALLISTIC_WEAPONS: readonly IWeapon[] = [
     costCBills: 300000,
     battleValue: 320,
     introductionYear: 2590,
+    isExplosive: true,
+  },
+  {
+    id: 'light-gauss-rifle',
+    name: 'Light Gauss Rifle',
+    category: WeaponCategory.BALLISTIC,
+    subType: BallisticWeaponType.GAUSS,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 8,
+    heat: 1,
+    ranges: { minimum: 3, short: 8, medium: 17, long: 25 },
+    weight: 12,
+    criticalSlots: 5,
+    ammoPerTon: 16,
+    costCBills: 275000,
+    battleValue: 159,
+    introductionYear: 3056,
+    isExplosive: true,
+  },
+  {
+    id: 'heavy-gauss-rifle',
+    name: 'Heavy Gauss Rifle',
+    category: WeaponCategory.BALLISTIC,
+    subType: BallisticWeaponType.GAUSS,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 25,
+    heat: 2,
+    ranges: { minimum: 4, short: 6, medium: 13, long: 20 },
+    weight: 18,
+    criticalSlots: 11,
+    ammoPerTon: 4,
+    costCBills: 500000,
+    battleValue: 346,
+    introductionYear: 3061,
+    isExplosive: true,
+  },
+  {
+    id: 'ap-gauss-rifle',
+    name: 'AP Gauss Rifle',
+    category: WeaponCategory.BALLISTIC,
+    subType: BallisticWeaponType.GAUSS,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 3,
+    heat: 1,
+    ranges: { minimum: 0, short: 3, medium: 6, long: 9 },
+    weight: 0.5,
+    criticalSlots: 1,
+    ammoPerTon: 40,
+    costCBills: 10000,
+    battleValue: 21,
+    introductionYear: 3069,
+    isExplosive: true,
   },
   {
     id: 'clan-gauss-rifle',
@@ -415,8 +1246,14 @@ export const BALLISTIC_WEAPONS: readonly IWeapon[] = [
     costCBills: 300000,
     battleValue: 320,
     introductionYear: 2828,
+    isExplosive: true,
   },
-  // Machine Guns
+] as const;
+
+/**
+ * Machine Guns
+ */
+export const MACHINE_GUNS: readonly IWeapon[] = [
   {
     id: 'machine-gun',
     name: 'Machine Gun',
@@ -434,13 +1271,123 @@ export const BALLISTIC_WEAPONS: readonly IWeapon[] = [
     battleValue: 5,
     introductionYear: 1950,
   },
+  {
+    id: 'light-machine-gun',
+    name: 'Light Machine Gun',
+    category: WeaponCategory.BALLISTIC,
+    subType: BallisticWeaponType.MACHINE_GUN,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 1,
+    heat: 0,
+    ranges: { minimum: 0, short: 2, medium: 4, long: 6 },
+    weight: 0.25,
+    criticalSlots: 1,
+    ammoPerTon: 200,
+    costCBills: 5000,
+    battleValue: 5,
+    introductionYear: 3068,
+  },
+  {
+    id: 'heavy-machine-gun',
+    name: 'Heavy Machine Gun',
+    category: WeaponCategory.BALLISTIC,
+    subType: BallisticWeaponType.MACHINE_GUN,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 3,
+    heat: 0,
+    ranges: { minimum: 0, short: 1, medium: 2, long: 2 },
+    weight: 1,
+    criticalSlots: 1,
+    ammoPerTon: 100,
+    costCBills: 7500,
+    battleValue: 6,
+    introductionYear: 3068,
+  },
+  {
+    id: 'clan-machine-gun',
+    name: 'Machine Gun (Clan)',
+    category: WeaponCategory.BALLISTIC,
+    subType: BallisticWeaponType.MACHINE_GUN,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 2,
+    heat: 0,
+    ranges: { minimum: 0, short: 1, medium: 2, long: 3 },
+    weight: 0.25,
+    criticalSlots: 1,
+    ammoPerTon: 200,
+    costCBills: 5000,
+    battleValue: 5,
+    introductionYear: 2825,
+  },
 ] as const;
 
 /**
- * Standard weapon definitions - Missile weapons
+ * Anti-Missile System
  */
-export const MISSILE_WEAPONS: readonly IWeapon[] = [
-  // LRMs
+export const BALLISTIC_AMS: readonly IWeapon[] = [
+  {
+    id: 'ams',
+    name: 'Anti-Missile System',
+    category: WeaponCategory.BALLISTIC,
+    subType: BallisticWeaponType.AMS,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 0,
+    heat: 1,
+    ranges: { minimum: 0, short: 1, medium: 1, long: 1 },
+    weight: 0.5,
+    criticalSlots: 1,
+    ammoPerTon: 12,
+    costCBills: 100000,
+    battleValue: 32,
+    introductionYear: 2617,
+    special: ['Defensive'],
+  },
+  {
+    id: 'clan-ams',
+    name: 'Anti-Missile System (Clan)',
+    category: WeaponCategory.BALLISTIC,
+    subType: BallisticWeaponType.AMS,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 0,
+    heat: 1,
+    ranges: { minimum: 0, short: 1, medium: 1, long: 1 },
+    weight: 0.5,
+    criticalSlots: 1,
+    ammoPerTon: 24,
+    costCBills: 100000,
+    battleValue: 32,
+    introductionYear: 2831,
+    special: ['Defensive'],
+  },
+] as const;
+
+/**
+ * All ballistic weapons combined
+ */
+export const BALLISTIC_WEAPONS: readonly IWeapon[] = [
+  ...AUTOCANNONS,
+  ...ULTRA_AUTOCANNONS,
+  ...LBX_AUTOCANNONS,
+  ...ROTARY_AUTOCANNONS,
+  ...LIGHT_AUTOCANNONS,
+  ...GAUSS_RIFLES,
+  ...MACHINE_GUNS,
+  ...BALLISTIC_AMS,
+] as const;
+
+// ============================================================================
+// MISSILE WEAPONS
+// ============================================================================
+
+/**
+ * Long Range Missiles
+ */
+export const LRM_LAUNCHERS: readonly IWeapon[] = [
   {
     id: 'lrm-5',
     name: 'LRM 5',
@@ -509,7 +1456,81 @@ export const MISSILE_WEAPONS: readonly IWeapon[] = [
     battleValue: 181,
     introductionYear: 2295,
   },
-  // SRMs
+  // Clan LRMs
+  {
+    id: 'clan-lrm-5',
+    name: 'LRM 5 (Clan)',
+    category: WeaponCategory.MISSILE,
+    subType: MissileWeaponType.LRM,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: '1/missile',
+    heat: 2,
+    ranges: { minimum: 0, short: 7, medium: 14, long: 21 },
+    weight: 1,
+    criticalSlots: 1,
+    ammoPerTon: 24,
+    costCBills: 30000,
+    battleValue: 55,
+    introductionYear: 2824,
+  },
+  {
+    id: 'clan-lrm-10',
+    name: 'LRM 10 (Clan)',
+    category: WeaponCategory.MISSILE,
+    subType: MissileWeaponType.LRM,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: '1/missile',
+    heat: 4,
+    ranges: { minimum: 0, short: 7, medium: 14, long: 21 },
+    weight: 2.5,
+    criticalSlots: 1,
+    ammoPerTon: 12,
+    costCBills: 100000,
+    battleValue: 109,
+    introductionYear: 2824,
+  },
+  {
+    id: 'clan-lrm-15',
+    name: 'LRM 15 (Clan)',
+    category: WeaponCategory.MISSILE,
+    subType: MissileWeaponType.LRM,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: '1/missile',
+    heat: 5,
+    ranges: { minimum: 0, short: 7, medium: 14, long: 21 },
+    weight: 3.5,
+    criticalSlots: 2,
+    ammoPerTon: 8,
+    costCBills: 175000,
+    battleValue: 164,
+    introductionYear: 2824,
+  },
+  {
+    id: 'clan-lrm-20',
+    name: 'LRM 20 (Clan)',
+    category: WeaponCategory.MISSILE,
+    subType: MissileWeaponType.LRM,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: '1/missile',
+    heat: 6,
+    ranges: { minimum: 0, short: 7, medium: 14, long: 21 },
+    weight: 5,
+    criticalSlots: 4,
+    ammoPerTon: 6,
+    costCBills: 250000,
+    battleValue: 220,
+    introductionYear: 2824,
+  },
+] as const;
+
+/**
+ * Short Range Missiles
+ */
+export const SRM_LAUNCHERS: readonly IWeapon[] = [
   {
     id: 'srm-2',
     name: 'SRM 2',
@@ -561,7 +1582,64 @@ export const MISSILE_WEAPONS: readonly IWeapon[] = [
     battleValue: 59,
     introductionYear: 2370,
   },
-  // Streak SRMs
+  // Clan SRMs
+  {
+    id: 'clan-srm-2',
+    name: 'SRM 2 (Clan)',
+    category: WeaponCategory.MISSILE,
+    subType: MissileWeaponType.SRM,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: '2/missile',
+    heat: 2,
+    ranges: { minimum: 0, short: 3, medium: 6, long: 9 },
+    weight: 0.5,
+    criticalSlots: 1,
+    ammoPerTon: 50,
+    costCBills: 10000,
+    battleValue: 21,
+    introductionYear: 2824,
+  },
+  {
+    id: 'clan-srm-4',
+    name: 'SRM 4 (Clan)',
+    category: WeaponCategory.MISSILE,
+    subType: MissileWeaponType.SRM,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: '2/missile',
+    heat: 3,
+    ranges: { minimum: 0, short: 3, medium: 6, long: 9 },
+    weight: 1,
+    criticalSlots: 1,
+    ammoPerTon: 25,
+    costCBills: 60000,
+    battleValue: 39,
+    introductionYear: 2824,
+  },
+  {
+    id: 'clan-srm-6',
+    name: 'SRM 6 (Clan)',
+    category: WeaponCategory.MISSILE,
+    subType: MissileWeaponType.SRM,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: '2/missile',
+    heat: 4,
+    ranges: { minimum: 0, short: 3, medium: 6, long: 9 },
+    weight: 1.5,
+    criticalSlots: 1,
+    ammoPerTon: 15,
+    costCBills: 80000,
+    battleValue: 59,
+    introductionYear: 2824,
+  },
+] as const;
+
+/**
+ * Streak SRM Launchers
+ */
+export const STREAK_LAUNCHERS: readonly IWeapon[] = [
   {
     id: 'streak-srm-2',
     name: 'Streak SRM 2',
@@ -578,8 +1656,414 @@ export const MISSILE_WEAPONS: readonly IWeapon[] = [
     costCBills: 15000,
     battleValue: 30,
     introductionYear: 2647,
+    special: ['No ammo wasted on miss'],
+  },
+  {
+    id: 'streak-srm-4',
+    name: 'Streak SRM 4',
+    category: WeaponCategory.MISSILE,
+    subType: MissileWeaponType.STREAK_SRM,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: '2/missile',
+    heat: 3,
+    ranges: { minimum: 0, short: 3, medium: 6, long: 9 },
+    weight: 3,
+    criticalSlots: 1,
+    ammoPerTon: 25,
+    costCBills: 90000,
+    battleValue: 59,
+    introductionYear: 3058,
+    special: ['No ammo wasted on miss'],
+  },
+  {
+    id: 'streak-srm-6',
+    name: 'Streak SRM 6',
+    category: WeaponCategory.MISSILE,
+    subType: MissileWeaponType.STREAK_SRM,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: '2/missile',
+    heat: 4,
+    ranges: { minimum: 0, short: 3, medium: 6, long: 9 },
+    weight: 4.5,
+    criticalSlots: 2,
+    ammoPerTon: 15,
+    costCBills: 120000,
+    battleValue: 89,
+    introductionYear: 3058,
+    special: ['No ammo wasted on miss'],
+  },
+  // Clan Streak SRMs
+  {
+    id: 'clan-streak-srm-2',
+    name: 'Streak SRM 2 (Clan)',
+    category: WeaponCategory.MISSILE,
+    subType: MissileWeaponType.STREAK_SRM,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: '2/missile',
+    heat: 2,
+    ranges: { minimum: 0, short: 4, medium: 8, long: 12 },
+    weight: 1,
+    criticalSlots: 1,
+    ammoPerTon: 50,
+    costCBills: 15000,
+    battleValue: 40,
+    introductionYear: 2826,
+    special: ['No ammo wasted on miss'],
+  },
+  {
+    id: 'clan-streak-srm-4',
+    name: 'Streak SRM 4 (Clan)',
+    category: WeaponCategory.MISSILE,
+    subType: MissileWeaponType.STREAK_SRM,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: '2/missile',
+    heat: 3,
+    ranges: { minimum: 0, short: 4, medium: 8, long: 12 },
+    weight: 2,
+    criticalSlots: 1,
+    ammoPerTon: 25,
+    costCBills: 90000,
+    battleValue: 79,
+    introductionYear: 2826,
+    special: ['No ammo wasted on miss'],
+  },
+  {
+    id: 'clan-streak-srm-6',
+    name: 'Streak SRM 6 (Clan)',
+    category: WeaponCategory.MISSILE,
+    subType: MissileWeaponType.STREAK_SRM,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: '2/missile',
+    heat: 4,
+    ranges: { minimum: 0, short: 4, medium: 8, long: 12 },
+    weight: 3,
+    criticalSlots: 2,
+    ammoPerTon: 15,
+    costCBills: 120000,
+    battleValue: 118,
+    introductionYear: 2826,
+    special: ['No ammo wasted on miss'],
   },
 ] as const;
+
+/**
+ * MRM Launchers
+ */
+export const MRM_LAUNCHERS: readonly IWeapon[] = [
+  {
+    id: 'mrm-10',
+    name: 'MRM 10',
+    category: WeaponCategory.MISSILE,
+    subType: MissileWeaponType.MRM,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: '1/missile',
+    heat: 4,
+    ranges: { minimum: 0, short: 3, medium: 8, long: 15 },
+    weight: 3,
+    criticalSlots: 2,
+    ammoPerTon: 24,
+    costCBills: 50000,
+    battleValue: 56,
+    introductionYear: 3058,
+    special: ['+1 to-hit penalty'],
+  },
+  {
+    id: 'mrm-20',
+    name: 'MRM 20',
+    category: WeaponCategory.MISSILE,
+    subType: MissileWeaponType.MRM,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: '1/missile',
+    heat: 6,
+    ranges: { minimum: 0, short: 3, medium: 8, long: 15 },
+    weight: 7,
+    criticalSlots: 3,
+    ammoPerTon: 12,
+    costCBills: 125000,
+    battleValue: 112,
+    introductionYear: 3058,
+    special: ['+1 to-hit penalty'],
+  },
+  {
+    id: 'mrm-30',
+    name: 'MRM 30',
+    category: WeaponCategory.MISSILE,
+    subType: MissileWeaponType.MRM,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: '1/missile',
+    heat: 10,
+    ranges: { minimum: 0, short: 3, medium: 8, long: 15 },
+    weight: 10,
+    criticalSlots: 5,
+    ammoPerTon: 8,
+    costCBills: 225000,
+    battleValue: 168,
+    introductionYear: 3058,
+    special: ['+1 to-hit penalty'],
+  },
+  {
+    id: 'mrm-40',
+    name: 'MRM 40',
+    category: WeaponCategory.MISSILE,
+    subType: MissileWeaponType.MRM,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: '1/missile',
+    heat: 12,
+    ranges: { minimum: 0, short: 3, medium: 8, long: 15 },
+    weight: 12,
+    criticalSlots: 7,
+    ammoPerTon: 6,
+    costCBills: 350000,
+    battleValue: 224,
+    introductionYear: 3058,
+    special: ['+1 to-hit penalty'],
+  },
+] as const;
+
+/**
+ * ATM Launchers (Clan only)
+ */
+export const ATM_LAUNCHERS: readonly IWeapon[] = [
+  {
+    id: 'atm-3',
+    name: 'ATM 3',
+    category: WeaponCategory.MISSILE,
+    subType: MissileWeaponType.ATM,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: '2/missile',
+    heat: 2,
+    ranges: { minimum: 4, short: 5, medium: 10, long: 15 },
+    weight: 1.5,
+    criticalSlots: 2,
+    ammoPerTon: 20,
+    costCBills: 50000,
+    battleValue: 53,
+    introductionYear: 3054,
+    special: ['Multiple ammo types'],
+  },
+  {
+    id: 'atm-6',
+    name: 'ATM 6',
+    category: WeaponCategory.MISSILE,
+    subType: MissileWeaponType.ATM,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: '2/missile',
+    heat: 4,
+    ranges: { minimum: 4, short: 5, medium: 10, long: 15 },
+    weight: 3.5,
+    criticalSlots: 3,
+    ammoPerTon: 10,
+    costCBills: 125000,
+    battleValue: 105,
+    introductionYear: 3054,
+    special: ['Multiple ammo types'],
+  },
+  {
+    id: 'atm-9',
+    name: 'ATM 9',
+    category: WeaponCategory.MISSILE,
+    subType: MissileWeaponType.ATM,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: '2/missile',
+    heat: 6,
+    ranges: { minimum: 4, short: 5, medium: 10, long: 15 },
+    weight: 5,
+    criticalSlots: 4,
+    ammoPerTon: 7,
+    costCBills: 225000,
+    battleValue: 147,
+    introductionYear: 3054,
+    special: ['Multiple ammo types'],
+  },
+  {
+    id: 'atm-12',
+    name: 'ATM 12',
+    category: WeaponCategory.MISSILE,
+    subType: MissileWeaponType.ATM,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: '2/missile',
+    heat: 8,
+    ranges: { minimum: 4, short: 5, medium: 10, long: 15 },
+    weight: 7,
+    criticalSlots: 5,
+    ammoPerTon: 5,
+    costCBills: 350000,
+    battleValue: 212,
+    introductionYear: 3054,
+    special: ['Multiple ammo types'],
+  },
+] as const;
+
+/**
+ * MML Launchers
+ */
+export const MML_LAUNCHERS: readonly IWeapon[] = [
+  {
+    id: 'mml-3',
+    name: 'MML 3',
+    category: WeaponCategory.MISSILE,
+    subType: MissileWeaponType.MML,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: '1-2/missile',
+    heat: 2,
+    ranges: { minimum: 0, short: 3, medium: 6, long: 9 },
+    weight: 1.5,
+    criticalSlots: 2,
+    ammoPerTon: 40,
+    costCBills: 45000,
+    battleValue: 29,
+    introductionYear: 3068,
+    special: ['Can fire LRM or SRM ammo'],
+  },
+  {
+    id: 'mml-5',
+    name: 'MML 5',
+    category: WeaponCategory.MISSILE,
+    subType: MissileWeaponType.MML,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: '1-2/missile',
+    heat: 3,
+    ranges: { minimum: 0, short: 3, medium: 6, long: 9 },
+    weight: 3,
+    criticalSlots: 3,
+    ammoPerTon: 24,
+    costCBills: 75000,
+    battleValue: 45,
+    introductionYear: 3068,
+    special: ['Can fire LRM or SRM ammo'],
+  },
+  {
+    id: 'mml-7',
+    name: 'MML 7',
+    category: WeaponCategory.MISSILE,
+    subType: MissileWeaponType.MML,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: '1-2/missile',
+    heat: 4,
+    ranges: { minimum: 0, short: 3, medium: 6, long: 9 },
+    weight: 4.5,
+    criticalSlots: 4,
+    ammoPerTon: 17,
+    costCBills: 105000,
+    battleValue: 67,
+    introductionYear: 3068,
+    special: ['Can fire LRM or SRM ammo'],
+  },
+  {
+    id: 'mml-9',
+    name: 'MML 9',
+    category: WeaponCategory.MISSILE,
+    subType: MissileWeaponType.MML,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: '1-2/missile',
+    heat: 5,
+    ranges: { minimum: 0, short: 3, medium: 6, long: 9 },
+    weight: 6,
+    criticalSlots: 5,
+    ammoPerTon: 13,
+    costCBills: 125000,
+    battleValue: 86,
+    introductionYear: 3068,
+    special: ['Can fire LRM or SRM ammo'],
+  },
+] as const;
+
+/**
+ * NARC/iNARC
+ */
+export const NARC_LAUNCHERS: readonly IWeapon[] = [
+  {
+    id: 'narc',
+    name: 'NARC Missile Beacon',
+    category: WeaponCategory.MISSILE,
+    subType: MissileWeaponType.NARC,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 0,
+    heat: 0,
+    ranges: { minimum: 0, short: 3, medium: 6, long: 9 },
+    weight: 3,
+    criticalSlots: 2,
+    ammoPerTon: 6,
+    costCBills: 100000,
+    battleValue: 30,
+    introductionYear: 2587,
+    special: ['Homing beacon'],
+    isExplosive: true,
+  },
+  {
+    id: 'inarc',
+    name: 'iNARC Launcher',
+    category: WeaponCategory.MISSILE,
+    subType: MissileWeaponType.INARC,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 0,
+    heat: 0,
+    ranges: { minimum: 0, short: 4, medium: 9, long: 15 },
+    weight: 5,
+    criticalSlots: 3,
+    ammoPerTon: 4,
+    costCBills: 250000,
+    battleValue: 75,
+    introductionYear: 3062,
+    special: ['Multiple pod types'],
+    isExplosive: true,
+  },
+  {
+    id: 'clan-narc',
+    name: 'NARC Missile Beacon (Clan)',
+    category: WeaponCategory.MISSILE,
+    subType: MissileWeaponType.NARC,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 0,
+    heat: 0,
+    ranges: { minimum: 0, short: 4, medium: 8, long: 12 },
+    weight: 2,
+    criticalSlots: 1,
+    ammoPerTon: 6,
+    costCBills: 100000,
+    battleValue: 30,
+    introductionYear: 2831,
+    special: ['Homing beacon'],
+    isExplosive: true,
+  },
+] as const;
+
+/**
+ * All missile weapons combined
+ */
+export const MISSILE_WEAPONS: readonly IWeapon[] = [
+  ...LRM_LAUNCHERS,
+  ...SRM_LAUNCHERS,
+  ...STREAK_LAUNCHERS,
+  ...MRM_LAUNCHERS,
+  ...ATM_LAUNCHERS,
+  ...MML_LAUNCHERS,
+  ...NARC_LAUNCHERS,
+] as const;
+
+// ============================================================================
+// COMBINED EXPORTS
+// ============================================================================
 
 /**
  * All standard weapons combined
@@ -611,3 +2095,16 @@ export function getWeaponsByTechBase(techBase: TechBase): IWeapon[] {
   return ALL_STANDARD_WEAPONS.filter(w => w.techBase === techBase);
 }
 
+/**
+ * Get weapons by sub-type
+ */
+export function getWeaponsBySubType(subType: string): IWeapon[] {
+  return ALL_STANDARD_WEAPONS.filter(w => w.subType === subType);
+}
+
+/**
+ * Get weapons available by year
+ */
+export function getWeaponsAvailableByYear(year: number): IWeapon[] {
+  return ALL_STANDARD_WEAPONS.filter(w => w.introductionYear <= year);
+}

@@ -1,7 +1,7 @@
 /**
- * Electronics Type Definitions
+ * Electronics Equipment Type Definitions
  * 
- * Defines electronics systems including ECM, C3, probes, and targeting computers.
+ * Defines electronic warfare, targeting, and C3 systems.
  * 
  * @spec openspec/changes/implement-phase3-equipment/specs/electronics-system/spec.md
  */
@@ -10,19 +10,19 @@ import { TechBase } from '../enums/TechBase';
 import { RulesLevel } from '../enums/RulesLevel';
 
 /**
- * Electronics category enumeration
+ * Electronics category
  */
 export enum ElectronicsCategory {
-  ECM = 'ECM',
-  C3 = 'C3',
   TARGETING = 'Targeting',
-  PROBE = 'Probe',
+  ECM = 'ECM',
+  ACTIVE_PROBE = 'Active Probe',
+  C3 = 'C3 System',
   TAG = 'TAG',
-  OTHER = 'Other',
+  COMMUNICATIONS = 'Communications',
 }
 
 /**
- * Electronics interface
+ * Electronics equipment interface
  */
 export interface IElectronics {
   readonly id: string;
@@ -35,15 +35,47 @@ export interface IElectronics {
   readonly costCBills: number;
   readonly battleValue: number;
   readonly introductionYear: number;
-  readonly effectRadius?: number;
-  readonly maxNetworkSize?: number;
+  readonly special?: readonly string[];
 }
 
-/**
- * Standard electronics definitions
- */
-export const ELECTRONICS_EQUIPMENT: readonly IElectronics[] = [
-  // ECM Systems
+// ============================================================================
+// TARGETING COMPUTERS
+// ============================================================================
+
+export const TARGETING_COMPUTERS: readonly IElectronics[] = [
+  {
+    id: 'targeting-computer',
+    name: 'Targeting Computer',
+    category: ElectronicsCategory.TARGETING,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    weight: 0, // Variable: 1 ton per 4 tons of weapons
+    criticalSlots: 0, // Variable: 1 slot per ton
+    costCBills: 0, // 10000 per ton
+    battleValue: 0, // Variable
+    introductionYear: 3062,
+    special: ['-1 to-hit for direct fire weapons', 'Weight = weapon tonnage / 4'],
+  },
+  {
+    id: 'clan-targeting-computer',
+    name: 'Targeting Computer (Clan)',
+    category: ElectronicsCategory.TARGETING,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    weight: 0, // Variable: 1 ton per 5 tons of weapons
+    criticalSlots: 0, // Variable: 1 slot per ton
+    costCBills: 0, // 10000 per ton
+    battleValue: 0, // Variable
+    introductionYear: 2860,
+    special: ['-1 to-hit for direct fire weapons', 'Weight = weapon tonnage / 5'],
+  },
+] as const;
+
+// ============================================================================
+// ECM SYSTEMS
+// ============================================================================
+
+export const ECM_SYSTEMS: readonly IElectronics[] = [
   {
     id: 'guardian-ecm',
     name: 'Guardian ECM Suite',
@@ -55,7 +87,7 @@ export const ELECTRONICS_EQUIPMENT: readonly IElectronics[] = [
     costCBills: 200000,
     battleValue: 61,
     introductionYear: 3045,
-    effectRadius: 6,
+    special: ['6 hex ECM bubble', 'Blocks enemy electronics'],
   },
   {
     id: 'clan-ecm',
@@ -68,46 +100,138 @@ export const ELECTRONICS_EQUIPMENT: readonly IElectronics[] = [
     costCBills: 200000,
     battleValue: 61,
     introductionYear: 2832,
-    effectRadius: 6,
+    special: ['6 hex ECM bubble', 'Blocks enemy electronics'],
   },
   {
     id: 'angel-ecm',
     name: 'Angel ECM Suite',
     category: ElectronicsCategory.ECM,
     techBase: TechBase.INNER_SPHERE,
-    rulesLevel: RulesLevel.EXPERIMENTAL,
+    rulesLevel: RulesLevel.ADVANCED,
     weight: 2,
     criticalSlots: 2,
     costCBills: 750000,
     battleValue: 100,
     introductionYear: 3063,
-    effectRadius: 6,
+    special: ['6 hex ECM bubble', 'Enhanced protection vs active probes'],
   },
-  // C3 Systems
+  {
+    id: 'watchdog-cews',
+    name: 'Watchdog CEWS',
+    category: ElectronicsCategory.ECM,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.ADVANCED,
+    weight: 1.5,
+    criticalSlots: 2,
+    costCBills: 600000,
+    battleValue: 68,
+    introductionYear: 3059,
+    special: ['Combined ECM and Active Probe', '4 hex probe range'],
+  },
+] as const;
+
+// ============================================================================
+// ACTIVE PROBES
+// ============================================================================
+
+export const ACTIVE_PROBES: readonly IElectronics[] = [
+  {
+    id: 'beagle-active-probe',
+    name: 'Beagle Active Probe',
+    category: ElectronicsCategory.ACTIVE_PROBE,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    weight: 1.5,
+    criticalSlots: 2,
+    costCBills: 200000,
+    battleValue: 10,
+    introductionYear: 2576,
+    special: ['4 hex detection range', 'Detects hidden units'],
+  },
+  {
+    id: 'bloodhound-active-probe',
+    name: 'Bloodhound Active Probe',
+    category: ElectronicsCategory.ACTIVE_PROBE,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.ADVANCED,
+    weight: 2,
+    criticalSlots: 3,
+    costCBills: 500000,
+    battleValue: 25,
+    introductionYear: 3058,
+    special: ['8 hex detection range', 'Detects hidden units', 'Counters stealth'],
+  },
+  {
+    id: 'clan-active-probe',
+    name: 'Active Probe (Clan)',
+    category: ElectronicsCategory.ACTIVE_PROBE,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    weight: 1,
+    criticalSlots: 1,
+    costCBills: 200000,
+    battleValue: 12,
+    introductionYear: 2832,
+    special: ['5 hex detection range', 'Detects hidden units'],
+  },
+  {
+    id: 'light-active-probe',
+    name: 'Light Active Probe',
+    category: ElectronicsCategory.ACTIVE_PROBE,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    weight: 0.5,
+    criticalSlots: 1,
+    costCBills: 50000,
+    battleValue: 7,
+    introductionYear: 3052,
+    special: ['3 hex detection range'],
+  },
+  {
+    id: 'clan-light-active-probe',
+    name: 'Light Active Probe (Clan)',
+    category: ElectronicsCategory.ACTIVE_PROBE,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    weight: 0.5,
+    criticalSlots: 1,
+    costCBills: 50000,
+    battleValue: 7,
+    introductionYear: 3058,
+    special: ['3 hex detection range'],
+  },
+] as const;
+
+// ============================================================================
+// C3 SYSTEMS
+// ============================================================================
+
+export const C3_SYSTEMS: readonly IElectronics[] = [
   {
     id: 'c3-master',
-    name: 'C3 Computer (Master)',
+    name: 'C3 Master Computer',
     category: ElectronicsCategory.C3,
     techBase: TechBase.INNER_SPHERE,
     rulesLevel: RulesLevel.STANDARD,
     weight: 5,
     criticalSlots: 5,
     costCBills: 1500000,
-    battleValue: 0, // BV calculated separately
+    battleValue: 0, // Calculated based on lance
     introductionYear: 3050,
-    maxNetworkSize: 4,
+    special: ['Coordinates up to 3 C3 slaves', 'Shares targeting data'],
   },
   {
     id: 'c3-slave',
-    name: 'C3 Computer (Slave)',
+    name: 'C3 Slave Unit',
     category: ElectronicsCategory.C3,
     techBase: TechBase.INNER_SPHERE,
     rulesLevel: RulesLevel.STANDARD,
     weight: 1,
     criticalSlots: 1,
     costCBills: 250000,
-    battleValue: 0,
+    battleValue: 0, // Calculated based on lance
     introductionYear: 3050,
+    special: ['Links to C3 Master', 'Shares targeting data'],
   },
   {
     id: 'c3i',
@@ -118,76 +242,43 @@ export const ELECTRONICS_EQUIPMENT: readonly IElectronics[] = [
     weight: 2.5,
     criticalSlots: 2,
     costCBills: 750000,
-    battleValue: 0,
+    battleValue: 0, // Calculated based on lance
     introductionYear: 3062,
-    maxNetworkSize: 6,
+    special: ['No master required', 'Links up to 6 units'],
   },
-  // Targeting Computers
   {
-    id: 'targeting-computer',
-    name: 'Targeting Computer',
-    category: ElectronicsCategory.TARGETING,
+    id: 'c3-boosted-master',
+    name: 'C3 Boosted Master',
+    category: ElectronicsCategory.C3,
     techBase: TechBase.INNER_SPHERE,
-    rulesLevel: RulesLevel.STANDARD,
-    weight: 0, // Calculated based on weapon weight
-    criticalSlots: 0, // Calculated
-    costCBills: 0, // Per weight
+    rulesLevel: RulesLevel.ADVANCED,
+    weight: 6,
+    criticalSlots: 6,
+    costCBills: 3000000,
     battleValue: 0,
-    introductionYear: 3062,
+    introductionYear: 3073,
+    special: ['Coordinates up to 3 C3 slaves', 'Extended range'],
   },
   {
-    id: 'clan-targeting-computer',
-    name: 'Targeting Computer (Clan)',
-    category: ElectronicsCategory.TARGETING,
-    techBase: TechBase.CLAN,
-    rulesLevel: RulesLevel.STANDARD,
-    weight: 0,
-    criticalSlots: 0,
-    costCBills: 0,
-    battleValue: 0,
-    introductionYear: 2860,
-  },
-  // Probes
-  {
-    id: 'beagle-probe',
-    name: 'Beagle Active Probe',
-    category: ElectronicsCategory.PROBE,
-    techBase: TechBase.INNER_SPHERE,
-    rulesLevel: RulesLevel.STANDARD,
-    weight: 1.5,
-    criticalSlots: 2,
-    costCBills: 200000,
-    battleValue: 10,
-    introductionYear: 2576,
-    effectRadius: 4,
-  },
-  {
-    id: 'clan-active-probe',
-    name: 'Active Probe (Clan)',
-    category: ElectronicsCategory.PROBE,
-    techBase: TechBase.CLAN,
-    rulesLevel: RulesLevel.STANDARD,
-    weight: 1,
-    criticalSlots: 1,
-    costCBills: 200000,
-    battleValue: 12,
-    introductionYear: 2825,
-    effectRadius: 5,
-  },
-  {
-    id: 'bloodhound-probe',
-    name: 'Bloodhound Active Probe',
-    category: ElectronicsCategory.PROBE,
+    id: 'c3-boosted-slave',
+    name: 'C3 Boosted Slave',
+    category: ElectronicsCategory.C3,
     techBase: TechBase.INNER_SPHERE,
     rulesLevel: RulesLevel.ADVANCED,
     weight: 2,
-    criticalSlots: 3,
+    criticalSlots: 2,
     costCBills: 500000,
-    battleValue: 25,
-    introductionYear: 3058,
-    effectRadius: 8,
+    battleValue: 0,
+    introductionYear: 3073,
+    special: ['Links to C3 Master', 'Extended range'],
   },
-  // TAG
+] as const;
+
+// ============================================================================
+// TAG SYSTEMS
+// ============================================================================
+
+export const TAG_SYSTEMS: readonly IElectronics[] = [
   {
     id: 'tag',
     name: 'TAG',
@@ -199,52 +290,82 @@ export const ELECTRONICS_EQUIPMENT: readonly IElectronics[] = [
     costCBills: 50000,
     battleValue: 0,
     introductionYear: 2600,
+    special: ['Designates targets for homing missiles', 'Uses small laser ranges'],
+  },
+  {
+    id: 'clan-tag',
+    name: 'TAG (Clan)',
+    category: ElectronicsCategory.TAG,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    weight: 1,
+    criticalSlots: 1,
+    costCBills: 50000,
+    battleValue: 0,
+    introductionYear: 2820,
+    special: ['Designates targets for homing missiles', 'Uses small laser ranges'],
+  },
+  {
+    id: 'light-tag',
+    name: 'Light TAG',
+    category: ElectronicsCategory.TAG,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.ADVANCED,
+    weight: 0.5,
+    criticalSlots: 1,
+    costCBills: 40000,
+    battleValue: 0,
+    introductionYear: 3054,
+    special: ['Designates targets', 'Shorter range than standard TAG'],
   },
   {
     id: 'clan-light-tag',
     name: 'Light TAG (Clan)',
     category: ElectronicsCategory.TAG,
     techBase: TechBase.CLAN,
-    rulesLevel: RulesLevel.STANDARD,
+    rulesLevel: RulesLevel.ADVANCED,
     weight: 0.5,
     criticalSlots: 1,
     costCBills: 40000,
     battleValue: 0,
-    introductionYear: 2600,
+    introductionYear: 3054,
+    special: ['Designates targets', 'Shorter range than standard TAG'],
   },
+] as const;
+
+// ============================================================================
+// COMBINED EXPORTS
+// ============================================================================
+
+/**
+ * All electronics combined
+ */
+export const ALL_ELECTRONICS: readonly IElectronics[] = [
+  ...TARGETING_COMPUTERS,
+  ...ECM_SYSTEMS,
+  ...ACTIVE_PROBES,
+  ...C3_SYSTEMS,
+  ...TAG_SYSTEMS,
 ] as const;
 
 /**
  * Get electronics by ID
  */
 export function getElectronicsById(id: string): IElectronics | undefined {
-  return ELECTRONICS_EQUIPMENT.find(e => e.id === id);
+  return ALL_ELECTRONICS.find(e => e.id === id);
 }
 
 /**
  * Get electronics by category
  */
 export function getElectronicsByCategory(category: ElectronicsCategory): IElectronics[] {
-  return ELECTRONICS_EQUIPMENT.filter(e => e.category === category);
+  return ALL_ELECTRONICS.filter(e => e.category === category);
 }
 
 /**
- * Calculate targeting computer size (IS: 1 ton per 4 tons of direct-fire weapons)
+ * Get electronics by tech base
  */
-export function calculateTargetingComputerWeight(
-  directFireWeaponWeight: number,
-  techBase: TechBase
-): number {
-  if (techBase === TechBase.CLAN) {
-    return Math.ceil(directFireWeaponWeight / 5);
-  }
-  return Math.ceil(directFireWeaponWeight / 4);
-}
-
-/**
- * Calculate targeting computer slots
- */
-export function calculateTargetingComputerSlots(weight: number): number {
-  return Math.ceil(weight);
+export function getElectronicsByTechBase(techBase: TechBase): IElectronics[] {
+  return ALL_ELECTRONICS.filter(e => e.techBase === techBase);
 }
 

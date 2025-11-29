@@ -169,6 +169,36 @@ export const PHYSICAL_WEAPON_DEFINITIONS: readonly IPhysicalWeapon[] = [
     validLocations: ['Left Arm', 'Right Arm'],
     introductionYear: 3069,
   },
+  {
+    type: PhysicalWeaponType.FLAIL,
+    name: 'Flail',
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.ADVANCED,
+    weightFormula: 'tonnage_divisor',
+    tonnageDivisor: 10,
+    damageFormula: 'tonnage_divisor',
+    damageDivisor: 4,
+    criticalSlots: 0,
+    requiresLowerArm: true,
+    requiresHand: true,
+    validLocations: ['Left Arm', 'Right Arm'],
+    introductionYear: 3064,
+  },
+  {
+    type: PhysicalWeaponType.WRECKING_BALL,
+    name: 'Wrecking Ball',
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.ADVANCED,
+    weightFormula: 'tonnage_divisor',
+    tonnageDivisor: 10,
+    damageFormula: 'tonnage_divisor',
+    damageDivisor: 5,
+    criticalSlots: 0,
+    requiresLowerArm: false, // Mounted on torso
+    requiresHand: false,
+    validLocations: ['Left Torso', 'Right Torso'],
+    introductionYear: 3054,
+  },
 ] as const;
 
 /**
