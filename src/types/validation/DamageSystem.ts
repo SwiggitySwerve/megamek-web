@@ -44,11 +44,12 @@ export interface HitLocationResult {
 }
 
 /**
- * Front/Rear hit location table
+ * Front hit location table (attacking from front arc)
  * 2d6 roll -> location
+ * Per TechManual p.109
  */
 export const FRONT_HIT_LOCATION_TABLE: Record<number, MechLocation> = {
-  2: MechLocation.CENTER_TORSO, // CT (Critical)
+  2: MechLocation.CENTER_TORSO, // CT (Through Armor Critical)
   3: MechLocation.RIGHT_ARM,
   4: MechLocation.RIGHT_ARM,
   5: MechLocation.RIGHT_LEG,
@@ -61,8 +62,13 @@ export const FRONT_HIT_LOCATION_TABLE: Record<number, MechLocation> = {
   12: MechLocation.HEAD,
 };
 
+/**
+ * Rear hit location table (attacking from rear arc)
+ * Same distribution as front, but hits rear armor
+ * Per TechManual p.109
+ */
 export const REAR_HIT_LOCATION_TABLE: Record<number, MechLocation> = {
-  2: MechLocation.CENTER_TORSO, // CT (Critical)
+  2: MechLocation.CENTER_TORSO, // CT (Through Armor Critical)
   3: MechLocation.RIGHT_ARM,
   4: MechLocation.RIGHT_ARM,
   5: MechLocation.RIGHT_LEG,
@@ -73,6 +79,83 @@ export const REAR_HIT_LOCATION_TABLE: Record<number, MechLocation> = {
   10: MechLocation.LEFT_ARM,
   11: MechLocation.LEFT_ARM,
   12: MechLocation.HEAD,
+};
+
+/**
+ * Left side hit location table (attacking from left arc)
+ * Favors left-side locations
+ * Per TechManual p.109
+ */
+export const LEFT_SIDE_HIT_LOCATION_TABLE: Record<number, MechLocation> = {
+  2: MechLocation.LEFT_TORSO,   // LT (Through Armor Critical)
+  3: MechLocation.LEFT_LEG,
+  4: MechLocation.LEFT_ARM,
+  5: MechLocation.LEFT_ARM,
+  6: MechLocation.LEFT_LEG,
+  7: MechLocation.LEFT_TORSO,
+  8: MechLocation.CENTER_TORSO,
+  9: MechLocation.RIGHT_TORSO,
+  10: MechLocation.RIGHT_ARM,
+  11: MechLocation.RIGHT_LEG,
+  12: MechLocation.HEAD,
+};
+
+/**
+ * Right side hit location table (attacking from right arc)
+ * Favors right-side locations
+ * Per TechManual p.109
+ */
+export const RIGHT_SIDE_HIT_LOCATION_TABLE: Record<number, MechLocation> = {
+  2: MechLocation.RIGHT_TORSO,  // RT (Through Armor Critical)
+  3: MechLocation.RIGHT_LEG,
+  4: MechLocation.RIGHT_ARM,
+  5: MechLocation.RIGHT_ARM,
+  6: MechLocation.RIGHT_LEG,
+  7: MechLocation.RIGHT_TORSO,
+  8: MechLocation.CENTER_TORSO,
+  9: MechLocation.LEFT_TORSO,
+  10: MechLocation.LEFT_ARM,
+  11: MechLocation.LEFT_LEG,
+  12: MechLocation.HEAD,
+};
+
+/**
+ * Punch hit location table (1d6)
+ * Per TechManual p.109
+ */
+export const PUNCH_HIT_LOCATION_TABLE: Record<number, MechLocation> = {
+  1: MechLocation.LEFT_ARM,
+  2: MechLocation.LEFT_TORSO,
+  3: MechLocation.CENTER_TORSO,
+  4: MechLocation.RIGHT_TORSO,
+  5: MechLocation.RIGHT_ARM,
+  6: MechLocation.HEAD,
+};
+
+/**
+ * Kick hit location table (1d6)
+ * Per TechManual p.109
+ */
+export const KICK_HIT_LOCATION_TABLE: Record<number, MechLocation> = {
+  1: MechLocation.RIGHT_LEG,
+  2: MechLocation.RIGHT_LEG,
+  3: MechLocation.RIGHT_LEG,
+  4: MechLocation.LEFT_LEG,
+  5: MechLocation.LEFT_LEG,
+  6: MechLocation.LEFT_LEG,
+};
+
+/**
+ * Through Armor Critical (TAC) locations by attack direction
+ * Roll of 2 on location determines which location gets TAC
+ */
+export const TAC_LOCATIONS: Record<HitLocationTable, MechLocation> = {
+  [HitLocationTable.MECH_FRONT]: MechLocation.CENTER_TORSO,
+  [HitLocationTable.MECH_REAR]: MechLocation.CENTER_TORSO,
+  [HitLocationTable.MECH_LEFT]: MechLocation.LEFT_TORSO,
+  [HitLocationTable.MECH_RIGHT]: MechLocation.RIGHT_TORSO,
+  [HitLocationTable.MECH_PUNCH]: MechLocation.LEFT_ARM, // N/A for punch
+  [HitLocationTable.MECH_KICK]: MechLocation.RIGHT_LEG, // N/A for kick
 };
 
 /**
@@ -120,32 +203,100 @@ export interface DamageHit {
 }
 
 /**
+ * Get the appropriate hit location table for an attack direction
+ */
+export function getHitLocationTable(table: HitLocationTable): Record<number, MechLocation> {
+  switch (table) {
+    case HitLocationTable.MECH_FRONT:
+      return FRONT_HIT_LOCATION_TABLE;
+    case HitLocationTable.MECH_REAR:
+      return REAR_HIT_LOCATION_TABLE;
+    case HitLocationTable.MECH_LEFT:
+      return LEFT_SIDE_HIT_LOCATION_TABLE;
+    case HitLocationTable.MECH_RIGHT:
+      return RIGHT_SIDE_HIT_LOCATION_TABLE;
+    case HitLocationTable.MECH_PUNCH:
+      return PUNCH_HIT_LOCATION_TABLE;
+    case HitLocationTable.MECH_KICK:
+      return KICK_HIT_LOCATION_TABLE;
+    default:
+      return FRONT_HIT_LOCATION_TABLE;
+  }
+}
+
+/**
  * Get hit location from roll
+ * 
+ * @param roll - 2d6 roll for standard tables, 1d6 for punch/kick
+ * @param table - Which hit location table to use based on attack direction
  */
 export function getHitLocation(
   roll: number,
   table: HitLocationTable
 ): HitLocationResult {
-  let location: MechLocation;
-  let isRear = false;
+  const locationTable = getHitLocationTable(table);
+  const location = locationTable[roll] ?? MechLocation.CENTER_TORSO;
   
-  switch (table) {
-    case HitLocationTable.MECH_REAR:
-      isRear = true;
-      location = REAR_HIT_LOCATION_TABLE[roll] ?? MechLocation.CENTER_TORSO;
-      break;
-    case HitLocationTable.MECH_FRONT:
-    default:
-      location = FRONT_HIT_LOCATION_TABLE[roll] ?? MechLocation.CENTER_TORSO;
-      break;
-  }
+  // Determine if this is a rear hit
+  const isRear = table === HitLocationTable.MECH_REAR;
+  
+  // Through Armor Critical (TAC) on roll of 2 for 2d6 tables
+  // Punch/Kick use 1d6 so roll of 2 is not special
+  const isPunchOrKick = table === HitLocationTable.MECH_PUNCH || table === HitLocationTable.MECH_KICK;
+  const isTACCandidate = !isPunchOrKick && roll === 2;
+  
+  // Head hit on 12 is always critical candidate
+  const isHeadHit = roll === 12 && !isPunchOrKick;
   
   return {
     roll,
     location,
     isRear,
-    isCriticalCandidate: roll === 2 || roll === 12,
+    isCriticalCandidate: isTACCandidate || isHeadHit,
   };
+}
+
+/**
+ * Determine attack direction based on attacker and target facing
+ * 
+ * @param attackerHex - Attacker's hex position
+ * @param targetHex - Target's hex position  
+ * @param targetFacing - Target's facing direction (0-5)
+ * @returns The appropriate hit location table
+ */
+export function determineAttackDirection(
+  attackerHex: { x: number; y: number },
+  targetHex: { x: number; y: number },
+  targetFacing: number
+): HitLocationTable {
+  // Calculate relative direction from target to attacker
+  const dx = attackerHex.x - targetHex.x;
+  const dy = attackerHex.y - targetHex.y;
+  
+  // Convert to hex direction (0-5, where 0 is "north")
+  // This is simplified - full hex geometry is more complex
+  let attackDirection = Math.round(Math.atan2(dy, dx) * 3 / Math.PI + 3) % 6;
+  
+  // Calculate relative direction from target's perspective
+  const relativeDirection = (attackDirection - targetFacing + 6) % 6;
+  
+  // Map relative direction to attack arc
+  // 0 = directly ahead, 3 = directly behind
+  // 1,5 = front-side, 2,4 = rear-side
+  switch (relativeDirection) {
+    case 0:
+    case 1:
+    case 5:
+      return HitLocationTable.MECH_FRONT;
+    case 3:
+      return HitLocationTable.MECH_REAR;
+    case 2:
+      return HitLocationTable.MECH_RIGHT;
+    case 4:
+      return HitLocationTable.MECH_LEFT;
+    default:
+      return HitLocationTable.MECH_FRONT;
+  }
 }
 
 /**
