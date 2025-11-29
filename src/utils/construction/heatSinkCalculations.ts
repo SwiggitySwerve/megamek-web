@@ -1,0 +1,150 @@
+/**
+ * Heat Sink Calculations
+ * 
+ * Functions for calculating heat sink requirements and placement.
+ * 
+ * @spec openspec/changes/implement-phase2-construction/specs/heat-sink-system/spec.md
+ */
+
+import { HeatSinkType, HeatSinkDefinition, getHeatSinkDefinition } from '../../types/construction/HeatSinkType';
+import { calculateIntegralHeatSinks } from './engineCalculations';
+import { EngineType } from '../../types/construction/EngineType';
+
+/**
+ * Minimum heat sinks required for a mech
+ */
+export const MINIMUM_HEAT_SINKS = 10;
+
+/**
+ * Calculate total heat dissipation capacity
+ * 
+ * @param heatSinkType - Type of heat sinks
+ * @param totalCount - Total number of heat sinks
+ * @returns Total heat dissipation
+ */
+export function calculateHeatDissipation(heatSinkType: HeatSinkType, totalCount: number): number {
+  const definition = getHeatSinkDefinition(heatSinkType);
+  if (!definition) {
+    return totalCount;
+  }
+  return totalCount * definition.dissipation;
+}
+
+/**
+ * Calculate number of external (non-integrated) heat sinks needed
+ * 
+ * @param totalNeeded - Total heat sinks desired
+ * @param engineRating - Engine rating
+ * @param engineType - Engine type
+ * @returns Number of external heat sinks
+ */
+export function calculateExternalHeatSinks(
+  totalNeeded: number,
+  engineRating: number,
+  engineType: EngineType
+): number {
+  const integrated = calculateIntegralHeatSinks(engineRating, engineType);
+  return Math.max(0, totalNeeded - integrated);
+}
+
+/**
+ * Calculate weight of external heat sinks
+ * 
+ * @param externalCount - Number of external heat sinks
+ * @param heatSinkType - Type of heat sinks
+ * @returns Weight in tons
+ */
+export function calculateExternalHeatSinkWeight(externalCount: number, heatSinkType: HeatSinkType): number {
+  const definition = getHeatSinkDefinition(heatSinkType);
+  if (!definition) {
+    return externalCount;
+  }
+  return externalCount * definition.weight;
+}
+
+/**
+ * Calculate critical slots needed for external heat sinks
+ * 
+ * @param externalCount - Number of external heat sinks
+ * @param heatSinkType - Type of heat sinks
+ * @returns Total critical slots needed
+ */
+export function calculateExternalHeatSinkSlots(externalCount: number, heatSinkType: HeatSinkType): number {
+  const definition = getHeatSinkDefinition(heatSinkType);
+  if (!definition) {
+    return externalCount;
+  }
+  return externalCount * definition.criticalSlots;
+}
+
+/**
+ * Validate heat sink configuration
+ * 
+ * @param totalHeatSinks - Total number of heat sinks
+ * @param heatSinkType - Type of heat sinks
+ * @param engineRating - Engine rating
+ * @param engineType - Engine type
+ * @returns Validation result
+ */
+export function validateHeatSinks(
+  totalHeatSinks: number,
+  heatSinkType: HeatSinkType,
+  engineRating: number,
+  engineType: EngineType
+): { isValid: boolean; errors: string[]; warnings: string[] } {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+
+  // Minimum heat sink requirement
+  if (totalHeatSinks < MINIMUM_HEAT_SINKS) {
+    errors.push(`Minimum ${MINIMUM_HEAT_SINKS} heat sinks required (have ${totalHeatSinks})`);
+  }
+
+  // Check heat sink type definition exists
+  const definition = getHeatSinkDefinition(heatSinkType);
+  if (!definition) {
+    errors.push(`Unknown heat sink type: ${heatSinkType}`);
+  }
+
+  // Check integral capacity
+  const integrated = calculateIntegralHeatSinks(engineRating, engineType);
+  if (totalHeatSinks > integrated) {
+    const external = totalHeatSinks - integrated;
+    if (external > 20) {
+      warnings.push(`Large number of external heat sinks (${external}) may be inefficient`);
+    }
+  }
+
+  return { isValid: errors.length === 0, errors, warnings };
+}
+
+/**
+ * Get heat sink configuration summary
+ * 
+ * @param totalHeatSinks - Total number of heat sinks
+ * @param heatSinkType - Type of heat sinks
+ * @param engineRating - Engine rating
+ * @param engineType - Engine type
+ * @returns Configuration summary
+ */
+export function getHeatSinkSummary(
+  totalHeatSinks: number,
+  heatSinkType: HeatSinkType,
+  engineRating: number,
+  engineType: EngineType
+): {
+  integrated: number;
+  external: number;
+  weight: number;
+  slots: number;
+  dissipation: number;
+} {
+  const integrated = calculateIntegralHeatSinks(engineRating, engineType);
+  const external = calculateExternalHeatSinks(totalHeatSinks, engineRating, engineType);
+  const weight = calculateExternalHeatSinkWeight(external, heatSinkType);
+  const slots = calculateExternalHeatSinkSlots(external, heatSinkType);
+  const dissipation = calculateHeatDissipation(heatSinkType, totalHeatSinks);
+
+  return { integrated, external, weight, slots, dissipation };
+}
+
