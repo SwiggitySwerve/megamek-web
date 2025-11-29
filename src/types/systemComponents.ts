@@ -1,25 +1,9 @@
 /**
- * SystemComponents.ts
- * Interfaces for structural components (Engine, Gyro, Structure, Armor, Cockpit).
+ * System Components Types
+ * Types for system components (Engine, Gyro, etc.)
  */
 
-import { TechBase, RulesLevel } from './TechBase';
-import { ComponentCategory, ComponentType } from './ComponentType';
-import { StructureMechanics } from '../mechanics/Structure';
-import { STRUCTURE_SLOTS_REQUIRED } from '../data/StructureTables';
-
-export interface ISystemComponent {
-  readonly name: string;
-  readonly type: ComponentType;
-  readonly techBase: TechBase;
-  readonly rulesLevel: RulesLevel;
-  readonly weightMultiplier?: number; // Some components weight is a factor of tonnage or engine rating
-}
-
-// =============================================================================
-// ENGINE
-// =============================================================================
-
+// Engine Types
 export enum EngineType {
   STANDARD = 'Standard',
   XL = 'XL',
@@ -32,22 +16,7 @@ export enum EngineType {
   FUEL_CELL = 'Fuel Cell',
 }
 
-export interface IEngine extends ISystemComponent {
-  readonly type: ComponentType.ENGINE;
-  readonly engineType: EngineType;
-  readonly rating: number;
-  readonly weight: number;
-  readonly criticalSlots: {
-    readonly ct: number;
-    readonly sideTorso: number;
-  };
-  readonly heatSinks: number; // Integral heat sinks
-}
-
-// =============================================================================
-// GYRO
-// =============================================================================
-
+// Gyro Types
 export enum GyroType {
   STANDARD = 'Standard',
   XL = 'XL',
@@ -55,17 +24,7 @@ export enum GyroType {
   HEAVY_DUTY = 'Heavy-Duty',
 }
 
-export interface IGyro extends ISystemComponent {
-  readonly type: ComponentType.GYRO;
-  readonly gyroType: GyroType;
-  readonly weight: number;
-  readonly criticalSlots: number;
-}
-
-// =============================================================================
-// COCKPIT
-// =============================================================================
-
+// Cockpit Types
 export enum CockpitType {
   STANDARD = 'Standard',
   SMALL = 'Small',
@@ -74,21 +33,7 @@ export enum CockpitType {
   PRIMITIVE = 'Primitive',
 }
 
-export interface ICockpit extends ISystemComponent {
-  readonly type: ComponentType.COCKPIT;
-  readonly cockpitType: CockpitType;
-  readonly weight: number;
-  readonly criticalSlots: number;
-  readonly sensors: {
-    readonly range: number;
-    readonly resolution: number;
-  };
-}
-
-// =============================================================================
-// STRUCTURE
-// =============================================================================
-
+// Structure Types
 export enum StructureType {
   STANDARD = 'Standard',
   ENDO_STEEL = 'Endo Steel',
@@ -99,37 +44,7 @@ export enum StructureType {
   INDUSTRIAL = 'Industrial',
 }
 
-/**
- * Calculate structure weight for a given tonnage and structure type
- */
-export function calculateStructureWeight(tonnage: number, type: StructureType): number {
-  return StructureMechanics.calculateWeight(tonnage, type);
-}
-
-/**
- * Get critical slots required for structure type (defaults to Inner Sphere)
- */
-export function getStructureSlots(type: StructureType): number {
-  const techMap = STRUCTURE_SLOTS_REQUIRED[type];
-  if (!techMap) {
-    return 0;
-  }
-  // Default to Inner Sphere if tech base not specified
-  return techMap[TechBase.INNER_SPHERE] || 0;
-}
-
-export interface IStructure extends ISystemComponent {
-  readonly type: ComponentType.STRUCTURE;
-  readonly structureType: StructureType;
-  readonly totalPoints: number;
-  readonly pointsByLocation: Record<string, number>;
-  readonly criticalSlots: number; // Slots required (e.g. 14 for Endo Steel)
-}
-
-// =============================================================================
-// ARMOR
-// =============================================================================
-
+// Armor Types
 export enum ArmorType {
   STANDARD = 'Standard',
   FERRO_FIBROUS = 'Ferro-Fibrous',
@@ -142,69 +57,34 @@ export enum ArmorType {
   HARDENED = 'Hardened',
 }
 
-export interface IArmor extends ISystemComponent {
-  readonly type: ComponentType.ARMOR;
-  readonly armorType: ArmorType;
-  readonly pointsPerTon: number;
-  readonly totalPoints: number;
-  readonly maxPoints: number;
-  readonly criticalSlots: number; // Slots required (e.g. 14 for Ferro)
-  readonly pointsByLocation: Record<string, number>;
-  readonly maxPointsByLocation?: Record<string, number>;
-}
-
-export interface IArmorDef {
-  readonly id: string;
-  readonly name: string;
-  readonly type: string;
-  readonly category: ComponentCategory;
-  readonly pointsPerTon: number;
-  readonly criticalSlots: number;
-  readonly techBase?: TechBase | 'Both';
-  readonly techLevel?: string;
-  readonly rulesLevel?: RulesLevel;
-  readonly costMultiplier?: number;
-  readonly maxPointsPerLocationMultiplier?: number;
-  readonly introductionYear?: number;
-}
-
-// =============================================================================
-// HEAT SINKS
-// =============================================================================
-
+// Heat Sink Types
 export enum HeatSinkType {
   SINGLE = 'Single',
   DOUBLE = 'Double',
   DOUBLE_IS = 'Double (IS)',
   DOUBLE_CLAN = 'Double (Clan)',
   COMPACT = 'Compact',
-  COMPACT_CLAN = 'Compact (Clan)',
   LASER = 'Laser',
-  LASER_CLAN = 'Laser (Clan)',
 }
 
-export interface IHeatSinkSystem extends ISystemComponent {
-  readonly type: ComponentType.HEAT_SINK;
-  readonly heatSinkType: HeatSinkType;
-  readonly count: number;
-  readonly engineHeatSinks: number; // Number integral to engine
-  readonly dissipation: number; // Total dissipation
-}
-
-
-// =============================================================================
-// JUMP JETS
-// =============================================================================
-
+// Jump Jet Types
 export enum JumpJetType {
   STANDARD = 'Standard',
   IMPROVED = 'Improved',
   MECHANICAL = 'Mechanical',
 }
 
-export interface IJumpJetSystem extends ISystemComponent {
-  readonly type: ComponentType.JUMP_JET;
-  readonly jumpJetType: JumpJetType;
-  readonly count: number;
-  readonly weight: number;
+// Component type enum
+export enum ComponentType {
+  ENGINE = 'Engine',
+  GYRO = 'Gyro',
+  COCKPIT = 'Cockpit',
+  STRUCTURE = 'Structure',
+  ARMOR = 'Armor',
+  HEAT_SINK = 'Heat Sink',
+  JUMP_JET = 'Jump Jet',
+  WEAPON = 'Weapon',
+  AMMO = 'Ammo',
+  EQUIPMENT = 'Equipment',
+  ACTUATOR = 'Actuator',
 }
