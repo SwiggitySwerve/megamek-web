@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5", // Changed to es5 as per common Next.js practice, though ES2017 was also fine.
+    "target": "es5",
     "lib": [
       "dom",
       "dom.iterable",
@@ -8,23 +8,23 @@
     ],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": true, // Enabled strict mode
-    "forceConsistentCasingInFileNames": true, // Added
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
     "noEmit": true,
-    "incremental": true, // Retained from original
+    "incremental": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "bundler", // Changed from "node" to "bundler" as recommended for modern TS/Next.js
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
-    "baseUrl": "./src", // Added
-    "plugins": [ // Added from a common Next.js setup, can be adjusted
+    "baseUrl": "./src",
+    "plugins": [
       {
         "name": "next"
       }
     ],
-    "paths": { // Added common alias example, can be removed if not used
+    "paths": {
       "@/*": [
         "./*"
       ]
@@ -34,7 +34,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts" // Added for Next.js 13+ type generation
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
@@ -42,21 +42,7 @@
     "scripts/data-migration/**/*",
     "backup-before-refactor-*/**/*",
     "desktop/**/*",
-    "src/components/.disabled/**/*",
     "**/.disabled/**/*",
-    "src/components/editor/**/*",
-    "src/components/criticalSlots/**/*",
-    "src/components/armor/**/*",
-    "src/components/equipment/**/*",
-    "src/components/comparison/**/*",
-    "src/components/compendium/**/*",
-    "src/components/overview/**/*",
-    "src/components/multiUnit/**/*",
-    "src/components/unit/**/*",
-    "src/components/units/**/*",
-    "src/components/hooks/**/*",
-    "src/hooks/**/*",
-    "src/stores/**/*",
     "src/services/catalog/**/*",
     "src/services/editor/**/*",
     "src/services/integration/**/*"
