@@ -357,7 +357,7 @@ Do NOT reference for:
 
 ### Recommended Section Structure in Component Specs
 
-Replace verbose "Technology Base Variants" sections with:
+Replace verbose "Tech Base Variants" sections with:
 
 ```markdown
 ## Tech Base Variants
@@ -466,7 +466,7 @@ Quick reference for where specific tech base variant information is documented:
 ## References
 
 ### Official BattleTech Sources
-- **TechManual**: Pages 85-106 - Technology Base differences and mixed tech rules
+- **TechManual**: Pages 85-106 - Tech Base differences and mixed tech rules
 - **Total Warfare**: Pages 128-132 - Tech base overview
 - **Strategic Operations**: Pages 125-135 - Advanced tech base rules
 - **Interstellar Operations**: Pages 136-145 - Tech progression and extinction

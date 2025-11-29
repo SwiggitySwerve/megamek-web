@@ -174,7 +174,7 @@ All BattleMechs SHALL have a minimum of 10 total heat sinks.
 ### Requirement: Critical Slot Placement for Engine-Mounted Heat Sinks
 Engine-mounted heat sinks SHALL occupy Center Torso slots immediately after gyro slots.
 
-**Rationale**: Heat sinks integrated into the engine are placed in the Center Torso after the engine core and gyroscope, before any other equipment.
+**Rationale**: Heat sinks integrated into the engine are placed in the Center Torso after the engine core and gyro, before any other equipment.
 
 **Priority**: Critical
 

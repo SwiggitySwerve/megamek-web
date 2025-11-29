@@ -623,7 +623,7 @@ Impact:
 - Structural: Pure IS (all IS structural components)
 - Equipment: Mixed (uses both IS and Clan weapons)
 - Tech Rating: Increased due to equipment mixing
-- Tournament: May be restricted as "mixed technology"
+- Tournament legality: May be restricted as "mixed technology"
 - NOT declared as "Mixed Tech" but acts similarly
 ```
 

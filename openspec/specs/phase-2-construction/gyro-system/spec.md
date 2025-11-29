@@ -11,7 +11,7 @@
 ## Overview
 
 ### Purpose
-Defines the gyroscope system for BattleMechs, including gyro types, weight calculations, critical slot requirements, and placement rules. The gyro is a critical system component that enables bipedal/quadrupedal movement and balance, located in the Center Torso immediately after the engine's first slot group.
+Defines the gyro system for BattleMechs, including gyro types, weight calculations, critical slot requirements, and placement rules. The gyro is a critical system component that enables bipedal/quadrupedal movement and balance, located in the Center Torso immediately after the engine's first slot group.
 
 ### Scope
 **In Scope:**
@@ -58,7 +58,7 @@ All gyros SHALL be classified into one of four types: Standard, XL, Compact, or 
 **AND** gyro SHALL occupy 4 critical slots in Center Torso
 
 #### Scenario: XL Gyro selection
-**GIVEN** a BattleMech with sufficient tech level
+**GIVEN** a BattleMech with sufficient rules level
 **WHEN** XL Gyro is selected
 **THEN** gyro weight SHALL be CEIL(engineRating / 100) * 0.5
 **AND** gyro SHALL occupy 6 critical slots in Center Torso

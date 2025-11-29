@@ -301,7 +301,7 @@ The Primitive Cockpit SHALL represent early BattleMech technology with increased
 **GIVEN** a unit configuration
 **WHEN** validating Primitive Cockpit selection
 **THEN** tech base SHALL be Both (Inner Sphere and Clan)
-**AND** rules level SHALL be Standard, Tournament, Advanced, or Experimental
+**AND** rules level SHALL be Introductory, Standard, Advanced, or Experimental
 **AND** Primitive Cockpit SHALL be available at all rules levels
 **AND** era SHALL typically be Age of War or early Succession Wars
 

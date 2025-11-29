@@ -919,7 +919,7 @@ See [Tech Base Variants Reference](../tech-base-variants-reference/spec.md) for 
 - Introduction year gaps (see Era & Temporal System spec)
 
 **Cross-Reference**:
-All component specifications reference the Tech Base Variants Reference for common patterns, then document component-specific differences in their own "Technology Base Variants" sections.
+All component specifications reference the Tech Base Variants Reference for common patterns, then document component-specific differences in their own "Tech Base Variants" sections.
 
 
 ---

@@ -322,8 +322,8 @@ The system SHALL calculate integral heat sink capacity based on engine rating.
 **GIVEN** engine with rating 100
 **WHEN** calculating integral heat sinks
 **THEN** integral count = 4 (100 / 25)
-**AND** mech requires 6 additional heat sinks to reach minimum 10
-**AND** additional heat sinks occupy slots and add weight
+**AND** mech requires 6 external heat sinks to reach minimum 10
+**AND** external heat sinks occupy slots and add weight
 
 #### Scenario: Large engine heat sinks
 **GIVEN** engine with rating 250 or higher
