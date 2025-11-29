@@ -1,40 +1,32 @@
 /**
- * Layout Constants for Consistent Tab Interface
- * 
- * Simple height calculations for tab-based components.
- * These values are used to ensure consistent spacing across all tabs.
+ * Layout Constants - STUB FILE
+ * TODO: Replace with spec-driven implementation
  */
 
-/**
- * Fixed header and navigation heights in pixels
- */
-export const LAYOUT_HEIGHTS = {
-  /** Unit information banner height */
-  HEADER: 80,
-  /** Tab navigation bar height */
-  NAVIGATION: 60,
-  /** Combined height of header + navigation */
-  get TOTAL_FIXED() {
-    return this.HEADER + this.NAVIGATION;
-  }
-} as const;
+export const SIDEBAR_WIDTH = 280;
+export const HEADER_HEIGHT = 64;
+export const FOOTER_HEIGHT = 48;
+export const PANEL_PADDING = 16;
+export const GRID_GAP = 8;
+export const TAB_CONTENT_HEIGHT = 'calc(100vh - 200px)';
+export const MAIN_CONTENT_HEIGHT = 'calc(100vh - 120px)';
+export const MODAL_MAX_HEIGHT = '80vh';
+export const SCROLLBAR_CLASSES = 'scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800';
 
-/**
- * Pre-calculated CSS height for tab content areas
- * Uses a more generous calculation to ensure content visibility
- */
-export const TAB_CONTENT_HEIGHT = `calc(100vh - 120px)`;
-
-/**
- * Standard scrollbar styling classes
- * These provide consistent scrollbar appearance across all tabs
- */
-export const SCROLLBAR_CLASSES = 'scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-slate-800';
-
-/**
- * Utility function to calculate custom height if needed
- * @param additionalOffset - Additional pixels to subtract from viewport height
- */
-export const calculateTabHeight = (additionalOffset: number = 0): string => {
-  return `calc(100vh - ${LAYOUT_HEIGHTS.TOTAL_FIXED + additionalOffset}px)`;
+export const BREAKPOINTS = {
+  xs: 0,
+  sm: 640,
+  md: 768,
+  lg: 1024,
+  xl: 1280,
+  '2xl': 1536,
 };
+
+export const Z_INDEX = {
+  base: 0,
+  dropdown: 100,
+  modal: 200,
+  tooltip: 300,
+  toast: 400,
+};
+

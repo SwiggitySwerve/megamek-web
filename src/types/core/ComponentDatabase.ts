@@ -1,28 +1,27 @@
-import {
-  COMPONENT_CATEGORIES as COMPONENT_CATEGORY_MAP,
-  ComponentConfigurationCategory,
-  ComponentConfiguration,
-  TechBaseMemory,
-  ComponentMemoryState,
-} from '../ComponentConfiguration';
-import { TechBase, TechBaseFilter } from '../TechBase';
+/**
+ * ComponentDatabase.ts - STUB FILE
+ * Component database interface
+ * TODO: Replace with spec-driven implementation
+ */
 
-export type { ComponentConfigurationCategory, ComponentConfiguration, TechBaseMemory, ComponentMemoryState };
-export * from '../ComponentDatabase';
+import { TechBase, RulesLevel } from '../enums';
+import { IArmorDef, IStructureDef, IEngineDef, IGyroDef, ICockpitDef, IHeatSinkDef } from './ComponentInterfaces';
 
-export const COMPONENT_CATEGORIES = Object.keys(
-  COMPONENT_CATEGORY_MAP,
-) as ComponentConfigurationCategory[];
+export interface IComponentDatabase {
+  getArmorTypes(): IArmorDef[];
+  getStructureTypes(): IStructureDef[];
+  getEngineTypes(): IEngineDef[];
+  getGyroTypes(): IGyroDef[];
+  getCockpitTypes(): ICockpitDef[];
+  getHeatSinkTypes(): IHeatSinkDef[];
+}
 
-export const TECH_BASES: ReadonlyArray<TechBase> = [
-  TechBase.INNER_SPHERE,
-  TechBase.CLAN,
-];
-
-export const TECH_BASE_FILTERS: ReadonlyArray<TechBaseFilter> = [
-  TechBaseFilter.INNER_SPHERE,
-  TechBaseFilter.CLAN,
-  TechBaseFilter.MIXED,
-];
+// Placeholder data
+export const ARMOR_TYPES: IArmorDef[] = [];
+export const STRUCTURE_TYPES: IStructureDef[] = [];
+export const ENGINE_TYPES: IEngineDef[] = [];
+export const GYRO_TYPES: IGyroDef[] = [];
+export const COCKPIT_TYPES: ICockpitDef[] = [];
+export const HEAT_SINK_TYPES: IHeatSinkDef[] = [];
 
 
