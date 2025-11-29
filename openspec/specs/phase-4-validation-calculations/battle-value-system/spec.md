@@ -456,7 +456,7 @@ const validateHeatConsistency = (calc: IBattleValueCalculation, unit: IBattleMec
 
 ---
 
-## Technology Base Variants
+## Tech Base Variants
 
 ### Inner Sphere Implementation
 
@@ -722,5 +722,5 @@ const madcatBV = {
 ### Version 1.0 (2025-11-28)
 - Initial specification
 - Comprehensive BV calculation formulas
-- Technology base variants
+- Tech base variants
 - Validation rules and examples

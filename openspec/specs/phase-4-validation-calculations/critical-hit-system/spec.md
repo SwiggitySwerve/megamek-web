@@ -674,9 +674,9 @@ Critical hit calculations and effects sourced from:
 - Structural integrity and damage transfer rules
 - Equipment system integration and cascade effect data
 
-### Technology Base Considerations
+### Tech Base Considerations
 - Inner Sphere and Clan equipment vulnerability differences
-- Mixed technology base critical hit effects
+- Mixed tech base critical hit effects
 - Era-specific equipment protection systems
 - Technology progression in damage resistance
 - Advanced equipment critical hit mitigation systems

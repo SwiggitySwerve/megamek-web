@@ -48,13 +48,13 @@ The system SHALL determine the technology level of each component based on its b
 **GIVEN** a standard Inner Sphere Medium Laser
 **WHEN** determining component tech level
 **THEN** assign Tech Level 2 (Standard)
-**AND** classify as Inner Sphere technology base
+**AND** classify as Inner Sphere tech base
 
 #### Scenario: Advanced Clan Technology
 **GIVEN** a Clan ER PPC
 **WHEN** determining component tech level
 **THEN** assign Tech Level 4 (Advanced)
-**AND** classify as Clan technology base
+**AND** classify as Clan tech base
 
 #### Scenario: Experimental Technology
 **GIVEN** an Improved Jump Jet system
@@ -68,8 +68,8 @@ The system SHALL determine the technology level of each component based on its b
 **THEN** assign Tech Level 0 (Primitive)
 **AND** apply primitive technology penalties
 
-### Requirement: Determine Unit Technology Base
-The system SHALL classify the overall technology base of a unit based on component composition.
+### Requirement: Determine Unit Tech Base
+The system SHALL classify the overall tech base of a unit based on component composition.
 
 **Rationale**: Technology base affects component compatibility and overall tech rating calculations.
 
@@ -93,7 +93,7 @@ The system SHALL classify the overall technology base of a unit based on compone
 **THEN** classify as Mixed Technology
 **AND** apply mixed technology calculation rules
 
-#### Scenario: Predominant Technology Base
+#### Scenario: Predominant Tech Base
 **GIVEN** a Mixed Tech unit with 80% Clan components
 **WHEN** determining unit tech base
 **THEN** classify as Clan-dominant Mixed
@@ -162,7 +162,7 @@ The system SHALL apply appropriate modifiers based on special equipment, technol
 **AND** reflect advanced electronics technology
 
 ### Requirement: Validate Technology Compatibility
-The system SHALL validate that component technologies are compatible with the unit's declared technology base.
+The system SHALL validate that component technologies are compatible with the unit's declared tech base.
 
 **Rationale**: Technology compatibility ensures realistic and balanced unit designs.
 
@@ -178,7 +178,7 @@ The system SHALL validate that component technologies are compatible with the un
 **GIVEN** a Clan BattleMech with primitive Inner Sphere equipment
 **WHEN** validating technology compatibility
 **THEN** flag as invalid Clan design
-**AND** suggest technology base reclassification
+**AND** suggest tech base reclassification
 
 #### Scenario: Era Compatibility Check
 **GIVEN** a Succession Wars-era design with Star League technology
@@ -199,11 +199,11 @@ The system SHALL provide detailed reports of technology composition and rating c
 **THEN** list all components with individual tech levels
 **AND** show component contribution to overall rating
 
-#### Scenario: Technology Base Analysis
+#### Scenario: Tech Base Analysis
 **GIVEN** a Mixed Technology BattleMech
 **WHEN** generating tech rating report
-**THEN** provide technology base percentages
-**AND** identify dominant technology base
+**THEN** provide tech base percentages
+**AND** identify dominant tech base
 
 #### Scenario: Improvement Suggestions
 **GIVEN** a BattleMech with mixed technology levels
@@ -260,7 +260,7 @@ interface IComponentTechInfo {
   /** Component technology level */
   readonly techLevel: ComponentTechLevel;
 
-  /** Component technology base */
+  /** Component tech base */
   readonly techBase: TechnologyBase;
 
   /** Technology weight in calculation (based on BV or critical slots) */
@@ -311,7 +311,7 @@ interface IUnitTechRating {
   /** Numeric rating value (0-5) */
   readonly numericRating: number;
 
-  /** Primary technology base */
+  /** Primary tech base */
   readonly primaryTechBase: TechnologyBase;
 
   /** Technology base composition percentages */
@@ -343,7 +343,7 @@ interface TechBaseComposition {
   /** Mixed technology percentage */
   readonly mixed: number;
 
-  /** Dominant technology base */
+  /** Dominant tech base */
   readonly dominant: TechnologyBase;
 }
 
@@ -391,7 +391,7 @@ interface RatingConversionTable {
 |----------|------|----------|-------------|--------------|---------|
 | `rating` | `TechRating` | Yes | Overall technology rating | A-F | C |
 | `numericRating` | `number` | Yes | Numeric rating value | 0-5 | 2 |
-| `primaryTechBase` | `TechnologyBase` | Yes | Primary technology base | enum values | innerSphere |
+| `primaryTechBase` | `TechnologyBase` | Yes | Primary tech base | enum values | innerSphere |
 | `isCompatible` | `boolean` | Yes | Technology compatibility status | true/false | true |
 
 ### Type Constraints
@@ -434,7 +434,7 @@ Output: Tech Level 4 (Experimental) - capped at maximum
 - Clamp to valid range (0-4)
 - No fractional tech levels allowed
 
-### Technology Base Composition
+### Tech Base Composition
 
 **Formula**:
 ```
@@ -456,7 +456,7 @@ Mixed % = 0%
 Output: Inner Sphere: 80%, Clan: 20%, Mixed: 0%
 ```
 
-**Technology Base Determination**:
+**Tech Base Determination**:
 - Inner Sphere >= 80%: Pure Inner Sphere
 - Clan >= 80%: Pure Clan
 - Otherwise: Mixed Technology
@@ -530,7 +530,7 @@ Calculation: Letter Rating = C (Introductory)
 Output: Tech Rating C
 ```
 
-**Technology Base Adjustments**:
+**Tech Base Adjustments**:
 - Inner Sphere: Use standard conversion table
 - Clan: Apply +0.5 to numeric rating before conversion
 - Mixed: Use standard conversion table (no adjustment)
@@ -539,9 +539,9 @@ Output: Tech Rating C
 
 ## Validation Rules
 
-### Validation: Technology Base Compatibility
+### Validation: Tech Base Compatibility
 
-**Rule**: Components must be compatible with declared unit technology base.
+**Rule**: Components must be compatible with declared unit tech base.
 
 **Severity**: Error
 
@@ -554,7 +554,7 @@ const validateTechBaseCompatibility = (unit: IUnitTechRating) => {
 
   if (incompatibleComponents.length > 0 && unit.primaryTechBase !== TechnologyBase.MIXED_TECH) {
     throw new ValidationError(
-      `${incompatibleComponents.length} components incompatible with ${unit.primaryTechBase} technology base`
+      `${incompatibleComponents.length} components incompatible with ${unit.primaryTechBase} tech base`
     );
   }
 };
@@ -565,13 +565,13 @@ const isComponentCompatible = (componentBase: TechnologyBase, unitBase: Technolo
 };
 ```
 
-**Error Message**: "Unit contains components incompatible with declared technology base"
+**Error Message**: "Unit contains components incompatible with declared tech base"
 
 **User Action**: Reclassify unit as Mixed Technology or replace incompatible components
 
 ### Validation: Technology Level Consistency
 
-**Rule**: Technology levels must be consistent with unit's declared era and technology base.
+**Rule**: Technology levels must be consistent with unit's declared era and tech base.
 
 **Severity**: Warning
 
@@ -601,7 +601,7 @@ const validateTechLevelConsistency = (unit: IUnitTechRating, era: Era) => {
 
 ### Validation: Tech Rating Range
 
-**Rule**: Calculated tech rating must be within expected ranges for unit tonnage and technology base.
+**Rule**: Calculated tech rating must be within expected ranges for unit tonnage and tech base.
 
 **Severity**: Warning
 
@@ -637,14 +637,14 @@ const validateTechRatingRange = (unit: IUnitTechRating, tonnage: number) => {
 const validateMixedTechBalance = (unit: IUnitTechRating) => {
   if (unit.primaryTechBase !== TechnologyBase.MIXED_TECH) return { valid: true };
 
-  const minRequired = 20; // Minimum 20% of any technology base
+  const minRequired = 20; // Minimum 20% of any tech base
   const { innerSphere, clan } = unit.techBaseComposition;
 
   if (innerSphere < minRequired || clan < minRequired) {
     return {
       valid: false,
-      message: `Mixed technology unit should have at least ${minRequired}% of each major technology base (IS: ${innerSphere}%, Clan: ${clan}%)`,
-      suggestion: "Consider reclassifying as pure technology base or adding more components from minority technology"
+      message: `Mixed technology unit should have at least ${minRequired}% of each major tech base (IS: ${innerSphere}%, Clan: ${clan}%)`,
+      suggestion: "Consider reclassifying as pure tech base or adding more components from minority technology"
     };
   }
 
@@ -654,11 +654,11 @@ const validateMixedTechBalance = (unit: IUnitTechRating) => {
 
 **Error Message**: "Mixed technology unit has unbalanced technology distribution"
 
-**User Action**: Add components from minority technology base or reclassify as pure technology
+**User Action**: Add components from minority tech base or reclassify as pure technology
 
 ---
 
-## Technology Base Variants
+## Tech Base Variants
 
 ### Inner Sphere Implementation
 
@@ -726,7 +726,7 @@ const clanConfig: ITechRatingConfig = {
 
 **When unit tech base is Mixed**:
 - Apply mixed technology penalty of -0.5 to overall tech rating
-- Use higher technology base's rules for advanced components
+- Use higher tech base's rules for advanced components
 - Apply compatibility restrictions for component interactions
 
 **Compatibility Rules**:
@@ -735,9 +735,9 @@ const clanConfig: ITechRatingConfig = {
 - Mixed Electronics: Apply most restrictive rules
 
 **Calculation Rules**:
-- Component weights based on technology base of origin
+- Component weights based on tech base of origin
 - Technology base percentages include all components
-- Dominant technology base used for primary calculation rules
+- Dominant tech base used for primary calculation rules
 
 ---
 
@@ -774,12 +774,12 @@ const clanConfig: ITechRatingConfig = {
 ### Edge Cases
 - **Zero Technology Components**: Handle equipment with no tech rating (life support, basic sensors)
 - **Negative Tech Levels**: Process primitive technology with negative modifiers
-- **Fractional Components**: Handle equipment that spans multiple technology bases
+- **Fractional Components**: Handle equipment that spans multiple tech bases
 
 ### Common Pitfalls
 - **Pitfall**: Double-counting technology modifiers
   - **Solution**: Clear separation between component tech levels and unit modifiers
-- **Pitfall**: Incorrect technology base classification
+- **Pitfall**: Incorrect tech base classification
   - **Solution**: Explicit calculation rules with clear thresholds
 - **Pitfall**: Rounding errors in tech rating calculation
   - **Solution**: Consistent rounding rules at calculation completion
@@ -997,7 +997,7 @@ const mixedTechRating = {
 - **Campaign Operations**: Pages 134-136 - Technology Acquisition
 
 ### Related Documentation
-- Technology Base Integration Specification
+- Tech Base Integration Specification
 - Era Temporal System Specification
 - Construction Rules Core Specification
 

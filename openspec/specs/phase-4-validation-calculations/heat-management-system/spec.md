@@ -37,7 +37,7 @@ The Heat Management system calculates, validates, and analyzes heat generation a
 - **Heat Efficiency**: Measurement of sustainable vs. maximum heat output
 - **Engine Heat Sinks**: Free heat sinks provided by fusion engines
 - **External Heat Sinks**: Additional heat sinks beyond engine capacity
-- **Technology Base Compatibility**: Heat sink types compatible with different tech bases
+- **Tech Base Compatibility**: Heat sink types compatible with different tech bases
 
 ---
 
@@ -98,13 +98,13 @@ The system SHALL calculate total heat dissipation capacity from engine and exter
 **WHEN** calculating external heat dissipation
 **THEN** sum heat dissipation from all external heat sinks
 **AND** apply type-specific dissipation values (Single/Double/Compact/Laser)
-**AND** account for technology base compatibility
+**AND** account for tech base compatibility
 
 #### Scenario: Heat sink type validation
 **GIVEN** specific heat sink types installed
 **WHEN** validating heat sink configuration
 **THEN** ensure compatibility with engine type
-**AND** validate technology base restrictions
+**AND** validate tech base restrictions
 **AND** check critical slot capacity requirements
 **AND** verify weight distribution and tonnage limits
 
@@ -114,7 +114,7 @@ The system SHALL calculate total heat dissipation capacity from engine and exter
 **THEN** apply 2x dissipation for Inner Sphere double heat sinks
 **AND** apply 2x dissipation for Clan double heat sinks
 **AND** account for different critical slot requirements
-**AND** handle mixed technology base configurations
+**AND** handle mixed tech base configurations
 
 ### Requirement: Apply Heat Scale Effects
 The system SHALL apply progressive penalties and risks at different heat levels according to BattleTech rules.
@@ -187,7 +187,7 @@ The system SHALL analyze heat efficiency and provide recommendations for optimal
 **AND** provide alternative loadout recommendations
 
 #### Scenario: Technology base heat efficiency comparison
-**GIVEN** equivalent units from different technology bases
+**GIVEN** equivalent units from different tech bases
 **WHEN** comparing heat efficiency
 **THEN** analyze Clan vs Inner Sphere heat management differences
 **AND** calculate efficiency advantages/disadvantages
@@ -218,9 +218,9 @@ The system SHALL validate that heat management configurations comply with constr
 **AND** ensure heat sink accessibility for damage assessment
 
 #### Scenario: Technology base compatibility validation
-**GIVEN** mixed technology base heat sink configurations
-**WHEN** validating technology base compliance
-**THEN** ensure heat sink types match unit technology base
+**GIVEN** mixed tech base heat sink configurations
+**WHEN** validating tech base compliance
+**THEN** ensure heat sink types match unit tech base
 **AND** handle Inner Sphere/Clan mixed configurations
 **AND** apply appropriate technology level restrictions
 **AND** validate era-appropriate heat sink availability
@@ -494,7 +494,7 @@ interface ExplosionRisk {
 ### Scenario Tests
 - Standard BattleMech heat management scenarios
 - Extreme heat situation handling
-- Mixed technology base heat configurations
+- Mixed tech base heat configurations
 - Environmental heat condition variations
 
 ---
@@ -540,7 +540,7 @@ interface ExplosionRisk {
 - **Engine Damage Risk**: 28% (4+ on 2d6)
 - **Tactical Recommendations**: Cease fire, seek cover, emergency cooling
 
-### Example 4: Technology Base Comparison
+### Example 4: Tech Base Comparison
 **GIVEN** equivalent 55-ton Inner Sphere and Clan BattleMechs
 
 **WHEN** comparing heat efficiency

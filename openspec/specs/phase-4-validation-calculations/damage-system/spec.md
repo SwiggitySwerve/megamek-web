@@ -39,7 +39,7 @@ The Damage system calculates weapon damage profiles, cluster hit patterns, and d
 - **Damage Application**: Sequence and method of applying damage to targets
 - **Special Damage Effects**: Unique weapon effects beyond standard damage (PPC interference, etc.)
 - **Damage Variability**: Damage ranges for weapons with variable output
-- **Technology Base Damage**: Damage differences between Inner Sphere and Clan equivalents
+- **Tech Base Damage**: Damage differences between Inner Sphere and Clan equivalents
 
 ---
 
@@ -57,7 +57,7 @@ The system SHALL calculate base damage for all weapon types according to BattleT
 **WHEN** calculating base damage
 **THEN** apply consistent damage across all range brackets
 **AND** include weapon-specific damage modifiers (pulse, heavy, etc.)
-**AND** account for technology base differences where applicable
+**AND** account for tech base differences where applicable
 **AND** handle variable damage weapons with appropriate calculations
 
 #### Scenario: Ballistic weapon damage calculation
@@ -697,9 +697,9 @@ Damage calculations and weapon data sourced from:
 - Cluster hit tables and damage distribution charts
 - Special damage effect rulebooks and supplements
 
-### Technology Base Considerations
+### Tech Base Considerations
 - Inner Sphere and Clan weapon damage differences
-- Mixed technology base weapon compatibility
+- Mixed tech base weapon compatibility
 - Era-specific weapon availability and damage profiles
 - Technology progression and weapon advancement
 - Experimental and prototype weapon damage characteristics
