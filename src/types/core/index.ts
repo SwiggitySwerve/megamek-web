@@ -1,20 +1,86 @@
 /**
- * Legacy compatibility barrel that re-exports the new canonical type system.
- * Importing from `../types/core` will continue to work while we migrate
- * call sites to the modern modules.
+ * Core Types barrel export
+ * Central export point for all core interfaces.
+ * 
+ * @spec openspec/specs/phase-1-foundation/core-entity-types/spec.md
  */
 
-export * from '../index';
-export * from './BaseTypes';
-export * from './ApplicationTypes';
-export * from './CalculationInterfaces';
-export * from './ComponentDatabase';
-export * from './ComponentInterfaces';
-export * from './ComponentPlacement';
-export * from './DynamicDataTypes';
-export * from './EquipmentInterfaces';
-export * from './TechBase';
-export * from './UnitInterfaces';
-export * from './ValidationInterfaces';
+// Base entity interfaces
+export * from './IEntity';
+export * from './ITechBaseEntity';
+export * from './IWeightedComponent';
+export * from './ISlottedComponent';
+export * from './IPlaceableComponent';
+export * from './IValuedComponent';
+export * from './ITemporalEntity';
+export * from './IDocumentedEntity';
 
+// Re-export enums for convenience
+export * from '../enums';
 
+// Legacy compatibility - keep old BaseTypes exports working
+export { TechBase } from '../enums/TechBase';
+export { RulesLevel } from '../enums/RulesLevel';
+export { Era } from '../enums/Era';
+export { WeightClass } from '../enums/WeightClass';
+
+// Legacy type aliases for backward compatibility
+export type EntityId = string;
+
+// Result type for operations
+export interface Result<T> {
+  success: boolean;
+  data?: T;
+  error?: Error;
+}
+
+export function success<T>(data: T): Result<T> {
+  return { success: true, data };
+}
+
+export function failure<T>(error: Error): Result<T> {
+  return { success: false, error };
+}
+
+// Severity levels
+export enum Severity {
+  ERROR = 'error',
+  WARNING = 'warning',
+  INFO = 'info',
+}
+
+// Component Category (legacy compatibility)
+export enum ComponentCategory {
+  CHASSIS = 'chassis',
+  ENGINE = 'engine',
+  GYRO = 'gyro',
+  COCKPIT = 'cockpit',
+  STRUCTURE = 'structure',
+  ARMOR = 'armor',
+  HEAT_SINK = 'heatsink',
+  MYOMER = 'myomer',
+  TARGETING = 'targeting',
+  MOVEMENT = 'movement',
+  WEAPON = 'weapon',
+  AMMO = 'ammo',
+  EQUIPMENT = 'equipment',
+}
+
+// Observable service interface (legacy)
+export interface IObservableService {
+  subscribe(listener: (event: IServiceEvent) => void): () => void;
+  unsubscribe(listener: (event: IServiceEvent) => void): void;
+}
+
+export interface IService {
+  readonly serviceName: string;
+  readonly version: string;
+  initialize?(): Promise<void>;
+  cleanup?(): Promise<void>;
+}
+
+export interface IServiceEvent {
+  type: string;
+  timestamp: Date;
+  data?: Record<string, unknown>;
+}
