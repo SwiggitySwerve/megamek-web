@@ -7,7 +7,7 @@
  * @spec Based on BattleTech TechManual mixed tech rules
  */
 
-import React, { useCallback } from 'react';
+import React from 'react';
 import { TechBase } from '@/types/enums/TechBase';
 import {
   TechBaseMode,
@@ -135,10 +135,6 @@ export function TechBaseConfiguration({
 }: TechBaseConfigurationProps) {
   const isMixed = mode === 'mixed';
   
-  const handleModeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    onModeChange(e.target.value as TechBaseMode);
-  }, [onModeChange]);
-  
   const componentOrder: TechBaseComponent[] = [
     'chassis',
     'gyro',
@@ -152,38 +148,68 @@ export function TechBaseConfiguration({
 
   return (
     <div className={`bg-slate-800 rounded-lg border border-slate-700 overflow-hidden ${className}`}>
-      {/* Header with global mode selector */}
-      <div className="px-4 py-3 border-b border-slate-700 bg-slate-800">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-white">Tech Base</h3>
-          <select
-            value={mode}
-            onChange={handleModeChange}
-            disabled={readOnly}
-            className={`
-              bg-slate-700 border border-slate-600 text-white rounded-lg px-3 py-1.5 text-sm
-              focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-              ${readOnly ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-            `}
-          >
-            {Object.entries(TECH_BASE_MODE_LABELS).map(([key, label]) => (
-              <option key={key} value={key}>
-                {label}
-              </option>
-            ))}
-          </select>
+      {/* Header with centered global mode selector */}
+      <div className="px-4 py-4 border-b border-slate-700 bg-slate-800">
+        <h3 className="text-sm font-medium text-slate-400 text-center mb-3">Tech Base</h3>
+        
+        {/* Centered segmented button for mode selection */}
+        <div className="flex justify-center">
+          <div className="inline-flex rounded-lg overflow-hidden border border-slate-600">
+            <button
+              type="button"
+              onClick={() => onModeChange('inner_sphere')}
+              disabled={readOnly}
+              className={`
+                px-4 py-2 text-sm font-medium transition-colors
+                ${mode === 'inner_sphere'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-slate-700 text-slate-400 hover:bg-slate-600 hover:text-slate-300'
+                }
+                ${readOnly ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+              `}
+            >
+              Inner Sphere
+            </button>
+            <button
+              type="button"
+              onClick={() => onModeChange('clan')}
+              disabled={readOnly}
+              className={`
+                px-4 py-2 text-sm font-medium transition-colors border-l border-slate-600
+                ${mode === 'clan'
+                  ? 'bg-green-600 text-white'
+                  : 'bg-slate-700 text-slate-400 hover:bg-slate-600 hover:text-slate-300'
+                }
+                ${readOnly ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+              `}
+            >
+              Clan
+            </button>
+            <button
+              type="button"
+              onClick={() => onModeChange('mixed')}
+              disabled={readOnly}
+              className={`
+                px-4 py-2 text-sm font-medium transition-colors border-l border-slate-600
+                ${mode === 'mixed'
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-slate-700 text-slate-400 hover:bg-slate-600 hover:text-slate-300'
+                }
+                ${readOnly ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+              `}
+            >
+              Mixed
+            </button>
+          </div>
         </div>
-        {!isMixed && (
-          <p className="text-xs text-slate-500 mt-1">
-            All components use {mode === 'inner_sphere' ? 'Inner Sphere' : 'Clan'} technology.
-            Select "Mixed Tech" to configure individual components.
-          </p>
-        )}
-        {isMixed && (
-          <p className="text-xs text-slate-500 mt-1">
-            Configure each component's tech base individually.
-          </p>
-        )}
+        
+        {/* Helper text */}
+        <p className="text-xs text-slate-500 text-center mt-2">
+          {isMixed 
+            ? 'Configure each component individually' 
+            : `All components use ${mode === 'inner_sphere' ? 'Inner Sphere' : 'Clan'} technology`
+          }
+        </p>
       </div>
 
       {/* Component rows */}
