@@ -1,59 +1,32 @@
 /**
- * Equipment API Route Tests
- * 
- * Integration tests for /api/equipment endpoint.
- * 
- * @spec openspec/specs/equipment-services/spec.md
+ * Tests for /api/equipment endpoint
  */
-
 import { createMocks } from 'node-mocks-http';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import handler from '@/pages/api/equipment';
+import { equipmentLookupService } from '@/services/equipment/EquipmentLookupService';
+import { TechBase } from '@/types/enums/TechBase';
+import { RulesLevel } from '@/types/enums/RulesLevel';
+import { EquipmentCategory } from '@/types/equipment';
 
 // Mock the equipment lookup service
 jest.mock('@/services/equipment/EquipmentLookupService', () => ({
   equipmentLookupService: {
-    getById: jest.fn().mockImplementation((id: string) => {
-      if (id === 'medium-laser') {
-        return {
-          id: 'medium-laser',
-          name: 'Medium Laser',
-          weight: 1,
-          criticalSlots: 1,
-          damage: 5,
-          heat: 3,
-          techBase: 'Inner Sphere',
-          category: 'ENERGY_WEAPON',
-        };
-      }
-      return undefined;
-    }),
-    query: jest.fn().mockImplementation(() => {
-      return [
-        { id: 'small-laser', name: 'Small Laser', weight: 0.5 },
-        { id: 'medium-laser', name: 'Medium Laser', weight: 1 },
-        { id: 'large-laser', name: 'Large Laser', weight: 5 },
-      ];
-    }),
+    getById: jest.fn(),
+    query: jest.fn(),
   },
 }));
 
+const mockGetById = equipmentLookupService.getById as jest.Mock;
+const mockQuery = equipmentLookupService.query as jest.Mock;
+
 describe('/api/equipment', () => {
-  // ============================================================================
-  // Method Handling
-  // ============================================================================
-  describe('HTTP Methods', () => {
-    it('should accept GET requests', async () => {
-      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
-        method: 'GET',
-      });
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
-      await handler(req, res);
-
-      expect(res._getStatusCode()).toBe(200);
-    });
-
-    it('should reject POST requests', async () => {
+  describe('GET method validation', () => {
+    it('should reject non-GET requests', async () => {
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'POST',
       });
@@ -61,6 +34,9 @@ describe('/api/equipment', () => {
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(405);
+      const data = JSON.parse(res._getData());
+      expect(data.success).toBe(false);
+      expect(data.error).toContain('Method not allowed');
     });
 
     it('should reject PUT requests', async () => {
@@ -72,13 +48,27 @@ describe('/api/equipment', () => {
 
       expect(res._getStatusCode()).toBe(405);
     });
+
+    it('should reject DELETE requests', async () => {
+      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+        method: 'DELETE',
+      });
+
+      await handler(req, res);
+
+      expect(res._getStatusCode()).toBe(405);
+    });
   });
 
-  // ============================================================================
-  // Get Single Equipment by ID
-  // ============================================================================
-  describe('GET /api/equipment?id=<id>', () => {
-    it('should return equipment when found', async () => {
+  describe('GET by ID', () => {
+    it('should return equipment when found by ID', async () => {
+      const mockEquipment = {
+        id: 'medium-laser',
+        name: 'Medium Laser',
+        category: EquipmentCategory.ENERGY_WEAPON,
+      };
+      mockGetById.mockReturnValue(mockEquipment);
+
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'GET',
         query: { id: 'medium-laser' },
@@ -89,14 +79,15 @@ describe('/api/equipment', () => {
       expect(res._getStatusCode()).toBe(200);
       const data = JSON.parse(res._getData());
       expect(data.success).toBe(true);
-      expect(data.data.id).toBe('medium-laser');
-      expect(data.data.name).toBe('Medium Laser');
+      expect(data.data).toEqual(mockEquipment);
     });
 
     it('should return 404 when equipment not found', async () => {
+      mockGetById.mockReturnValue(null);
+
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'GET',
-        query: { id: 'non-existent-weapon' },
+        query: { id: 'non-existent' },
       });
 
       await handler(req, res);
@@ -108,11 +99,14 @@ describe('/api/equipment', () => {
     });
   });
 
-  // ============================================================================
-  // Query Equipment
-  // ============================================================================
-  describe('GET /api/equipment (query)', () => {
-    it('should return list of equipment', async () => {
+  describe('GET with query parameters', () => {
+    it('should query equipment without filters', async () => {
+      const mockEquipment = [
+        { id: 'medium-laser', name: 'Medium Laser' },
+        { id: 'ppc', name: 'PPC' },
+      ];
+      mockQuery.mockReturnValue(mockEquipment);
+
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'GET',
         query: {},
@@ -123,61 +117,85 @@ describe('/api/equipment', () => {
       expect(res._getStatusCode()).toBe(200);
       const data = JSON.parse(res._getData());
       expect(data.success).toBe(true);
-      expect(Array.isArray(data.data)).toBe(true);
+      expect(data.data).toEqual(mockEquipment);
+      expect(data.count).toBe(2);
     });
 
-    it('should include count in response', async () => {
+    it('should filter by category', async () => {
+      mockQuery.mockReturnValue([]);
+
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'GET',
-        query: {},
-      });
-
-      await handler(req, res);
-
-      const data = JSON.parse(res._getData());
-      expect(data.count).toBeDefined();
-      expect(data.count).toBe(data.data.length);
-    });
-  });
-
-  // ============================================================================
-  // Query Parameters
-  // ============================================================================
-  describe('Query Parameters', () => {
-    it('should accept category filter', async () => {
-      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
-        method: 'GET',
-        query: { category: 'ENERGY_WEAPON' },
+        query: { category: EquipmentCategory.ENERGY_WEAPON },
       });
 
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(200);
+      expect(mockQuery).toHaveBeenCalledWith(
+        expect.objectContaining({
+          category: EquipmentCategory.ENERGY_WEAPON,
+        })
+      );
     });
 
-    it('should accept techBase filter', async () => {
+    it('should filter by tech base', async () => {
+      mockQuery.mockReturnValue([]);
+
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'GET',
-        query: { techBase: 'Inner Sphere' },
+        query: { techBase: TechBase.CLAN },
       });
 
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(200);
+      expect(mockQuery).toHaveBeenCalledWith(
+        expect.objectContaining({
+          techBase: TechBase.CLAN,
+        })
+      );
     });
 
-    it('should accept year filter', async () => {
+    it('should filter by rules level', async () => {
+      mockQuery.mockReturnValue([]);
+
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'GET',
-        query: { year: '3050' },
+        query: { rulesLevel: RulesLevel.STANDARD },
       });
 
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(200);
+      expect(mockQuery).toHaveBeenCalledWith(
+        expect.objectContaining({
+          rulesLevel: RulesLevel.STANDARD,
+        })
+      );
     });
 
-    it('should accept search filter', async () => {
+    it('should filter by year', async () => {
+      mockQuery.mockReturnValue([]);
+
+      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+        method: 'GET',
+        query: { year: '3025' },
+      });
+
+      await handler(req, res);
+
+      expect(res._getStatusCode()).toBe(200);
+      expect(mockQuery).toHaveBeenCalledWith(
+        expect.objectContaining({
+          year: 3025,
+        })
+      );
+    });
+
+    it('should filter by search term', async () => {
+      mockQuery.mockReturnValue([]);
+
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'GET',
         query: { search: 'laser' },
@@ -186,20 +204,34 @@ describe('/api/equipment', () => {
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(200);
+      expect(mockQuery).toHaveBeenCalledWith(
+        expect.objectContaining({
+          nameQuery: 'laser',
+        })
+      );
     });
 
-    it('should accept maxWeight filter', async () => {
+    it('should filter by maxWeight', async () => {
+      mockQuery.mockReturnValue([]);
+
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'GET',
-        query: { maxWeight: '5' },
+        query: { maxWeight: '5.5' },
       });
 
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(200);
+      expect(mockQuery).toHaveBeenCalledWith(
+        expect.objectContaining({
+          maxWeight: 5.5,
+        })
+      );
     });
 
-    it('should accept maxSlots filter', async () => {
+    it('should filter by maxSlots', async () => {
+      mockQuery.mockReturnValue([]);
+
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'GET',
         query: { maxSlots: '3' },
@@ -208,77 +240,129 @@ describe('/api/equipment', () => {
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(200);
+      expect(mockQuery).toHaveBeenCalledWith(
+        expect.objectContaining({
+          maxSlots: 3,
+        })
+      );
     });
 
-    it('should accept multiple filters', async () => {
+    it('should combine multiple filters', async () => {
+      mockQuery.mockReturnValue([]);
+
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'GET',
         query: {
-          category: 'ENERGY_WEAPON',
-          techBase: 'Inner Sphere',
-          maxWeight: '5',
+          category: EquipmentCategory.BALLISTIC_WEAPON,
+          techBase: TechBase.INNER_SPHERE,
+          year: '3050',
         },
       });
 
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(200);
+      expect(mockQuery).toHaveBeenCalledWith({
+        category: EquipmentCategory.BALLISTIC_WEAPON,
+        techBase: TechBase.INNER_SPHERE,
+        year: 3050,
+      });
     });
-  });
 
-  // ============================================================================
-  // Response Format
-  // ============================================================================
-  describe('Response Format', () => {
-    it('should return valid JSON', async () => {
+    it('should ignore invalid category values', async () => {
+      mockQuery.mockReturnValue([]);
+
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'GET',
+        query: { category: 'INVALID_CATEGORY' },
       });
 
       await handler(req, res);
 
-      expect(() => JSON.parse(res._getData())).not.toThrow();
-    });
-
-    it('should include success field', async () => {
-      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
-        method: 'GET',
-      });
-
-      await handler(req, res);
-
-      const data = JSON.parse(res._getData());
-      expect(data).toHaveProperty('success');
-    });
-
-    it('should include data field on success', async () => {
-      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
-        method: 'GET',
-      });
-
-      await handler(req, res);
-
-      const data = JSON.parse(res._getData());
-      expect(data.success).toBe(true);
-      expect(data).toHaveProperty('data');
-    });
-  });
-
-  // ============================================================================
-  // Error Handling
-  // ============================================================================
-  describe('Error Handling', () => {
-    it('should handle invalid numeric parameters gracefully', async () => {
-      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
-        method: 'GET',
-        query: { maxWeight: 'invalid' },
-      });
-
-      await handler(req, res);
-
-      // Should not crash, should return data
       expect(res._getStatusCode()).toBe(200);
+      expect(mockQuery).toHaveBeenCalledWith({});
+    });
+
+    it('should ignore invalid techBase values', async () => {
+      mockQuery.mockReturnValue([]);
+
+      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+        method: 'GET',
+        query: { techBase: 'INVALID_TECH' },
+      });
+
+      await handler(req, res);
+
+      expect(res._getStatusCode()).toBe(200);
+      expect(mockQuery).toHaveBeenCalledWith({});
+    });
+
+    it('should ignore invalid rulesLevel values', async () => {
+      mockQuery.mockReturnValue([]);
+
+      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+        method: 'GET',
+        query: { rulesLevel: 'INVALID_LEVEL' },
+      });
+
+      await handler(req, res);
+
+      expect(res._getStatusCode()).toBe(200);
+      expect(mockQuery).toHaveBeenCalledWith({});
+    });
+
+    it('should handle invalid year values', async () => {
+      mockQuery.mockReturnValue([]);
+
+      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+        method: 'GET',
+        query: { year: 'not-a-number' },
+      });
+
+      await handler(req, res);
+
+      expect(res._getStatusCode()).toBe(200);
+      expect(mockQuery).toHaveBeenCalledWith({
+        year: undefined,
+      });
+    });
+  });
+
+  describe('Error handling', () => {
+    it('should return 500 on service error', async () => {
+      mockQuery.mockImplementation(() => {
+        throw new Error('Database connection failed');
+      });
+
+      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+        method: 'GET',
+        query: {},
+      });
+
+      await handler(req, res);
+
+      expect(res._getStatusCode()).toBe(500);
+      const data = JSON.parse(res._getData());
+      expect(data.success).toBe(false);
+      expect(data.error).toBe('Database connection failed');
+    });
+
+    it('should handle non-Error exceptions', async () => {
+      mockQuery.mockImplementation(() => {
+        throw 'Unknown error';
+      });
+
+      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+        method: 'GET',
+        query: {},
+      });
+
+      await handler(req, res);
+
+      expect(res._getStatusCode()).toBe(500);
+      const data = JSON.parse(res._getData());
+      expect(data.success).toBe(false);
+      expect(data.error).toBe('Internal server error');
     });
   });
 });
-

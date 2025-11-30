@@ -1,55 +1,32 @@
 /**
- * Units API Route Tests
- * 
- * Integration tests for /api/units endpoint.
- * 
- * @spec openspec/specs/unit-services/spec.md
+ * Tests for /api/units endpoint
  */
-
 import { createMocks } from 'node-mocks-http';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import handler from '@/pages/api/units';
+import { canonicalUnitService } from '@/services/units/CanonicalUnitService';
+import { TechBase } from '@/types/enums/TechBase';
+import { Era } from '@/types/enums/Era';
+import { WeightClass } from '@/types/enums/WeightClass';
 
 // Mock the canonical unit service
 jest.mock('@/services/units/CanonicalUnitService', () => ({
   canonicalUnitService: {
-    getById: jest.fn().mockImplementation((id: string) => {
-      if (id === 'atlas-as7-d') {
-        return Promise.resolve({
-          id: 'atlas-as7-d',
-          chassis: 'Atlas',
-          variant: 'AS7-D',
-          tonnage: 100,
-          techBase: 'Inner Sphere',
-        });
-      }
-      return Promise.resolve(null);
-    }),
-    query: jest.fn().mockImplementation(() => {
-      return Promise.resolve([
-        { id: 'locust-lct-1v', chassis: 'Locust', variant: 'LCT-1V', tonnage: 20 },
-        { id: 'atlas-as7-d', chassis: 'Atlas', variant: 'AS7-D', tonnage: 100 },
-      ]);
-    }),
+    getById: jest.fn(),
+    query: jest.fn(),
   },
 }));
 
+const mockGetById = canonicalUnitService.getById as jest.Mock;
+const mockQuery = canonicalUnitService.query as jest.Mock;
+
 describe('/api/units', () => {
-  // ============================================================================
-  // Method Handling
-  // ============================================================================
-  describe('HTTP Methods', () => {
-    it('should accept GET requests', async () => {
-      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
-        method: 'GET',
-      });
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
-      await handler(req, res);
-
-      expect(res._getStatusCode()).toBe(200);
-    });
-
-    it('should reject POST requests', async () => {
+  describe('GET method validation', () => {
+    it('should reject non-GET requests', async () => {
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'POST',
       });
@@ -57,7 +34,9 @@ describe('/api/units', () => {
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(405);
-      expect(JSON.parse(res._getData()).error).toContain('Method not allowed');
+      const data = JSON.parse(res._getData());
+      expect(data.success).toBe(false);
+      expect(data.error).toContain('Method not allowed');
     });
 
     it('should reject PUT requests', async () => {
@@ -81,11 +60,16 @@ describe('/api/units', () => {
     });
   });
 
-  // ============================================================================
-  // Get Single Unit by ID
-  // ============================================================================
-  describe('GET /api/units?id=<id>', () => {
-    it('should return unit when found', async () => {
+  describe('GET by ID', () => {
+    it('should return unit when found by ID', async () => {
+      const mockUnit = {
+        id: 'atlas-as7-d',
+        name: 'Atlas AS7-D',
+        tonnage: 100,
+        techBase: TechBase.INNER_SPHERE,
+      };
+      mockGetById.mockResolvedValue(mockUnit);
+
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'GET',
         query: { id: 'atlas-as7-d' },
@@ -96,14 +80,15 @@ describe('/api/units', () => {
       expect(res._getStatusCode()).toBe(200);
       const data = JSON.parse(res._getData());
       expect(data.success).toBe(true);
-      expect(data.data.id).toBe('atlas-as7-d');
-      expect(data.data.chassis).toBe('Atlas');
+      expect(data.data).toEqual(mockUnit);
     });
 
     it('should return 404 when unit not found', async () => {
+      mockGetById.mockResolvedValue(null);
+
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'GET',
-        query: { id: 'non-existent-unit' },
+        query: { id: 'non-existent' },
       });
 
       await handler(req, res);
@@ -115,11 +100,14 @@ describe('/api/units', () => {
     });
   });
 
-  // ============================================================================
-  // Query Units
-  // ============================================================================
-  describe('GET /api/units (query)', () => {
-    it('should return list of units', async () => {
+  describe('GET with query parameters', () => {
+    it('should query units without filters', async () => {
+      const mockUnits = [
+        { id: 'atlas-as7-d', name: 'Atlas AS7-D' },
+        { id: 'locust-lct-1v', name: 'Locust LCT-1V' },
+      ];
+      mockQuery.mockResolvedValue(mockUnits);
+
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'GET',
         query: {},
@@ -130,11 +118,219 @@ describe('/api/units', () => {
       expect(res._getStatusCode()).toBe(200);
       const data = JSON.parse(res._getData());
       expect(data.success).toBe(true);
-      expect(Array.isArray(data.data)).toBe(true);
-      expect(data.count).toBe(data.data.length);
+      expect(data.data).toEqual(mockUnits);
+      expect(data.count).toBe(2);
     });
 
-    it('should include count in response', async () => {
+    it('should filter by tech base', async () => {
+      mockQuery.mockResolvedValue([]);
+
+      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+        method: 'GET',
+        query: { techBase: TechBase.CLAN },
+      });
+
+      await handler(req, res);
+
+      expect(res._getStatusCode()).toBe(200);
+      expect(mockQuery).toHaveBeenCalledWith(
+        expect.objectContaining({
+          techBase: TechBase.CLAN,
+        })
+      );
+    });
+
+    it('should filter by era', async () => {
+      mockQuery.mockResolvedValue([]);
+
+      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+        method: 'GET',
+        query: { era: Era.SUCCESSION_WARS },
+      });
+
+      await handler(req, res);
+
+      expect(res._getStatusCode()).toBe(200);
+      expect(mockQuery).toHaveBeenCalledWith(
+        expect.objectContaining({
+          era: Era.SUCCESSION_WARS,
+        })
+      );
+    });
+
+    it('should filter by weight class', async () => {
+      mockQuery.mockResolvedValue([]);
+
+      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+        method: 'GET',
+        query: { weightClass: WeightClass.ASSAULT },
+      });
+
+      await handler(req, res);
+
+      expect(res._getStatusCode()).toBe(200);
+      expect(mockQuery).toHaveBeenCalledWith(
+        expect.objectContaining({
+          weightClass: WeightClass.ASSAULT,
+        })
+      );
+    });
+
+    it('should filter by unit type', async () => {
+      mockQuery.mockResolvedValue([]);
+
+      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+        method: 'GET',
+        query: { unitType: 'BattleMech' },
+      });
+
+      await handler(req, res);
+
+      expect(res._getStatusCode()).toBe(200);
+      expect(mockQuery).toHaveBeenCalledWith(
+        expect.objectContaining({
+          unitType: 'BattleMech',
+        })
+      );
+    });
+
+    it('should filter by minTonnage', async () => {
+      mockQuery.mockResolvedValue([]);
+
+      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+        method: 'GET',
+        query: { minTonnage: '50' },
+      });
+
+      await handler(req, res);
+
+      expect(res._getStatusCode()).toBe(200);
+      expect(mockQuery).toHaveBeenCalledWith(
+        expect.objectContaining({
+          minTonnage: 50,
+        })
+      );
+    });
+
+    it('should filter by maxTonnage', async () => {
+      mockQuery.mockResolvedValue([]);
+
+      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+        method: 'GET',
+        query: { maxTonnage: '75' },
+      });
+
+      await handler(req, res);
+
+      expect(res._getStatusCode()).toBe(200);
+      expect(mockQuery).toHaveBeenCalledWith(
+        expect.objectContaining({
+          maxTonnage: 75,
+        })
+      );
+    });
+
+    it('should combine multiple filters', async () => {
+      mockQuery.mockResolvedValue([]);
+
+      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+        method: 'GET',
+        query: {
+          techBase: TechBase.INNER_SPHERE,
+          weightClass: WeightClass.HEAVY,
+          minTonnage: '60',
+          maxTonnage: '75',
+        },
+      });
+
+      await handler(req, res);
+
+      expect(res._getStatusCode()).toBe(200);
+      expect(mockQuery).toHaveBeenCalledWith({
+        techBase: TechBase.INNER_SPHERE,
+        weightClass: WeightClass.HEAVY,
+        minTonnage: 60,
+        maxTonnage: 75,
+      });
+    });
+
+    it('should ignore invalid techBase values', async () => {
+      mockQuery.mockResolvedValue([]);
+
+      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+        method: 'GET',
+        query: { techBase: 'INVALID_TECH' },
+      });
+
+      await handler(req, res);
+
+      expect(res._getStatusCode()).toBe(200);
+      expect(mockQuery).toHaveBeenCalledWith({});
+    });
+
+    it('should ignore invalid era values', async () => {
+      mockQuery.mockResolvedValue([]);
+
+      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+        method: 'GET',
+        query: { era: 'INVALID_ERA' },
+      });
+
+      await handler(req, res);
+
+      expect(res._getStatusCode()).toBe(200);
+      expect(mockQuery).toHaveBeenCalledWith({});
+    });
+
+    it('should ignore invalid weightClass values', async () => {
+      mockQuery.mockResolvedValue([]);
+
+      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+        method: 'GET',
+        query: { weightClass: 'INVALID_CLASS' },
+      });
+
+      await handler(req, res);
+
+      expect(res._getStatusCode()).toBe(200);
+      expect(mockQuery).toHaveBeenCalledWith({});
+    });
+
+    it('should ignore invalid unitType values', async () => {
+      mockQuery.mockResolvedValue([]);
+
+      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+        method: 'GET',
+        query: { unitType: 'InvalidType' },
+      });
+
+      await handler(req, res);
+
+      expect(res._getStatusCode()).toBe(200);
+      expect(mockQuery).toHaveBeenCalledWith({});
+    });
+
+    it('should handle invalid tonnage values', async () => {
+      mockQuery.mockResolvedValue([]);
+
+      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+        method: 'GET',
+        query: { minTonnage: 'not-a-number' },
+      });
+
+      await handler(req, res);
+
+      expect(res._getStatusCode()).toBe(200);
+      expect(mockQuery).toHaveBeenCalledWith({
+        minTonnage: undefined,
+      });
+    });
+  });
+
+  describe('Error handling', () => {
+    it('should return 500 on service error', async () => {
+      mockQuery.mockRejectedValue(new Error('Database connection failed'));
+
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'GET',
         query: {},
@@ -142,62 +338,26 @@ describe('/api/units', () => {
 
       await handler(req, res);
 
-      const data = JSON.parse(res._getData());
-      expect(data.count).toBeDefined();
-      expect(typeof data.count).toBe('number');
-    });
-  });
-
-  // ============================================================================
-  // Response Format
-  // ============================================================================
-  describe('Response Format', () => {
-    it('should return JSON', async () => {
-      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
-        method: 'GET',
-      });
-
-      await handler(req, res);
-
-      expect(() => JSON.parse(res._getData())).not.toThrow();
-    });
-
-    it('should have success field', async () => {
-      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
-        method: 'GET',
-      });
-
-      await handler(req, res);
-
-      const data = JSON.parse(res._getData());
-      expect(data).toHaveProperty('success');
-      expect(typeof data.success).toBe('boolean');
-    });
-
-    it('should have data field on success', async () => {
-      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
-        method: 'GET',
-      });
-
-      await handler(req, res);
-
-      const data = JSON.parse(res._getData());
-      expect(data.success).toBe(true);
-      expect(data).toHaveProperty('data');
-    });
-
-    it('should have error field on failure', async () => {
-      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
-        method: 'GET',
-        query: { id: 'non-existent' },
-      });
-
-      await handler(req, res);
-
+      expect(res._getStatusCode()).toBe(500);
       const data = JSON.parse(res._getData());
       expect(data.success).toBe(false);
-      expect(data).toHaveProperty('error');
+      expect(data.error).toBe('Database connection failed');
+    });
+
+    it('should handle non-Error exceptions', async () => {
+      mockQuery.mockRejectedValue('Unknown error');
+
+      const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
+        method: 'GET',
+        query: {},
+      });
+
+      await handler(req, res);
+
+      expect(res._getStatusCode()).toBe(500);
+      const data = JSON.parse(res._getData());
+      expect(data.success).toBe(false);
+      expect(data.error).toBe('Internal server error');
     });
   });
 });
-
