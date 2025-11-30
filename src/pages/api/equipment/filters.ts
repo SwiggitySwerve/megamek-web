@@ -1,12 +1,76 @@
 /**
- * Equipment Filters API - Stub
- * Temporarily disabled while core specs are being implemented
+ * Equipment Filters API
+ * 
+ * Returns available filter options for the equipment browser.
+ * 
+ * GET /api/equipment/filters - Get all available filter values
+ * 
+ * @spec openspec/specs/equipment-services/spec.md
  */
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { TechBase } from '@/types/enums/TechBase';
+import { RulesLevel } from '@/types/enums/RulesLevel';
+import { EquipmentCategory } from '@/types/equipment';
 
-export default async function handler(_req: NextApiRequest, res: NextApiResponse) {
-  res.status(503).json({ 
-    error: 'Service temporarily unavailable',
-    message: 'Equipment Filters API is being rebuilt with spec-driven architecture'
-  })
+interface FilterOptions {
+  categories: Array<{ value: string; label: string }>;
+  techBases: Array<{ value: string; label: string }>;
+  rulesLevels: Array<{ value: string; label: string }>;
+}
+
+interface ApiResponse {
+  success: boolean;
+  data?: FilterOptions;
+  error?: string;
+}
+
+/**
+ * Format enum value to display label
+ */
+function formatLabel(value: string): string {
+  return value
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+}
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<ApiResponse>
+) {
+  if (req.method !== 'GET') {
+    return res.status(405).json({
+      success: false,
+      error: 'Method not allowed. Use GET.',
+    });
+  }
+
+  try {
+    const filters: FilterOptions = {
+      categories: Object.values(EquipmentCategory).map(value => ({
+        value,
+        label: formatLabel(value),
+      })),
+      techBases: Object.values(TechBase).map(value => ({
+        value,
+        label: formatLabel(value),
+      })),
+      rulesLevels: Object.values(RulesLevel).map(value => ({
+        value,
+        label: formatLabel(value),
+      })),
+    };
+
+    return res.status(200).json({
+      success: true,
+      data: filters,
+    });
+
+  } catch (error) {
+    console.error('Equipment Filters API error:', error);
+    return res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Internal server error',
+    });
+  }
 }

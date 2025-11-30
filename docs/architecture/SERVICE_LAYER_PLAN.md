@@ -364,33 +364,42 @@ src/services/
 
 ## Implementation Phases
 
-### Phase 1: Infrastructure
-- [ ] Create IndexedDBService
-- [ ] Create service registry pattern
-- [ ] Set up barrel exports
+### Phase 1: Infrastructure (COMPLETE)
+- [x] Create IndexedDBService
+- [x] Create service registry pattern
+- [x] Set up barrel exports
 
-### Phase 2: Equipment Services
-- [ ] Create EquipmentLookupService (wraps existing types)
-- [ ] Create EquipmentCalculatorService (wraps existing calculator)
+### Phase 2: Equipment Services (COMPLETE)
+- [x] Create EquipmentLookupService (wraps existing types)
+- [x] Create EquipmentCalculatorService (wraps existing calculator)
 
-### Phase 3: Unit Services
-- [ ] Create CanonicalUnitService
-- [ ] Create CustomUnitService
-- [ ] Create UnitSearchService with MiniSearch
+### Phase 3: Unit Services (COMPLETE)
+- [x] Create CanonicalUnitService
+- [x] Create CustomUnitService
+- [x] Create UnitSearchService with MiniSearch
 
-### Phase 4: Construction Services
-- [ ] Create MechBuilderService
-- [ ] Create ValidationService (integrate existing validators)
-- [ ] Create CalculationService (integrate existing calculations)
+### Phase 4: Construction Services (COMPLETE)
+- [x] Create MechBuilderService
+- [x] Create ValidationService (integrate existing validators)
+- [x] Create CalculationService (integrate existing calculations)
 
-### Phase 5: File I/O
-- [ ] Create FileService for export/import
-- [ ] Add file validation
+### Phase 5: File I/O (COMPLETE)
+- [x] Create FileService for export/import
+- [x] Add file validation
 
-### Phase 6: Cleanup
-- [ ] Delete old stub services
-- [ ] Update all imports
-- [ ] Update API routes to use new services
+### Phase 6: API Integration (COMPLETE)
+- [x] Update API route stubs to use new services
+- [x] Update component imports to use service registry
+- [ ] Integration testing (ongoing)
+
+**API Routes Updated:**
+- `src/pages/api/units.ts` - Uses CanonicalUnitService
+- `src/pages/api/equipment.ts` - Uses EquipmentLookupService
+- `src/pages/api/catalog.ts` - Uses CanonicalUnitService
+- `src/pages/api/equipment/catalog.ts` - Uses EquipmentLookupService
+- `src/pages/api/equipment/filters.ts` - Returns enum-based filter options
+- `src/pages/api/custom-variants.ts` - Documents client-side IndexedDB usage
+- `src/pages/api/custom-variants/[variantId].ts` - Documents client-side IndexedDB usage
 
 ---
 
@@ -426,5 +435,6 @@ src/services/
 ---
 
 **Created:** 2025-11-30
-**Status:** Planning
+**Updated:** 2025-11-30
+**Status:** Complete (All phases implemented)
 

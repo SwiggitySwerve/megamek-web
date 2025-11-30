@@ -1,12 +1,69 @@
 /**
- * Equipment Catalog API - Stub
- * Temporarily disabled while core specs are being implemented
+ * Equipment Catalog API
+ * 
+ * Get all equipment organized by category.
+ * 
+ * GET /api/equipment/catalog - Get all equipment
+ * GET /api/equipment/catalog?type=weapons - Get only weapons
+ * GET /api/equipment/catalog?type=ammunition - Get only ammunition
+ * 
+ * @spec openspec/specs/equipment-services/spec.md
  */
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { equipmentLookupService } from '@/services/equipment/EquipmentLookupService';
 
-export default async function handler(_req: NextApiRequest, res: NextApiResponse) {
-  res.status(503).json({ 
-    error: 'Service temporarily unavailable',
-    message: 'Equipment Catalog API is being rebuilt with spec-driven architecture'
-  })
+interface ApiResponse {
+  success: boolean;
+  data?: unknown;
+  error?: string;
+  count?: number;
+}
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<ApiResponse>
+) {
+  if (req.method !== 'GET') {
+    return res.status(405).json({
+      success: false,
+      error: 'Method not allowed. Use GET.',
+    });
+  }
+
+  try {
+    const { type, search } = req.query;
+
+    let data: unknown[];
+
+    // Filter by type if specified
+    if (type === 'weapons') {
+      data = equipmentLookupService.getAllWeapons();
+    } else if (type === 'ammunition') {
+      data = equipmentLookupService.getAllAmmunition();
+    } else {
+      data = equipmentLookupService.getAllEquipment();
+    }
+
+    // Apply search filter if provided
+    if (search && typeof search === 'string') {
+      const searchLower = search.toLowerCase();
+      data = data.filter((item: unknown) => {
+        const equipment = item as { name: string };
+        return equipment.name.toLowerCase().includes(searchLower);
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data,
+      count: data.length,
+    });
+
+  } catch (error) {
+    console.error('Equipment Catalog API error:', error);
+    return res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Internal server error',
+    });
+  }
 }
