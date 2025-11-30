@@ -4,6 +4,9 @@
 // Import Jest DOM matchers
 import '@testing-library/jest-dom';
 
+// Import BattleTech custom matchers (auto-registers)
+import './src/__tests__/helpers/assertions';
+
 // Set test timeout for database operations
 jest.setTimeout(30000);
 
