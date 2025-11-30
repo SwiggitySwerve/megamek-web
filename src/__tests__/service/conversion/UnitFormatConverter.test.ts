@@ -148,11 +148,12 @@ describe('UnitFormatConverter', () => {
       expect(result.unit?.techBase).toBe(TechBase.CLAN);
     });
 
-    it('should map Mixed tech base', () => {
+    it('should map Mixed tech base to INNER_SPHERE (per spec VAL-ENUM-004)', () => {
+      // Per spec: Components must have binary tech base, MIXED defaults to IS
       const source = createMegaMekLabUnit({ tech_base: 'Mixed' });
       const result = converter.convert(source);
       
-      expect(result.unit?.techBase).toBe(TechBase.MIXED);
+      expect(result.unit?.techBase).toBe(TechBase.INNER_SPHERE);
     });
   });
 

@@ -2,11 +2,15 @@
  * Tech Base Color System
  * 
  * Colors to distinguish Inner Sphere and Clan technology.
+ * Per spec: TechBase is binary (INNER_SPHERE or CLAN only).
+ * Mixed tech is a unit-level mode, not a component tech base value.
  * 
  * @spec openspec/changes/add-customizer-ui-components/specs/color-system/spec.md
+ * @spec openspec/specs/validation-rules-master/spec.md (VAL-ENUM-001, VAL-ENUM-004)
  */
 
 import { TechBase } from '@/types/enums/TechBase';
+import { TechBaseMode } from '@/types/construction/TechBaseConfiguration';
 
 /**
  * Tech base color definitions
@@ -20,13 +24,12 @@ export interface TechBaseColorDefinition {
 }
 
 /**
- * Tech base colors
+ * Component tech base colors (binary: IS or Clan only)
  * 
  * - Inner Sphere: blue (text-blue-400)
  * - Clan: green (text-green-400)
- * - Mixed: purple (text-purple-400)
  */
-export const TECH_BASE_COLORS: Record<string, TechBaseColorDefinition> = {
+export const TECH_BASE_COLORS: Record<TechBase, TechBaseColorDefinition> = {
   [TechBase.INNER_SPHERE]: {
     text: 'text-blue-400',
     bg: 'bg-blue-900/50',
@@ -41,26 +44,21 @@ export const TECH_BASE_COLORS: Record<string, TechBaseColorDefinition> = {
     badge: 'bg-green-700 text-green-100',
     accent: '#4ade80', // green-400
   },
-  [TechBase.MIXED]: {
+};
+
+/**
+ * Unit-level tech base mode colors (for mixed tech display)
+ * Note: This is for UI display of unit modes, not component tech base
+ */
+export const TECH_BASE_MODE_COLORS: Record<TechBaseMode, TechBaseColorDefinition> = {
+  inner_sphere: TECH_BASE_COLORS[TechBase.INNER_SPHERE],
+  clan: TECH_BASE_COLORS[TechBase.CLAN],
+  mixed: {
     text: 'text-purple-400',
     bg: 'bg-purple-900/50',
     border: 'border-purple-700',
     badge: 'bg-purple-700 text-purple-100',
     accent: '#c084fc', // purple-400
-  },
-  [TechBase.MIXED_IS_CHASSIS]: {
-    text: 'text-blue-400',
-    bg: 'bg-blue-900/50',
-    border: 'border-blue-700',
-    badge: 'bg-blue-700 text-blue-100',
-    accent: '#60a5fa',
-  },
-  [TechBase.MIXED_CLAN_CHASSIS]: {
-    text: 'text-green-400',
-    bg: 'bg-green-900/50',
-    border: 'border-green-700',
-    badge: 'bg-green-700 text-green-100',
-    accent: '#4ade80',
   },
 };
 
@@ -76,16 +74,23 @@ const DEFAULT_TECH_COLORS: TechBaseColorDefinition = {
 };
 
 /**
- * Get colors for a tech base
+ * Get colors for a component tech base (binary: IS or Clan)
  */
-export function getTechBaseColors(techBase: TechBase | string): TechBaseColorDefinition {
+export function getTechBaseColors(techBase: TechBase): TechBaseColorDefinition {
   return TECH_BASE_COLORS[techBase] || DEFAULT_TECH_COLORS;
+}
+
+/**
+ * Get colors for a unit-level tech base mode
+ */
+export function getTechBaseModeColors(mode: TechBaseMode): TechBaseColorDefinition {
+  return TECH_BASE_MODE_COLORS[mode] || DEFAULT_TECH_COLORS;
 }
 
 /**
  * Get the badge class string for a tech base
  */
-export function getTechBaseBadgeClass(techBase: TechBase | string): string {
+export function getTechBaseBadgeClass(techBase: TechBase): string {
   const colors = getTechBaseColors(techBase);
   return `${colors.badge} px-2 py-0.5 rounded text-xs font-medium`;
 }
@@ -93,20 +98,30 @@ export function getTechBaseBadgeClass(techBase: TechBase | string): string {
 /**
  * Get short display name for tech base
  */
-export function getTechBaseShortName(techBase: TechBase | string): string {
+export function getTechBaseShortName(techBase: TechBase): string {
   switch (techBase) {
     case TechBase.INNER_SPHERE:
       return 'IS';
     case TechBase.CLAN:
       return 'Clan';
-    case TechBase.MIXED:
-      return 'Mixed';
-    case TechBase.MIXED_IS_CHASSIS:
-      return 'IS/Mixed';
-    case TechBase.MIXED_CLAN_CHASSIS:
-      return 'Clan/Mixed';
     default:
       return String(techBase);
+  }
+}
+
+/**
+ * Get short display name for tech base mode
+ */
+export function getTechBaseModeShortName(mode: TechBaseMode): string {
+  switch (mode) {
+    case 'inner_sphere':
+      return 'IS';
+    case 'clan':
+      return 'Clan';
+    case 'mixed':
+      return 'Mixed';
+    default:
+      return String(mode);
   }
 }
 

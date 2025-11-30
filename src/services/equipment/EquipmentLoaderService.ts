@@ -147,16 +147,21 @@ interface IEquipmentFile<T> {
 /**
  * Convert string to TechBase enum
  */
+/**
+ * Parse tech base from string
+ * Per spec VAL-ENUM-004: Components must have binary tech base (IS or Clan).
+ * MIXED/BOTH from import sources default to INNER_SPHERE.
+ */
 function parseTechBase(value: string): TechBase {
   switch (value.toUpperCase()) {
-    case 'INNER_SPHERE':
-      return TechBase.INNER_SPHERE;
     case 'CLAN':
       return TechBase.CLAN;
+    case 'INNER_SPHERE':
+    case 'IS':
     case 'BOTH':
     case 'MIXED':
-      return TechBase.MIXED;
     default:
+      // Per spec: Default to IS for mixed/unknown
       return TechBase.INNER_SPHERE;
   }
 }
@@ -723,7 +728,8 @@ export class EquipmentLoaderService {
     
     if (filter.techBase) {
       const techBases = Array.isArray(filter.techBase) ? filter.techBase : [filter.techBase];
-      results = results.filter(w => techBases.includes(w.techBase) || w.techBase === TechBase.MIXED);
+      // Per spec: Tech base is binary (IS or Clan), no MIXED
+      results = results.filter(w => techBases.includes(w.techBase));
     }
     
     if (filter.rulesLevel) {

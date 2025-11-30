@@ -195,17 +195,19 @@ function parseHeatSinkType(value: string): HeatSinkType {
 
 /**
  * Parse tech base from string
+ * Per spec VAL-ENUM-004: Components must have binary tech base (IS or Clan).
+ * MIXED/BOTH from import sources default to INNER_SPHERE.
  */
 function parseTechBase(value: string): TechBase {
   switch (value.toUpperCase()) {
-    case 'INNER_SPHERE':
-      return TechBase.INNER_SPHERE;
     case 'CLAN':
       return TechBase.CLAN;
+    case 'INNER_SPHERE':
+    case 'IS':
     case 'BOTH':
     case 'MIXED':
-      return TechBase.MIXED;
     default:
+      // Per spec: Default to IS for mixed/unknown
       return TechBase.INNER_SPHERE;
   }
 }

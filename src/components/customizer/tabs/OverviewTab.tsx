@@ -45,12 +45,10 @@ export function OverviewTab({
   const maxArmorPoints = Math.floor(tonnage * 2 * 3.5);
 
   // Tech base configuration state
+  // Note: TechBase is binary (IS or Clan). Mixed is a unit-level mode, not a TechBase value.
   const [techBaseMode, setTechBaseMode] = useState<TechBaseMode>(() => {
     // Initialize based on the unit's tech base
     if (techBase === TechBase.CLAN) return 'clan';
-    if (techBase === TechBase.MIXED || 
-        techBase === TechBase.MIXED_IS_CHASSIS || 
-        techBase === TechBase.MIXED_CLAN_CHASSIS) return 'mixed';
     return 'inner_sphere';
   });
   

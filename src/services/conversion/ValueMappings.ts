@@ -23,14 +23,18 @@ import { MechConfiguration } from '@/types/unit/BattleMechInterfaces';
 
 /**
  * Map source tech_base string to TechBase enum
+ * Per spec VAL-ENUM-004: Components must have binary tech base (IS or Clan).
+ * MIXED values from source data default to INNER_SPHERE.
  */
 const TECH_BASE_MAP: Record<string, TechBase> = {
   'Inner Sphere': TechBase.INNER_SPHERE,
   'IS': TechBase.INNER_SPHERE,
   'Clan': TechBase.CLAN,
-  'Mixed': TechBase.MIXED,
-  'Mixed (IS Chassis)': TechBase.MIXED_IS_CHASSIS,
-  'Mixed (Clan Chassis)': TechBase.MIXED_CLAN_CHASSIS,
+  // Per spec: Mixed is not a valid component tech base, default to IS
+  'Mixed': TechBase.INNER_SPHERE,
+  'Mixed (IS Chassis)': TechBase.INNER_SPHERE,
+  'Mixed (Clan Chassis)': TechBase.CLAN,
+  'BOTH': TechBase.INNER_SPHERE,
 };
 
 export function mapTechBase(source: string): TechBase {

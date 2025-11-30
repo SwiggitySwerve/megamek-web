@@ -7,7 +7,7 @@
  */
 
 import React from 'react';
-import { TechBase, PRIMARY_TECH_BASES } from '@/types/enums/TechBase';
+import { TechBase, ALL_TECH_BASES } from '@/types/enums/TechBase';
 import { EquipmentCategory } from '@/types/equipment';
 
 interface EquipmentFiltersProps {
@@ -78,7 +78,7 @@ export function EquipmentFilters({
           className="px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white text-sm focus:outline-none focus:border-amber-500"
         >
           <option value="">All Tech</option>
-          {PRIMARY_TECH_BASES.map((tb) => (
+          {ALL_TECH_BASES.map((tb) => (
             <option key={tb} value={tb}>
               {tb}
             </option>
