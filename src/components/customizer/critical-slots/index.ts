@@ -7,6 +7,7 @@
  */
 
 export { CriticalSlotsDisplay } from './CriticalSlotsDisplay';
+export type { LocationData, SlotContent } from './CriticalSlotsDisplay';
 export { LocationGrid } from './LocationGrid';
 export { SlotRow } from './SlotRow';
 export { DraggableEquipment } from './DraggableEquipment';

@@ -9,6 +9,7 @@
 
 export { EquipmentBrowser } from './EquipmentBrowser';
 export { EquipmentTray } from './EquipmentTray';
+export type { TrayEquipmentItem, WeightStats } from './EquipmentTray';
 export { EquipmentRow } from './EquipmentRow';
 export { EquipmentFilters } from './EquipmentFilters';
 
