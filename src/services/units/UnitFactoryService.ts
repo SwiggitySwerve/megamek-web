@@ -569,23 +569,27 @@ export class UnitFactoryService {
       rightLeg: 0,
     };
     
-    // Mutable copy for building
-    const mutableResult = { ...result } as Record<string, number>;
-    
     for (const [location, value] of Object.entries(allocation)) {
-      const camelKey = this.locationToCamelCase(location);
+      const camelKey = this.locationToCamelCase(location) as keyof IArmorAllocation;
       
       if (typeof value === 'number') {
-        mutableResult[camelKey] = value;
+        if (camelKey in result) {
+          (result as Record<keyof IArmorAllocation, number>)[camelKey] = value;
+        }
       } else if (typeof value === 'object' && value !== null) {
         // Front armor
-        mutableResult[camelKey] = value.front;
+        if (camelKey in result) {
+          (result as Record<keyof IArmorAllocation, number>)[camelKey] = value.front;
+        }
         // Rear armor (only for torso locations)
-        mutableResult[`${camelKey}Rear`] = value.rear;
+        const rearKey = `${camelKey}Rear` as keyof IArmorAllocation;
+        if (rearKey in result) {
+          (result as Record<keyof IArmorAllocation, number>)[rearKey] = value.rear;
+        }
       }
     }
     
-    return mutableResult as IArmorAllocation;
+    return result;
   }
   
   /**
