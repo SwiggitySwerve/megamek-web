@@ -8,6 +8,7 @@ temp-build/
 .swc/
 *.tsbuildinfo
 coverage/
+test-results/
 
 # Logs
 *.log

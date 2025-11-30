@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import mockUnitTechBases from '../../../../public/mockdata/mockUnitTechBases.json';
+import { ALL_TECH_BASES } from '@/types/enums/TechBase';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
@@ -7,7 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    res.status(200).json(mockUnitTechBases);
+    res.status(200).json(ALL_TECH_BASES);
   } catch (error) {
     console.error('Error fetching unit tech bases:', error);
     res.status(500).json({ message: 'Internal server error' });

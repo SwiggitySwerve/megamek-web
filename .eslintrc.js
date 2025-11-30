@@ -69,6 +69,5 @@ module.exports = {
     "**/.next/**",
     "**/out/**",
     "**/dist/**",
-    "battletech-editor-app/src/app_disabled/**",
   ],
 }; 

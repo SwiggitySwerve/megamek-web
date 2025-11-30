@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import mockEquipmentEras from '../../../../public/mockdata/mockEquipmentEras.json';
+import { ALL_ERAS } from '@/types/enums/Era';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
@@ -7,7 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    res.status(200).json(mockEquipmentEras);
+    res.status(200).json(ALL_ERAS);
   } catch (error) {
     console.error('Error fetching equipment eras:', error);
     res.status(500).json({ message: 'Internal server error' });
