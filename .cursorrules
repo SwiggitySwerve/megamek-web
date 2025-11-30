@@ -5,10 +5,18 @@
 **ALWAYS reference BattleTech construction rules when working on this project.**
 
 ### **Primary Rules Documentation**
-- **Master Index**: `docs/battletech/agents/00-INDEX.md`
-- **Construction Rules**: `docs/battletech/agents/01-construction-rules.md`
-- **Quick Reference**: `docs/battletech/reference/quick-reference.md`
+- **OpenSpec Specs**: `openspec/specs/` (SINGLE SOURCE OF TRUTH)
+- **Constants**: `constants/BattleTechConstructionRules.ts`
 - **Full Guides**: `docs/battletech/battletech_*.md`
+
+### **Viewing Specs**
+```bash
+# List all specs
+npx openspec list --specs
+
+# View a specific spec
+npx openspec show movement-system --type spec
+```
 
 ### **When to Reference Rules**
 - Implementing or modifying construction calculations
@@ -83,16 +91,24 @@ All validation MUST enforce BattleTech rules:
 
 ### **Rules Documentation**
 ```
-docs/battletech/
-├── agents/              # Structured rule documentation
-│   ├── 00-INDEX.md      # START HERE - Master index
-│   └── *.md             # Category-specific rules
-├── reference/           # Quick lookup tables
-└── battletech_*.md      # Comprehensive guides
+openspec/specs/           # SINGLE SOURCE OF TRUTH
+├── construction-rules-core/
+├── engine-system/
+├── gyro-system/
+├── armor-system/
+├── movement-system/
+├── heat-sink-system/
+├── weapon-system/
+├── equipment-database/
+└── ...
+
+docs/battletech/          # Supplementary guides
+├── README.md             # Points to OpenSpec
+└── battletech_*.md       # Comprehensive guides
 ```
 
 ### **Before Making Changes**
-1. Read relevant rules documentation
+1. Read relevant OpenSpec spec (`npx openspec show <spec-name> --type spec`)
 2. Check `constants/BattleTechConstructionRules.ts`
 3. Review validation services
 4. Ensure changes match official rules
@@ -102,7 +118,7 @@ docs/battletech/
 ## ⚠️ **Important Reminders**
 
 1. **BattleTech Rules are IMMUTABLE** - They come from the official TechManual
-2. **Single Source of Truth** - `BattleTechConstructionRules.ts` contains all constants
+2. **Single Source of Truth** - OpenSpec specs + `BattleTechConstructionRules.ts`
 3. **Always Validate** - Use validation services, don't bypass them
 4. **Type Safety First** - No `as any`, use proper types
 5. **SOLID Architecture** - Follow established patterns
@@ -119,12 +135,11 @@ docs/battletech/
 - **Min Total Heat Sinks**: MAX(10, heat-generating weapons)
 
 ### **Key Files**
-- Rules: `constants/BattleTechConstructionRules.ts`
+- Specs: `openspec/specs/`
+- Constants: `constants/BattleTechConstructionRules.ts`
 - Validation: `services/ConstructionRulesValidator.ts`
-- Documentation: `docs/battletech/agents/00-INDEX.md`
 
 ---
 
-**Last Updated**: 2025-01-XX
-**Version**: 1.1
-
+**Last Updated**: 2025-11-30
+**Version**: 2.0
