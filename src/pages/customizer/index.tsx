@@ -37,10 +37,15 @@ import { ResetConfirmationDialog } from '@/components/customizer/dialogs/ResetCo
 
 // Utils
 import { ValidationStatus } from '@/utils/colors/statusColors';
+import { calculateEngineWeight, calculateEngineRating } from '@/utils/construction/engineCalculations';
+import { calculateGyroWeight } from '@/utils/construction/gyroCalculations';
+import { ceilToHalfTon } from '@/utils/physical/weightUtils';
 
 // Types
 import { MechLocation } from '@/types/construction';
 import { IEquipmentItem, EquipmentCategory } from '@/types/equipment';
+import { EngineType } from '@/types/construction/EngineType';
+import { GyroType } from '@/types/construction/GyroType';
 
 /**
  * Main customizer page component
@@ -103,19 +108,49 @@ export default function CustomizerPage() {
     if (!tab) return null;
     const tonnage = tab.tonnage;
     const maxArmorPoints = Math.floor(tonnage * 2 * 3.5);
-    const usedWeight = unitEquipment.reduce((sum, eq) => sum + eq.weight, 0);
-    const usedSlots = unitEquipment.reduce((sum, eq) => sum + eq.criticalSlots, 0);
+    
+    // Calculate base system component weights
+    // Walk MP 4 is default, giving engine rating = tonnage × walkMP
+    const walkMP = 4;
+    const engineRating = calculateEngineRating(tonnage, walkMP);
+    
+    // Standard Fusion Engine weight
+    const engineWeight = calculateEngineWeight(engineRating, EngineType.STANDARD);
+    
+    // Standard Gyro weight (ceil(rating/100))
+    const gyroWeight = calculateGyroWeight(engineRating, GyroType.STANDARD);
+    
+    // Internal Structure (10% of tonnage for standard)
+    const structureWeight = ceilToHalfTon(tonnage * 0.10);
+    
+    // Cockpit (3 tons standard)
+    const cockpitWeight = 3;
+    
+    // Base system weight total
+    const baseSystemWeight = engineWeight + gyroWeight + structureWeight + cockpitWeight;
+    
+    // Equipment weight from added equipment
+    const equipmentWeight = unitEquipment.reduce((sum, eq) => sum + eq.weight, 0);
+    
+    // Total used weight
+    const totalUsedWeight = baseSystemWeight + equipmentWeight;
+    
+    // Critical slots from equipment only (system slots are fixed)
+    const equipmentSlots = unitEquipment.reduce((sum, eq) => sum + eq.criticalSlots, 0);
+    // System slots: engine (6 CT for standard), gyro (4), cockpit (6 head slots), actuators (~16)
+    const systemSlots = 6 + 4 + 6 + 16; // ~32 slots for base systems
     const totalSlots = 78; // Standard BattleMech has 78 critical slots
+    const usedSlots = systemSlots + equipmentSlots;
     
     return {
       name: tab.name,
       tonnage: tab.tonnage,
       techBase: tab.techBase,
-      walkMP: 4, // Placeholder - would come from engine/tonnage calculation
-      runMP: 6,
+      walkMP,
+      runMP: Math.ceil(walkMP * 1.5),
       jumpMP: 0,
-      weightUsed: usedWeight,
-      weightRemaining: tonnage - usedWeight,
+      weightUsed: totalUsedWeight,
+      weightRemaining: tonnage - totalUsedWeight,
       armorPoints: 0, // Placeholder - would come from armor allocation
       maxArmorPoints,
       criticalSlotsUsed: usedSlots,
