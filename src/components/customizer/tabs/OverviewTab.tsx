@@ -47,7 +47,6 @@ export function OverviewTab({
   className = '',
 }: OverviewTabProps) {
   // Calculate derived values
-  const maxArmorPoints = Math.floor(tonnage * 2 * 3.5);
   const calculatedEngineRating = engineRating ?? tonnage * walkMP;
 
   // Get tech base configuration from store (persisted state)
@@ -94,69 +93,15 @@ export function OverviewTab({
 
   return (
     <div className={`space-y-6 p-4 ${className}`}>
-      {/* Top row: Configuration (full width) */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left: Combined Tech Base + Component Configuration */}
-        <TechBaseConfiguration
-          mode={tab.techBaseMode}
-          components={tab.componentTechBases}
-          componentValues={componentValues}
-          onModeChange={handleModeChange}
-          onComponentChange={handleComponentChange}
-          readOnly={readOnly}
-        />
-
-        {/* Right: Protection + Quick Stats */}
-        <div className="space-y-4">
-          {/* Protection Summary */}
-          <div className="bg-slate-800 rounded-lg border border-slate-700 p-4">
-            <h3 className="text-lg font-semibold text-white mb-3">Protection</h3>
-            <dl className="space-y-2 text-sm">
-              <div className="flex justify-between items-center">
-                <dt className="text-slate-400">Armor Type</dt>
-                <dd className="text-white">Standard</dd>
-              </div>
-              <div className="flex justify-between items-center">
-                <dt className="text-slate-400">Total Armor</dt>
-                <dd className="text-white">
-                  <span className="text-slate-500">0</span>
-                  <span className="text-slate-600 mx-1">/</span>
-                  <span>{maxArmorPoints}</span>
-                </dd>
-              </div>
-              <div className="flex justify-between items-center">
-                <dt className="text-slate-400">Heat Sinks</dt>
-                <dd className="text-white">10 Single</dd>
-              </div>
-            </dl>
-          </div>
-
-          {/* Quick Info */}
-          <div className="bg-slate-800 rounded-lg border border-slate-700 p-4">
-            <h3 className="text-lg font-semibold text-white mb-3">Quick Info</h3>
-            <dl className="space-y-2 text-sm">
-              <div className="flex justify-between items-center">
-                <dt className="text-slate-400">Configuration</dt>
-                <dd className="text-white">Biped</dd>
-              </div>
-              <div className="flex justify-between items-center">
-                <dt className="text-slate-400">Weight Class</dt>
-                <dd className="text-white">
-                  {tonnage <= 35 ? 'Light' : tonnage <= 55 ? 'Medium' : tonnage <= 75 ? 'Heavy' : 'Assault'}
-                </dd>
-              </div>
-              <div className="flex justify-between items-center">
-                <dt className="text-slate-400">Engine Rating</dt>
-                <dd className="text-white">{calculatedEngineRating}</dd>
-              </div>
-              <div className="flex justify-between items-center">
-                <dt className="text-slate-400">Walk / Run / Jump</dt>
-                <dd className="text-white">{walkMP} / {Math.ceil(walkMP * 1.5)} / 0</dd>
-              </div>
-            </dl>
-          </div>
-        </div>
-      </div>
+      {/* Configuration Panel */}
+      <TechBaseConfiguration
+        mode={tab.techBaseMode}
+        components={tab.componentTechBases}
+        componentValues={componentValues}
+        onModeChange={handleModeChange}
+        onComponentChange={handleComponentChange}
+        readOnly={readOnly}
+      />
 
       {/* Equipment Summary */}
       <div className="bg-slate-800 rounded-lg border border-slate-700 p-4">
