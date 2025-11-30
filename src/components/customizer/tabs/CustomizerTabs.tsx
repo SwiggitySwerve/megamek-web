@@ -6,7 +6,8 @@
  * @spec openspec/changes/add-customizer-ui-components/specs/customizer-tabs/spec.md
  */
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
+import { useTabKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
 
 /**
  * Customizer tab configuration
@@ -58,16 +59,28 @@ export function CustomizerTabs({
   readOnly = false,
   className = '',
 }: CustomizerTabsProps) {
+  const handleKeyDown = useTabKeyboardNavigation(tabs, activeTab, onTabChange);
+  
   return (
-    <div className={`flex bg-slate-800 border-b border-slate-700 ${className}`}>
+    <div 
+      className={`flex bg-slate-800 border-b border-slate-700 ${className}`}
+      role="tablist"
+      aria-label="Unit configuration tabs"
+      onKeyDown={handleKeyDown}
+    >
       {tabs.map((tab) => (
         <button
           key={tab.id}
+          role="tab"
+          aria-selected={tab.id === activeTab}
+          aria-controls={`tabpanel-${tab.id}`}
+          tabIndex={tab.id === activeTab ? 0 : -1}
           onClick={() => !tab.disabled && onTabChange(tab.id)}
           disabled={tab.disabled}
           className={`
             flex items-center gap-2 px-4 py-2.5 text-sm font-medium
             border-b-2 transition-colors
+            focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-inset
             ${tab.id === activeTab
               ? 'text-amber-400 border-amber-400'
               : 'text-slate-400 border-transparent hover:text-white hover:border-slate-500'

@@ -6,7 +6,7 @@
  * @spec openspec/changes/add-customizer-ui-components/specs/critical-slots-display/spec.md
  */
 
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { SlotContent } from './CriticalSlotsDisplay';
 import { 
   getSlotColors, 
@@ -60,8 +60,9 @@ function getSlotContentClasses(slot: SlotContent): string {
 
 /**
  * Single critical slot row
+ * Memoized for performance with many slots
  */
-export function SlotRow({
+export const SlotRow = memo(function SlotRow({
   slot,
   isAssignable,
   isSelected,
@@ -136,8 +137,13 @@ export function SlotRow({
   
   return (
     <div
+      role="gridcell"
+      tabIndex={0}
+      aria-label={slot.name ? `Slot ${slot.index + 1}: ${slot.name}` : `Empty slot ${slot.index + 1}`}
+      aria-selected={isSelected}
       className={`
         relative flex items-center border transition-all cursor-pointer
+        focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-inset
         ${contentClasses}
         ${dynamicClasses}
         ${borderRadius}
@@ -145,6 +151,17 @@ export function SlotRow({
       `}
       onClick={onClick}
       onDoubleClick={handleDoubleClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick();
+        } else if (e.key === 'Delete' || e.key === 'Backspace') {
+          if (slot.isRemovable) {
+            e.preventDefault();
+            onRemove();
+          }
+        }
+      }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onDragOver={handleDragOver}
@@ -168,5 +185,5 @@ export function SlotRow({
       )}
     </div>
   );
-}
+});
 

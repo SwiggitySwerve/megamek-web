@@ -6,4 +6,5 @@
 
 export * from './useUnit';
 export * from './useEquipmentBrowser';
+export * from './useKeyboardNavigation';
 

@@ -6,7 +6,7 @@
  * @spec openspec/changes/add-customizer-ui-components/specs/equipment-browser/spec.md
  */
 
-import React from 'react';
+import React, { memo } from 'react';
 import { IEquipmentItem, EquipmentCategory } from '@/types/equipment';
 import { TechBaseBadge } from '../shared/TechBaseBadge';
 import { categoryToColorType, getEquipmentColors } from '@/utils/colors/equipmentColors';
@@ -48,8 +48,9 @@ function getCategoryLabel(category: EquipmentCategory): string {
 
 /**
  * Equipment table row
+ * Memoized for performance when rendering large lists
  */
-export function EquipmentRow({
+export const EquipmentRow = memo(function EquipmentRow({
   equipment,
   onAdd,
 }: EquipmentRowProps) {
@@ -106,5 +107,5 @@ export function EquipmentRow({
       </td>
     </tr>
   );
-}
+});
 

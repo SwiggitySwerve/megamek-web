@@ -103,10 +103,22 @@ export function ArmorLocation({
   
   return (
     <g
-      className="cursor-pointer"
+      role="button"
+      tabIndex={0}
+      aria-label={`${location} armor: ${data?.current ?? 0} points${showRear ? `, rear: ${data?.rear ?? 0} points` : ''}`}
+      aria-pressed={isSelected}
+      className="cursor-pointer focus:outline-none"
       onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick();
+        }
+      }}
       onMouseEnter={() => onHover(true)}
       onMouseLeave={() => onHover(false)}
+      onFocus={() => onHover(true)}
+      onBlur={() => onHover(false)}
     >
       {/* Main section */}
       <rect
