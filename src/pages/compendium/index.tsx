@@ -2,7 +2,11 @@
  * Rules Compendium Page
  * Reference for BattleTech construction rules and game mechanics.
  */
-import Link from 'next/link';
+import React from 'react';
+import {
+  PageLayout,
+  Card,
+} from '@/components/ui';
 
 interface RuleSection {
   id: string;
@@ -23,11 +27,7 @@ const ruleSections: RuleSection[] = [
     id: 'structure',
     title: 'Internal Structure',
     description: 'Structure types and weight calculations',
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
-      </svg>
-    ),
+    icon: <StructureIcon />,
     items: [
       {
         title: 'Standard Structure',
@@ -55,11 +55,7 @@ const ruleSections: RuleSection[] = [
     id: 'engine',
     title: 'Engine',
     description: 'Engine types and rating calculations',
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-      </svg>
-    ),
+    icon: <LightningIcon />,
     items: [
       {
         title: 'Engine Rating',
@@ -88,11 +84,7 @@ const ruleSections: RuleSection[] = [
     id: 'armor',
     title: 'Armor',
     description: 'Armor types and maximum allocations',
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-      </svg>
-    ),
+    icon: <ShieldIcon />,
     items: [
       {
         title: 'Maximum Armor Formula',
@@ -122,11 +114,7 @@ const ruleSections: RuleSection[] = [
     id: 'heatsinks',
     title: 'Heat Sinks',
     description: 'Heat management and dissipation',
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z" />
-      </svg>
-    ),
+    icon: <FlameIcon />,
     items: [
       {
         title: 'Minimum Heat Sinks',
@@ -151,11 +139,7 @@ const ruleSections: RuleSection[] = [
     id: 'gyro',
     title: 'Gyro',
     description: 'Gyro types and stability',
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-      </svg>
-    ),
+    icon: <GyroIcon />,
     items: [
       {
         title: 'Standard Gyro',
@@ -180,11 +164,7 @@ const ruleSections: RuleSection[] = [
     id: 'movement',
     title: 'Movement',
     description: 'Movement points and jump jets',
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
-      </svg>
-    ),
+    icon: <RocketIcon />,
     items: [
       {
         title: 'Running MP',
@@ -209,11 +189,7 @@ const ruleSections: RuleSection[] = [
     id: 'criticals',
     title: 'Critical Slots',
     description: 'Critical slot allocation by location',
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-      </svg>
-    ),
+    icon: <ListIcon />,
     items: [
       {
         title: 'Head',
@@ -241,18 +217,14 @@ const ruleSections: RuleSection[] = [
 
 export default function CompendiumPage() {
   return (
-    <div className="min-h-screen bg-slate-900 p-6">
-      <div className="max-w-5xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Rules Compendium</h1>
-          <p className="text-slate-400">
-            Quick reference for BattleTech TechManual construction rules
-          </p>
-        </div>
-
-        {/* Navigation */}
-        <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 mb-8">
+    <PageLayout
+      title="Rules Compendium"
+      subtitle="Quick reference for BattleTech TechManual construction rules"
+      maxWidth="narrow"
+    >
+      {/* Navigation */}
+      <Card className="mb-8">
+        <nav aria-label="Compendium sections">
           <div className="flex flex-wrap gap-2">
             {ruleSections.map((section) => (
               <a
@@ -264,56 +236,116 @@ export default function CompendiumPage() {
               </a>
             ))}
           </div>
-        </div>
+        </nav>
+      </Card>
 
-        {/* Rule Sections */}
-        <div className="space-y-8">
-          {ruleSections.map((section) => (
-            <div
-              key={section.id}
-              id={section.id}
-              className="bg-slate-800/30 border border-slate-700 rounded-xl overflow-hidden scroll-mt-6"
-            >
-              {/* Section Header */}
-              <div className="bg-slate-800/50 px-6 py-4 border-b border-slate-700">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-rose-600/20 text-rose-400">
-                    {section.icon}
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-semibold text-white">{section.title}</h2>
-                    <p className="text-slate-400 text-sm">{section.description}</p>
-                  </div>
+      {/* Rule Sections */}
+      <div className="space-y-8">
+        {ruleSections.map((section) => (
+          <section
+            key={section.id}
+            id={section.id}
+            className="bg-slate-800/30 border border-slate-700 rounded-xl overflow-hidden scroll-mt-6"
+            aria-labelledby={`${section.id}-title`}
+          >
+            {/* Section Header */}
+            <div className="bg-slate-800/50 px-6 py-4 border-b border-slate-700">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-rose-600/20 text-rose-400">
+                  {section.icon}
+                </div>
+                <div>
+                  <h2 id={`${section.id}-title`} className="text-xl font-semibold text-white">
+                    {section.title}
+                  </h2>
+                  <p className="text-slate-400 text-sm">{section.description}</p>
                 </div>
               </div>
-
-              {/* Section Items */}
-              <div className="divide-y divide-slate-700/50">
-                {section.items.map((item, index) => (
-                  <div key={index} className="px-6 py-4">
-                    <h3 className="font-medium text-amber-400 mb-1">{item.title}</h3>
-                    <p className="text-slate-300 text-sm leading-relaxed">{item.content}</p>
-                    {item.formula && (
-                      <div className="mt-2 inline-block px-3 py-1 bg-slate-700/50 rounded font-mono text-sm text-cyan-400">
-                        {item.formula}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
             </div>
-          ))}
-        </div>
 
-        {/* Source Reference */}
-        <div className="mt-12 bg-slate-800/30 border border-slate-700 rounded-xl p-6 text-center">
-          <p className="text-slate-400 text-sm">
-            Rules reference based on BattleTech TechManual.
-            <br />
-            For complete rules, consult the official rulebooks.
-          </p>
-        </div>
+            {/* Section Items */}
+            <div className="divide-y divide-slate-700/50">
+              {section.items.map((item, index) => (
+                <article key={index} className="px-6 py-4">
+                  <h3 className="font-medium text-amber-400 mb-1">{item.title}</h3>
+                  <p className="text-slate-300 text-sm leading-relaxed">{item.content}</p>
+                  {item.formula && (
+                    <div className="mt-2 inline-block px-3 py-1 bg-slate-700/50 rounded font-mono text-sm text-cyan-400">
+                      {item.formula}
+                    </div>
+                  )}
+                </article>
+              ))}
+            </div>
+          </section>
+        ))}
       </div>
-    </div>
+
+      {/* Source Reference */}
+      <Card variant="dark" className="mt-12 text-center">
+        <p className="text-slate-400 text-sm">
+          Rules reference based on BattleTech TechManual.
+          <br />
+          For complete rules, consult the official rulebooks.
+        </p>
+      </Card>
+    </PageLayout>
+  );
+}
+
+// Icon Components
+function StructureIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+    </svg>
+  );
+}
+
+function LightningIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+    </svg>
+  );
+}
+
+function ShieldIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+    </svg>
+  );
+}
+
+function FlameIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z" />
+    </svg>
+  );
+}
+
+function GyroIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+    </svg>
+  );
+}
+
+function RocketIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
+    </svg>
+  );
+}
+
+function ListIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+    </svg>
   );
 }

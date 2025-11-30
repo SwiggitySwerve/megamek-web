@@ -162,7 +162,8 @@ export default function EquipmentListPage() {
       <PageError
         title="Error Loading Equipment"
         message={error}
-        backLink={{ href: '/', label: 'Go Home' }}
+        backLink="/"
+        backLabel="Go Home"
       />
     );
   }
@@ -183,6 +184,7 @@ export default function EquipmentListPage() {
               value={filters.search}
               onChange={(e) => handleFilterChange('search', e.target.value)}
               accent="cyan"
+              aria-label="Search equipment by name"
             />
           </div>
 
@@ -193,6 +195,7 @@ export default function EquipmentListPage() {
             options={categoryOptions}
             placeholder="All Categories"
             accent="cyan"
+            aria-label="Filter by equipment category"
           />
 
           {/* Tech Base */}
@@ -202,6 +205,7 @@ export default function EquipmentListPage() {
             options={techBaseOptions}
             placeholder="All Tech Bases"
             accent="cyan"
+            aria-label="Filter by tech base"
           />
 
           {/* Clear Filters */}
