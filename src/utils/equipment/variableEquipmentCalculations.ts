@@ -1,10 +1,18 @@
 /**
  * Variable Equipment Calculations
  * 
- * Calculation functions for equipment with variable properties.
- * All formulas derived from BattleTech TechManual.
+ * @deprecated This entire file is deprecated. Use EquipmentCalculatorService instead.
  * 
- * @spec openspec/changes/add-variable-equipment-calculations
+ * The unified formula system in services/equipment/ now handles all variable equipment
+ * calculations through a data-driven approach. These functions are preserved only for
+ * backwards compatibility and will be removed in a future version.
+ * 
+ * Migration:
+ * - OLD: calculateTargetingComputer(context)
+ * - NEW: equipmentCalculatorService.calculateProperties('targeting-computer-is', context)
+ * 
+ * @see src/services/equipment/EquipmentCalculatorService.ts
+ * @see src/services/equipment/FormulaRegistry.ts
  */
 
 import { TechBase } from '../../types/enums/TechBase';
@@ -296,198 +304,4 @@ export function calculateJumpJetWeight(
   return jumpMP * weightPerJet;
 }
 
-// ============================================================================
-// PHYSICAL WEAPONS
-// @deprecated Use EquipmentCalculatorService with FormulaRegistry instead
-// These functions are preserved for backwards compatibility but will be removed
-// in a future version. Migrate to the unified formula system.
-// ============================================================================
-
-/**
- * Calculate Hatchet properties
- * Damage = floor(tonnage / 5)
- * Weight = ceil(tonnage / 15)
- * Slots = ceil(tonnage / 15)
- * 
- * @deprecated Use EquipmentCalculatorService.calculateProperties('hatchet', { tonnage })
- */
-export function calculateHatchet(
-  mechTonnage: number
-): ICalculatedEquipmentProperties {
-  const weight = Math.ceil(mechTonnage / 15);
-  const damage = Math.floor(mechTonnage / 5);
-
-  return {
-    weight,
-    criticalSlots: weight,
-    costCBills: weight * 5000,
-    damage,
-  };
-}
-
-/**
- * Calculate Sword properties
- * Damage = floor(tonnage / 10) + 1
- * Weight = ceil(tonnage / 15)
- * Slots = ceil(tonnage / 15)
- * 
- * @deprecated Use EquipmentCalculatorService.calculateProperties('sword', { tonnage })
- */
-export function calculateSword(
-  mechTonnage: number
-): ICalculatedEquipmentProperties {
-  const weight = Math.ceil(mechTonnage / 15);
-  const damage = Math.floor(mechTonnage / 10) + 1;
-
-  return {
-    weight,
-    criticalSlots: weight,
-    costCBills: weight * 10000,
-    damage,
-  };
-}
-
-/**
- * Calculate Mace properties
- * Damage = floor(tonnage / 4)
- * Weight = ceil(tonnage / 10)
- * Slots = ceil(tonnage / 10)
- * 
- * @deprecated Use EquipmentCalculatorService.calculateProperties('mace', { tonnage })
- */
-export function calculateMace(
-  mechTonnage: number
-): ICalculatedEquipmentProperties {
-  const weight = Math.ceil(mechTonnage / 10);
-  const damage = Math.floor(mechTonnage / 4);
-
-  return {
-    weight,
-    criticalSlots: weight,
-    costCBills: weight * 10000,
-    damage,
-  };
-}
-
-/**
- * Calculate Lance properties
- * Damage = floor(tonnage / 5), doubled when charging
- * Weight = ceil(tonnage / 20)
- * Slots = ceil(tonnage / 20)
- * 
- * @deprecated Use EquipmentCalculatorService.calculateProperties('lance', { tonnage })
- */
-export function calculateLance(
-  mechTonnage: number
-): ICalculatedEquipmentProperties {
-  const weight = Math.ceil(mechTonnage / 20);
-  const damage = Math.floor(mechTonnage / 5);
-
-  return {
-    weight,
-    criticalSlots: weight,
-    costCBills: weight * 10000,
-    damage,
-  };
-}
-
-/**
- * Calculate Claws properties (Clan)
- * Damage = floor(tonnage / 7)
- * Weight = ceil(tonnage / 15)
- * Slots = ceil(tonnage / 15)
- */
-export function calculateClaws(
-  mechTonnage: number
-): ICalculatedEquipmentProperties {
-  const weight = Math.ceil(mechTonnage / 15);
-  const damage = Math.floor(mechTonnage / 7);
-
-  return {
-    weight,
-    criticalSlots: weight,
-    costCBills: weight * 10000,
-    damage,
-  };
-}
-
-/**
- * Calculate Talons properties
- * Damage bonus = floor(tonnage / 5) added to kick
- * Weight = ceil(tonnage / 15)
- * Slots = ceil(tonnage / 15)
- */
-export function calculateTalons(
-  mechTonnage: number
-): ICalculatedEquipmentProperties {
-  const weight = Math.ceil(mechTonnage / 15);
-  const damageBonus = Math.floor(mechTonnage / 5);
-
-  return {
-    weight,
-    criticalSlots: weight,
-    costCBills: weight * 10000,
-    damage: damageBonus,
-  };
-}
-
-/**
- * Calculate Retractable Blade properties
- * Damage = floor(tonnage / 10)
- * Weight = ceil(tonnage / 20)
- * Slots = ceil(tonnage / 20)
- */
-export function calculateRetractableBlade(
-  mechTonnage: number
-): ICalculatedEquipmentProperties {
-  const weight = Math.ceil(mechTonnage / 20);
-  const damage = Math.floor(mechTonnage / 10);
-
-  return {
-    weight,
-    criticalSlots: weight,
-    costCBills: weight * 10000,
-    damage,
-  };
-}
-
-/**
- * Calculate Flail properties
- * Damage = floor(tonnage / 4)
- * Weight = ceil(tonnage / 10)
- * Slots = ceil(tonnage / 10)
- */
-export function calculateFlail(
-  mechTonnage: number
-): ICalculatedEquipmentProperties {
-  const weight = Math.ceil(mechTonnage / 10);
-  const damage = Math.floor(mechTonnage / 4);
-
-  return {
-    weight,
-    criticalSlots: weight,
-    costCBills: weight * 15000,
-    damage,
-  };
-}
-
-/**
- * Calculate Wrecking Ball properties
- * Damage = floor(tonnage / 5)
- * Weight = ceil(tonnage / 10)
- * Slots = ceil(tonnage / 10)
- */
-export function calculateWreckingBall(
-  mechTonnage: number
-): ICalculatedEquipmentProperties {
-  const weight = Math.ceil(mechTonnage / 10);
-  const damage = Math.floor(mechTonnage / 5);
-
-  return {
-    weight,
-    criticalSlots: weight,
-    costCBills: weight * 20000,
-    damage,
-  };
-}
 
