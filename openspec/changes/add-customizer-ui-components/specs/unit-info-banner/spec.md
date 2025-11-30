@@ -25,55 +25,58 @@ The banner SHALL display unit name and basic classification on the left.
 - **AND** text is slate-100 (heading) and slate-400 (subtitle)
 
 ### Requirement: Statistics Grid
-The banner SHALL display key unit statistics in a horizontal grid.
+The banner SHALL display key unit statistics in a horizontal grid using "current / max" format for capacity-based stats.
 
-#### Scenario: Movement stat
-- **WHEN** movement stat renders
-- **THEN** label shows Movement
-- **AND** value shows condensed format (e.g., 4/6/3)
-- **AND** unit label shows MP
+#### Scenario: Movement stats display
+- **WHEN** movement stats render
+- **THEN** Walk MP shows as single value (e.g., "4")
+- **AND** Run MP shows as single value (e.g., "6")
+- **AND** Jump MP shows as single value (e.g., "0")
+- **AND** each has its own labeled cell
 
-#### Scenario: Weight stat
+#### Scenario: Weight stat with capacity format
 - **WHEN** weight stat renders
-- **THEN** label shows Weight
-- **AND** value shows usedTonnage/totalTonnage format
-- **AND** unit label shows tons
-- **AND** value is red if overweight, normal otherwise
+- **THEN** label shows "WEIGHT"
+- **AND** value shows "usedTonnage / maxTonnage" format (e.g., "45.5t / 50.0t")
+- **AND** value text is red if used exceeds max (overweight)
+- **AND** value text is yellow if within 0.5 tons of max
+- **AND** value text is white/normal otherwise
 
-#### Scenario: Critical slots stat
+#### Scenario: Critical slots stat with capacity format
 - **WHEN** critical slots stat renders
-- **THEN** label shows Critical
-- **AND** value shows used/total format
-- **AND** unit label shows slots
+- **THEN** label shows "SLOTS"
+- **AND** value shows "used / total" format (e.g., "16 / 78")
+- **AND** total is 78 for standard BattleMech
+- **AND** value text is red if used exceeds total
 
-#### Scenario: Heat sinks stat
-- **WHEN** heat sinks stat renders
-- **THEN** label shows Heat
-- **AND** value shows total heat sinks count
-- **AND** unit label shows sinks
-
-#### Scenario: Heat status stat
-- **WHEN** heat status stat renders
-- **THEN** label shows Heat
-- **AND** value shows generation/dissipation format
-- **AND** value is red if generation exceeds dissipation, green otherwise
-- **AND** unit label shows gen/diss
-
-#### Scenario: Armor stat
+#### Scenario: Armor stat with capacity format
 - **WHEN** armor stat renders
-- **THEN** label shows Armor
-- **AND** value shows allocated/maximum format
-- **AND** unit label shows points
+- **THEN** label shows "ARMOR"
+- **AND** value shows "allocated / maximum" format (e.g., "200 / 350")
+- **AND** maximum is calculated from tonnage (2 × internal structure points)
+
+#### Scenario: Heat stat with balance format
+- **WHEN** heat stat renders
+- **THEN** label shows "HEAT"
+- **AND** value shows "generated / dissipation" format (e.g., "15 / 10")
+- **AND** value text is red if generated exceeds dissipation (overheating)
+- **AND** value text is green if dissipation meets or exceeds generation
 
 ### Requirement: Stat Cell Styling
-Each statistic cell SHALL use consistent vertical layout.
+Each statistic cell SHALL use consistent vertical layout with clear labeling.
 
 #### Scenario: Cell structure
 - **WHEN** stat cell renders
-- **THEN** label appears at top (slate-400, text-xs)
-- **AND** value appears in middle (font-medium, appropriate color)
-- **AND** unit label appears at bottom (slate-500, text-xs)
-- **AND** cell is centered with appropriate spacing
+- **THEN** label appears at top in uppercase (slate-400, text-xs, font-medium)
+- **AND** value appears in middle (text-lg, font-bold, appropriate color)
+- **AND** cell is centered with appropriate spacing (gap-0.5)
+
+#### Scenario: Capacity format display
+- **WHEN** stat shows "current / max" format
+- **THEN** both values appear with " / " separator
+- **AND** current value inherits color based on status (normal/warning/error)
+- **AND** max value appears in slate-500 (muted)
+- **AND** format emphasizes current value over max
 
 ### Requirement: Validation Status Indicator
 The banner SHALL display unit validation status.

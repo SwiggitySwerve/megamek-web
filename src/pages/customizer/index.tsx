@@ -104,6 +104,8 @@ export default function CustomizerPage() {
     const tonnage = tab.tonnage;
     const maxArmorPoints = Math.floor(tonnage * 2 * 3.5);
     const usedWeight = unitEquipment.reduce((sum, eq) => sum + eq.weight, 0);
+    const usedSlots = unitEquipment.reduce((sum, eq) => sum + eq.criticalSlots, 0);
+    const totalSlots = 78; // Standard BattleMech has 78 critical slots
     
     return {
       name: tab.name,
@@ -116,6 +118,8 @@ export default function CustomizerPage() {
       weightRemaining: tonnage - usedWeight,
       armorPoints: 0, // Placeholder - would come from armor allocation
       maxArmorPoints,
+      criticalSlotsUsed: usedSlots,
+      criticalSlotsTotal: totalSlots,
       heatGenerated: 0, // Placeholder - would come from weapons
       heatDissipation: 10, // Placeholder - would come from heat sinks
       validationStatus: 'warning' as ValidationStatus,
