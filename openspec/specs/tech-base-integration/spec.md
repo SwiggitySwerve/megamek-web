@@ -4,7 +4,7 @@
 TBD - created by archiving change implement-phase2-construction. Update Purpose after archive.
 ## Requirements
 ### Requirement: Unit Tech Base Declaration
-Units SHALL declare their technology base.
+Units SHALL declare their tech base.
 
 #### Scenario: Tech base types
 - **WHEN** declaring unit tech base
