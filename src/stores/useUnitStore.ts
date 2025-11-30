@@ -1,0 +1,236 @@
+/**
+ * Unit Store Factory
+ * 
+ * Creates isolated Zustand stores for individual units.
+ * Each unit has its own store instance with independent persistence.
+ * 
+ * @spec openspec/changes/add-customizer-ui-components/specs/unit-store-architecture/spec.md
+ */
+
+import { create, StoreApi, useStore } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import { createContext, useContext } from 'react';
+import { TechBase } from '@/types/enums/TechBase';
+import {
+  TechBaseMode,
+  IComponentTechBases,
+  createDefaultComponentTechBases,
+} from '@/types/construction/TechBaseConfiguration';
+import {
+  UnitState,
+  UnitActions,
+  UnitStore,
+  CreateUnitOptions,
+  createDefaultUnitState,
+} from './unitState';
+
+// =============================================================================
+// Store Factory
+// =============================================================================
+
+/**
+ * Create an isolated Zustand store for a single unit
+ * 
+ * Each unit gets its own store instance that:
+ * - Contains only that unit's state
+ * - Persists independently to localStorage
+ * - Has a clean API without tabId parameters
+ */
+export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
+  return create<UnitStore>()(
+    persist(
+      (set) => ({
+        // Spread initial state
+        ...initialState,
+        
+        // =================================================================
+        // Name Actions
+        // =================================================================
+        
+        setName: (name) => set({
+          name,
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        }),
+        
+        // =================================================================
+        // Tech Base Actions
+        // =================================================================
+        
+        setTechBaseMode: (mode) => set((state) => {
+          // When switching to non-mixed mode, reset all components to match
+          const newTechBase = mode === 'clan' ? TechBase.CLAN : TechBase.INNER_SPHERE;
+          const newComponentTechBases = mode === 'mixed'
+            ? state.componentTechBases
+            : createDefaultComponentTechBases(newTechBase);
+          
+          return {
+            techBaseMode: mode,
+            componentTechBases: newComponentTechBases,
+            isModified: true,
+            lastModifiedAt: Date.now(),
+          };
+        }),
+        
+        setComponentTechBase: (component, techBase) => set((state) => ({
+          componentTechBases: {
+            ...state.componentTechBases,
+            [component]: techBase,
+          },
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        })),
+        
+        setAllComponentTechBases: (techBases) => set({
+          componentTechBases: techBases,
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        }),
+        
+        // =================================================================
+        // Component Actions
+        // =================================================================
+        
+        setEngineType: (type) => set({
+          engineType: type,
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        }),
+        
+        setEngineRating: (rating) => set({
+          engineRating: rating,
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        }),
+        
+        setGyroType: (type) => set({
+          gyroType: type,
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        }),
+        
+        setInternalStructureType: (type) => set({
+          internalStructureType: type,
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        }),
+        
+        setCockpitType: (type) => set({
+          cockpitType: type,
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        }),
+        
+        setHeatSinkType: (type) => set({
+          heatSinkType: type,
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        }),
+        
+        setHeatSinkCount: (count) => set({
+          heatSinkCount: count,
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        }),
+        
+        setArmorType: (type) => set({
+          armorType: type,
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        }),
+        
+        // =================================================================
+        // Metadata Actions
+        // =================================================================
+        
+        markModified: (modified = true) => set({
+          isModified: modified,
+          lastModifiedAt: Date.now(),
+        }),
+      }),
+      {
+        name: `megamek-unit-${initialState.id}`,
+        storage: createJSONStorage(() => localStorage),
+        // Only persist state, not actions
+        partialize: (state) => ({
+          id: state.id,
+          name: state.name,
+          tonnage: state.tonnage,
+          techBase: state.techBase,
+          unitType: state.unitType,
+          configuration: state.configuration,
+          techBaseMode: state.techBaseMode,
+          componentTechBases: state.componentTechBases,
+          engineType: state.engineType,
+          engineRating: state.engineRating,
+          gyroType: state.gyroType,
+          internalStructureType: state.internalStructureType,
+          cockpitType: state.cockpitType,
+          heatSinkType: state.heatSinkType,
+          heatSinkCount: state.heatSinkCount,
+          armorType: state.armorType,
+          isModified: state.isModified,
+          createdAt: state.createdAt,
+          lastModifiedAt: state.lastModifiedAt,
+        }),
+      }
+    )
+  );
+}
+
+/**
+ * Create a new unit store from options
+ */
+export function createNewUnitStore(options: CreateUnitOptions): StoreApi<UnitStore> {
+  const initialState = createDefaultUnitState(options);
+  return createUnitStore(initialState);
+}
+
+// =============================================================================
+// React Context
+// =============================================================================
+
+/**
+ * Context for providing the active unit's store
+ */
+export const UnitStoreContext = createContext<StoreApi<UnitStore> | null>(null);
+
+/**
+ * Hook to access the unit store from context
+ * 
+ * This is the primary way components access unit state.
+ * No tabId is needed - the context provides the active unit's store.
+ * 
+ * @example
+ * const engineType = useUnitStore((s) => s.engineType);
+ * const setEngineType = useUnitStore((s) => s.setEngineType);
+ */
+export function useUnitStore<T>(selector: (state: UnitStore) => T): T {
+  const store = useContext(UnitStoreContext);
+  
+  if (!store) {
+    throw new Error(
+      'useUnitStore must be used within a UnitStoreProvider. ' +
+      'Wrap your component tree with <UnitStoreProvider>.'
+    );
+  }
+  
+  return useStore(store, selector);
+}
+
+/**
+ * Hook to get the entire unit store API
+ * Useful when you need direct access to the store
+ */
+export function useUnitStoreApi(): StoreApi<UnitStore> {
+  const store = useContext(UnitStoreContext);
+  
+  if (!store) {
+    throw new Error(
+      'useUnitStoreApi must be used within a UnitStoreProvider.'
+    );
+  }
+  
+  return store;
+}
+

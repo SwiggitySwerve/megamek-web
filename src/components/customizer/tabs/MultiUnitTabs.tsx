@@ -2,14 +2,17 @@
  * Multi-Unit Tabs Component
  * 
  * Browser-like tabs for editing multiple units.
+ * Uses the new TabManagerStore for tab lifecycle management.
  * 
  * @spec openspec/changes/add-customizer-ui-components/specs/multi-unit-tabs/spec.md
+ * @spec openspec/changes/add-customizer-ui-components/specs/unit-store-architecture/spec.md
  */
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { TabBar } from './TabBar';
 import { NewTabModal } from './NewTabModal';
-import { useUnit } from '@/hooks/useUnit';
+import { useTabManagerStore, UNIT_TEMPLATES } from '@/stores/useTabManagerStore';
+import { TechBase } from '@/types/enums/TechBase';
 
 interface MultiUnitTabsProps {
   /** Content to render for the active tab */
@@ -25,18 +28,33 @@ export function MultiUnitTabs({
   children,
   className = '',
 }: MultiUnitTabsProps) {
-  const {
-    allTabs,
-    activeTabId,
-    isLoading,
-    isNewTabModalOpen,
-    selectTab,
-    closeTab,
-    renameUnit,
-    createNewUnit,
-    openNewTabModal,
-    closeNewTabModal,
-  } = useUnit();
+  // Use the new TabManagerStore
+  const tabs = useTabManagerStore((s) => s.tabs);
+  const activeTabId = useTabManagerStore((s) => s.activeTabId);
+  const isLoading = useTabManagerStore((s) => s.isLoading);
+  const isNewTabModalOpen = useTabManagerStore((s) => s.isNewTabModalOpen);
+  const selectTab = useTabManagerStore((s) => s.selectTab);
+  const closeTab = useTabManagerStore((s) => s.closeTab);
+  const renameTab = useTabManagerStore((s) => s.renameTab);
+  const createTab = useTabManagerStore((s) => s.createTab);
+  const openNewTabModal = useTabManagerStore((s) => s.openNewTabModal);
+  const closeNewTabModal = useTabManagerStore((s) => s.closeNewTabModal);
+  
+  // Create unit from template
+  const createNewUnit = useCallback((tonnage: number, techBase: TechBase = TechBase.INNER_SPHERE) => {
+    const template = UNIT_TEMPLATES.find(t => t.tonnage === tonnage) || UNIT_TEMPLATES[1];
+    const templateWithTechBase = { ...template, techBase };
+    return createTab(templateWithTechBase);
+  }, [createTab]);
+  
+  // Transform tabs to format expected by TabBar
+  const tabBarTabs = tabs.map((tab) => ({
+    id: tab.id,
+    name: tab.name,
+    tonnage: tab.tonnage,
+    techBase: tab.techBase,
+    isModified: false, // Would need to track this separately or get from unit store
+  }));
   
   // Loading state
   if (isLoading) {
@@ -48,7 +66,7 @@ export function MultiUnitTabs({
   }
   
   // Empty state - no tabs
-  if (allTabs.length === 0) {
+  if (tabs.length === 0) {
     return (
       <div className={`flex flex-col items-center justify-center h-full ${className}`}>
         <div className="text-center">
@@ -75,20 +93,16 @@ export function MultiUnitTabs({
     <div className={`flex flex-col h-full ${className}`}>
       {/* Tab bar */}
       <TabBar
-        tabs={allTabs}
+        tabs={tabBarTabs}
         activeTabId={activeTabId}
         onSelectTab={selectTab}
         onCloseTab={closeTab}
-        onRenameTab={(tabId, name) => {
-          if (tabId === activeTabId) {
-            renameUnit(name);
-          }
-        }}
-        onAddTab={openNewTabModal}
+        onRenameTab={renameTab}
+        onNewTab={openNewTabModal}
       />
       
       {/* Tab content */}
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 min-h-0 overflow-hidden">
         {children}
       </div>
       
@@ -101,4 +115,3 @@ export function MultiUnitTabs({
     </div>
   );
 }
-

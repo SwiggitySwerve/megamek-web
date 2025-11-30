@@ -2,20 +2,21 @@
  * Unit Customizer Page
  * 
  * Full-featured BattleMech construction and modification interface.
- * Uses multi-unit tabs, customizer tabs, and all UI components.
+ * Uses isolated unit stores with the new architecture.
  * 
  * @spec openspec/changes/add-customizer-ui-components
+ * @spec openspec/changes/add-customizer-ui-components/specs/unit-store-architecture/spec.md
  */
 
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
 // Stores and hooks
-import { useUnit } from '@/hooks/useUnit';
+import { useTabManagerStore, UNIT_TEMPLATES } from '@/stores/useTabManagerStore';
+import { UnitStoreProvider, useUnitStore } from '@/stores';
 import { useCustomizerStore } from '@/stores/useCustomizerStore';
 import { useUnitCalculations } from '@/hooks/useUnitCalculations';
-import { createDefaultComponentSelections } from '@/stores/useMultiUnitStore';
 
 // Tab components
 import {
@@ -44,33 +45,56 @@ import { ValidationStatus } from '@/utils/colors/statusColors';
 import { MechLocation } from '@/types/construction';
 import { IEquipmentItem, EquipmentCategory } from '@/types/equipment';
 
-/**
- * Main customizer page component
- */
-export default function CustomizerPage() {
-  const { tab, isLoading } = useUnit();
-  const { tabs, activeTab, setActiveTab } = useCustomizerTabs('overview');
+// =============================================================================
+// Inner Content Component (uses UnitStore context)
+// =============================================================================
+
+function CustomizerContent() {
+  const { tabs: sectionTabs, activeTab, setActiveTab } = useCustomizerTabs('overview');
   const {
     autoModeSettings,
     toggleAutoFillUnhittables,
     toggleShowPlacementPreview,
     colorLegendExpanded,
-    toggleColorLegend,
   } = useCustomizerStore();
+
+  // Get unit state from context (no tabId needed!)
+  const unitName = useUnitStore((s) => s.name);
+  const tonnage = useUnitStore((s) => s.tonnage);
+  const techBase = useUnitStore((s) => s.techBase);
+  const engineType = useUnitStore((s) => s.engineType);
+  const engineRating = useUnitStore((s) => s.engineRating);
+  const gyroType = useUnitStore((s) => s.gyroType);
+  const internalStructureType = useUnitStore((s) => s.internalStructureType);
+  const cockpitType = useUnitStore((s) => s.cockpitType);
+  const heatSinkType = useUnitStore((s) => s.heatSinkType);
+  const heatSinkCount = useUnitStore((s) => s.heatSinkCount);
+  const armorType = useUnitStore((s) => s.armorType);
 
   // Local state for dialogs
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
   
-  // Mock state for armor (would come from unit data)
+  // Mock state for armor
   const [selectedArmorLocation, setSelectedArmorLocation] = useState<MechLocation | null>(null);
   
-  // Mock state for equipment (would come from unit data)
+  // Mock state for equipment
   const [unitEquipment, setUnitEquipment] = useState<TrayEquipmentItem[]>([]);
   const [selectedEquipmentId, setSelectedEquipmentId] = useState<string | undefined>();
 
+  // Calculate unit stats using the hook
+  const calculations = useUnitCalculations(tonnage, {
+    engineType,
+    engineRating,
+    gyroType,
+    internalStructureType,
+    cockpitType,
+    heatSinkType,
+    heatSinkCount,
+    armorType,
+  });
+
   // Generate mock armor data based on unit
   const armorData: LocationArmorData[] = useMemo(() => {
-    const tonnage = tab?.tonnage || 50;
     const maxArmor = Math.floor(tonnage * 2 * 3.5);
     
     return [
@@ -83,69 +107,54 @@ export default function CustomizerPage() {
       { location: MechLocation.LEFT_LEG, current: 0, maximum: Math.floor(maxArmor * 0.12) },
       { location: MechLocation.RIGHT_LEG, current: 0, maximum: Math.floor(maxArmor * 0.12) },
     ];
-  }, [tab?.tonnage]);
+  }, [tonnage]);
 
   // Generate mock critical slot data
   const criticalSlotsData: LocationData[] = useMemo(() => {
     return Object.values(MechLocation).map(location => ({
       location: location as MechLocation,
-      slots: [], // Would be populated with actual slot data
+      slots: [],
     }));
   }, []);
 
   // Weight stats
   const weightStats: WeightStats = useMemo(() => ({
-    maxWeight: tab?.tonnage || 50,
+    maxWeight: tonnage,
     usedWeight: unitEquipment.reduce((sum, eq) => sum + eq.weight, 0),
-    remainingWeight: (tab?.tonnage || 50) - unitEquipment.reduce((sum, eq) => sum + eq.weight, 0),
-  }), [tab?.tonnage, unitEquipment]);
+    remainingWeight: tonnage - unitEquipment.reduce((sum, eq) => sum + eq.weight, 0),
+  }), [tonnage, unitEquipment]);
 
-  // Get component selections from the tab (or use defaults)
-  const componentSelections = useMemo(() => {
-    if (!tab) return createDefaultComponentSelections(50, 4);
-    return tab.componentSelections ?? createDefaultComponentSelections(tab.tonnage, 4, tab.techBase);
-  }, [tab]);
-  
-  // Calculate unit stats using the hook
-  const calculations = useUnitCalculations(tab?.tonnage ?? 50, componentSelections);
-  
   // Unit stats for the persistent banner
   const unitStats = useMemo(() => {
-    if (!tab) return null;
-    const tonnage = tab.tonnage;
     const maxArmorPoints = Math.floor(tonnage * 2 * 3.5);
     
-    // Equipment weight from added equipment
     const equipmentWeight = unitEquipment.reduce((sum, eq) => sum + eq.weight, 0);
-    
-    // Total used weight = structural + equipment
     const totalUsedWeight = calculations.totalStructuralWeight + equipmentWeight;
     
-    // Critical slots from equipment
     const equipmentSlots = unitEquipment.reduce((sum, eq) => sum + eq.criticalSlots, 0);
-    const totalSlots = 78; // Standard BattleMech has 78 critical slots
+    const totalSlots = 78;
     const usedSlots = calculations.totalSystemSlots + equipmentSlots;
     
     return {
-      name: tab.name,
-      tonnage: tab.tonnage,
-      techBase: tab.techBase,
+      name: unitName,
+      tonnage,
+      techBase,
       walkMP: calculations.walkMP,
       runMP: calculations.runMP,
       jumpMP: 0,
       weightUsed: totalUsedWeight,
       weightRemaining: tonnage - totalUsedWeight,
-      armorPoints: 0, // Placeholder - would come from armor allocation
+      armorPoints: 0,
       maxArmorPoints,
       criticalSlotsUsed: usedSlots,
       criticalSlotsTotal: totalSlots,
-      heatGenerated: 0, // Placeholder - would come from weapons
+      heatGenerated: 0,
       heatDissipation: calculations.totalHeatDissipation,
       validationStatus: 'warning' as ValidationStatus,
       errorCount: 0,
       warningCount: 1,
     };
-  }, [tab, unitEquipment, calculations]);
+  }, [unitName, tonnage, techBase, unitEquipment, calculations]);
 
   // Handlers
   const handleAddEquipment = useCallback((equipment: IEquipmentItem) => {
@@ -169,17 +178,14 @@ export default function CustomizerPage() {
 
   const handleSlotClick = useCallback((location: MechLocation, slotIndex: number) => {
     console.log('Slot clicked:', location, slotIndex);
-    // Would handle equipment placement
   }, []);
 
   const handleEquipmentDrop = useCallback((location: MechLocation, slotIndex: number, equipmentId: string) => {
     console.log('Equipment dropped:', equipmentId, 'at', location, slotIndex);
-    // Would handle equipment placement
   }, []);
 
   const handleEquipmentRemove = useCallback((location: MechLocation, slotIndex: number) => {
     console.log('Equipment removed from:', location, slotIndex);
-    // Would handle equipment removal
   }, []);
 
   const handleToolbarAction = useCallback((action: 'fill' | 'compact' | 'sort' | 'reset') => {
@@ -197,36 +203,16 @@ export default function CustomizerPage() {
     }
   }, []);
 
-  // Render loading state
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="text-slate-400">Loading customizer...</div>
-      </div>
-    );
-  }
-
   // Render tab content based on active tab
   const renderTabContent = () => {
-    if (!tab) return null;
-
     switch (activeTab) {
       case 'overview':
-        return (
-          <OverviewTab
-            tabId={tab.id}
-            unitName={tab.name}
-            tonnage={tab.tonnage}
-          />
-        );
+        // No tabId needed - uses context!
+        return <OverviewTab />;
 
       case 'structure':
-        return (
-          <StructureTab
-            tabId={tab.id}
-            tonnage={tab.tonnage}
-          />
-        );
+        // No tabId needed - uses context!
+        return <StructureTab />;
 
       case 'armor':
         return (
@@ -285,8 +271,8 @@ export default function CustomizerPage() {
       case 'fluff':
         return (
           <FluffTab
-            chassis={tab.name.split(' ')[0]}
-            model={tab.name}
+            chassis={unitName.split(' ')[0]}
+            model={unitName}
           />
         );
 
@@ -300,51 +286,80 @@ export default function CustomizerPage() {
   };
 
   return (
+    <div className="flex flex-col h-full">
+      {/* Persistent unit stats banner */}
+      <UnitInfoBanner 
+        stats={unitStats}
+        onReset={() => setIsResetDialogOpen(true)}
+      />
+      
+      {/* Customizer section tabs */}
+      <CustomizerTabs
+        tabs={DEFAULT_CUSTOMIZER_TABS}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
+
+      {/* Tab content */}
+      <div className="flex-1 overflow-auto bg-slate-900">
+        {renderTabContent()}
+      </div>
+
+      {/* Color legend (collapsible) */}
+      <div className="border-t border-slate-700 p-2">
+        <ColorLegend defaultExpanded={colorLegendExpanded} />
+      </div>
+
+      {/* Reset confirmation dialog */}
+      <ResetConfirmationDialog
+        isOpen={isResetDialogOpen}
+        onClose={() => setIsResetDialogOpen(false)}
+        onConfirm={handleResetConfirm}
+      />
+    </div>
+  );
+}
+
+// =============================================================================
+// Main Page Component
+// =============================================================================
+
+/**
+ * Main customizer page component
+ */
+export default function CustomizerPage() {
+  const isLoading = useTabManagerStore((s) => s.isLoading);
+  const tabs = useTabManagerStore((s) => s.tabs);
+  const activeTabId = useTabManagerStore((s) => s.activeTabId);
+
+  // Render loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="text-slate-400">Loading customizer...</div>
+      </div>
+    );
+  }
+
+  return (
     <DndProvider backend={HTML5Backend}>
       <div className="min-h-screen bg-slate-900 flex flex-col">
         {/* Multi-unit tabs at top */}
         <MultiUnitTabs>
-          {tab && unitStats ? (
-            <div className="flex flex-col h-full">
-              {/* Persistent unit stats banner */}
-              <UnitInfoBanner 
-                stats={unitStats}
-                onReset={() => setIsResetDialogOpen(true)}
-              />
-              
-              {/* Customizer section tabs */}
-              <CustomizerTabs
-                tabs={DEFAULT_CUSTOMIZER_TABS}
-                activeTab={activeTab}
-                onTabChange={setActiveTab}
-              />
-
-              {/* Tab content */}
-              <div className="flex-1 overflow-auto bg-slate-900">
-                {renderTabContent()}
+          {/* UnitStoreProvider provides the active unit's store */}
+          <UnitStoreProvider
+            fallback={
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center text-slate-400">
+                  <p className="text-lg mb-2">No unit selected</p>
+                  <p className="text-sm">Create a new unit to get started</p>
+                </div>
               </div>
-
-              {/* Color legend (collapsible) */}
-              <div className="border-t border-slate-700 p-2">
-                <ColorLegend defaultExpanded={colorLegendExpanded} />
-              </div>
-            </div>
-          ) : (
-            <div className="flex items-center justify-center h-full">
-              <div className="text-center text-slate-400">
-                <p className="text-lg mb-2">No unit selected</p>
-                <p className="text-sm">Create a new unit to get started</p>
-              </div>
-            </div>
-          )}
+            }
+          >
+            <CustomizerContent />
+          </UnitStoreProvider>
         </MultiUnitTabs>
-
-        {/* Reset confirmation dialog */}
-        <ResetConfirmationDialog
-          isOpen={isResetDialogOpen}
-          onClose={() => setIsResetDialogOpen(false)}
-          onConfirm={handleResetConfirm}
-        />
       </div>
     </DndProvider>
   );

@@ -2,14 +2,14 @@
  * Structure Tab Component
  * 
  * Configuration of structural components (engine, gyro, structure, cockpit).
- * Uses store for persistence and tech base filtering for available options.
+ * Uses the contextual unit store - no tabId prop needed.
  * 
  * @spec openspec/changes/add-customizer-ui-components/specs/customizer-tabs/spec.md
- * @spec openspec/changes/add-customizer-ui-components/specs/component-configuration/spec.md
+ * @spec openspec/changes/add-customizer-ui-components/specs/unit-store-architecture/spec.md
  */
 
 import React, { useCallback, useMemo } from 'react';
-import { useMultiUnitStore } from '@/stores/useMultiUnitStore';
+import { useUnitStore } from '@/stores/useUnitStore';
 import { useTechBaseSync } from '@/hooks/useTechBaseSync';
 import { useUnitCalculations } from '@/hooks/useUnitCalculations';
 import { EngineType } from '@/types/construction/EngineType';
@@ -22,10 +22,6 @@ import { CockpitType } from '@/types/construction/CockpitType';
 // =============================================================================
 
 interface StructureTabProps {
-  /** Tab ID for accessing store state */
-  tabId: string;
-  /** Unit tonnage */
-  tonnage: number;
   /** Read-only mode */
   readOnly?: boolean;
   /** Additional CSS classes */
@@ -41,8 +37,6 @@ interface StructureTabProps {
  */
 function generateEngineRatings(tonnage: number): number[] {
   const ratings: number[] = [];
-  // Walk MP 1-12 gives engine ratings from tonnage*1 to tonnage*12
-  // But cap at 500 (max engine rating)
   for (let walkMP = 1; walkMP <= 12; walkMP++) {
     const rating = tonnage * walkMP;
     if (rating >= 10 && rating <= 500 && rating % 5 === 0) {
@@ -58,88 +52,71 @@ function generateEngineRatings(tonnage: number): number[] {
 
 /**
  * Structure configuration tab
+ * 
+ * Uses useUnitStore() to access the current unit's state.
+ * No tabId prop needed - context provides the active unit.
  */
 export function StructureTab({
-  tabId,
-  tonnage,
   readOnly = false,
   className = '',
 }: StructureTabProps) {
-  // Get tab data from store
-  const tab = useMultiUnitStore((state) => state.tabs.find((t) => t.id === tabId));
+  // Get unit state from context (no tabId needed!)
+  const tonnage = useUnitStore((s) => s.tonnage);
+  const componentTechBases = useUnitStore((s) => s.componentTechBases);
+  const engineType = useUnitStore((s) => s.engineType);
+  const engineRating = useUnitStore((s) => s.engineRating);
+  const gyroType = useUnitStore((s) => s.gyroType);
+  const internalStructureType = useUnitStore((s) => s.internalStructureType);
+  const cockpitType = useUnitStore((s) => s.cockpitType);
+  const heatSinkType = useUnitStore((s) => s.heatSinkType);
+  const heatSinkCount = useUnitStore((s) => s.heatSinkCount);
+  const armorType = useUnitStore((s) => s.armorType);
   
-  // Get store actions
-  const updateEngineType = useMultiUnitStore((state) => state.updateEngineType);
-  const updateEngineRating = useMultiUnitStore((state) => state.updateEngineRating);
-  const updateGyroType = useMultiUnitStore((state) => state.updateGyroType);
-  const updateStructureType = useMultiUnitStore((state) => state.updateStructureType);
-  const updateCockpitType = useMultiUnitStore((state) => state.updateCockpitType);
+  // Get actions from context
+  const setEngineType = useUnitStore((s) => s.setEngineType);
+  const setEngineRating = useUnitStore((s) => s.setEngineRating);
+  const setGyroType = useUnitStore((s) => s.setGyroType);
+  const setInternalStructureType = useUnitStore((s) => s.setInternalStructureType);
+  const setCockpitType = useUnitStore((s) => s.setCockpitType);
   
   // Get filtered options based on tech base
-  const componentTechBases = tab?.componentTechBases;
-  const { filteredOptions } = useTechBaseSync(componentTechBases ?? {
-    chassis: tab?.techBase ?? 'Inner Sphere',
-    gyro: tab?.techBase ?? 'Inner Sphere',
-    engine: tab?.techBase ?? 'Inner Sphere',
-    heatsink: tab?.techBase ?? 'Inner Sphere',
-    targeting: tab?.techBase ?? 'Inner Sphere',
-    myomer: tab?.techBase ?? 'Inner Sphere',
-    movement: tab?.techBase ?? 'Inner Sphere',
-    armor: tab?.techBase ?? 'Inner Sphere',
-  } as any);
-  
-  // Get current selections
-  const selections = tab?.componentSelections;
+  const { filteredOptions } = useTechBaseSync(componentTechBases);
   
   // Calculate weights and slots
-  const calculations = useUnitCalculations(
-    tonnage,
-    selections ?? {
-      engineType: EngineType.STANDARD,
-      engineRating: tonnage * 4,
-      gyroType: GyroType.STANDARD,
-      internalStructureType: InternalStructureType.STANDARD,
-      cockpitType: CockpitType.STANDARD,
-      heatSinkType: 'Single' as any,
-      heatSinkCount: 10,
-      armorType: 'Standard' as any,
-    }
-  );
+  const calculations = useUnitCalculations(tonnage, {
+    engineType,
+    engineRating,
+    gyroType,
+    internalStructureType,
+    cockpitType,
+    heatSinkType,
+    heatSinkCount,
+    armorType,
+  });
   
   // Generate engine rating options
   const engineRatings = useMemo(() => generateEngineRatings(tonnage), [tonnage]);
   
-  // Handlers
+  // Handlers - no tabId needed!
   const handleEngineTypeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    updateEngineType(tabId, e.target.value as EngineType);
-  }, [tabId, updateEngineType]);
+    setEngineType(e.target.value as EngineType);
+  }, [setEngineType]);
   
   const handleEngineRatingChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    updateEngineRating(tabId, parseInt(e.target.value, 10));
-  }, [tabId, updateEngineRating]);
+    setEngineRating(parseInt(e.target.value, 10));
+  }, [setEngineRating]);
   
   const handleGyroTypeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    updateGyroType(tabId, e.target.value as GyroType);
-  }, [tabId, updateGyroType]);
+    setGyroType(e.target.value as GyroType);
+  }, [setGyroType]);
   
   const handleStructureTypeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    updateStructureType(tabId, e.target.value as InternalStructureType);
-  }, [tabId, updateStructureType]);
+    setInternalStructureType(e.target.value as InternalStructureType);
+  }, [setInternalStructureType]);
   
   const handleCockpitTypeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    updateCockpitType(tabId, e.target.value as CockpitType);
-  }, [tabId, updateCockpitType]);
-  
-  // If tab not found, show error
-  if (!tab || !selections) {
-    return (
-      <div className={`p-4 ${className}`}>
-        <div className="bg-red-900/30 border border-red-700 rounded-lg p-4 text-red-300">
-          Error: Unit tab not found
-        </div>
-      </div>
-    );
-  }
+    setCockpitType(e.target.value as CockpitType);
+  }, [setCockpitType]);
   
   return (
     <div className={`space-y-6 p-4 ${className}`}>
@@ -154,7 +131,7 @@ export function StructureTab({
               <select 
                 className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white"
                 disabled={readOnly}
-                value={selections.engineType}
+                value={engineType}
                 onChange={handleEngineTypeChange}
               >
                 {filteredOptions.engines.map((engine) => (
@@ -170,7 +147,7 @@ export function StructureTab({
               <select 
                 className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white"
                 disabled={readOnly}
-                value={selections.engineRating}
+                value={engineRating}
                 onChange={handleEngineRatingChange}
               >
                 {engineRatings.map((rating) => (
@@ -208,7 +185,7 @@ export function StructureTab({
               <select 
                 className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white"
                 disabled={readOnly}
-                value={selections.gyroType}
+                value={gyroType}
                 onChange={handleGyroTypeChange}
               >
                 {filteredOptions.gyros.map((gyro) => (
@@ -242,7 +219,7 @@ export function StructureTab({
               <select 
                 className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white"
                 disabled={readOnly}
-                value={selections.internalStructureType}
+                value={internalStructureType}
                 onChange={handleStructureTypeChange}
               >
                 {filteredOptions.structures.map((structure) => (
@@ -276,7 +253,7 @@ export function StructureTab({
               <select 
                 className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white"
                 disabled={readOnly}
-                value={selections.cockpitType}
+                value={cockpitType}
                 onChange={handleCockpitTypeChange}
               >
                 {filteredOptions.cockpits.map((cockpit) => (
