@@ -4,7 +4,7 @@
   "description": "BattleTech Editor - Desktop Application",
   "main": "dist/main.js",
   "author": "BattleTech Editor Team",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "homepage": "https://github.com/battletech-editor/battletech-editor",
   "repository": {
     "type": "git",
