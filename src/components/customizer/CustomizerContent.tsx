@@ -24,6 +24,11 @@ import { CustomizerTabs, DEFAULT_CUSTOMIZER_TABS, useCustomizerTabs } from '@/co
 import { StructureTab } from '@/components/customizer/tabs/StructureTab';
 import { OverviewTab } from '@/components/customizer/tabs/OverviewTab';
 
+// Shared components
+import { UnitInfoBanner, UnitStats } from '@/components/customizer/shared/UnitInfoBanner';
+import { useUnitCalculations } from '@/hooks/useUnitCalculations';
+import { ValidationStatus } from '@/utils/colors/statusColors';
+
 // =============================================================================
 // Main Component
 // =============================================================================
@@ -98,26 +103,60 @@ export default function CustomizerContent() {
  * Shows tabbed interface with Structure, Armor, Weapons, etc.
  */
 function UnitEditorContent() {
-  // Access unit state from context for header
+  // Access unit state from context
   const unitName = useUnitStore((s) => s.name);
   const tonnage = useUnitStore((s) => s.tonnage);
   const techBase = useUnitStore((s) => s.techBase);
+  const engineType = useUnitStore((s) => s.engineType);
+  const engineRating = useUnitStore((s) => s.engineRating);
+  const gyroType = useUnitStore((s) => s.gyroType);
+  const internalStructureType = useUnitStore((s) => s.internalStructureType);
+  const cockpitType = useUnitStore((s) => s.cockpitType);
+  const heatSinkType = useUnitStore((s) => s.heatSinkType);
+  const heatSinkCount = useUnitStore((s) => s.heatSinkCount);
+  const armorType = useUnitStore((s) => s.armorType);
+  
+  // Calculate unit stats
+  const calculations = useUnitCalculations(tonnage, {
+    engineType,
+    engineRating,
+    gyroType,
+    internalStructureType,
+    cockpitType,
+    heatSinkType,
+    heatSinkCount,
+    armorType,
+  });
+  
+  // Build stats object for UnitInfoBanner
+  const unitStats: UnitStats = useMemo(() => ({
+    name: unitName,
+    tonnage,
+    techBase,
+    walkMP: calculations.walkMP,
+    runMP: calculations.runMP,
+    jumpMP: 0, // TODO: Calculate from jump jets when equipment system is added
+    weightUsed: calculations.totalStructuralWeight,
+    weightRemaining: tonnage - calculations.totalStructuralWeight,
+    armorPoints: 0, // TODO: Get from armor allocation
+    maxArmorPoints: 0, // TODO: Calculate max armor
+    criticalSlotsUsed: calculations.totalSystemSlots,
+    criticalSlotsTotal: 78,
+    heatGenerated: 0, // TODO: Calculate from weapons
+    heatDissipation: calculations.totalHeatDissipation,
+    validationStatus: 'valid' as ValidationStatus, // TODO: Get from validation
+    errorCount: 0,
+    warningCount: 0,
+  }), [unitName, tonnage, techBase, calculations]);
   
   // Customizer section tabs (Overview, Structure, Armor, etc.)
   const { tabs, activeTab, setActiveTab } = useCustomizerTabs('structure');
   
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      {/* Unit header with name and basic info */}
-      <div className="bg-slate-800 border-b border-slate-700 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-bold text-white">{unitName}</h2>
-            <p className="text-sm text-slate-400">
-              {tonnage}t {techBase === TechBase.INNER_SPHERE ? 'Inner Sphere' : 'Clan'} BattleMech
-            </p>
-          </div>
-        </div>
+      {/* Unit Info Banner - at-a-glance stats */}
+      <div className="p-2 bg-slate-900 border-b border-slate-700">
+        <UnitInfoBanner stats={unitStats} />
       </div>
       
       {/* Section tabs (Structure, Armor, Weapons, etc.) */}
