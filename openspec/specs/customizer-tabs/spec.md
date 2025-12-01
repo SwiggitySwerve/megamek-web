@@ -33,7 +33,20 @@ All tab components SHALL access unit state through the useUnit hook from MultiUn
 - **AND** configuration changes are applied via updateConfiguration
 
 ### Requirement: Overview Tab
-The Overview tab SHALL manage unit identity, tech progression, and tech rating configuration.
+The Overview tab SHALL manage unit identity, basic configuration, tech progression, and provide a summary view.
+
+#### Scenario: Basic Info section
+- **WHEN** Overview tab renders
+- **THEN** Basic Info section appears at the top
+- **AND** Name input field allows editing the unit name
+- **AND** Tonnage spinner allows setting tonnage (20-100, step 5)
+- **AND** Motive Type dropdown shows Biped, Quad, Tripod, LAM, QuadVee options
+
+#### Scenario: Tonnage change from Overview
+- **WHEN** user changes tonnage in Overview tab
+- **THEN** engine rating is recalculated to maintain Walk MP
+- **AND** structure weight recalculates automatically
+- **AND** all derived calculations update across tabs
 
 #### Scenario: Tech base configuration
 - **WHEN** user changes a subsystem tech base
