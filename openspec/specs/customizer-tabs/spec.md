@@ -42,40 +42,21 @@ The Overview tab SHALL manage unit identity, tech progression, and tech rating c
 - **AND** component options are filtered to match the new tech base
 
 ### Requirement: Structure Tab
-The Structure tab SHALL manage unit chassis, movement, engine, and system components using a three-column layout.
+The Structure tab SHALL manage system components, enhancement selection, and movement configuration.
 
-#### Scenario: Three-column layout
+#### Scenario: Two-column layout
 - **WHEN** Structure tab renders
-- **THEN** left column shows Chassis panel
-- **AND** middle column shows System Components panel
+- **THEN** left column shows Chassis panel with component selections
 - **AND** right column shows Movement panel
-- **AND** layout stacks on narrow screens
+- **AND** tonnage and motive type are NOT shown (moved to Overview)
 
-#### Scenario: Chassis panel
+#### Scenario: Chassis panel components
 - **WHEN** Chassis panel renders
-- **THEN** Tonnage input with +/- buttons is shown (range 20-100, step 5)
-- **AND** Omni checkbox is shown
-- **AND** Motive Type dropdown is shown (Biped, Quad, Tripod, LAM, QuadVee)
+- **THEN** Engine Type dropdown is shown with weight and slots
+- **AND** Gyro dropdown is shown with weight and slots
+- **AND** Structure dropdown is shown with weight and slots
+- **AND** Cockpit dropdown is shown with weight and slots
 - **AND** Enhancement dropdown is shown (None, MASC, TSM)
-
-#### Scenario: Tonnage change
-- **WHEN** user changes tonnage
-- **THEN** engine rating is recalculated to maintain Walk MP
-- **AND** engine rating is clamped to valid range (10-500)
-- **AND** structure weight recalculates automatically
-
-#### Scenario: Enhancement selection with mutual exclusion
-- **WHEN** user selects MASC
-- **THEN** TSM option becomes disabled
-- **AND** enhancement info shows MASC description
-- **WHEN** user selects TSM
-- **THEN** MASC option becomes disabled
-- **AND** enhancement info shows TSM description
-
-#### Scenario: System Components panel
-- **WHEN** System Components panel renders
-- **THEN** Engine Type, Gyro, Structure, and Cockpit dropdowns are shown
-- **AND** each shows weight and critical slots
 - **AND** Engine Rating is displayed as derived info
 
 #### Scenario: Walk MP drives engine rating
