@@ -17,6 +17,12 @@ import { EngineType } from '@/types/construction/EngineType';
 import { GyroType } from '@/types/construction/GyroType';
 import { InternalStructureType } from '@/types/construction/InternalStructureType';
 import { CockpitType } from '@/types/construction/CockpitType';
+import { MechConfiguration } from '@/types/unit/BattleMechInterfaces';
+import { 
+  MovementEnhancementType, 
+  getMovementEnhancementDefinition,
+  MOVEMENT_ENHANCEMENT_DEFINITIONS 
+} from '@/types/construction/MovementEnhancement';
 
 // =============================================================================
 // Types
@@ -54,6 +60,51 @@ function calculateRunMP(walkMP: number): number {
   return Math.ceil(walkMP * 1.5);
 }
 
+/**
+ * Valid tonnage range for BattleMechs
+ */
+const TONNAGE_RANGE = { min: 20, max: 100, step: 5 };
+
+/**
+ * Configuration options
+ */
+const CONFIGURATION_OPTIONS: { value: MechConfiguration; label: string }[] = [
+  { value: MechConfiguration.BIPED, label: 'Biped' },
+  { value: MechConfiguration.QUAD, label: 'Quad' },
+  { value: MechConfiguration.TRIPOD, label: 'Tripod' },
+  { value: MechConfiguration.LAM, label: 'LAM' },
+  { value: MechConfiguration.QUADVEE, label: 'QuadVee' },
+];
+
+/**
+ * Get available enhancement options (MASC and TSM are mutually exclusive)
+ */
+function getEnhancementOptions(currentEnhancement: MovementEnhancementType | null): {
+  value: MovementEnhancementType | null;
+  label: string;
+  disabled: boolean;
+  tooltip?: string;
+}[] {
+  const mascDef = getMovementEnhancementDefinition(MovementEnhancementType.MASC);
+  const tsmDef = getMovementEnhancementDefinition(MovementEnhancementType.TSM);
+  
+  return [
+    { value: null, label: 'None', disabled: false },
+    { 
+      value: MovementEnhancementType.MASC, 
+      label: 'MASC', 
+      disabled: currentEnhancement === MovementEnhancementType.TSM,
+      tooltip: currentEnhancement === MovementEnhancementType.TSM ? 'Mutually incompatible with TSM' : undefined,
+    },
+    { 
+      value: MovementEnhancementType.TSM, 
+      label: 'Triple Strength Myomer', 
+      disabled: currentEnhancement === MovementEnhancementType.MASC,
+      tooltip: currentEnhancement === MovementEnhancementType.MASC ? 'Mutually incompatible with MASC' : undefined,
+    },
+  ];
+}
+
 // =============================================================================
 // Component
 // =============================================================================
@@ -70,6 +121,8 @@ export function StructureTab({
 }: StructureTabProps) {
   // Get unit state from context
   const tonnage = useUnitStore((s) => s.tonnage);
+  const configuration = useUnitStore((s) => s.configuration);
+  const isOmni = useUnitStore((s) => s.isOmni);
   const componentTechBases = useUnitStore((s) => s.componentTechBases);
   const engineType = useUnitStore((s) => s.engineType);
   const engineRating = useUnitStore((s) => s.engineRating);
@@ -79,13 +132,18 @@ export function StructureTab({
   const heatSinkType = useUnitStore((s) => s.heatSinkType);
   const heatSinkCount = useUnitStore((s) => s.heatSinkCount);
   const armorType = useUnitStore((s) => s.armorType);
+  const enhancement = useUnitStore((s) => s.enhancement);
   
   // Get actions from context
+  const setTonnage = useUnitStore((s) => s.setTonnage);
+  const setConfiguration = useUnitStore((s) => s.setConfiguration);
+  const setIsOmni = useUnitStore((s) => s.setIsOmni);
   const setEngineType = useUnitStore((s) => s.setEngineType);
   const setEngineRating = useUnitStore((s) => s.setEngineRating);
   const setGyroType = useUnitStore((s) => s.setGyroType);
   const setInternalStructureType = useUnitStore((s) => s.setInternalStructureType);
   const setCockpitType = useUnitStore((s) => s.setCockpitType);
+  const setEnhancement = useUnitStore((s) => s.setEnhancement);
   
   // Get filtered options based on tech base
   const { filteredOptions } = useTechBaseSync(componentTechBases);
@@ -107,7 +165,26 @@ export function StructureTab({
   const runMP = useMemo(() => calculateRunMP(walkMP), [walkMP]);
   const walkMPRange = useMemo(() => getWalkMPRange(tonnage), [tonnage]);
   
-  // Handlers
+  // Enhancement options
+  const enhancementOptions = useMemo(() => getEnhancementOptions(enhancement), [enhancement]);
+  
+  // Handlers - Chassis
+  const handleTonnageChange = useCallback((newTonnage: number) => {
+    const clamped = Math.max(TONNAGE_RANGE.min, Math.min(TONNAGE_RANGE.max, newTonnage));
+    // Round to nearest step
+    const rounded = Math.round(clamped / TONNAGE_RANGE.step) * TONNAGE_RANGE.step;
+    setTonnage(rounded);
+  }, [setTonnage]);
+  
+  const handleConfigurationChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    setConfiguration(e.target.value as MechConfiguration);
+  }, [setConfiguration]);
+  
+  const handleOmniChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsOmni(e.target.checked);
+  }, [setIsOmni]);
+  
+  // Handlers - Components
   const handleEngineTypeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     setEngineType(e.target.value as EngineType);
   }, [setEngineType]);
@@ -131,6 +208,11 @@ export function StructureTab({
   const handleCockpitTypeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     setCockpitType(e.target.value as CockpitType);
   }, [setCockpitType]);
+  
+  const handleEnhancementChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    setEnhancement(value === '' ? null : value as MovementEnhancementType);
+  }, [setEnhancement]);
   
   return (
     <div className={`space-y-4 p-4 ${className}`}>
@@ -166,19 +248,124 @@ export function StructureTab({
         </div>
       </div>
 
-      {/* Two-column layout: System Components (left) | Movement (right) */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      {/* Three-column layout: Chassis | System Components | Movement */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         
-        {/* LEFT: System Components */}
+        {/* LEFT: Chassis */}
+        <div className="bg-slate-800 rounded-lg border border-slate-700 p-4">
+          <h3 className="text-lg font-semibold text-white mb-4">Chassis</h3>
+          
+          <div className="space-y-3">
+            {/* Tonnage */}
+            <div className="grid grid-cols-[100px_1fr] gap-2 items-center">
+              <label className="text-sm text-slate-400">Tonnage</label>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => handleTonnageChange(tonnage - TONNAGE_RANGE.step)}
+                  disabled={readOnly || tonnage <= TONNAGE_RANGE.min}
+                  className="px-2 py-1 bg-slate-700 hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed rounded border border-slate-600 text-white text-sm"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  value={tonnage}
+                  onChange={(e) => handleTonnageChange(parseInt(e.target.value, 10) || TONNAGE_RANGE.min)}
+                  disabled={readOnly}
+                  min={TONNAGE_RANGE.min}
+                  max={TONNAGE_RANGE.max}
+                  step={TONNAGE_RANGE.step}
+                  className="w-16 px-2 py-1 bg-slate-700 border border-slate-600 rounded text-white text-sm text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                />
+                <button
+                  onClick={() => handleTonnageChange(tonnage + TONNAGE_RANGE.step)}
+                  disabled={readOnly || tonnage >= TONNAGE_RANGE.max}
+                  className="px-2 py-1 bg-slate-700 hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed rounded border border-slate-600 text-white text-sm"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            
+            {/* Omni Checkbox */}
+            <div className="grid grid-cols-[100px_1fr] gap-2 items-center">
+              <label className="text-sm text-slate-400">Omni</label>
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={isOmni}
+                  onChange={handleOmniChange}
+                  disabled={readOnly}
+                  className="w-4 h-4 bg-slate-700 border border-slate-600 rounded text-amber-500 focus:ring-amber-500 focus:ring-offset-slate-800"
+                />
+              </div>
+            </div>
+            
+            {/* Configuration (Motive Type) */}
+            <div className="grid grid-cols-[100px_1fr] gap-2 items-center">
+              <label className="text-sm text-slate-400">Motive Type</label>
+              <select 
+                className="px-2 py-1.5 bg-slate-700 border border-slate-600 rounded text-white text-sm"
+                disabled={readOnly}
+                value={configuration}
+                onChange={handleConfigurationChange}
+              >
+                {CONFIGURATION_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            {/* Enhancement */}
+            <div className="grid grid-cols-[100px_1fr] gap-2 items-center">
+              <label className="text-sm text-slate-400">Enhancement</label>
+              <select 
+                className="px-2 py-1.5 bg-slate-700 border border-slate-600 rounded text-white text-sm"
+                disabled={readOnly}
+                value={enhancement ?? ''}
+                onChange={handleEnhancementChange}
+              >
+                {enhancementOptions.map((opt) => (
+                  <option 
+                    key={opt.value ?? 'none'} 
+                    value={opt.value ?? ''}
+                    disabled={opt.disabled}
+                  >
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            {/* Enhancement info */}
+            {enhancement && (
+              <div className="mt-2 p-2 bg-slate-900/50 rounded text-xs text-slate-400">
+                {enhancement === MovementEnhancementType.MASC && (
+                  <span>MASC: Double running speed, risk of leg damage</span>
+                )}
+                {enhancement === MovementEnhancementType.TSM && (
+                  <span>TSM: +2 Walk MP at 9+ heat, double physical damage</span>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* MIDDLE: System Components */}
         <div className="bg-slate-800 rounded-lg border border-slate-700 p-4">
           <h3 className="text-lg font-semibold text-white mb-4">System Components</h3>
           
-          <div className="space-y-4">
+          <div className="space-y-3">
             {/* Engine Type */}
-            <div className="grid grid-cols-[120px_1fr_80px_60px] gap-2 items-center">
-              <label className="text-sm text-slate-400">Engine</label>
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <label className="text-sm text-slate-400">Engine</label>
+                <span className="text-xs text-slate-500">{calculations.engineWeight}t / {calculations.engineSlots} slots</span>
+              </div>
               <select 
-                className="px-2 py-1.5 bg-slate-700 border border-slate-600 rounded text-white text-sm"
+                className="w-full px-2 py-1.5 bg-slate-700 border border-slate-600 rounded text-white text-sm"
                 disabled={readOnly}
                 value={engineType}
                 onChange={handleEngineTypeChange}
@@ -189,15 +376,16 @@ export function StructureTab({
                   </option>
                 ))}
               </select>
-              <span className="text-sm text-slate-400 text-right">{calculations.engineWeight}t</span>
-              <span className="text-sm text-slate-500 text-right">{calculations.engineSlots} slots</span>
             </div>
             
             {/* Gyro */}
-            <div className="grid grid-cols-[120px_1fr_80px_60px] gap-2 items-center">
-              <label className="text-sm text-slate-400">Gyro</label>
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <label className="text-sm text-slate-400">Gyro</label>
+                <span className="text-xs text-slate-500">{calculations.gyroWeight}t / {calculations.gyroSlots} slots</span>
+              </div>
               <select 
-                className="px-2 py-1.5 bg-slate-700 border border-slate-600 rounded text-white text-sm"
+                className="w-full px-2 py-1.5 bg-slate-700 border border-slate-600 rounded text-white text-sm"
                 disabled={readOnly}
                 value={gyroType}
                 onChange={handleGyroTypeChange}
@@ -208,15 +396,16 @@ export function StructureTab({
                   </option>
                 ))}
               </select>
-              <span className="text-sm text-slate-400 text-right">{calculations.gyroWeight}t</span>
-              <span className="text-sm text-slate-500 text-right">{calculations.gyroSlots} slots</span>
             </div>
             
             {/* Internal Structure */}
-            <div className="grid grid-cols-[120px_1fr_80px_60px] gap-2 items-center">
-              <label className="text-sm text-slate-400">Structure</label>
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <label className="text-sm text-slate-400">Structure</label>
+                <span className="text-xs text-slate-500">{calculations.structureWeight}t / {calculations.structureSlots} slots</span>
+              </div>
               <select 
-                className="px-2 py-1.5 bg-slate-700 border border-slate-600 rounded text-white text-sm"
+                className="w-full px-2 py-1.5 bg-slate-700 border border-slate-600 rounded text-white text-sm"
                 disabled={readOnly}
                 value={internalStructureType}
                 onChange={handleStructureTypeChange}
@@ -227,15 +416,16 @@ export function StructureTab({
                   </option>
                 ))}
               </select>
-              <span className="text-sm text-slate-400 text-right">{calculations.structureWeight}t</span>
-              <span className="text-sm text-slate-500 text-right">{calculations.structureSlots} slots</span>
             </div>
             
             {/* Cockpit */}
-            <div className="grid grid-cols-[120px_1fr_80px_60px] gap-2 items-center">
-              <label className="text-sm text-slate-400">Cockpit</label>
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <label className="text-sm text-slate-400">Cockpit</label>
+                <span className="text-xs text-slate-500">{calculations.cockpitWeight}t / {calculations.cockpitSlots} slots</span>
+              </div>
               <select 
-                className="px-2 py-1.5 bg-slate-700 border border-slate-600 rounded text-white text-sm"
+                className="w-full px-2 py-1.5 bg-slate-700 border border-slate-600 rounded text-white text-sm"
                 disabled={readOnly}
                 value={cockpitType}
                 onChange={handleCockpitTypeChange}
@@ -246,13 +436,11 @@ export function StructureTab({
                   </option>
                 ))}
               </select>
-              <span className="text-sm text-slate-400 text-right">{calculations.cockpitWeight}t</span>
-              <span className="text-sm text-slate-500 text-right">{calculations.cockpitSlots} slots</span>
             </div>
             
             {/* Engine Rating (derived info) */}
-            <div className="pt-3 mt-3 border-t border-slate-700">
-              <div className="grid grid-cols-[120px_1fr] gap-2 items-center">
+            <div className="pt-3 mt-1 border-t border-slate-700">
+              <div className="flex items-center justify-between">
                 <span className="text-sm text-slate-400">Engine Rating</span>
                 <span className="text-sm font-medium text-amber-400">{engineRating}</span>
               </div>

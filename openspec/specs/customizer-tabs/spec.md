@@ -42,40 +42,46 @@ The Overview tab SHALL manage unit identity, tech progression, and tech rating c
 - **AND** component options are filtered to match the new tech base
 
 ### Requirement: Structure Tab
-The Structure tab SHALL manage unit movement, engine, and system components using a movement-first design where Walk MP determines engine rating.
+The Structure tab SHALL manage unit chassis, movement, engine, and system components using a three-column layout.
 
-#### Scenario: Two-column layout
+#### Scenario: Three-column layout
 - **WHEN** Structure tab renders
-- **THEN** left column shows System Components panel
+- **THEN** left column shows Chassis panel
+- **AND** middle column shows System Components panel
 - **AND** right column shows Movement panel
-- **AND** layout is responsive (stacks on narrow screens)
+- **AND** layout stacks on narrow screens
+
+#### Scenario: Chassis panel
+- **WHEN** Chassis panel renders
+- **THEN** Tonnage input with +/- buttons is shown (range 20-100, step 5)
+- **AND** Omni checkbox is shown
+- **AND** Motive Type dropdown is shown (Biped, Quad, Tripod, LAM, QuadVee)
+- **AND** Enhancement dropdown is shown (None, MASC, TSM)
+
+#### Scenario: Tonnage change
+- **WHEN** user changes tonnage
+- **THEN** engine rating is recalculated to maintain Walk MP
+- **AND** engine rating is clamped to valid range (10-500)
+- **AND** structure weight recalculates automatically
+
+#### Scenario: Enhancement selection with mutual exclusion
+- **WHEN** user selects MASC
+- **THEN** TSM option becomes disabled
+- **AND** enhancement info shows MASC description
+- **WHEN** user selects TSM
+- **THEN** MASC option becomes disabled
+- **AND** enhancement info shows TSM description
 
 #### Scenario: System Components panel
 - **WHEN** System Components panel renders
-- **THEN** Engine Type, Gyro, Structure, and Cockpit are shown in compact rows
-- **AND** each row shows label, dropdown, weight, and critical slots
-- **AND** Engine Rating is displayed as derived info below the component list
-
-#### Scenario: Movement panel with Base/Final columns
-- **WHEN** Movement panel renders
-- **THEN** Walk MP shows input with +/- buttons under Base column
-- **AND** Walk MP Final column shows same value
-- **AND** Run MP shows calculated value (ceil of 1.5 × Walk MP)
-- **AND** Jump/UMU MP shows placeholder input (disabled until equipment system)
-- **AND** Jump Type shows dropdown (disabled until equipment system)
-- **AND** Mech. J. Booster MP shows placeholder
+- **THEN** Engine Type, Gyro, Structure, and Cockpit dropdowns are shown
+- **AND** each shows weight and critical slots
+- **AND** Engine Rating is displayed as derived info
 
 #### Scenario: Walk MP drives engine rating
 - **WHEN** user changes Walk MP value
 - **THEN** engine rating is calculated as tonnage × walkMP
 - **AND** engine rating is updated in the store
-- **AND** engine weight and gyro weight recalculate accordingly
-
-#### Scenario: Walk MP range validation
-- **WHEN** Walk MP input renders
-- **THEN** minimum Walk MP ensures engine rating >= 10
-- **AND** maximum Walk MP ensures engine rating <= 500
-- **AND** +/- buttons are disabled at range boundaries
 
 ### Requirement: Armor Tab
 The Armor tab SHALL manage armor type selection and location-based armor allocation.

@@ -89,6 +89,36 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
         }),
         
         // =================================================================
+        // Chassis Actions
+        // =================================================================
+        
+        setTonnage: (tonnage) => set((state) => {
+          // Recalculate engine rating to maintain same Walk MP
+          const walkMP = Math.floor(state.engineRating / state.tonnage);
+          const newEngineRating = tonnage * walkMP;
+          // Clamp engine rating to valid range
+          const clampedRating = Math.max(10, Math.min(500, newEngineRating));
+          return {
+            tonnage,
+            engineRating: clampedRating,
+            isModified: true,
+            lastModifiedAt: Date.now(),
+          };
+        }),
+        
+        setConfiguration: (configuration) => set({
+          configuration,
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        }),
+        
+        setIsOmni: (isOmni) => set({
+          isOmni,
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        }),
+        
+        // =================================================================
         // Tech Base Actions
         // =================================================================
         
@@ -253,6 +283,12 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
           lastModifiedAt: Date.now(),
         }),
         
+        setEnhancement: (enhancement) => set({
+          enhancement,
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        }),
+        
         // =================================================================
         // Metadata Actions
         // =================================================================
@@ -274,6 +310,7 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
           techBase: state.techBase,
           unitType: state.unitType,
           configuration: state.configuration,
+          isOmni: state.isOmni,
           techBaseMode: state.techBaseMode,
           componentTechBases: state.componentTechBases,
           selectionMemory: state.selectionMemory,
@@ -285,6 +322,7 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
           heatSinkType: state.heatSinkType,
           heatSinkCount: state.heatSinkCount,
           armorType: state.armorType,
+          enhancement: state.enhancement,
           isModified: state.isModified,
           createdAt: state.createdAt,
           lastModifiedAt: state.lastModifiedAt,

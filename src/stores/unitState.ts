@@ -20,6 +20,7 @@ import { InternalStructureType } from '@/types/construction/InternalStructureTyp
 import { CockpitType } from '@/types/construction/CockpitType';
 import { HeatSinkType } from '@/types/construction/HeatSinkType';
 import { ArmorTypeEnum } from '@/types/construction/ArmorType';
+import { MovementEnhancementType } from '@/types/construction/MovementEnhancement';
 
 // =============================================================================
 // Selection Memory Types
@@ -82,8 +83,8 @@ export interface UnitState {
   /** Display name (user-editable) */
   name: string;
   
-  /** Unit tonnage */
-  readonly tonnage: number;
+  /** Unit tonnage (editable) */
+  tonnage: number;
   
   /** Base tech base for the unit */
   readonly techBase: TechBase;
@@ -96,7 +97,10 @@ export interface UnitState {
   readonly unitType: UnitType;
   
   /** Mech configuration (Biped, Quad, etc.) */
-  readonly configuration: MechConfiguration;
+  configuration: MechConfiguration;
+  
+  /** Whether this is an OmniMech */
+  isOmni: boolean;
   
   /** Tech base mode: inner_sphere, clan, or mixed */
   techBaseMode: TechBaseMode;
@@ -135,6 +139,9 @@ export interface UnitState {
   /** Armor type */
   armorType: ArmorTypeEnum;
   
+  /** Movement enhancement (MASC, TSM, etc.) or null for none */
+  enhancement: MovementEnhancementType | null;
+  
   // =========================================================================
   // Metadata
   // =========================================================================
@@ -160,6 +167,11 @@ export interface UnitActions {
   // Name
   setName: (name: string) => void;
   
+  // Chassis
+  setTonnage: (tonnage: number) => void;
+  setConfiguration: (configuration: MechConfiguration) => void;
+  setIsOmni: (isOmni: boolean) => void;
+  
   // Tech base
   setTechBaseMode: (mode: TechBaseMode) => void;
   setComponentTechBase: (component: keyof IComponentTechBases, techBase: TechBase) => void;
@@ -174,6 +186,7 @@ export interface UnitActions {
   setHeatSinkType: (type: HeatSinkType) => void;
   setHeatSinkCount: (count: number) => void;
   setArmorType: (type: ArmorTypeEnum) => void;
+  setEnhancement: (enhancement: MovementEnhancementType | null) => void;
   
   // Metadata
   markModified: (modified?: boolean) => void;
@@ -226,6 +239,7 @@ export function createDefaultUnitState(options: CreateUnitOptions): UnitState {
     // Configuration
     unitType: UnitType.BATTLEMECH,
     configuration: MechConfiguration.BIPED,
+    isOmni: false,
     techBaseMode,
     componentTechBases: createDefaultComponentTechBases(options.techBase),
     selectionMemory: createEmptySelectionMemory(),
@@ -239,6 +253,7 @@ export function createDefaultUnitState(options: CreateUnitOptions): UnitState {
     heatSinkType: HeatSinkType.SINGLE,
     heatSinkCount: 10,
     armorType: ArmorTypeEnum.STANDARD,
+    enhancement: null,
     
     // Metadata
     isModified: true,
