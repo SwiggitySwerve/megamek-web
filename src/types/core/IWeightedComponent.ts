@@ -2,7 +2,7 @@
  * IWeightedComponent - Physical mass interface
  * Components with physical characteristics SHALL implement this interface.
  * 
- * @spec openspec/specs/phase-1-foundation/core-entity-types/spec.md
+ * @spec core-entity-types/spec.md
  */
 
 /**

@@ -3,7 +3,7 @@
  * 
  * Defines melee and physical weapons for BattleMechs.
  * 
- * @spec openspec/changes/implement-phase3-equipment/specs/physical-weapons-system/spec.md
+ * @spec openspec/specs/physical-weapons-system/spec.md
  */
 
 import { TechBase } from '../enums/TechBase';

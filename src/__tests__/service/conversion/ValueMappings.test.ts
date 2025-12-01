@@ -45,10 +45,11 @@ describe('ValueMappings', () => {
       expect(mapTechBase('Clan')).toBe(TechBase.CLAN);
     });
 
-    it('should map Mixed tech bases', () => {
-      expect(mapTechBase('Mixed')).toBe(TechBase.MIXED);
-      expect(mapTechBase('Mixed (IS Chassis)')).toBe(TechBase.MIXED_IS_CHASSIS);
-      expect(mapTechBase('Mixed (Clan Chassis)')).toBe(TechBase.MIXED_CLAN_CHASSIS);
+    it('should map Mixed tech bases to binary values (per spec VAL-ENUM-004)', () => {
+      // Per spec: Components must have binary tech base, MIXED not valid
+      expect(mapTechBase('Mixed')).toBe(TechBase.INNER_SPHERE);
+      expect(mapTechBase('Mixed (IS Chassis)')).toBe(TechBase.INNER_SPHERE);
+      expect(mapTechBase('Mixed (Clan Chassis)')).toBe(TechBase.CLAN);
     });
 
     it('should default to Inner Sphere for unknown values', () => {

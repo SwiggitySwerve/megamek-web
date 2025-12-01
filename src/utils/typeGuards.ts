@@ -3,7 +3,7 @@
  * 
  * Type guard implementations for safe type narrowing.
  * 
- * @spec openspec/changes/implement-phase1-foundation/specs/type-guards/spec.md
+ * @spec openspec/specs/validation-patterns/spec.md
  */
 
 import { TechBase } from '../types/enums/TechBase';

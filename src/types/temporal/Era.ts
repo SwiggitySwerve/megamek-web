@@ -3,7 +3,7 @@
  * 
  * Defines all canonical BattleTech eras with their historical year ranges.
  * 
- * @spec openspec/changes/implement-phase1-foundation/specs/era-temporal-system/spec.md
+ * @spec openspec/specs/era-temporal-system/spec.md
  */
 
 /**

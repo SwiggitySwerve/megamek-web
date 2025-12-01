@@ -3,7 +3,7 @@
  * 
  * Defines damage types, hit locations, and damage resolution.
  * 
- * @spec openspec/changes/implement-phase4-validation/specs/damage-system/spec.md
+ * @spec openspec/specs/damage-system/spec.md
  */
 
 import { MechLocation } from '../construction/CriticalSlotAllocation';

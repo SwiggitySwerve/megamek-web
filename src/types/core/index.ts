@@ -2,7 +2,7 @@
  * Core Types barrel export
  * Central export point for all core interfaces.
  * 
- * @spec openspec/specs/phase-1-foundation/core-entity-types/spec.md
+ * @spec core-entity-types/spec.md
  */
 
 // Base entity interfaces

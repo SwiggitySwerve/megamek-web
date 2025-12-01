@@ -146,11 +146,12 @@ describe('UnitFactoryService', () => {
         expect(result.unit?.techBase).toBe(TechBase.CLAN);
       });
 
-      it('should parse MIXED/BOTH tech base', () => {
+      it('should parse MIXED/BOTH tech base as INNER_SPHERE (per spec VAL-ENUM-004)', () => {
+        // Per spec: Components must have binary tech base, MIXED defaults to IS
         const serialized = createSerializedUnit({ techBase: 'MIXED' });
         const result = factory.createFromSerialized(serialized);
 
-        expect(result.unit?.techBase).toBe(TechBase.MIXED);
+        expect(result.unit?.techBase).toBe(TechBase.INNER_SPHERE);
       });
     });
 

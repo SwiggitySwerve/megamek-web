@@ -1,13 +1,18 @@
 /**
  * TechBase - Technology base enumeration
- * Defines the technology base classification for all equipment.
+ * Defines the technology base classification for components and equipment.
  * 
- * @spec openspec/specs/phase-1-foundation/core-enumerations/spec.md
+ * @spec openspec/specs/core-enumerations/spec.md
+ * @spec openspec/specs/validation-rules-master/spec.md (VAL-ENUM-001, VAL-ENUM-004)
+ * 
+ * Per spec: Components MUST have binary tech base (Inner Sphere or Clan).
+ * Mixed tech applies only to UNITS via TechBaseMode, not to components.
  */
 
 /**
- * Technology base for equipment and units.
- * Inner Sphere and Clan represent the two major technology families.
+ * Technology base for components and equipment.
+ * Per spec VAL-ENUM-001: Valid values are INNER_SPHERE or CLAN only.
+ * Per spec VAL-ENUM-004: Components must have binary tech base, not MIXED.
  */
 export enum TechBase {
   /** Inner Sphere technology */
@@ -15,59 +20,40 @@ export enum TechBase {
   
   /** Clan technology */
   CLAN = 'Clan',
-  
-  /** Mixed technology (both IS and Clan components) */
-  MIXED = 'Mixed',
-  
-  /** Mixed with Inner Sphere base chassis */
-  MIXED_IS_CHASSIS = 'Mixed (IS Chassis)',
-  
-  /** Mixed with Clan base chassis */
-  MIXED_CLAN_CHASSIS = 'Mixed (Clan Chassis)',
 }
 
 /**
- * Array of all TechBase values for iteration
+ * Array of all valid TechBase values for iteration
  */
 export const ALL_TECH_BASES: readonly TechBase[] = Object.freeze([
   TechBase.INNER_SPHERE,
   TechBase.CLAN,
-  TechBase.MIXED,
-  TechBase.MIXED_IS_CHASSIS,
-  TechBase.MIXED_CLAN_CHASSIS,
 ]);
 
 /**
- * Primary tech bases (not mixed)
+ * Check if a value is a valid TechBase
  */
-export const PRIMARY_TECH_BASES: readonly TechBase[] = Object.freeze([
-  TechBase.INNER_SPHERE,
-  TechBase.CLAN,
-]);
-
-/**
- * Check if a tech base is a mixed configuration
- */
-export function isMixedTechBase(techBase: TechBase): boolean {
-  return (
-    techBase === TechBase.MIXED ||
-    techBase === TechBase.MIXED_IS_CHASSIS ||
-    techBase === TechBase.MIXED_CLAN_CHASSIS
-  );
+export function isValidTechBase(value: unknown): value is TechBase {
+  return value === TechBase.INNER_SPHERE || value === TechBase.CLAN;
 }
 
 /**
- * Get the base tech (IS or Clan) for mixed tech configurations
+ * Parse a string to TechBase, defaulting to INNER_SPHERE for invalid values.
+ * Note: "Mixed", "BOTH", etc. from import sources default to INNER_SPHERE
+ * because components must have binary tech base per spec VAL-ENUM-004.
  */
-export function getBaseTechBase(techBase: TechBase): TechBase.INNER_SPHERE | TechBase.CLAN {
-  switch (techBase) {
-    case TechBase.CLAN:
-    case TechBase.MIXED_CLAN_CHASSIS:
+export function parseTechBase(value: string | undefined): TechBase {
+  if (!value) return TechBase.INNER_SPHERE;
+  
+  const normalized = value.toUpperCase().trim();
+  switch (normalized) {
+    case 'CLAN':
       return TechBase.CLAN;
-    case TechBase.INNER_SPHERE:
-    case TechBase.MIXED:
-    case TechBase.MIXED_IS_CHASSIS:
+    case 'INNER_SPHERE':
+    case 'IS':
+    case 'INNERSPHERE':
     default:
+      // Per spec: Components default to IS when source is ambiguous or mixed
       return TechBase.INNER_SPHERE;
   }
 }

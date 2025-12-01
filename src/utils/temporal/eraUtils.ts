@@ -3,7 +3,7 @@
  * 
  * Functions for determining era from year and working with era boundaries.
  * 
- * @spec openspec/changes/implement-phase1-foundation/specs/era-temporal-system/spec.md
+ * @spec openspec/specs/era-temporal-system/spec.md
  */
 
 import { Era, ERA_DEFINITIONS, EraDefinition } from '../../types/temporal/Era';

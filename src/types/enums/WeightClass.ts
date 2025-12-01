@@ -2,7 +2,7 @@
  * WeightClass - Mech weight classification enumeration
  * Defines the weight class categories for mechs.
  * 
- * @spec openspec/specs/phase-1-foundation/core-enumerations/spec.md
+ * @spec core-enumerations/spec.md
  */
 
 /**

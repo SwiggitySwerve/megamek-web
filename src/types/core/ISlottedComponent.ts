@@ -2,7 +2,7 @@
  * ISlottedComponent - Critical slot interface
  * Components that occupy critical slots SHALL implement this interface.
  * 
- * @spec openspec/specs/phase-1-foundation/core-entity-types/spec.md
+ * @spec core-entity-types/spec.md
  */
 
 /**

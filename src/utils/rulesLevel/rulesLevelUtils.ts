@@ -3,7 +3,7 @@
  * 
  * Functions for comparing and filtering by rules level.
  * 
- * @spec openspec/changes/implement-phase1-foundation/specs/rules-level-system/spec.md
+ * @spec openspec/specs/rules-level-system/spec.md
  */
 
 import { RulesLevel } from '../../types/enums/RulesLevel';

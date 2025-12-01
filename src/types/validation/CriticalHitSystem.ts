@@ -3,7 +3,7 @@
  * 
  * Defines critical hit tables, effects, and resolution.
  * 
- * @spec openspec/changes/implement-phase4-validation/specs/critical-hit-system/spec.md
+ * @spec openspec/specs/critical-hit-system/spec.md
  */
 
 import { MechLocation } from '../construction/CriticalSlotAllocation';

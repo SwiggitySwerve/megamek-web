@@ -4,7 +4,7 @@
  * Defines interfaces for mech construction components.
  * All interfaces extend from core entity types.
  * 
- * @spec openspec/changes/implement-phase2-construction
+ * @spec openspec/specs/construction-rules-core/spec.md
  */
 
 import { IEntity, ITechBaseEntity, IPlaceableComponent, ITemporalEntity, IValuedComponent } from '../core';

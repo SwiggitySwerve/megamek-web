@@ -3,7 +3,7 @@
  * 
  * Utilities for working with critical slots per BattleTech rules.
  * 
- * @spec openspec/changes/implement-phase1-foundation/specs/physical-properties/spec.md
+ * @spec openspec/specs/physical-properties-system/spec.md
  */
 
 /**

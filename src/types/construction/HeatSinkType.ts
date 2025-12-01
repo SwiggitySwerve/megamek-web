@@ -3,7 +3,7 @@
  * 
  * Defines all standard BattleTech heat sink types.
  * 
- * @spec openspec/changes/implement-phase2-construction/specs/heat-sink-system/spec.md
+ * @spec openspec/specs/heat-sink-system/spec.md
  */
 
 import { TechBase } from '../enums/TechBase';

@@ -1,7 +1,7 @@
 /**
  * Construction Utilities Barrel Export
  * 
- * @spec openspec/changes/implement-phase2-construction
+ * @spec openspec/specs/construction-rules-core/spec.md
  */
 
 export * from './engineCalculations';

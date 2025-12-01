@@ -3,7 +3,7 @@
  * 
  * Lasers, PPCs, Flamers, and energy-based defensive systems.
  * 
- * @spec openspec/changes/implement-phase3-equipment/specs/weapon-system/spec.md
+ * @spec openspec/specs/weapon-system/spec.md
  */
 
 import { TechBase } from '../../enums/TechBase';

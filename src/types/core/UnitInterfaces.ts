@@ -1,7 +1,7 @@
 /**
  * UnitInterfaces.ts - STUB FILE
  * Unit interface definitions
- * TODO: Replace with spec-driven implementation from openspec/specs/phase-1-foundation/
+ * TODO: Replace with spec-driven implementation from 
  */
 
 import { TechBase, RulesLevel, EntityId } from './index';

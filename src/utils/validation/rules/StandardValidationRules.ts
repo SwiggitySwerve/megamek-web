@@ -3,7 +3,7 @@
  * 
  * Implements the core validation rules for BattleMech construction.
  * 
- * @spec openspec/changes/implement-validation-rules-master/specs/
+ * @spec openspec/specs/
  */
 
 import {

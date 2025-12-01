@@ -3,7 +3,7 @@
  * 
  * Functions for calculating armor allocation and limits.
  * 
- * @spec openspec/changes/implement-phase2-construction/specs/armor-system/spec.md
+ * @spec openspec/specs/armor-system/spec.md
  */
 
 import { ArmorTypeEnum, ArmorDefinition, getArmorDefinition } from '../../types/construction/ArmorType';
@@ -142,6 +142,7 @@ export function validateLocationArmor(
 
 /**
  * Get recommended armor allocation percentages
+ * @deprecated Use calculateOptimalArmorAllocation instead
  */
 export function getRecommendedArmorDistribution(): Record<string, number> {
   return {
@@ -156,6 +157,165 @@ export function getRecommendedArmorDistribution(): Record<string, number> {
     rightArm: 0.10,       // 10% - RA
     leftLeg: 0.10,        // 10% - LL
     rightLeg: 0.10,       // 10% - RL
+  };
+}
+
+/**
+ * Complete armor allocation result
+ */
+export interface ArmorAllocationResult {
+  head: number;
+  centerTorsoFront: number;
+  centerTorsoRear: number;
+  leftTorsoFront: number;
+  leftTorsoRear: number;
+  rightTorsoFront: number;
+  rightTorsoRear: number;
+  leftArm: number;
+  rightArm: number;
+  leftLeg: number;
+  rightLeg: number;
+  totalAllocated: number;
+  unallocated: number;
+}
+
+/**
+ * Calculate optimal armor allocation matching MegaMekLab's distribution
+ * 
+ * Simplified 3-phase algorithm:
+ * 1. Initial spread: Head gets 25%, body proportional to max capacity
+ * 2. Symmetric remainder: Distribute to symmetric pairs first (torsos, legs, arms)
+ * 3. Apply splits: Front/rear for torsos
+ * 
+ * Target distributions (50-ton mech):
+ * - 32 pts: Head=8, CT=3+1, LT/RT=5, LA/RA=2, LL/RL=3
+ * - 152 pts: Head=9, CT=22+7, LT/RT=17+5, LA/RA=14, LL/RL=21
+ * - 169 pts: Head=9, CT=24+8, LT/RT=18+6, LA/RA=16, LL/RL=24
+ * 
+ * @param availablePoints - Total armor points to distribute
+ * @param tonnage - Mech tonnage (determines max per location)
+ * @returns Optimal armor allocation
+ */
+export function calculateOptimalArmorAllocation(
+  availablePoints: number,
+  tonnage: number
+): ArmorAllocationResult {
+  // Get max armor for each location
+  const maxHead = MAX_HEAD_ARMOR;
+  const maxCT = getMaxArmorForLocation(tonnage, 'centerTorso');
+  const maxLT = getMaxArmorForLocation(tonnage, 'leftTorso');
+  const maxLA = getMaxArmorForLocation(tonnage, 'leftArm');
+  const maxLL = getMaxArmorForLocation(tonnage, 'leftLeg');
+  
+  const maxBodyArmor = maxCT + (maxLT * 2) + (maxLA * 2) + (maxLL * 2);
+  const maxTotalArmor = maxHead + maxBodyArmor;
+  
+  // Cap at max
+  const points = Math.min(availablePoints, maxTotalArmor);
+  
+  // ===========================================================================
+  // PHASE 1: Initial proportional spread
+  // ===========================================================================
+  
+  // Head gets ~25% weight, capped at 9
+  let head = Math.min(Math.floor(points * 0.25), maxHead);
+  
+  // Body gets the rest, distributed proportionally to max capacity
+  const bodyPoints = points - head;
+  
+  let ct = Math.floor(bodyPoints * maxCT / maxBodyArmor);
+  let lt = Math.floor(bodyPoints * maxLT / maxBodyArmor);
+  let rt = lt; // Symmetric
+  let la = Math.floor(bodyPoints * maxLA / maxBodyArmor);
+  let ra = la; // Symmetric
+  let ll = Math.floor(bodyPoints * maxLL / maxBodyArmor);
+  let rl = ll; // Symmetric
+  
+  // ===========================================================================
+  // PHASE 2: Symmetric remainder distribution
+  // ===========================================================================
+  
+  let allocated = head + ct + lt + rt + la + ra + ll + rl;
+  let remaining = points - allocated;
+  
+  // Simple priority loop - symmetric pairs first
+  while (remaining > 0) {
+    // Try symmetric pairs (need 2 points)
+    if (remaining >= 2 && lt < maxLT && rt < maxLT) {
+      lt++; rt++; remaining -= 2; continue;
+    }
+    if (remaining >= 2 && ll < maxLL && rl < maxLL) {
+      ll++; rl++; remaining -= 2; continue;
+    }
+    if (remaining >= 2 && la < maxLA && ra < maxLA) {
+      la++; ra++; remaining -= 2; continue;
+    }
+    
+    // Single locations for odd remainder
+    if (remaining >= 1 && ct < maxCT) {
+      ct++; remaining--; continue;
+    }
+    if (remaining >= 1 && head < maxHead) {
+      head++; remaining--; continue;
+    }
+    
+    // Safety: if nothing can be allocated, break
+    break;
+  }
+  
+  // ===========================================================================
+  // PHASE 3: Apply front/rear splits to torsos
+  // ===========================================================================
+  
+  // CT: rear = ceil(total / 4.5)
+  const ctRear = Math.ceil(ct / 4.5);
+  const ctFront = ct - ctRear;
+  
+  // Side torsos: 25% rear at MAX TOTAL ARMOR, 22% otherwise, 0% if < 40% capacity
+  const atMaxTotalArmor = points >= maxTotalArmor;
+  
+  let ltRear = 0, ltFront = lt;
+  let rtRear = 0, rtFront = rt;
+  
+  if (lt > maxLT * 0.4) {
+    const rearRatio = atMaxTotalArmor ? 0.25 : 0.22;
+    ltRear = Math.round(lt * rearRatio);
+    ltFront = lt - ltRear;
+    rtRear = ltRear;
+    rtFront = rt - rtRear;
+  }
+  
+  allocated = head + ctFront + ctRear + ltFront + ltRear + rtFront + rtRear + la + ra + ll + rl;
+  
+  return createAllocationResult(
+    head, ctFront, ctRear, ltFront, ltRear, rtFront, rtRear,
+    la, ra, ll, rl, allocated, availablePoints - allocated
+  );
+}
+
+/**
+ * Helper to create allocation result object
+ */
+function createAllocationResult(
+  head: number, ctFront: number, ctRear: number,
+  ltFront: number, ltRear: number, rtFront: number, rtRear: number,
+  laArmor: number, raArmor: number, llArmor: number, rlArmor: number,
+  totalAllocated: number, unallocated: number
+): ArmorAllocationResult {
+  return {
+    head,
+    centerTorsoFront: ctFront,
+    centerTorsoRear: ctRear,
+    leftTorsoFront: ltFront,
+    leftTorsoRear: ltRear,
+    rightTorsoFront: rtFront,
+    rightTorsoRear: rtRear,
+    leftArm: laArmor,
+    rightArm: raArmor,
+    leftLeg: llArmor,
+    rightLeg: rlArmor,
+    totalAllocated,
+    unallocated,
   };
 }
 

@@ -3,7 +3,7 @@
  * 
  * Coordinates execution of validation rules.
  * 
- * @spec openspec/changes/implement-validation-rules-master/specs/validation-orchestrator/spec.md
+ * @spec openspec/specs/validation-rules-master/spec.md
  */
 
 import {

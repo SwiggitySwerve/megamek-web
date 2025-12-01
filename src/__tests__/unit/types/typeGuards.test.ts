@@ -142,10 +142,11 @@ describe('Type Guards', () => {
   // ============================================================================
   describe('isTechBaseEntity', () => {
     describe('valid tech base entities', () => {
+      // Per spec VAL-ENUM-004: TechBase is binary (IS or Clan only)
       it.each([
         [{ techBase: TechBase.INNER_SPHERE, rulesLevel: RulesLevel.INTRODUCTORY }],
         [{ techBase: TechBase.CLAN, rulesLevel: RulesLevel.STANDARD }],
-        [{ techBase: TechBase.MIXED, rulesLevel: RulesLevel.ADVANCED }],
+        [{ techBase: TechBase.INNER_SPHERE, rulesLevel: RulesLevel.ADVANCED }],
       ])('should accept %o', (value) => {
         expect(isTechBaseEntity(value)).toBe(true);
       });

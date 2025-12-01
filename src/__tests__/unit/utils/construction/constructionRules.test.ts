@@ -1,7 +1,7 @@
 /**
  * Tests for Construction Rules Core
  * 
- * @spec openspec/changes/implement-phase2-construction/specs/construction-rules/spec.md
+ * @spec openspec/specs/construction-rules-core/spec.md
  */
 
 import {

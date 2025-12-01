@@ -1,7 +1,7 @@
 /**
  * Tests for Rules Level Utilities
  * 
- * @spec openspec/changes/implement-phase1-foundation/specs/rules-level-system/spec.md
+ * @spec openspec/specs/rules-level-system/spec.md
  */
 
 import {

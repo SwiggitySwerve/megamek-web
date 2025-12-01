@@ -2,7 +2,7 @@
  * ITemporalEntity - Temporal availability interface
  * Components with introduction dates SHALL implement ITemporalEntity.
  * 
- * @spec openspec/specs/phase-1-foundation/core-entity-types/spec.md
+ * @spec core-entity-types/spec.md
  */
 
 import { Era } from '../enums/Era';

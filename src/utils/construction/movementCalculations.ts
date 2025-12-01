@@ -3,7 +3,7 @@
  * 
  * Functions for calculating movement points and related values.
  * 
- * @spec openspec/changes/implement-phase2-construction/specs/movement-system/spec.md
+ * @spec openspec/specs/movement-system/spec.md
  */
 
 import { TechBase } from '../../types/enums/TechBase';

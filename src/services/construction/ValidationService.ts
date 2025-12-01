@@ -206,13 +206,10 @@ export class ValidationService implements IValidationService {
       const eqTechBase = (equipment as { techBase: TechBase }).techBase;
       
       // Check compatibility
-      // MIXED tech base is always compatible
-      // INNER_SPHERE equipment is compatible with IS or MIXED mechs
-      // CLAN equipment is compatible with CLAN or MIXED mechs
-      const isCompatible = 
-        eqTechBase === TechBase.MIXED ||
-        mech.techBase === TechBase.MIXED ||
-        eqTechBase === mech.techBase;
+      // Per spec VAL-ENUM-004: Tech base is binary (IS or Clan)
+      // Equipment must match mech's component tech base, unless mech is in mixed mode
+      // Note: Mixed mode is handled at the unit configuration level, not here
+      const isCompatible = eqTechBase === mech.techBase;
       
       if (!isCompatible) {
         errors.push({

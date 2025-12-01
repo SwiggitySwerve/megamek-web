@@ -3,7 +3,7 @@
  * 
  * Functions for calculating gyro weight and slots.
  * 
- * @spec openspec/changes/implement-phase2-construction/specs/gyro-system/spec.md
+ * @spec openspec/specs/gyro-system/spec.md
  */
 
 import { GyroType, GyroDefinition, getGyroDefinition } from '../../types/construction/GyroType';

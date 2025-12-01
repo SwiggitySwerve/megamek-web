@@ -77,7 +77,8 @@ describe('/api/meta/unit_tech_bases', () => {
       expect(data).toContain(TechBase.CLAN);
     });
 
-    it('should include MIXED tech base', async () => {
+    it('should only include binary tech bases (per spec VAL-ENUM-001)', async () => {
+      // Per spec: Valid TechBase values are INNER_SPHERE and CLAN only
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'GET',
       });
@@ -85,7 +86,9 @@ describe('/api/meta/unit_tech_bases', () => {
       await handler(req, res);
 
       const data = JSON.parse(res._getData());
-      expect(data).toContain(TechBase.MIXED);
+      expect(data).toContain(TechBase.INNER_SPHERE);
+      expect(data).toContain(TechBase.CLAN);
+      expect(data.length).toBe(2); // Only IS and Clan
     });
 
     it('should have correct number of tech bases', async () => {
@@ -96,7 +99,7 @@ describe('/api/meta/unit_tech_bases', () => {
       await handler(req, res);
 
       const data = JSON.parse(res._getData());
-      expect(data.length).toBe(Object.values(TechBase).length);
+      expect(data.length).toBe(Object.values(TechBase).length); // Should be 2
     });
   });
 });

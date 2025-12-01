@@ -2,7 +2,7 @@
  * IEntity - Base entity interface
  * All entities in the system SHALL extend from IEntity, providing universal identification.
  * 
- * @spec openspec/specs/phase-1-foundation/core-entity-types/spec.md
+ * @spec core-entity-types/spec.md
  */
 
 /**

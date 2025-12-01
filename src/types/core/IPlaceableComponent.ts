@@ -2,7 +2,7 @@
  * IPlaceableComponent - Composition interface
  * Components with both weight and slots SHALL use IPlaceableComponent composition.
  * 
- * @spec openspec/specs/phase-1-foundation/core-entity-types/spec.md
+ * @spec core-entity-types/spec.md
  */
 
 import { IWeightedComponent } from './IWeightedComponent';

@@ -4,7 +4,7 @@
  * Centralized registry for all BattleTech construction formulas.
  * Each formula references its source in the TechManual.
  * 
- * @spec openspec/changes/implement-phase2-construction/specs/formula-registry/spec.md
+ * @spec openspec/specs/formula-registry/spec.md
  */
 
 /**

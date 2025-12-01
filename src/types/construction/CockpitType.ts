@@ -3,7 +3,7 @@
  * 
  * Defines all standard BattleTech cockpit types.
  * 
- * @spec openspec/changes/implement-phase2-construction/specs/cockpit-system/spec.md
+ * @spec openspec/specs/cockpit-system/spec.md
  */
 
 import { TechBase } from '../enums/TechBase';

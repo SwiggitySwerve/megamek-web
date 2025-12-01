@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Unit Tech Base Declaration
-Units SHALL declare their technology base.
+Units SHALL declare their tech base.
 
 #### Scenario: Tech base types
 - **WHEN** declaring unit tech base

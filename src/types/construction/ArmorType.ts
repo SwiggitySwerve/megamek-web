@@ -3,7 +3,7 @@
  * 
  * Defines all standard BattleTech armor types.
  * 
- * @spec openspec/changes/implement-phase2-construction/specs/armor-system/spec.md
+ * @spec openspec/specs/armor-system/spec.md
  */
 
 import { TechBase } from '../enums/TechBase';

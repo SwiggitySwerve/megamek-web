@@ -3,7 +3,7 @@
  * 
  * Comprehensive ammunition types and compatibility rules.
  * 
- * @spec openspec/changes/implement-phase3-equipment/specs/ammunition-system/spec.md
+ * @spec openspec/specs/ammunition-system/spec.md
  */
 
 import { TechBase } from '../enums/TechBase';

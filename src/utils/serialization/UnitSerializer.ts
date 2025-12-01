@@ -3,7 +3,7 @@
  * 
  * Implements JSON save/load for unit data.
  * 
- * @spec openspec/changes/implement-phase5-data-models/specs/serialization-formats/spec.md
+ * @spec openspec/specs/serialization-formats/spec.md
  */
 
 import {

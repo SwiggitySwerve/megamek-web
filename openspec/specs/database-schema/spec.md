@@ -125,7 +125,7 @@ The system SHALL define unit record structure matching ISerializedUnit.
 #### Scenario: Unit classification fields
 - **GIVEN** a unit record
 - **THEN** it MUST contain:
-  - `techBase` - Technology base
+  - `techBase` - tech base
   - `rulesLevel` - Rules level
   - `era` - BattleTech era
   - `year` - Introduction year

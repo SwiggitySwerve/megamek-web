@@ -1,7 +1,7 @@
 /**
  * Construction Types Barrel Export
  * 
- * @spec openspec/changes/implement-phase2-construction
+ * @spec openspec/specs/construction-rules-core/spec.md
  */
 
 export * from './EngineType';
@@ -13,4 +13,5 @@ export * from './CockpitType';
 export * from './ComponentInterfaces';
 export * from './CriticalSlotAllocation';
 export * from './MovementEnhancement';
+export * from './TechBaseConfiguration';
 

@@ -3,7 +3,7 @@
  * 
  * Defines heat tracking and management types.
  * 
- * @spec openspec/changes/implement-phase4-validation/specs/heat-management-system/spec.md
+ * @spec openspec/specs/heat-management-system/spec.md
  */
 
 /**
