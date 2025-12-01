@@ -1,8 +1,9 @@
 /**
  * Structure Tab Component
  * 
- * Configuration of structural components (engine, gyro, structure, cockpit).
- * Uses the contextual unit store - no tabId prop needed.
+ * Configuration of structural components (engine, gyro, structure, cockpit)
+ * and movement settings. Uses movement-first design where Walk MP determines
+ * engine rating.
  * 
  * @spec openspec/specs/customizer-tabs/spec.md
  * @spec openspec/specs/unit-store-architecture/spec.md
@@ -33,17 +34,24 @@ interface StructureTabProps {
 // =============================================================================
 
 /**
- * Generate engine rating options based on tonnage
+ * Get valid Walk MP range for a given tonnage
+ * Engine rating = tonnage × walkMP, must be 10-500
  */
-function generateEngineRatings(tonnage: number): number[] {
-  const ratings: number[] = [];
-  for (let walkMP = 1; walkMP <= 12; walkMP++) {
-    const rating = tonnage * walkMP;
-    if (rating >= 10 && rating <= 500 && rating % 5 === 0) {
-      ratings.push(rating);
-    }
-  }
-  return ratings;
+function getWalkMPRange(tonnage: number): { min: number; max: number } {
+  const minRating = 10;
+  const maxRating = 500;
+  
+  const minWalk = Math.max(1, Math.ceil(minRating / tonnage));
+  const maxWalk = Math.min(12, Math.floor(maxRating / tonnage));
+  
+  return { min: minWalk, max: maxWalk };
+}
+
+/**
+ * Calculate Run MP from Walk MP (ceil of 1.5× walk)
+ */
+function calculateRunMP(walkMP: number): number {
+  return Math.ceil(walkMP * 1.5);
 }
 
 // =============================================================================
@@ -60,7 +68,7 @@ export function StructureTab({
   readOnly = false,
   className = '',
 }: StructureTabProps) {
-  // Get unit state from context (no tabId needed!)
+  // Get unit state from context
   const tonnage = useUnitStore((s) => s.tonnage);
   const componentTechBases = useUnitStore((s) => s.componentTechBases);
   const engineType = useUnitStore((s) => s.engineType);
@@ -80,7 +88,6 @@ export function StructureTab({
   const setCockpitType = useUnitStore((s) => s.setCockpitType);
   
   // Get filtered options based on tech base
-  // Note: Component selection sync is handled in the store when tech base changes
   const { filteredOptions } = useTechBaseSync(componentTechBases);
   
   // Calculate weights and slots
@@ -95,17 +102,23 @@ export function StructureTab({
     armorType,
   });
   
-  // Generate engine rating options
-  const engineRatings = useMemo(() => generateEngineRatings(tonnage), [tonnage]);
+  // Movement calculations - Walk MP drives engine rating
+  const walkMP = useMemo(() => Math.floor(engineRating / tonnage), [engineRating, tonnage]);
+  const runMP = useMemo(() => calculateRunMP(walkMP), [walkMP]);
+  const walkMPRange = useMemo(() => getWalkMPRange(tonnage), [tonnage]);
   
-  // Handlers - no tabId needed!
+  // Handlers
   const handleEngineTypeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     setEngineType(e.target.value as EngineType);
   }, [setEngineType]);
   
-  const handleEngineRatingChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    setEngineRating(parseInt(e.target.value, 10));
-  }, [setEngineRating]);
+  const handleWalkMPChange = useCallback((newWalkMP: number) => {
+    // Clamp to valid range
+    const clampedWalk = Math.max(walkMPRange.min, Math.min(walkMPRange.max, newWalkMP));
+    // Calculate and set engine rating
+    const newRating = tonnage * clampedWalk;
+    setEngineRating(newRating);
+  }, [tonnage, walkMPRange, setEngineRating]);
   
   const handleGyroTypeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     setGyroType(e.target.value as GyroType);
@@ -120,7 +133,7 @@ export function StructureTab({
   }, [setCockpitType]);
   
   return (
-    <div className={`space-y-6 p-4 ${className}`}>
+    <div className={`space-y-4 p-4 ${className}`}>
       {/* Compact Structural Weight Summary - at top */}
       <div className="bg-slate-800/50 rounded-lg border border-slate-700 px-4 py-2">
         <div className="flex items-center justify-between gap-6">
@@ -153,16 +166,19 @@ export function StructureTab({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Engine Configuration */}
+      {/* Two-column layout: System Components (left) | Movement (right) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        
+        {/* LEFT: System Components */}
         <div className="bg-slate-800 rounded-lg border border-slate-700 p-4">
-          <h3 className="text-lg font-semibold text-white mb-4">Engine</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">System Components</h3>
           
           <div className="space-y-4">
-            <div>
-              <label className="block text-sm text-slate-400 mb-1">Engine Type</label>
+            {/* Engine Type */}
+            <div className="grid grid-cols-[120px_1fr_80px_60px] gap-2 items-center">
+              <label className="text-sm text-slate-400">Engine</label>
               <select 
-                className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white"
+                className="px-2 py-1.5 bg-slate-700 border border-slate-600 rounded text-white text-sm"
                 disabled={readOnly}
                 value={engineType}
                 onChange={handleEngineTypeChange}
@@ -173,50 +189,15 @@ export function StructureTab({
                   </option>
                 ))}
               </select>
+              <span className="text-sm text-slate-400 text-right">{calculations.engineWeight}t</span>
+              <span className="text-sm text-slate-500 text-right">{calculations.engineSlots} slots</span>
             </div>
             
-            <div>
-              <label className="block text-sm text-slate-400 mb-1">Engine Rating</label>
+            {/* Gyro */}
+            <div className="grid grid-cols-[120px_1fr_80px_60px] gap-2 items-center">
+              <label className="text-sm text-slate-400">Gyro</label>
               <select 
-                className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white"
-                disabled={readOnly}
-                value={engineRating}
-                onChange={handleEngineRatingChange}
-              >
-                {engineRatings.map((rating) => (
-                  <option key={rating} value={rating}>
-                    {rating} (Walk {Math.floor(rating / tonnage)})
-                  </option>
-                ))}
-              </select>
-            </div>
-            
-            <div className="pt-2 border-t border-slate-700">
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-400">Weight:</span>
-                <span className="text-white">{calculations.engineWeight} tons</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-400">Walk MP:</span>
-                <span className="text-white">{calculations.walkMP}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-400">Critical Slots:</span>
-                <span className="text-white">{calculations.engineSlots}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Gyro Configuration */}
-        <div className="bg-slate-800 rounded-lg border border-slate-700 p-4">
-          <h3 className="text-lg font-semibold text-white mb-4">Gyro</h3>
-          
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm text-slate-400 mb-1">Gyro Type</label>
-              <select 
-                className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white"
+                className="px-2 py-1.5 bg-slate-700 border border-slate-600 rounded text-white text-sm"
                 disabled={readOnly}
                 value={gyroType}
                 onChange={handleGyroTypeChange}
@@ -227,30 +208,15 @@ export function StructureTab({
                   </option>
                 ))}
               </select>
+              <span className="text-sm text-slate-400 text-right">{calculations.gyroWeight}t</span>
+              <span className="text-sm text-slate-500 text-right">{calculations.gyroSlots} slots</span>
             </div>
             
-            <div className="pt-2 border-t border-slate-700">
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-400">Weight:</span>
-                <span className="text-white">{calculations.gyroWeight} tons</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-400">Critical Slots:</span>
-                <span className="text-white">{calculations.gyroSlots}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Structure Configuration */}
-        <div className="bg-slate-800 rounded-lg border border-slate-700 p-4">
-          <h3 className="text-lg font-semibold text-white mb-4">Internal Structure</h3>
-          
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm text-slate-400 mb-1">Structure Type</label>
+            {/* Internal Structure */}
+            <div className="grid grid-cols-[120px_1fr_80px_60px] gap-2 items-center">
+              <label className="text-sm text-slate-400">Structure</label>
               <select 
-                className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white"
+                className="px-2 py-1.5 bg-slate-700 border border-slate-600 rounded text-white text-sm"
                 disabled={readOnly}
                 value={internalStructureType}
                 onChange={handleStructureTypeChange}
@@ -261,30 +227,15 @@ export function StructureTab({
                   </option>
                 ))}
               </select>
+              <span className="text-sm text-slate-400 text-right">{calculations.structureWeight}t</span>
+              <span className="text-sm text-slate-500 text-right">{calculations.structureSlots} slots</span>
             </div>
             
-            <div className="pt-2 border-t border-slate-700">
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-400">Weight:</span>
-                <span className="text-white">{calculations.structureWeight} tons</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-400">Critical Slots:</span>
-                <span className="text-white">{calculations.structureSlots}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Cockpit Configuration */}
-        <div className="bg-slate-800 rounded-lg border border-slate-700 p-4">
-          <h3 className="text-lg font-semibold text-white mb-4">Cockpit</h3>
-          
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm text-slate-400 mb-1">Cockpit Type</label>
+            {/* Cockpit */}
+            <div className="grid grid-cols-[120px_1fr_80px_60px] gap-2 items-center">
+              <label className="text-sm text-slate-400">Cockpit</label>
               <select 
-                className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white"
+                className="px-2 py-1.5 bg-slate-700 border border-slate-600 rounded text-white text-sm"
                 disabled={readOnly}
                 value={cockpitType}
                 onChange={handleCockpitTypeChange}
@@ -295,17 +246,127 @@ export function StructureTab({
                   </option>
                 ))}
               </select>
+              <span className="text-sm text-slate-400 text-right">{calculations.cockpitWeight}t</span>
+              <span className="text-sm text-slate-500 text-right">{calculations.cockpitSlots} slots</span>
             </div>
             
-            <div className="pt-2 border-t border-slate-700">
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-400">Weight:</span>
-                <span className="text-white">{calculations.cockpitWeight} tons</span>
+            {/* Engine Rating (derived info) */}
+            <div className="pt-3 mt-3 border-t border-slate-700">
+              <div className="grid grid-cols-[120px_1fr] gap-2 items-center">
+                <span className="text-sm text-slate-400">Engine Rating</span>
+                <span className="text-sm font-medium text-amber-400">{engineRating}</span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-400">Critical Slots:</span>
-                <span className="text-white">{calculations.cockpitSlots}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* RIGHT: Movement */}
+        <div className="bg-slate-800 rounded-lg border border-slate-700 p-4">
+          <h3 className="text-lg font-semibold text-white mb-4">Movement</h3>
+          
+          <div className="space-y-3">
+            {/* Column Headers */}
+            <div className="grid grid-cols-[140px_80px_80px] gap-2 items-center">
+              <span></span>
+              <span className="text-xs text-slate-500 text-center uppercase">Base</span>
+              <span className="text-xs text-slate-500 text-center uppercase">Final</span>
+            </div>
+            
+            {/* Walk MP */}
+            <div className="grid grid-cols-[140px_80px_80px] gap-2 items-center">
+              <label className="text-sm text-slate-400">Walk MP</label>
+              <div className="flex items-center justify-center">
+                <button
+                  onClick={() => handleWalkMPChange(walkMP - 1)}
+                  disabled={readOnly || walkMP <= walkMPRange.min}
+                  className="px-2 py-1 bg-slate-700 hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-l border border-slate-600 text-white text-sm"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  value={walkMP}
+                  onChange={(e) => handleWalkMPChange(parseInt(e.target.value, 10) || walkMPRange.min)}
+                  disabled={readOnly}
+                  min={walkMPRange.min}
+                  max={walkMPRange.max}
+                  className="w-12 px-1 py-1 bg-slate-700 border-y border-slate-600 text-white text-sm text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                />
+                <button
+                  onClick={() => handleWalkMPChange(walkMP + 1)}
+                  disabled={readOnly || walkMP >= walkMPRange.max}
+                  className="px-2 py-1 bg-slate-700 hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-r border border-slate-600 text-white text-sm"
+                >
+                  +
+                </button>
               </div>
+              <span className="text-sm text-white text-center font-medium">{walkMP}</span>
+            </div>
+            
+            {/* Run MP (calculated) */}
+            <div className="grid grid-cols-[140px_80px_80px] gap-2 items-center">
+              <label className="text-sm text-slate-400">Run MP</label>
+              <span className="text-sm text-slate-500 text-center">{runMP}</span>
+              <span className="text-sm text-white text-center font-medium">{runMP}</span>
+            </div>
+            
+            {/* Jump/UMU MP */}
+            <div className="grid grid-cols-[140px_80px_80px] gap-2 items-center">
+              <label className="text-sm text-slate-400">Jump/UMU MP</label>
+              <div className="flex items-center justify-center">
+                <button
+                  disabled={true}
+                  className="px-2 py-1 bg-slate-700 opacity-50 cursor-not-allowed rounded-l border border-slate-600 text-white text-sm"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  value={0}
+                  disabled={true}
+                  className="w-12 px-1 py-1 bg-slate-700 border-y border-slate-600 text-white text-sm text-center opacity-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                />
+                <button
+                  disabled={true}
+                  className="px-2 py-1 bg-slate-700 opacity-50 cursor-not-allowed rounded-r border border-slate-600 text-white text-sm"
+                >
+                  +
+                </button>
+              </div>
+              <span className="text-sm text-white text-center font-medium">0</span>
+            </div>
+            
+            {/* Jump Type */}
+            <div className="grid grid-cols-[140px_160px] gap-2 items-center">
+              <label className="text-sm text-slate-400">Jump Type</label>
+              <select 
+                className="px-2 py-1.5 bg-slate-700 border border-slate-600 rounded text-white text-sm"
+                disabled={true}
+                value="jump_jet"
+              >
+                <option value="jump_jet">Jump Jet</option>
+                <option value="improved_jump_jet">Improved Jump Jet</option>
+                <option value="umu">UMU</option>
+              </select>
+            </div>
+            
+            {/* Mech. J. Booster MP (placeholder) */}
+            <div className="grid grid-cols-[140px_80px_80px] gap-2 items-center">
+              <label className="text-sm text-slate-400">Mech. J. Booster MP</label>
+              <div className="flex items-center justify-center">
+                <input
+                  type="number"
+                  value={0}
+                  disabled={true}
+                  className="w-16 px-2 py-1 bg-slate-700 border border-slate-600 rounded text-white text-sm text-center opacity-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                />
+              </div>
+              <span></span>
+            </div>
+            
+            {/* Movement summary info */}
+            <div className="pt-3 mt-3 border-t border-slate-700 text-xs text-slate-500">
+              <p>Walk MP range: {walkMPRange.min}–{walkMPRange.max} (for {tonnage}t mech)</p>
             </div>
           </div>
         </div>
