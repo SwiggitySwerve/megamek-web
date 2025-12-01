@@ -22,29 +22,6 @@ import { TechBase } from '@/types/enums/TechBase';
 import { MultiUnitTabs } from '@/components/customizer/tabs';
 
 // =============================================================================
-// Single Selector for Tab State
-// =============================================================================
-
-interface TabManagerSnapshot {
-  tabs: TabInfo[];
-  activeTabId: string | null;
-  isLoading: boolean;
-}
-
-/**
- * Single combined selector to avoid hook ordering issues
- */
-const selectTabManagerState = (state: {
-  tabs?: TabInfo[];
-  activeTabId?: string | null;
-  isLoading?: boolean;
-}): TabManagerSnapshot => ({
-  tabs: Array.isArray(state.tabs) ? state.tabs : [],
-  activeTabId: state.activeTabId ?? null,
-  isLoading: state.isLoading ?? true,
-});
-
-// =============================================================================
 // Main Component
 // =============================================================================
 
@@ -54,8 +31,10 @@ const selectTabManagerState = (state: {
 export default function CustomizerContent() {
   const [isHydrated, setIsHydrated] = useState(false);
   
-  // Single selector to get all tab state at once
-  const { tabs, activeTabId, isLoading } = useTabManagerStore(selectTabManagerState);
+  // Use individual selectors for primitives and stable references
+  const tabs = useTabManagerStore((s) => s.tabs);
+  const activeTabId = useTabManagerStore((s) => s.activeTabId);
+  const isLoading = useTabManagerStore((s) => s.isLoading);
   
   // Trigger hydration on mount
   useEffect(() => {

@@ -25,66 +25,6 @@ interface MultiUnitTabsProps {
   className?: string;
 }
 
-/**
- * Combined selector state for stable hook ordering
- */
-interface TabManagerSnapshot {
-  tabs: TabInfo[];
-  activeTabId: string | null;
-  isLoading: boolean;
-  isNewTabModalOpen: boolean;
-}
-
-/**
- * Combined actions for stable hook ordering
- */
-interface TabManagerActions {
-  selectTab: (tabId: string) => void;
-  closeTab: (tabId: string) => void;
-  renameTab: (tabId: string, newName: string) => void;
-  createTab: (template: { id: string; name: string; tonnage: number; techBase: TechBase; walkMP: number }, customName?: string) => string;
-  openNewTabModal: () => void;
-  closeNewTabModal: () => void;
-}
-
-// =============================================================================
-// Single Selectors
-// =============================================================================
-
-/**
- * Single combined selector for state - avoids hook ordering issues
- */
-const selectState = (s: {
-  tabs?: TabInfo[];
-  activeTabId?: string | null;
-  isLoading?: boolean;
-  isNewTabModalOpen?: boolean;
-}): TabManagerSnapshot => ({
-  tabs: Array.isArray(s.tabs) ? s.tabs : [],
-  activeTabId: s.activeTabId ?? null,
-  isLoading: s.isLoading ?? true,
-  isNewTabModalOpen: s.isNewTabModalOpen ?? false,
-});
-
-/**
- * Single combined selector for actions - avoids hook ordering issues
- */
-const selectActions = (s: {
-  selectTab: (tabId: string) => void;
-  closeTab: (tabId: string) => void;
-  renameTab: (tabId: string, newName: string) => void;
-  createTab: (template: { id: string; name: string; tonnage: number; techBase: TechBase; walkMP: number }, customName?: string) => string;
-  openNewTabModal: () => void;
-  closeNewTabModal: () => void;
-}): TabManagerActions => ({
-  selectTab: s.selectTab,
-  closeTab: s.closeTab,
-  renameTab: s.renameTab,
-  createTab: s.createTab,
-  openNewTabModal: s.openNewTabModal,
-  closeNewTabModal: s.closeNewTabModal,
-});
-
 // =============================================================================
 // Component
 // =============================================================================
@@ -96,9 +36,20 @@ export function MultiUnitTabs({
   children,
   className = '',
 }: MultiUnitTabsProps) {
-  // Use combined selectors for stable hook ordering
-  const { tabs, activeTabId, isLoading, isNewTabModalOpen } = useTabManagerStore(selectState);
-  const { selectTab, closeTab, renameTab, createTab, openNewTabModal, closeNewTabModal } = useTabManagerStore(selectActions);
+  // Use individual selectors for primitives and stable references
+  // This avoids creating new objects on each render
+  const tabs = useTabManagerStore((s) => s.tabs);
+  const activeTabId = useTabManagerStore((s) => s.activeTabId);
+  const isLoading = useTabManagerStore((s) => s.isLoading);
+  const isNewTabModalOpen = useTabManagerStore((s) => s.isNewTabModalOpen);
+  
+  // Actions are stable references from the store
+  const selectTab = useTabManagerStore((s) => s.selectTab);
+  const closeTab = useTabManagerStore((s) => s.closeTab);
+  const renameTab = useTabManagerStore((s) => s.renameTab);
+  const createTab = useTabManagerStore((s) => s.createTab);
+  const openNewTabModal = useTabManagerStore((s) => s.openNewTabModal);
+  const closeNewTabModal = useTabManagerStore((s) => s.closeNewTabModal);
   
   // Create unit from template
   const createNewUnit = useCallback((tonnage: number, techBase: TechBase = TechBase.INNER_SPHERE) => {

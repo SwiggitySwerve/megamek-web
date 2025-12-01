@@ -7,11 +7,13 @@
  * @spec openspec/changes/add-customizer-ui-components/specs/unit-store-architecture/spec.md
  */
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { StoreApi } from 'zustand';
 import { UnitStoreContext } from './useUnitStore';
 import type { UnitStore } from './useUnitStore';
 import { TechBase } from '@/types/enums/TechBase';
+// Registry has SSR guards internally, safe to import directly
+import { hydrateOrCreateUnit } from './unitStoreRegistry';
 
 // =============================================================================
 // Types
@@ -32,9 +34,6 @@ interface UnitStoreProviderProps {
   fallback?: React.ReactNode;
 }
 
-// Type for the registry module
-type RegistryModule = typeof import('./unitStoreRegistry');
-
 // =============================================================================
 // Provider Component
 // =============================================================================
@@ -44,81 +43,46 @@ type RegistryModule = typeof import('./unitStoreRegistry');
  * 
  * Key design decisions:
  * - Receives activeTab as prop (not from hooks) to avoid hook ordering issues
- * - Lazily imports unitStoreRegistry to avoid SSR module evaluation
- * - Uses refs to prevent re-render loops during registry loading
+ * - Registry functions have internal SSR guards
+ * - Uses useMemo to create store only when activeTab changes
  */
 export function UnitStoreProvider({
   children,
   activeTab,
   fallback,
 }: UnitStoreProviderProps) {
-  // Track the current store
-  const [currentStore, setCurrentStore] = useState<StoreApi<UnitStore> | null>(null);
-  
-  // Track registry loading state
-  const [registryReady, setRegistryReady] = useState(false);
-  const registryRef = useRef<RegistryModule | null>(null);
-  const loadingRef = useRef(false);
-  
-  // Load the registry module once on mount
-  useEffect(() => {
-    // Prevent double-loading
-    if (loadingRef.current || registryReady) return;
-    loadingRef.current = true;
-    
-    import('./unitStoreRegistry')
-      .then((module) => {
-        registryRef.current = module;
-        setRegistryReady(true);
-      })
-      .catch((err) => {
-        console.error('Failed to load unit store registry:', err);
-        loadingRef.current = false;
-      });
-  }, [registryReady]);
-  
-  // Create/update store when activeTab changes
-  useEffect(() => {
-    // Wait for registry to be ready
-    if (!registryReady || !registryRef.current) {
-      return;
+  // Create/get store based on activeTab
+  // useMemo ensures we don't recreate on every render
+  const currentStore = useMemo<StoreApi<UnitStore> | null>(() => {
+    // No active tab - no store
+    if (!activeTab) {
+      return null;
     }
     
-    // No active tab - clear the store
-    if (!activeTab) {
-      setCurrentStore(null);
-      return;
+    // SSR check - don't create stores on server
+    if (typeof window === 'undefined') {
+      return null;
     }
     
     // Get or create the store for this tab
     try {
-      const store = registryRef.current.hydrateOrCreateUnit(activeTab.id, {
+      return hydrateOrCreateUnit(activeTab.id, {
         name: activeTab.name,
         tonnage: activeTab.tonnage,
         techBase: activeTab.techBase,
       });
-      setCurrentStore(store);
     } catch (e) {
       console.error('Error creating unit store:', e);
-      setCurrentStore(null);
+      return null;
     }
-  }, [activeTab?.id, activeTab?.name, activeTab?.tonnage, activeTab?.techBase, registryReady]);
-  
-  // Loading state - registry not yet loaded
-  if (!registryReady) {
-    return (
-      <div className="flex-1 flex items-center justify-center">
-        <div className="text-slate-400">Loading unit system...</div>
-      </div>
-    );
-  }
+  }, [activeTab?.id, activeTab?.name, activeTab?.tonnage, activeTab?.techBase]);
   
   // No active tab selected - show fallback
   if (!activeTab) {
     return <>{fallback}</>;
   }
   
-  // Active tab but store not yet created - brief loading
+  // Store not yet created (SSR or error)
   if (!currentStore) {
     return (
       <div className="flex-1 flex items-center justify-center">
