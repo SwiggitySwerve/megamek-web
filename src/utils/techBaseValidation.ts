@@ -5,6 +5,7 @@
  * Uses a registry pattern to make it easy to add new component types.
  * 
  * @spec openspec/specs/component-configuration/spec.md
+ * @spec openspec/specs/tech-base-integration/spec.md
  */
 
 import { TechBase } from '@/types/enums/TechBase';
