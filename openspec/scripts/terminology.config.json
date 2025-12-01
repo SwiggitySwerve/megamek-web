@@ -1,0 +1,319 @@
+{
+  "$schema": "./terminology.schema.json",
+  "version": "2.0",
+  "description": "Unified terminology rules for OpenSpec validation and fixing",
+  "lastUpdated": "2025-12-01",
+
+  "deprecatedTerms": [
+    {
+      "id": "crit-slots",
+      "deprecated": "crit slots",
+      "canonical": "critical slots",
+      "severity": "error",
+      "category": "slots",
+      "pattern": "\\bcrit slots\\b",
+      "flags": "gi"
+    },
+    {
+      "id": "critical-spaces",
+      "deprecated": "critical spaces",
+      "canonical": "critical slots",
+      "severity": "error",
+      "category": "slots",
+      "pattern": "\\bcritical spaces\\b",
+      "flags": "gi"
+    },
+    {
+      "id": "equipment-slots",
+      "deprecated": "equipment slots",
+      "canonical": "critical slots",
+      "severity": "warning",
+      "category": "slots",
+      "pattern": "\\bequipment slots\\b",
+      "flags": "gi",
+      "skipContexts": ["rule-descriptions", "comparisons"]
+    },
+    {
+      "id": "component-mass",
+      "deprecated": "component mass",
+      "canonical": "component weight",
+      "severity": "error",
+      "category": "weight",
+      "pattern": "\\bcomponent mass\\b",
+      "flags": "gi"
+    },
+    {
+      "id": "equipment-mass",
+      "deprecated": "equipment mass",
+      "canonical": "equipment weight",
+      "severity": "error",
+      "category": "weight",
+      "pattern": "\\bequipment mass\\b",
+      "flags": "gi"
+    },
+    {
+      "id": "weapon-mass",
+      "deprecated": "weapon mass",
+      "canonical": "weapon weight",
+      "severity": "error",
+      "category": "weight",
+      "pattern": "\\bweapon mass\\b",
+      "flags": "gi"
+    },
+    {
+      "id": "technology-base",
+      "deprecated": "technology base",
+      "canonical": "tech base",
+      "severity": "warning",
+      "category": "tech-base",
+      "pattern": "\\btechnology base\\b",
+      "flags": "gi",
+      "preserveCase": true
+    },
+    {
+      "id": "tournament-rules-level",
+      "deprecated": "Tournament",
+      "canonical": "Advanced",
+      "severity": "error",
+      "category": "rules-level",
+      "pattern": "\\bTournament\\b(?!-legal|/Advanced|\\s+legality|\\s+organization|\\s+Validation|\\s+play)",
+      "flags": "g",
+      "context": "rules level only"
+    },
+    {
+      "id": "tech-level",
+      "deprecated": "tech level",
+      "canonical": "rules level",
+      "severity": "error",
+      "category": "rules-level",
+      "pattern": "\\btech level\\b",
+      "flags": "gi"
+    },
+    {
+      "id": "complexity-level",
+      "deprecated": "complexity level",
+      "canonical": "rules level",
+      "severity": "warning",
+      "category": "rules-level",
+      "pattern": "\\bcomplexity level\\b",
+      "flags": "gi",
+      "preserveCase": true
+    },
+    {
+      "id": "mech-section",
+      "deprecated": "section",
+      "canonical": "location",
+      "severity": "warning",
+      "category": "location",
+      "pattern": "\\b(mech|unit|location)\\s+section\\b",
+      "flags": "gi",
+      "context": "mech body part"
+    },
+    {
+      "id": "body-part",
+      "deprecated": "body part",
+      "canonical": "location",
+      "severity": "warning",
+      "category": "location",
+      "pattern": "\\bbody part\\b",
+      "flags": "gi"
+    },
+    {
+      "id": "centre-torso",
+      "deprecated": "centre torso",
+      "canonical": "Center Torso",
+      "severity": "error",
+      "category": "location",
+      "pattern": "\\bcentre torso\\b",
+      "flags": "gi"
+    },
+    {
+      "id": "armour",
+      "deprecated": "armour",
+      "canonical": "armor",
+      "severity": "error",
+      "category": "spelling",
+      "pattern": "\\barmour\\b",
+      "flags": "gi"
+    },
+    {
+      "id": "internal-heat-sinks",
+      "deprecated": "internal heat sinks",
+      "canonical": "engine-integrated heat sinks",
+      "severity": "error",
+      "category": "heat-sinks",
+      "pattern": "\\binternal heat sinks\\b",
+      "flags": "gi"
+    },
+    {
+      "id": "additional-heat-sinks",
+      "deprecated": "additional heat sinks",
+      "canonical": "external heat sinks",
+      "severity": "warning",
+      "category": "heat-sinks",
+      "pattern": "\\badditional heat sinks\\b",
+      "flags": "gi",
+      "skipContexts": ["rationale"]
+    },
+    {
+      "id": "integrated-heat-sink-capacity",
+      "deprecated": "integrated heat sink capacity",
+      "canonical": "engine integration capacity",
+      "severity": "error",
+      "category": "heat-sinks",
+      "pattern": "\\bintegrated heat sink capacity\\b",
+      "flags": "gi",
+      "skipContexts": ["changelog"]
+    },
+    {
+      "id": "gyroscope",
+      "deprecated": "gyroscope",
+      "canonical": "gyro",
+      "severity": "warning",
+      "category": "components",
+      "pattern": "\\bgyroscope\\b",
+      "flags": "gi"
+    },
+    {
+      "id": "heatsink-one-word",
+      "deprecated": "heatsink",
+      "canonical": "heat sink",
+      "severity": "error",
+      "category": "components",
+      "pattern": "\\bheatsink\\b",
+      "flags": "g",
+      "note": "Only matches lowercase; preserves camelCase like heatSink"
+    }
+  ],
+
+  "propertyViolations": [
+    {
+      "id": "prop-tons",
+      "pattern": "^\\s*(?:readonly\\s+)?tons:\\s*number",
+      "canonical": "weight: number",
+      "severity": "error",
+      "context": "property definition"
+    },
+    {
+      "id": "prop-mass",
+      "pattern": "^\\s*(?:readonly\\s+)?mass:\\s*number",
+      "canonical": "weight: number",
+      "severity": "error",
+      "context": "property definition"
+    },
+    {
+      "id": "prop-slots",
+      "pattern": "^\\s*(?:readonly\\s+)?slots:\\s*number",
+      "canonical": "criticalSlots: number",
+      "severity": "error",
+      "context": "property definition (not 'slots' alone in prose)"
+    },
+    {
+      "id": "prop-crit-slots",
+      "pattern": "^\\s*(?:readonly\\s+)?critSlots:\\s*number",
+      "canonical": "criticalSlots: number",
+      "severity": "error",
+      "context": "property definition"
+    },
+    {
+      "id": "prop-intro-year",
+      "pattern": "^\\s*(?:readonly\\s+)?introYear:",
+      "canonical": "introductionYear:",
+      "severity": "error",
+      "context": "property definition"
+    },
+    {
+      "id": "prop-faction",
+      "pattern": "^\\s*(?:readonly\\s+)?faction:",
+      "canonical": "techBase:",
+      "severity": "error",
+      "context": "property definition"
+    }
+  ],
+
+  "capitalizationRules": [
+    {
+      "id": "battlemech-lower-m",
+      "pattern": "\\bBattlemech\\b",
+      "canonical": "BattleMech",
+      "severity": "error"
+    },
+    {
+      "id": "battle-mech-space",
+      "pattern": "\\bBattle Mech\\b",
+      "canonical": "BattleMech",
+      "severity": "error"
+    },
+    {
+      "id": "battle-mech-lowercase",
+      "pattern": "\\bbattle mech\\b",
+      "canonical": "BattleMech or mech",
+      "severity": "warning"
+    },
+    {
+      "id": "inner-sphere-lowercase",
+      "pattern": "\\binner sphere\\b",
+      "canonical": "Inner Sphere",
+      "severity": "error",
+      "context": "when referring to faction (not 'inner sphere technology')"
+    }
+  ],
+
+  "skipPatterns": {
+    "lines": [
+      "❌",
+      "Deprecated",
+      "Do not use",
+      "≠",
+      "!=",
+      "**Rule**:",
+      "could mean",
+      "| \"",
+      "→",
+      "instances",
+      "Found:",
+      "Should be:",
+      "TERMINOLOGY"
+    ],
+    "contexts": {
+      "rule-descriptions": ["**Rule**:", "could mean"],
+      "rationale": ["**Rationale**:"],
+      "changelog": ["- Changed", "Version 1.", "→", "instances"],
+      "comparisons": ["≠", "!="],
+      "deprecated-examples": ["❌", "Deprecated", "Do not use", "| \"", "→"],
+      "when-clauses": ["**WHEN**"],
+      "user-actions": ["**User Action**:"],
+      "implementation-notes": ["**Pitfall**:", "Checking:"],
+      "documentation-tables": ["| \"", "| ❌", "| ✅"],
+      "fix-reports": ["Found:", "Should be:", "TERMINOLOGY", "instances"]
+    }
+  },
+
+  "filePatterns": {
+    "specs": ["**/openspec/specs/**/*.md", "**/openspec/changes/**/*.md"],
+    "source": ["src/**/*.ts", "src/**/*.tsx"],
+    "exclude": [
+      "**/node_modules/**",
+      "**/*.bak",
+      "**/dist/**",
+      "**/build/**",
+      "**/openspec/scripts/**",
+      "**/TERMINOLOGY_GLOSSARY.md",
+      "**/TERMINOLOGY_FIX_REPORT.md"
+    ]
+  },
+
+  "smartReplacements": {
+    "technology base": {
+      "Technology base": "Tech base",
+      "technology base": "tech base",
+      "TECHNOLOGY BASE": "TECH BASE"
+    },
+    "complexity level": {
+      "Complexity level": "Rules level",
+      "complexity level": "rules level",
+      "COMPLEXITY LEVEL": "RULES LEVEL"
+    }
+  }
+}
+

@@ -37,7 +37,7 @@ The Equipment Tray SHALL display aggregate statistics for all equipment in a hea
 - **AND** capacity warning banner appears
 
 #### Scenario: Over-slots indication
-- **WHEN** equipment slots exceed available critical slots
+- **WHEN** critical slots exceed available critical slots
 - **THEN** slots value displays in red
 - **AND** capacity warning specifies overage amount
 

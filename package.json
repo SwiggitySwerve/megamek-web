@@ -29,7 +29,12 @@
     "refactor:pre-commit": "npm run analyze:files && npm run test:coverage && npm run lint && npm run build",
     "refactor:metrics": "node scripts/metrics/validate-refactoring-metrics.js",
     "quality:check": "npm run analyze:files && npm run analyze:complexity && npm run test:coverage",
-    "quality:report": "npm run analyze:files:report && npm run analyze:complexity && npm run analyze:dependencies && echo 'Quality analysis complete. Check generated reports.'"
+    "quality:report": "npm run analyze:files:report && npm run analyze:complexity && npm run analyze:dependencies && echo 'Quality analysis complete. Check generated reports.'",
+    "terminology:validate": "npx ts-node openspec/scripts/terminology-tool.ts validate",
+    "terminology:validate:strict": "npx ts-node openspec/scripts/terminology-tool.ts validate --strict",
+    "terminology:fix": "npx ts-node openspec/scripts/terminology-tool.ts fix",
+    "terminology:fix:dry-run": "npx ts-node openspec/scripts/terminology-tool.ts fix --dry-run",
+    "terminology:check": "node openspec/scripts/validate-terminology.js"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.8",

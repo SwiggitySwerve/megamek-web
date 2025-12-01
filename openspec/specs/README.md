@@ -248,7 +248,7 @@ Each specification follows the OpenSpec template structure:
 - Data Model Requirements (TypeScript interfaces)
 - Calculation Formulas (with examples)
 - Validation Rules (with error messages)
-- Technology Base Variants (IS vs Clan differences)
+- tech base Variants (IS vs Clan differences)
 - Dependencies (what it depends on and what depends on it)
 - Implementation Notes (performance, edge cases, pitfalls)
 - Examples (comprehensive code examples)
