@@ -6,7 +6,7 @@
  * - Selection modes (click-to-assign vs drag-and-drop)
  * - UI preferences and settings
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/critical-slots-display/spec.md
+ * @spec openspec/specs/critical-slots-display/spec.md
  */
 
 import { create } from 'zustand';

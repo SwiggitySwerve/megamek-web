@@ -3,7 +3,7 @@
  * 
  * Individual tab with name, modification indicator, and close button.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/multi-unit-tabs/spec.md
+ * @spec openspec/specs/multi-unit-tabs/spec.md
  */
 
 import React, { useState, useRef, useEffect } from 'react';

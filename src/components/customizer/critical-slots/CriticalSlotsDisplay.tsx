@@ -3,7 +3,7 @@
  * 
  * Grid display of all mech locations with critical slots.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/critical-slots-display/spec.md
+ * @spec openspec/specs/critical-slots-display/spec.md
  */
 
 import React from 'react';

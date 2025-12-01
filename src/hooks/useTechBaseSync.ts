@@ -4,7 +4,7 @@
  * Provides filtered component options based on tech base settings.
  * Handles validation and automatic selection replacement when tech base changes.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/component-configuration/spec.md
+ * @spec openspec/specs/component-configuration/spec.md
  */
 
 import { useMemo, useCallback } from 'react';

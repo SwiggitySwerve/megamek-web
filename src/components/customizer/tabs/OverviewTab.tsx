@@ -4,8 +4,8 @@
  * Summary view of the current unit configuration.
  * Uses the contextual unit store - no tabId prop needed.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/customizer-tabs/spec.md
- * @spec openspec/changes/add-customizer-ui-components/specs/unit-store-architecture/spec.md
+ * @spec openspec/specs/customizer-tabs/spec.md
+ * @spec openspec/specs/unit-store-architecture/spec.md
  */
 
 import React, { useCallback, useMemo } from 'react';

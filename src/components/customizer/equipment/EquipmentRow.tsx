@@ -3,7 +3,7 @@
  * 
  * Table row for equipment in the browser.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/equipment-browser/spec.md
+ * @spec openspec/specs/equipment-browser/spec.md
  */
 
 import React, { memo } from 'react';

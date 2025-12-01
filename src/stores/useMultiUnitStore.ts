@@ -7,8 +7,8 @@
  * - Unsaved changes tracking
  * - localStorage persistence
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/multi-unit-tabs/spec.md
- * @spec openspec/changes/add-customizer-ui-components/specs/component-configuration/spec.md
+ * @spec openspec/specs/multi-unit-tabs/spec.md
+ * @spec openspec/specs/component-configuration/spec.md
  */
 
 import { create } from 'zustand';

@@ -3,7 +3,7 @@
  * 
  * Defines all standard BattleTech engine types with their characteristics.
  * 
- * @spec openspec/changes/implement-phase2-construction/specs/engine-system/spec.md
+ * @spec openspec/specs/engine-system/spec.md
  */
 
 import { TechBase } from '../enums/TechBase';

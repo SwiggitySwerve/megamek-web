@@ -4,7 +4,7 @@
  * Tests for the multi-unit tab store, including tab management
  * and component selection actions.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/multi-unit-tabs/spec.md
+ * @spec openspec/specs/multi-unit-tabs/spec.md
  */
 
 import { act } from '@testing-library/react';

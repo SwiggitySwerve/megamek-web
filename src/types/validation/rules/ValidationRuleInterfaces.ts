@@ -3,7 +3,7 @@
  * 
  * Defines the core validation rule system interfaces.
  * 
- * @spec openspec/changes/implement-validation-rules-master/specs/validation-rule-registry/spec.md
+ * @spec openspec/specs/validation-rules-master/spec.md
  */
 
 /**

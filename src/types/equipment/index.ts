@@ -3,7 +3,7 @@
  * 
  * Comprehensive equipment type system for BattleTech.
  * 
- * @spec openspec/changes/implement-phase3-equipment
+ * @spec openspec/specs/equipment-database/spec.md
  */
 
 // Weapon Types (from weapons subfolder)

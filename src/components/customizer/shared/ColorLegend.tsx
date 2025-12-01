@@ -3,7 +3,7 @@
  * 
  * Collapsible color reference panel explaining the color system.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/color-system/spec.md
+ * @spec openspec/specs/color-system/spec.md
  */
 
 import React, { useState } from 'react';

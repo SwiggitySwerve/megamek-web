@@ -3,7 +3,7 @@
  * 
  * UI components for the BattleMech customizer.
  * 
- * @spec openspec/changes/add-customizer-ui-components
+ * @spec openspec/specs/customizer-tabs/spec.md
  */
 
 // Armor diagram components

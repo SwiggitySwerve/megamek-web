@@ -3,7 +3,7 @@
  * 
  * Colors for validation states, allocation status, and interactive feedback.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/color-system/spec.md
+ * @spec openspec/specs/color-system/spec.md
  */
 
 /**

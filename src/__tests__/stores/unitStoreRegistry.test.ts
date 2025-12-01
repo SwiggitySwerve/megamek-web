@@ -4,7 +4,7 @@
  * Tests for the unit store registry, including store registration,
  * lookup, hydration, and cleanup operations.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/unit-store-architecture/spec.md
+ * @spec openspec/specs/unit-store-architecture/spec.md
  */
 
 import { act } from '@testing-library/react';

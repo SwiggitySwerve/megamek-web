@@ -3,7 +3,7 @@
  * 
  * Single critical slot display with drag-and-drop support.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/critical-slots-display/spec.md
+ * @spec openspec/specs/critical-slots-display/spec.md
  */
 
 import React, { useState, memo } from 'react';

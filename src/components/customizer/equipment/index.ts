@@ -3,8 +3,8 @@
  * 
  * Equipment browser and tray components.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/equipment-browser/spec.md
- * @spec openspec/changes/add-customizer-ui-components/specs/equipment-tray/spec.md
+ * @spec openspec/specs/equipment-browser/spec.md
+ * @spec openspec/specs/equipment-tray/spec.md
  */
 
 export { EquipmentBrowser } from './EquipmentBrowser';

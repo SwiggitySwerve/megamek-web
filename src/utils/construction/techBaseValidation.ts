@@ -3,7 +3,7 @@
  * 
  * Validates tech base compatibility for construction.
  * 
- * @spec openspec/changes/implement-phase2-construction/specs/tech-base-system/spec.md
+ * @spec openspec/specs/tech-base-integration/spec.md
  */
 
 import { TechBase } from '../../types/enums/TechBase';

@@ -2,7 +2,7 @@
  * IDocumentedEntity - Source documentation interface
  * Components with source references SHALL implement IDocumentedEntity.
  * 
- * @spec openspec/specs/phase-1-foundation/core-entity-types/spec.md
+ * @spec core-entity-types/spec.md
  */
 
 /**

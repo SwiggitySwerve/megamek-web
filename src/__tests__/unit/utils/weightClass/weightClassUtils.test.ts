@@ -1,7 +1,7 @@
 /**
  * Tests for Weight Class Utilities
  * 
- * @spec openspec/changes/implement-phase1-foundation/specs/weight-class-system/spec.md
+ * @spec openspec/specs/weight-class-system/spec.md
  */
 
 import {

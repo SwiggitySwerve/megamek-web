@@ -3,8 +3,8 @@
  * 
  * Zustand-based state management for the BattleTech customizer.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/multi-unit-tabs/spec.md
- * @spec openspec/changes/add-customizer-ui-components/specs/unit-store-architecture/spec.md
+ * @spec openspec/specs/multi-unit-tabs/spec.md
+ * @spec openspec/specs/unit-store-architecture/spec.md
  */
 
 // Legacy store (to be deprecated)

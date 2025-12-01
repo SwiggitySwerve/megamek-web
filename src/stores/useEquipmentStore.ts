@@ -6,7 +6,7 @@
  * - Filter state for equipment browser
  * - Search and pagination state
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/equipment-browser/spec.md
+ * @spec openspec/specs/equipment-browser/spec.md
  */
 
 import { create } from 'zustand';

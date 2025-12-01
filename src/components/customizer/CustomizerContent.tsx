@@ -5,7 +5,7 @@
  * This component is dynamically imported with SSR disabled to avoid
  * hydration issues with Zustand's persist middleware.
  * 
- * @spec openspec/changes/add-customizer-ui-components
+ * @spec openspec/specs/customizer-tabs/spec.md
  */
 
 import React, { useEffect, useState, useMemo } from 'react';

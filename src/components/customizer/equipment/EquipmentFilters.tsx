@@ -3,7 +3,7 @@
  * 
  * Filter controls for the equipment browser.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/equipment-browser/spec.md
+ * @spec openspec/specs/equipment-browser/spec.md
  */
 
 import React from 'react';

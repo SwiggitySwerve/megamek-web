@@ -4,7 +4,7 @@
  * Provides equipment browsing functionality with filtering,
  * sorting, and pagination.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/equipment-browser/spec.md
+ * @spec openspec/specs/equipment-browser/spec.md
  */
 
 import { useEffect, useMemo, useCallback } from 'react';

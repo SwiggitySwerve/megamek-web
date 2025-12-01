@@ -4,7 +4,7 @@
  * Defines the complete state for a single unit.
  * This is the shape of data stored in each isolated unit store.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/unit-store-architecture/spec.md
+ * @spec openspec/specs/unit-store-architecture/spec.md
  */
 
 import { TechBase } from '@/types/enums/TechBase';

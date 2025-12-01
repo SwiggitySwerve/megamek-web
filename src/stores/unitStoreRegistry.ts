@@ -4,7 +4,7 @@
  * Manages all active unit store instances.
  * Provides lookup, creation, and cleanup of unit stores.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/unit-store-architecture/spec.md
+ * @spec openspec/specs/unit-store-architecture/spec.md
  */
 
 import { StoreApi } from 'zustand';

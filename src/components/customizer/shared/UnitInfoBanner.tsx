@@ -4,7 +4,7 @@
  * At-a-glance unit statistics display with "current / max" format
  * for capacity-based stats like MegaMekLab's status bar.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/unit-info-banner/spec.md
+ * @spec openspec/specs/unit-info-banner/spec.md
  */
 
 import React from 'react';

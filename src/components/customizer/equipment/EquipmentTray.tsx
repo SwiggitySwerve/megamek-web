@@ -3,7 +3,7 @@
  * 
  * Persistent sidebar showing unit's current equipment.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/equipment-tray/spec.md
+ * @spec openspec/specs/equipment-tray/spec.md
  */
 
 import React, { useState } from 'react';

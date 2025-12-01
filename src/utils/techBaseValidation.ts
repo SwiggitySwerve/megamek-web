@@ -4,7 +4,7 @@
  * Abstracted validation system for component selections based on tech base.
  * Uses a registry pattern to make it easy to add new component types.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/component-configuration/spec.md
+ * @spec openspec/specs/component-configuration/spec.md
  */
 
 import { TechBase } from '@/types/enums/TechBase';

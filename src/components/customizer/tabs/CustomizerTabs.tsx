@@ -3,7 +3,7 @@
  * 
  * Tabbed navigation for unit configuration sections.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/customizer-tabs/spec.md
+ * @spec openspec/specs/customizer-tabs/spec.md
  */
 
 import React, { useState, useRef, useCallback } from 'react';

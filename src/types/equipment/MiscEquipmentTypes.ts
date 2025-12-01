@@ -3,7 +3,7 @@
  * 
  * Defines heat sinks, jump jets, movement enhancements, and other misc equipment.
  * 
- * @spec openspec/changes/implement-phase3-equipment/specs/electronics-system/spec.md
+ * @spec openspec/specs/electronics-system/spec.md
  */
 
 import { TechBase } from '../enums/TechBase';

@@ -2,7 +2,7 @@
  * Era - Historical era enumeration
  * Defines the 8 canonical BattleTech eras.
  * 
- * @spec openspec/specs/phase-1-foundation/core-enumerations/spec.md
+ * @spec core-enumerations/spec.md
  */
 
 /**

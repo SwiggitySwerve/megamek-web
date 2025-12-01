@@ -2,7 +2,7 @@
  * IValuedComponent - Economic properties interface
  * Components with economic value SHALL implement IValuedComponent.
  * 
- * @spec openspec/specs/phase-1-foundation/core-entity-types/spec.md
+ * @spec core-entity-types/spec.md
  */
 
 /**

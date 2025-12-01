@@ -4,8 +4,8 @@
  * Browser-like tabs for editing multiple units.
  * Uses the new TabManagerStore for tab lifecycle management.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/multi-unit-tabs/spec.md
- * @spec openspec/changes/add-customizer-ui-components/specs/unit-store-architecture/spec.md
+ * @spec openspec/specs/multi-unit-tabs/spec.md
+ * @spec openspec/specs/unit-store-architecture/spec.md
  */
 
 import React, { useCallback, useMemo } from 'react';

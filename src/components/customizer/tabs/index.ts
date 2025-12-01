@@ -3,8 +3,8 @@
  * 
  * Multi-unit tabs and customizer section tabs.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/multi-unit-tabs/spec.md
- * @spec openspec/changes/add-customizer-ui-components/specs/customizer-tabs/spec.md
+ * @spec openspec/specs/multi-unit-tabs/spec.md
+ * @spec openspec/specs/customizer-tabs/spec.md
  */
 
 export { MultiUnitTabs } from './MultiUnitTabs';

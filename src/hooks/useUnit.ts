@@ -4,7 +4,7 @@
  * Provides access to the currently active unit in the customizer.
  * Combines multi-unit store state with unit-specific data.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/multi-unit-tabs/spec.md
+ * @spec openspec/specs/multi-unit-tabs/spec.md
  */
 
 import { useMemo, useCallback } from 'react';

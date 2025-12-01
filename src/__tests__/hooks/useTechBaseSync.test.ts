@@ -5,7 +5,7 @@
  * Verifies that the correct components are available for each tech base
  * and that invalid selections are replaced with defaults.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/component-configuration/spec.md
+ * @spec openspec/specs/component-configuration/spec.md
  */
 
 import { renderHook } from '@testing-library/react';

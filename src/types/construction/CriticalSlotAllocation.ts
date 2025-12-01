@@ -3,7 +3,7 @@
  * 
  * Defines critical slot counts and allocation rules.
  * 
- * @spec openspec/changes/implement-phase2-construction/specs/critical-slot-system/spec.md
+ * @spec openspec/specs/critical-slot-allocation/spec.md
  */
 
 /**

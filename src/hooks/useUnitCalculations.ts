@@ -4,7 +4,7 @@
  * Computes weights, critical slots, and other derived values
  * based on component selections.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/component-configuration/spec.md
+ * @spec openspec/specs/component-configuration/spec.md
  */
 
 import { useMemo } from 'react';

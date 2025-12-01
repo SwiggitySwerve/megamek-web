@@ -3,7 +3,7 @@
  * 
  * Defines all standard BattleTech internal structure types.
  * 
- * @spec openspec/changes/implement-phase2-construction/specs/internal-structure-system/spec.md
+ * @spec openspec/specs/internal-structure-system/spec.md
  */
 
 import { TechBase } from '../enums/TechBase';

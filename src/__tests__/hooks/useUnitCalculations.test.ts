@@ -10,7 +10,7 @@
  * - Double Heat Sinks: IS = 3 slots, Clan = 2 slots
  * - Ferro-Fibrous: IS = 14 slots, Clan = 7 slots
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/component-configuration/spec.md
+ * @spec openspec/specs/component-configuration/spec.md
  */
 
 import { renderHook } from '@testing-library/react';

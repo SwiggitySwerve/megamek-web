@@ -2,7 +2,7 @@
  * RulesLevel - Rules complexity enumeration
  * Defines the complexity/availability level of equipment.
  * 
- * @spec openspec/specs/phase-1-foundation/core-enumerations/spec.md
+ * @spec core-enumerations/spec.md
  */
 
 /**

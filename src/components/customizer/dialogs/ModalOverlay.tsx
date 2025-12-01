@@ -3,7 +3,7 @@
  * 
  * Reusable modal overlay with backdrop and centering.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/confirmation-dialogs/spec.md
+ * @spec openspec/specs/confirmation-dialogs/spec.md
  */
 
 import React, { useEffect, useRef } from 'react';

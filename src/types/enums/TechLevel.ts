@@ -2,7 +2,7 @@
  * TechLevel - Technology advancement level enumeration
  * Similar to RulesLevel but represents tech advancement.
  * 
- * @spec openspec/specs/phase-1-foundation/core-enumerations/spec.md
+ * @spec core-enumerations/spec.md
  */
 
 /**

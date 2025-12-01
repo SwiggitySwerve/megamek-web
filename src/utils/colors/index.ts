@@ -5,7 +5,7 @@
  * Provides consistent color tokens for equipment types, tech bases,
  * system components, and interactive states.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/color-system/spec.md
+ * @spec openspec/specs/color-system/spec.md
  */
 
 export * from './equipmentColors';

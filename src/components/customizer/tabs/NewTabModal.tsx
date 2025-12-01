@@ -3,7 +3,7 @@
  * 
  * Modal dialog for creating new unit tabs.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/multi-unit-tabs/spec.md
+ * @spec openspec/specs/multi-unit-tabs/spec.md
  */
 
 import React, { useState } from 'react';

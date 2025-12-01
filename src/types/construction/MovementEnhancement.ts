@@ -3,7 +3,7 @@
  * 
  * Defines MASC, TSM, Supercharger, and other movement enhancers.
  * 
- * @spec openspec/changes/implement-phase2-construction/specs/movement-system/spec.md
+ * @spec openspec/specs/movement-system/spec.md
  */
 
 import { TechBase } from '../enums/TechBase';

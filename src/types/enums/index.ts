@@ -2,7 +2,7 @@
  * Enums barrel export
  * Central export point for all enumeration types.
  * 
- * @spec openspec/specs/phase-1-foundation/core-enumerations/spec.md
+ * @spec core-enumerations/spec.md
  */
 
 export * from './TechBase';

@@ -4,7 +4,7 @@
  * Tests for the tab manager store, which manages tab lifecycle
  * without containing unit data (that's in individual unit stores).
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/unit-store-architecture/spec.md
+ * @spec openspec/specs/unit-store-architecture/spec.md
  */
 
 import { act } from '@testing-library/react';

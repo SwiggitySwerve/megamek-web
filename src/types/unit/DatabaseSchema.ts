@@ -3,7 +3,7 @@
  * 
  * Defines database schema for equipment and unit templates.
  * 
- * @spec openspec/changes/implement-phase5-data-models/specs/database-schema/spec.md
+ * @spec openspec/specs/database-schema/spec.md
  */
 
 import { TechBase, RulesLevel, Era } from '../enums';

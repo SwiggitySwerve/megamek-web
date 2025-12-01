@@ -4,7 +4,7 @@
  * React component that provides the active unit's store via context.
  * Child components can use useUnitStore() to access the current unit's state.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/unit-store-architecture/spec.md
+ * @spec openspec/specs/unit-store-architecture/spec.md
  */
 
 import React, { useEffect, useState, useMemo } from 'react';

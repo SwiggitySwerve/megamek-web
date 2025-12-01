@@ -3,7 +3,7 @@
  * 
  * Multi-step confirmation dialog for reset operations.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/confirmation-dialogs/spec.md
+ * @spec openspec/specs/confirmation-dialogs/spec.md
  */
 
 import React, { useState } from 'react';

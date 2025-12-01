@@ -1,7 +1,7 @@
 /**
  * Validation Types Barrel Export
  * 
- * @spec openspec/changes/implement-phase4-validation
+ * @spec openspec/specs/validation-patterns/spec.md
  */
 
 export * from './BattleValue';

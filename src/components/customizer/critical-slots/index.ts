@@ -3,7 +3,7 @@
  * 
  * Drag-and-drop critical slot management.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/critical-slots-display/spec.md
+ * @spec openspec/specs/critical-slots-display/spec.md
  */
 
 export { CriticalSlotsDisplay } from './CriticalSlotsDisplay';

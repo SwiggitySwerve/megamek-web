@@ -3,7 +3,7 @@
  * 
  * SVG-based interactive armor visualization.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/armor-diagram/spec.md
+ * @spec openspec/specs/armor-diagram/spec.md
  */
 
 export { ArmorDiagram } from './ArmorDiagram';

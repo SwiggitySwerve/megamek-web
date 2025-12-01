@@ -5,7 +5,7 @@
  * This ensures that selections remain valid when switching between
  * Inner Sphere and Clan tech bases.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/component-configuration/spec.md
+ * @spec openspec/specs/component-configuration/spec.md
  */
 
 import { useEffect, useRef } from 'react';

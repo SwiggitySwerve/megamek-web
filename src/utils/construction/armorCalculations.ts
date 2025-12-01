@@ -3,7 +3,7 @@
  * 
  * Functions for calculating armor allocation and limits.
  * 
- * @spec openspec/changes/implement-phase2-construction/specs/armor-system/spec.md
+ * @spec openspec/specs/armor-system/spec.md
  */
 
 import { ArmorTypeEnum, ArmorDefinition, getArmorDefinition } from '../../types/construction/ArmorType';

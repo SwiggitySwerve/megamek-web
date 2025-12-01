@@ -3,7 +3,7 @@
  * 
  * Functions for calculating heat sink requirements and placement.
  * 
- * @spec openspec/changes/implement-phase2-construction/specs/heat-sink-system/spec.md
+ * @spec openspec/specs/heat-sink-system/spec.md
  */
 
 import { HeatSinkType, HeatSinkDefinition, getHeatSinkDefinition } from '../../types/construction/HeatSinkType';

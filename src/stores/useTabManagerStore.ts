@@ -8,7 +8,7 @@
  * 
  * Unit data is stored separately in individual unit stores.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/unit-store-architecture/spec.md
+ * @spec openspec/specs/unit-store-architecture/spec.md
  */
 
 import { create } from 'zustand';

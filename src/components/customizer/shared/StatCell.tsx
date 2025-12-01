@@ -3,7 +3,7 @@
  * 
  * Displays a single statistic with label and value.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/unit-info-banner/spec.md
+ * @spec openspec/specs/unit-info-banner/spec.md
  */
 
 import React from 'react';

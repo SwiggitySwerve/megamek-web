@@ -4,8 +4,8 @@
  * Full-featured BattleMech construction and modification interface.
  * Uses isolated unit stores with the new architecture.
  * 
- * @spec openspec/changes/add-customizer-ui-components
- * @spec openspec/changes/add-customizer-ui-components/specs/unit-store-architecture/spec.md
+ * @spec openspec/specs/customizer-tabs/spec.md
+ * @spec openspec/specs/unit-store-architecture/spec.md
  */
 
 import React from 'react';

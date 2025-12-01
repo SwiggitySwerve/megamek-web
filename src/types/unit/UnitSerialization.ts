@@ -3,7 +3,7 @@
  * 
  * Defines JSON save/load formats and serialization interfaces.
  * 
- * @spec openspec/changes/implement-phase5-data-models/specs/serialization-formats/spec.md
+ * @spec openspec/specs/serialization-formats/spec.md
  */
 
 import { IBattleMech } from './BattleMechInterfaces';

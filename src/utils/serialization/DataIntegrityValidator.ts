@@ -3,7 +3,7 @@
  * 
  * Implements validation and repair for unit data.
  * 
- * @spec openspec/changes/implement-phase5-data-models/specs/data-integrity/spec.md
+ * @spec openspec/specs/data-integrity-validation/spec.md
  */
 
 import {

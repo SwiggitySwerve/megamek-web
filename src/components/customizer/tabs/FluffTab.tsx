@@ -3,7 +3,7 @@
  * 
  * Non-mechanical unit information (history, description, manufacturer).
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/customizer-tabs/spec.md
+ * @spec openspec/specs/customizer-tabs/spec.md
  */
 
 import React from 'react';

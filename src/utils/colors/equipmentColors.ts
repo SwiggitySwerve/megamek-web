@@ -3,7 +3,7 @@
  * 
  * Colors for equipment types in critical slot and equipment displays.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/color-system/spec.md
+ * @spec openspec/specs/color-system/spec.md
  */
 
 import { EquipmentCategory } from '@/types/equipment';

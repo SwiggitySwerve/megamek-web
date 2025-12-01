@@ -3,7 +3,7 @@
  * 
  * Defines the complete BattleMech unit model with all component references.
  * 
- * @spec openspec/changes/implement-phase5-data-models/specs/unit-entity-model/spec.md
+ * @spec openspec/specs/unit-entity-model/spec.md
  */
 
 import { IEntity, ITechBaseEntity, ITemporalEntity, IValuedComponent } from '../core';

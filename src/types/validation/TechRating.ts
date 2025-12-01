@@ -3,7 +3,7 @@
  * 
  * Defines technology availability and rating classifications.
  * 
- * @spec openspec/changes/implement-phase4-validation/specs/tech-rating-system/spec.md
+ * @spec openspec/specs/tech-rating-system/spec.md
  */
 
 /**

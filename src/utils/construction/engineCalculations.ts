@@ -3,7 +3,7 @@
  * 
  * Functions for calculating engine weight, slots, and related properties.
  * 
- * @spec openspec/changes/implement-phase2-construction/specs/engine-system/spec.md
+ * @spec openspec/specs/engine-system/spec.md
  */
 
 import { EngineType, EngineDefinition, getEngineDefinition, ENGINE_DEFINITIONS } from '../../types/construction/EngineType';

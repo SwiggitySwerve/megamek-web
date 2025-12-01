@@ -3,7 +3,7 @@
  * 
  * Defines BV calculation types and interfaces.
  * 
- * @spec openspec/changes/implement-phase4-validation/specs/battle-value-system/spec.md
+ * @spec openspec/specs/battle-value-system/spec.md
  */
 
 /**

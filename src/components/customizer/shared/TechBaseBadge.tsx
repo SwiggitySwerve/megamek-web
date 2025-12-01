@@ -3,7 +3,7 @@
  * 
  * Displays tech base with appropriate color coding.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/color-system/spec.md
+ * @spec openspec/specs/color-system/spec.md
  */
 
 import React from 'react';

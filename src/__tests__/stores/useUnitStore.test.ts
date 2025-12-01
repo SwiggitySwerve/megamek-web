@@ -3,7 +3,7 @@
  * 
  * Tests for the isolated unit store factory and state management.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/unit-store-architecture/spec.md
+ * @spec openspec/specs/unit-store-architecture/spec.md
  */
 
 import { act } from '@testing-library/react';

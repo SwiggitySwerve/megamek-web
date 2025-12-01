@@ -4,7 +4,7 @@
  * The core weight class functionality is defined in the enum file.
  * This file provides additional utilities and re-exports for convenience.
  * 
- * @spec openspec/changes/implement-phase1-foundation/specs/weight-class-system/spec.md
+ * @spec openspec/specs/weight-class-system/spec.md
  */
 
 // Re-export everything from the enum file

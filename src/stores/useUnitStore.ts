@@ -4,7 +4,7 @@
  * Creates isolated Zustand stores for individual units.
  * Each unit has its own store instance with independent persistence.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/unit-store-architecture/spec.md
+ * @spec openspec/specs/unit-store-architecture/spec.md
  */
 
 import { create, StoreApi, useStore } from 'zustand';

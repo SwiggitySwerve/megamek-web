@@ -5,7 +5,7 @@
  * Per spec: TechBase is binary (INNER_SPHERE or CLAN only).
  * Mixed tech is a unit-level mode, not a component tech base value.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/color-system/spec.md
+ * @spec openspec/specs/color-system/spec.md
  * @spec openspec/specs/validation-rules-master/spec.md (VAL-ENUM-001, VAL-ENUM-004)
  */
 

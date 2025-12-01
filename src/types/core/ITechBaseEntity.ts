@@ -2,7 +2,7 @@
  * ITechBaseEntity - Tech base classification interface
  * All components and equipment SHALL implement ITechBaseEntity to declare their tech base.
  * 
- * @spec openspec/specs/phase-1-foundation/core-entity-types/spec.md
+ * @spec core-entity-types/spec.md
  */
 
 import { TechBase } from '../enums/TechBase';

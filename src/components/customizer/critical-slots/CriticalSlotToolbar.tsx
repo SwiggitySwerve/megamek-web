@@ -3,7 +3,7 @@
  * 
  * Toolbar with auto-mode toggles and manual actions.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/critical-slots-display/spec.md
+ * @spec openspec/specs/critical-slots-display/spec.md
  */
 
 import React from 'react';

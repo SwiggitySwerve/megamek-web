@@ -3,8 +3,8 @@
  * 
  * Common components used across the customizer.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/color-system/spec.md
- * @spec openspec/changes/add-customizer-ui-components/specs/unit-info-banner/spec.md
+ * @spec openspec/specs/color-system/spec.md
+ * @spec openspec/specs/unit-info-banner/spec.md
  */
 
 export { ColorLegend } from './ColorLegend';

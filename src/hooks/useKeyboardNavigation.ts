@@ -3,7 +3,7 @@
  * 
  * Provides keyboard navigation support for lists and grids.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/confirmation-dialogs/spec.md
+ * @spec openspec/specs/confirmation-dialogs/spec.md
  */
 
 import { useCallback, useEffect, useState } from 'react';

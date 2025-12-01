@@ -3,7 +3,7 @@
  * 
  * Color legend for the armor diagram.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/armor-diagram/spec.md
+ * @spec openspec/specs/armor-diagram/spec.md
  */
 
 import React from 'react';

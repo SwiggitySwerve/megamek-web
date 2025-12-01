@@ -3,7 +3,7 @@
  * 
  * Colors for system components in critical slot displays.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/color-system/spec.md
+ * @spec openspec/specs/color-system/spec.md
  */
 
 /**

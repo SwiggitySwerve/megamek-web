@@ -3,7 +3,7 @@
  * 
  * Defines location restrictions and placement rules for equipment.
  * 
- * @spec openspec/changes/implement-phase3-equipment/specs/equipment-placement/spec.md
+ * @spec openspec/specs/equipment-placement/spec.md
  */
 
 import { MechLocation } from '../construction/CriticalSlotAllocation';

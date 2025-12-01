@@ -3,7 +3,7 @@
  * 
  * Confirmation dialog for closing tabs with unsaved changes.
  * 
- * @spec openspec/changes/add-customizer-ui-components/specs/multi-unit-tabs/spec.md
+ * @spec openspec/specs/multi-unit-tabs/spec.md
  */
 
 import React from 'react';

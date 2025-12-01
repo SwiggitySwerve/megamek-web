@@ -1,7 +1,7 @@
 /**
  * Serialization Utilities Barrel Export
  * 
- * @spec openspec/changes/implement-phase5-data-models
+ * @spec openspec/specs/unit-entity-model/spec.md
  */
 
 export * from './UnitSerializer';
