@@ -1,36 +1,4 @@
-# armor-system Specification
-
-## Purpose
-Define armor allocation rules including armor types, maximum armor per location, front/rear split for torsos, and the auto-allocation algorithm that matches MegaMekLab's distribution pattern.
-## Requirements
-### Requirement: Armor Types
-The system SHALL support 14 armor types with distinct point-per-ton ratios.
-
-#### Scenario: Standard armor
-- **WHEN** using standard armor
-- **THEN** ratio SHALL be 16 points per ton
-- **AND** armor SHALL require 0 critical slots
-
-#### Scenario: Ferro-Fibrous armor
-- **WHEN** using Ferro-Fibrous
-- **THEN** IS ratio SHALL be 17.92 points per ton (14 slots)
-- **AND** Clan ratio SHALL be 19.2 points per ton (7 slots)
-
-### Requirement: Maximum Armor
-Maximum armor per location SHALL be calculated from structure.
-
-#### Scenario: Armor maximum
-- **WHEN** calculating maximum armor
-- **THEN** max = 2 × structure points for that location
-- **AND** head maximum = 9 (exception)
-
-### Requirement: Rear Armor
-Torso locations SHALL have front and rear armor.
-
-#### Scenario: Rear armor allocation
-- **WHEN** allocating torso armor
-- **THEN** rear armor MAY be specified separately
-- **AND** front + rear <= maximum for location
+## MODIFIED Requirements
 
 ### Requirement: Auto-Allocation Algorithm
 The system SHALL provide automatic armor distribution matching MegaMekLab's allocation pattern using a simplified three-phase approach.
@@ -109,29 +77,13 @@ The system SHALL provide automatic armor distribution matching MegaMekLab's allo
   - Left/Right Leg: 24 each
 - **AND** side torso rear SHALL use 25% ratio (not 22%) at max total armor
 
-### Requirement: Maximum Clamping
-The system SHALL clamp all allocations to location maximums.
+## REMOVED Requirements
 
-#### Scenario: Head maximum
-- **WHEN** head allocation would exceed 9
-- **THEN** head SHALL be clamped to 9
-- **AND** excess points SHALL be redistributed to body locations
+### Requirement: Symmetry Enforcement
+**Reason**: Merged into Auto-Allocation Algorithm Phase 2
+**Migration**: Symmetry enforcement is now implicit in the symmetric remainder distribution loop
 
-#### Scenario: Location overflow
-- **WHEN** any location allocation would exceed its maximum
-- **THEN** allocation SHALL be clamped to maximum
-- **AND** excess SHALL be redistributed using remainder distribution rules
-
-### Requirement: Tonnage Capping
-The system SHALL cap armor tonnage at the maximum useful value.
-
-#### Scenario: Max useful tonnage
-- **WHEN** setting armor tonnage
-- **THEN** maximum SHALL be ceilToHalfTon(maxArmorPoints / pointsPerTon)
-- **AND** points exceeding maxArmorPoints SHALL be displayed as "Wasted Armor Points"
-
-#### Scenario: Auto-allocate button display
-- **WHEN** displaying allocatable points on button
-- **THEN** positive delta SHALL be min(unallocated, maxArmor - allocated)
-- **AND** negative delta SHALL show points to remove when over-allocated
+### Requirement: Torso Front/Rear Split
+**Reason**: Merged into Auto-Allocation Algorithm Phase 3
+**Migration**: Front/rear split logic is now Phase 3 of the unified algorithm
 
