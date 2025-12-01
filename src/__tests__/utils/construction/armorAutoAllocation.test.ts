@@ -99,6 +99,26 @@ describe('calculateOptimalArmorAllocation', () => {
       expect(result.totalAllocated).toBe(168);
       expect(result.unallocated).toBe(0);
     });
+
+    it('should allocate 169 points (max armor) matching MegaMekLab pattern', () => {
+      const result = calculateOptimalArmorAllocation(169, 50);
+      
+      // Expected from MegaMekLab screenshot (max armor):
+      // HD=9, LA/RA=16, LT/RT=18+6=24, CT=24+8=32, LL/RL=24
+      expect(result.head).toBe(9);
+      expect(result.centerTorsoFront).toBe(24);
+      expect(result.centerTorsoRear).toBe(8);
+      expect(result.leftTorsoFront).toBe(18);
+      expect(result.rightTorsoFront).toBe(18);
+      expect(result.leftTorsoRear).toBe(6);
+      expect(result.rightTorsoRear).toBe(6);
+      expect(result.leftArm).toBe(16);
+      expect(result.rightArm).toBe(16);
+      expect(result.leftLeg).toBe(24);
+      expect(result.rightLeg).toBe(24);
+      expect(result.totalAllocated).toBe(169);
+      expect(result.unallocated).toBe(0);
+    });
   });
 
   describe('symmetry enforcement', () => {

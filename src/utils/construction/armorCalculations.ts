@@ -300,7 +300,9 @@ export function calculateOptimalArmorAllocation(
   
   // Add rear armor to side torsos if we have decent coverage (>40% of max)
   if (sideTorsoEach > maxLT * 0.4) {
-    const rearRatio = 0.22; // ~22% goes to rear (18+5 / 23 = 0.217)
+    // At max capacity, use 25% rear; below max use ~22%
+    const atMaxCapacity = sideTorsoEach >= maxLT;
+    const rearRatio = atMaxCapacity ? 0.25 : 0.22;
     const rearPoints = Math.round(sideTorsoEach * rearRatio);
     ltRear = rearPoints;
     rtRear = rearPoints;
