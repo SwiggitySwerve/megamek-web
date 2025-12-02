@@ -30,9 +30,20 @@ import { UnitInfoBanner, UnitStats } from '@/components/customizer/shared/UnitIn
 import { GlobalLoadoutTray, LoadoutEquipmentItem } from '@/components/customizer/equipment/GlobalLoadoutTray';
 import { GlobalStatusBar, StatusBarStats } from '@/components/customizer/shared/GlobalStatusBar';
 
+// Equipment
+import { EquipmentCategory } from '@/types/equipment';
+import { JUMP_JETS } from '@/types/equipment/MiscEquipmentTypes';
+
 // Utils
 import { ValidationStatus } from '@/utils/colors/statusColors';
 import { getMaxTotalArmor } from '@/utils/construction/armorCalculations';
+
+// =============================================================================
+// Constants
+// =============================================================================
+
+/** Jump jet equipment IDs for category normalization */
+const JUMP_JET_IDS = new Set(JUMP_JETS.map(jj => jj.id));
 
 // =============================================================================
 // Types
@@ -140,29 +151,26 @@ export function UnitEditorWithRouting({
     warningCount: 0,
   }), [unitName, tonnage, techBase, calculations, equipmentCalcs, totalWeight, totalSlotsUsed, allocatedArmorPoints, maxArmorPoints]);
   
-  // Build status bar stats
-  const statusBarStats: StatusBarStats = useMemo(() => ({
-    weightUsed: totalWeight,
-    weightMax: tonnage,
-    weightRemaining: tonnage - totalWeight,
-    slotsUsed: totalSlotsUsed,
-    slotsTotal: 78,
-    heatGenerated: equipmentCalcs.totalHeat,
-    heatDissipation: calculations.totalHeatDissipation,
-  }), [totalWeight, tonnage, totalSlotsUsed, equipmentCalcs.totalHeat, calculations.totalHeatDissipation]);
-  
   // Convert equipment to LoadoutEquipmentItem format
+  // Normalize categories for consistent display (e.g., jump jets -> Movement)
   const loadoutEquipment: LoadoutEquipmentItem[] = useMemo(() => {
-    return equipment.map((item) => ({
-      instanceId: item.instanceId,
-      name: item.name,
-      category: item.category,
-      weight: item.weight,
-      criticalSlots: item.criticalSlots,
-      isAllocated: !!item.location,
-      location: item.location,
-      isRemovable: item.isRemovable,
-    }));
+    return equipment.map((item) => {
+      // Normalize category: jump jets should be in Movement category
+      const normalizedCategory = JUMP_JET_IDS.has(item.equipmentId)
+        ? EquipmentCategory.MOVEMENT
+        : item.category;
+      
+      return {
+        instanceId: item.instanceId,
+        name: item.name,
+        category: normalizedCategory,
+        weight: item.weight,
+        criticalSlots: item.criticalSlots,
+        isAllocated: !!item.location,
+        location: item.location,
+        isRemovable: item.isRemovable,
+      };
+    });
   }, [equipment]);
   
   // Handle equipment removal
@@ -227,9 +235,6 @@ export function UnitEditorWithRouting({
           onToggleExpand={handleToggleTray}
         />
       </div>
-      
-      {/* Global Status Bar */}
-      <GlobalStatusBar stats={statusBarStats} />
     </div>
   );
 }
