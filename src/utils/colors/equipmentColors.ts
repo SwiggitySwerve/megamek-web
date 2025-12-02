@@ -8,6 +8,10 @@
 
 import { EquipmentCategory } from '@/types/equipment';
 
+// =============================================================================
+// Types
+// =============================================================================
+
 /**
  * Equipment color type for styling
  */
@@ -17,6 +21,7 @@ export type EquipmentColorType =
   | 'heatsink'
   | 'electronics'
   | 'physical'
+  | 'movement'
   | 'misc';
 
 /**
@@ -30,13 +35,96 @@ export interface EquipmentColorDefinition {
   readonly badge: string;
 }
 
+// =============================================================================
+// Name Classification Patterns
+// =============================================================================
+
+/**
+ * Patterns for classifying equipment by name.
+ * Each array contains substrings to match (case-insensitive).
+ */
+const EQUIPMENT_NAME_PATTERNS: Record<EquipmentColorType, readonly string[]> = {
+  heatsink: [
+    'heat sink',
+    'heatsink',
+  ],
+  ammunition: [
+    'ammo',
+    'ammunition',
+  ],
+  weapon: [
+    'laser',
+    'ppc',
+    'autocannon',
+    'ac/',
+    'gauss',
+    'lrm',
+    'srm',
+    'mrm',
+    'machine gun',
+    'flamer',
+    'narc',
+    'tag',
+  ],
+  electronics: [
+    'computer',
+    'ecm',
+    'bap',
+    'probe',
+    'c3',
+    'command console',
+  ],
+  physical: [
+    'hatchet',
+    'sword',
+    'claw',
+    'mace',
+    'lance',
+    'talons',
+  ],
+  movement: [
+    'jump jet',
+    'masc',
+    'supercharger',
+    'partial wing',
+  ],
+  misc: [], // Fallback - no specific patterns
+} as const;
+
+/**
+ * Suffix patterns that indicate ammunition
+ */
+const AMMUNITION_SUFFIXES: readonly string[] = [
+  ' rounds',
+] as const;
+
+/**
+ * Priority order for pattern matching.
+ * Earlier entries take precedence over later ones.
+ */
+const CLASSIFICATION_PRIORITY: readonly EquipmentColorType[] = [
+  'heatsink',
+  'ammunition',
+  'weapon',
+  'electronics',
+  'physical',
+  'movement',
+] as const;
+
+// =============================================================================
+// Color Definitions
+// =============================================================================
+
 /**
  * Equipment type colors
  * 
  * - Weapons: red (bg-red-700)
  * - Ammunition: orange (bg-orange-700)
  * - Heat sinks: cyan (bg-cyan-700)
- * - Other equipment: blue (bg-blue-700)
+ * - Electronics: blue (bg-blue-700)
+ * - Physical: amber (bg-amber-700)
+ * - Movement: green (bg-green-700)
+ * - Misc: slate (bg-slate-700)
  */
 export const EQUIPMENT_COLORS: Record<EquipmentColorType, EquipmentColorDefinition> = {
   weapon: {
@@ -74,6 +162,13 @@ export const EQUIPMENT_COLORS: Record<EquipmentColorType, EquipmentColorDefiniti
     hoverBg: 'hover:bg-amber-600',
     badge: 'bg-amber-600 text-white',
   },
+  movement: {
+    bg: 'bg-green-700',
+    border: 'border-green-800',
+    text: 'text-white',
+    hoverBg: 'hover:bg-green-600',
+    badge: 'bg-green-600 text-white',
+  },
   misc: {
     bg: 'bg-slate-700',
     border: 'border-slate-800',
@@ -82,6 +177,30 @@ export const EQUIPMENT_COLORS: Record<EquipmentColorType, EquipmentColorDefiniti
     badge: 'bg-slate-600 text-white',
   },
 };
+
+// =============================================================================
+// Category to Color Type Mapping
+// =============================================================================
+
+/**
+ * Mapping from EquipmentCategory to EquipmentColorType
+ */
+const CATEGORY_TO_COLOR_MAP: Record<EquipmentCategory, EquipmentColorType> = {
+  [EquipmentCategory.ENERGY_WEAPON]: 'weapon',
+  [EquipmentCategory.BALLISTIC_WEAPON]: 'weapon',
+  [EquipmentCategory.MISSILE_WEAPON]: 'weapon',
+  [EquipmentCategory.ARTILLERY]: 'weapon',
+  [EquipmentCategory.CAPITAL_WEAPON]: 'weapon',
+  [EquipmentCategory.AMMUNITION]: 'ammunition',
+  [EquipmentCategory.ELECTRONICS]: 'electronics',
+  [EquipmentCategory.PHYSICAL_WEAPON]: 'physical',
+  [EquipmentCategory.MOVEMENT]: 'movement',
+  [EquipmentCategory.MISC_EQUIPMENT]: 'misc',
+};
+
+// =============================================================================
+// Public Functions
+// =============================================================================
 
 /**
  * Get color classes for an equipment type
@@ -102,85 +221,29 @@ export function getEquipmentColorClasses(colorType: EquipmentColorType): string 
  * Map EquipmentCategory to color type
  */
 export function categoryToColorType(category: EquipmentCategory): EquipmentColorType {
-  switch (category) {
-    case EquipmentCategory.ENERGY_WEAPON:
-    case EquipmentCategory.BALLISTIC_WEAPON:
-    case EquipmentCategory.MISSILE_WEAPON:
-    case EquipmentCategory.ARTILLERY:
-    case EquipmentCategory.CAPITAL_WEAPON:
-      return 'weapon';
-    case EquipmentCategory.AMMUNITION:
-      return 'ammunition';
-    case EquipmentCategory.ELECTRONICS:
-      return 'electronics';
-    case EquipmentCategory.PHYSICAL_WEAPON:
-      return 'physical';
-    case EquipmentCategory.MISC_EQUIPMENT:
-    default:
-      return 'misc';
-  }
+  return CATEGORY_TO_COLOR_MAP[category] ?? 'misc';
 }
 
 /**
- * Classify equipment by name into a color type
+ * Classify equipment by name into a color type.
+ * Uses pattern matching against known equipment name patterns.
  */
 export function classifyEquipment(name: string): EquipmentColorType {
   const lowerName = name.toLowerCase();
   
-  // Heat sinks
-  if (lowerName.includes('heat sink') || lowerName.includes('heatsink')) {
-    return 'heatsink';
+  // Check each category in priority order
+  for (const colorType of CLASSIFICATION_PRIORITY) {
+    const patterns = EQUIPMENT_NAME_PATTERNS[colorType];
+    
+    // Check if name includes any pattern
+    if (patterns.some(pattern => lowerName.includes(pattern))) {
+      return colorType;
+    }
   }
   
-  // Ammunition
-  if (
-    lowerName.includes('ammo') ||
-    lowerName.includes('ammunition') ||
-    lowerName.endsWith(' rounds')
-  ) {
+  // Special case: ammunition suffix patterns
+  if (AMMUNITION_SUFFIXES.some(suffix => lowerName.endsWith(suffix))) {
     return 'ammunition';
-  }
-  
-  // Weapons (common patterns)
-  if (
-    lowerName.includes('laser') ||
-    lowerName.includes('ppc') ||
-    lowerName.includes('autocannon') ||
-    lowerName.includes('ac/') ||
-    lowerName.includes('gauss') ||
-    lowerName.includes('lrm') ||
-    lowerName.includes('srm') ||
-    lowerName.includes('mrm') ||
-    lowerName.includes('machine gun') ||
-    lowerName.includes('flamer') ||
-    lowerName.includes('narc') ||
-    lowerName.includes('tag')
-  ) {
-    return 'weapon';
-  }
-  
-  // Electronics
-  if (
-    lowerName.includes('computer') ||
-    lowerName.includes('ecm') ||
-    lowerName.includes('bap') ||
-    lowerName.includes('probe') ||
-    lowerName.includes('c3') ||
-    lowerName.includes('command console')
-  ) {
-    return 'electronics';
-  }
-  
-  // Physical weapons
-  if (
-    lowerName.includes('hatchet') ||
-    lowerName.includes('sword') ||
-    lowerName.includes('claw') ||
-    lowerName.includes('mace') ||
-    lowerName.includes('lance') ||
-    lowerName.includes('talons')
-  ) {
-    return 'physical';
   }
   
   return 'misc';
@@ -204,4 +267,3 @@ export function getBattleTechEquipmentClasses(
   
   return `${baseClasses} ${colors.hoverBg}`;
 }
-

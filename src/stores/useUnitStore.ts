@@ -104,6 +104,7 @@ function getJumpJetEquipment(tonnage: number, jumpJetType: JumpJetType) {
 
 /**
  * Create jump jet equipment instances for the equipment array
+ * These are configuration-based components and NOT removable via the loadout tray.
  */
 function createJumpJetEquipmentList(
   tonnage: number,
@@ -121,7 +122,7 @@ function createJumpJetEquipmentList(
       instanceId: generateUnitId(),
       equipmentId: jetEquip.id,
       name: jetEquip.name,
-      category: EquipmentCategory.MISC_EQUIPMENT,
+      category: EquipmentCategory.MOVEMENT, // Movement equipment category
       weight: jetEquip.weight,
       criticalSlots: jetEquip.criticalSlots,
       heat: 0,
@@ -130,6 +131,7 @@ function createJumpJetEquipmentList(
       slots: undefined,
       isRearMounted: false,
       linkedAmmoId: undefined,
+      isRemovable: false, // Configuration component - managed via Structure tab
     });
   }
   return result;

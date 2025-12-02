@@ -433,6 +433,7 @@ function mapEquipment(
         slots: undefined,
         isRearMounted: false,
         linkedAmmoId: undefined,
+        isRemovable: true, // User-added equipment is removable
       };
     } else {
       // Not found - create placeholder with unknown equipment
@@ -450,6 +451,7 @@ function mapEquipment(
         slots: undefined,
         isRearMounted: false,
         linkedAmmoId: undefined,
+        isRemovable: true, // User-added equipment is removable
       };
     }
   });

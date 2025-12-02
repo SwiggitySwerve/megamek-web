@@ -33,6 +33,11 @@ export interface LoadoutEquipmentItem {
   isAllocated: boolean;
   /** Location if allocated */
   location?: string;
+  /** 
+   * Whether this equipment can be removed via the loadout tray.
+   * Configuration components are managed via their respective tabs.
+   */
+  isRemovable: boolean;
 }
 
 interface GlobalLoadoutTrayProps {
@@ -64,6 +69,7 @@ const CATEGORY_ORDER: EquipmentCategory[] = [
   EquipmentCategory.AMMUNITION,
   EquipmentCategory.ELECTRONICS,
   EquipmentCategory.PHYSICAL_WEAPON,
+  EquipmentCategory.MOVEMENT,
   EquipmentCategory.MISC_EQUIPMENT,
 ];
 
@@ -76,6 +82,7 @@ const CATEGORY_LABELS: Record<EquipmentCategory, string> = {
   [EquipmentCategory.AMMUNITION]: 'Ammunition',
   [EquipmentCategory.ELECTRONICS]: 'Electronics',
   [EquipmentCategory.PHYSICAL_WEAPON]: 'Physical Weapons',
+  [EquipmentCategory.MOVEMENT]: 'Movement',
   [EquipmentCategory.MISC_EQUIPMENT]: 'Misc Equipment',
 };
 
@@ -152,26 +159,39 @@ function CategorySection({
               className={`
                 mx-1 mb-0.5 px-2 py-1 rounded text-xs cursor-pointer
                 transition-colors group
-                ${selectedId === item.instanceId
+                ${selectedId === item.instanceId && item.isRemovable
                   ? 'bg-amber-600/30 ring-1 ring-amber-500'
-                  : 'bg-slate-700/40 hover:bg-slate-700'
+                  : !item.isRemovable
+                    ? 'bg-slate-700/20 border border-slate-600/30'
+                    : 'bg-slate-700/40 hover:bg-slate-700'
                 }
               `}
-              onClick={() => onSelect(item.instanceId)}
-              title="Click to select"
+              onClick={() => item.isRemovable && onSelect(item.instanceId)}
+              title={item.isRemovable ? 'Click to select' : 'Configuration component - managed via Structure/Armor tabs'}
             >
               <div className="flex items-center justify-between gap-1">
-                <span className="text-white truncate flex-1">{item.name}</span>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onRemove(item.instanceId);
-                  }}
-                  className="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 transition-opacity px-1"
-                  title="Remove"
-                >
-                  ✕
-                </button>
+                <span className={`truncate flex-1 ${item.isRemovable ? 'text-white' : 'text-slate-400'}`}>
+                  {item.name}
+                </span>
+                {item.isRemovable ? (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onRemove(item.instanceId);
+                    }}
+                    className="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 transition-opacity px-1"
+                    title="Remove"
+                  >
+                    ✕
+                  </button>
+                ) : (
+                  <span 
+                    className="text-slate-500 text-[10px] px-1"
+                    title="Managed via configuration tabs"
+                  >
+                    🔒
+                  </span>
+                )}
               </div>
               <div className="flex items-center gap-2 text-slate-400 mt-0.5">
                 <span>{item.weight}t</span>
@@ -180,6 +200,9 @@ function CategorySection({
                   <span className="text-green-400">@ {item.location}</span>
                 ) : (
                   <span className="text-amber-400 italic">Unallocated</span>
+                )}
+                {!item.isRemovable && (
+                  <span className="text-slate-500 italic text-[10px]">Fixed</span>
                 )}
               </div>
             </div>
@@ -227,24 +250,32 @@ export function GlobalLoadoutTray({
     });
   }, []);
   
+  // Get only removable equipment
+  const removableEquipment = equipment.filter(item => item.isRemovable);
+  const removableCount = removableEquipment.length;
+  
+  // Check if selected item is removable
+  const selectedItem = selectedId ? equipment.find(e => e.instanceId === selectedId) : undefined;
+  const canRemoveSelected = selectedItem?.isRemovable ?? false;
+  
   // Handle remove selected
   const handleRemoveSelected = useCallback(() => {
-    if (selectedId) {
+    if (selectedId && canRemoveSelected) {
       onRemoveEquipment(selectedId);
       setSelectedId(undefined);
     }
-  }, [selectedId, onRemoveEquipment]);
+  }, [selectedId, canRemoveSelected, onRemoveEquipment]);
   
-  // Handle remove all with confirmation
+  // Handle remove all with confirmation (only removable items)
   const handleRemoveAll = useCallback(() => {
-    if (equipment.length === 0) return;
+    if (removableCount === 0) return;
     
     // Simple confirmation
-    if (window.confirm(`Remove all ${equipment.length} equipment items?`)) {
+    if (window.confirm(`Remove all ${removableCount} removable equipment items?`)) {
       onRemoveAllEquipment();
       setSelectedId(undefined);
     }
-  }, [equipment.length, onRemoveAllEquipment]);
+  }, [removableCount, onRemoveAllEquipment]);
   
   // Group equipment by category
   const grouped = groupByCategory(equipment);
@@ -302,15 +333,17 @@ export function GlobalLoadoutTray({
         <div className="flex gap-2 px-3 pb-2">
           <button
             onClick={handleRemoveSelected}
-            disabled={!selectedId}
+            disabled={!canRemoveSelected}
             className="flex-1 px-2 py-1 text-xs bg-slate-700 hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed rounded text-slate-300 transition-colors"
+            title={!selectedId ? 'Select an item to remove' : !canRemoveSelected ? 'Configuration items cannot be removed' : 'Remove selected item'}
           >
             Remove
           </button>
           <button
             onClick={handleRemoveAll}
-            disabled={equipment.length === 0}
+            disabled={removableCount === 0}
             className="flex-1 px-2 py-1 text-xs bg-red-900/50 hover:bg-red-900 disabled:opacity-50 disabled:cursor-not-allowed rounded text-red-300 transition-colors"
+            title={removableCount === 0 ? 'No removable equipment' : `Remove all ${removableCount} removable items`}
           >
             Remove All
           </button>

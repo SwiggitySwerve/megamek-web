@@ -184,10 +184,14 @@ export interface IMountedEquipmentInstance {
 
 /**
  * Create a mounted equipment instance from an equipment item
+ * @param item The equipment definition
+ * @param instanceId Unique instance identifier
+ * @param isRemovable Whether the equipment can be removed via the loadout tray (default: true)
  */
 export function createMountedEquipment(
   item: IEquipmentItem,
-  instanceId: string
+  instanceId: string,
+  isRemovable: boolean = true
 ): IMountedEquipmentInstance {
   return {
     instanceId,
@@ -202,6 +206,7 @@ export function createMountedEquipment(
     slots: undefined,
     isRearMounted: false,
     linkedAmmoId: undefined,
+    isRemovable,
   };
 }
 

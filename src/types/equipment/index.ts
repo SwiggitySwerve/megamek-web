@@ -55,6 +55,7 @@ export enum EquipmentCategory {
   AMMUNITION = 'Ammunition',
   ELECTRONICS = 'Electronics',
   PHYSICAL_WEAPON = 'Physical Weapon',
+  MOVEMENT = 'Movement',
   MISC_EQUIPMENT = 'Misc Equipment',
 }
 

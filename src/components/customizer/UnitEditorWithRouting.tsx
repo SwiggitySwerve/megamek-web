@@ -161,6 +161,7 @@ export function UnitEditorWithRouting({
       criticalSlots: item.criticalSlots,
       isAllocated: !!item.location,
       location: item.location,
+      isRemovable: item.isRemovable,
     }));
   }, [equipment]);
   
