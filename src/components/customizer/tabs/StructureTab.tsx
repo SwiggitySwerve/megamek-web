@@ -11,6 +11,7 @@
 
 import React, { useCallback, useMemo } from 'react';
 import { useUnitStore } from '@/stores/useUnitStore';
+import { getTotalAllocatedArmor } from '@/stores/unitState';
 import { useTechBaseSync } from '@/hooks/useTechBaseSync';
 import { useUnitCalculations } from '@/hooks/useUnitCalculations';
 import { EngineType } from '@/types/construction/EngineType';
@@ -113,6 +114,7 @@ export function StructureTab({
   const heatSinkType = useUnitStore((s) => s.heatSinkType);
   const heatSinkCount = useUnitStore((s) => s.heatSinkCount);
   const armorType = useUnitStore((s) => s.armorType);
+  const armorAllocation = useUnitStore((s) => s.armorAllocation);
   const enhancement = useUnitStore((s) => s.enhancement);
   
   // Get actions from context
@@ -126,17 +128,27 @@ export function StructureTab({
   // Get filtered options based on tech base
   const { filteredOptions } = useTechBaseSync(componentTechBases);
   
-  // Calculate weights and slots
-  const calculations = useUnitCalculations(tonnage, {
-    engineType,
-    engineRating,
-    gyroType,
-    internalStructureType,
-    cockpitType,
-    heatSinkType,
-    heatSinkCount,
-    armorType,
-  });
+  // Calculate armor points
+  const allocatedArmorPoints = useMemo(
+    () => getTotalAllocatedArmor(armorAllocation),
+    [armorAllocation]
+  );
+  
+  // Calculate weights and slots (including armor)
+  const calculations = useUnitCalculations(
+    tonnage,
+    {
+      engineType,
+      engineRating,
+      gyroType,
+      internalStructureType,
+      cockpitType,
+      heatSinkType,
+      heatSinkCount,
+      armorType,
+    },
+    allocatedArmorPoints
+  );
   
   // Movement calculations - Walk MP drives engine rating
   const walkMP = useMemo(() => Math.floor(engineRating / tonnage), [engineRating, tonnage]);
