@@ -16,15 +16,27 @@ import { Era } from '@/types/enums/Era';
 import { WeightClass, getWeightClass } from '@/types/enums/WeightClass';
 
 /**
+ * Unit name entry for quick lookups
+ */
+export interface IUnitNameEntry {
+  readonly id: string;
+  readonly chassis: string;
+  readonly variant: string;
+  readonly fullName: string;
+}
+
+/**
  * Custom unit service interface
  */
 export interface ICustomUnitService {
-  create(unit: IFullUnit): Promise<string>;
+  create(unit: IFullUnit, overwriteId?: string): Promise<string>;
   update(id: string, unit: IFullUnit): Promise<void>;
   delete(id: string): Promise<void>;
   getById(id: string): Promise<IFullUnit | null>;
   list(): Promise<readonly IUnitIndexEntry[]>;
   exists(id: string): Promise<boolean>;
+  findByName(chassis: string, variant: string): Promise<IFullUnit | null>;
+  listNames(): Promise<readonly IUnitNameEntry[]>;
 }
 
 /**
@@ -44,13 +56,16 @@ export class CustomUnitService implements ICustomUnitService {
   }
 
   /**
-   * Create a new custom unit
-   * @returns The generated unique ID
+   * Create a new custom unit or overwrite an existing one
+   * @param unit - The unit data to save
+   * @param overwriteId - Optional ID of existing unit to overwrite
+   * @returns The unit ID (either generated or the overwriteId)
    */
-  async create(unit: IFullUnit): Promise<string> {
+  async create(unit: IFullUnit, overwriteId?: string): Promise<string> {
     await this.ensureInitialized();
     
-    const id = `custom-${uuidv4()}`;
+    // If overwriting, use the existing ID; otherwise generate a new one
+    const id = overwriteId || `custom-${uuidv4()}`;
     const unitWithId = { ...unit, id };
     
     await indexedDBService.put(STORES.CUSTOM_UNITS, id, unitWithId);
@@ -106,6 +121,44 @@ export class CustomUnitService implements ICustomUnitService {
   async exists(id: string): Promise<boolean> {
     const unit = await this.getById(id);
     return unit !== null;
+  }
+
+  /**
+   * Find a custom unit by chassis and variant name
+   * Uses case-insensitive comparison
+   */
+  async findByName(chassis: string, variant: string): Promise<IFullUnit | null> {
+    await this.ensureInitialized();
+    
+    const normalizedChassis = chassis.trim().toLowerCase();
+    const normalizedVariant = variant.trim().toLowerCase();
+    
+    const units = await indexedDBService.getAll<IFullUnit>(STORES.CUSTOM_UNITS);
+    
+    const match = units.find((unit) => {
+      const unitChassis = (unit.chassis || '').trim().toLowerCase();
+      const unitVariant = (unit.variant || '').trim().toLowerCase();
+      return unitChassis === normalizedChassis && unitVariant === normalizedVariant;
+    });
+    
+    return match || null;
+  }
+
+  /**
+   * List all custom unit names for quick lookup
+   * More efficient than loading full unit data
+   */
+  async listNames(): Promise<readonly IUnitNameEntry[]> {
+    await this.ensureInitialized();
+    
+    const units = await indexedDBService.getAll<IFullUnit>(STORES.CUSTOM_UNITS);
+    
+    return units.map((unit) => ({
+      id: unit.id,
+      chassis: unit.chassis || '',
+      variant: unit.variant || '',
+      fullName: `${unit.chassis || ''} ${unit.variant || ''}`.trim(),
+    }));
   }
 
   /**

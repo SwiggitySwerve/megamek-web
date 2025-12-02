@@ -14,8 +14,10 @@ import { useRouter } from 'next/router';
 import { TabBar } from './TabBar';
 import { NewTabModal } from './NewTabModal';
 import { UnsavedChangesDialog } from '@/components/customizer/dialogs/UnsavedChangesDialog';
+import { SaveUnitDialog } from '@/components/customizer/dialogs/SaveUnitDialog';
 import { useTabManagerStore, UNIT_TEMPLATES, TabInfo } from '@/stores/useTabManagerStore';
 import { getUnitStore } from '@/stores/unitStoreRegistry';
+import { customUnitService } from '@/services/units/CustomUnitService';
 import { TechBase } from '@/types/enums/TechBase';
 import { DEFAULT_TAB } from '@/hooks/useCustomizerRouter';
 
@@ -36,6 +38,14 @@ interface CloseDialogState {
   tabName: string;
 }
 
+interface SaveDialogState {
+  isOpen: boolean;
+  tabId: string | null;
+  chassis: string;
+  variant: string;
+  closeAfterSave: boolean;
+}
+
 // =============================================================================
 // Component
 // =============================================================================
@@ -54,6 +64,15 @@ export function MultiUnitTabs({
     isOpen: false,
     tabId: null,
     tabName: '',
+  });
+  
+  // Save dialog state
+  const [saveDialog, setSaveDialog] = useState<SaveDialogState>({
+    isOpen: false,
+    tabId: null,
+    chassis: '',
+    variant: '',
+    closeAfterSave: false,
   });
   
   // Use individual selectors for primitives and stable references
@@ -128,18 +147,102 @@ export function MultiUnitTabs({
   }, [closeDialog.tabId, performCloseTab]);
   
   const handleCloseDialogSave = useCallback(() => {
-    // TODO: Implement save functionality
-    // For now, just close after "saving"
+    // Get unit data for save dialog
     if (closeDialog.tabId) {
       const unitStore = getUnitStore(closeDialog.tabId);
       if (unitStore) {
-        // Mark as not modified (simulating save)
-        unitStore.getState().markModified(false);
+        const state = unitStore.getState();
+        // Close the unsaved changes dialog and open save dialog
+        setCloseDialog({ isOpen: false, tabId: null, tabName: '' });
+        setSaveDialog({
+          isOpen: true,
+          tabId: closeDialog.tabId,
+          chassis: state.name || 'New Mech',
+          variant: '', // User needs to provide variant
+          closeAfterSave: true,
+        });
+        return;
       }
-      performCloseTab(closeDialog.tabId);
     }
     setCloseDialog({ isOpen: false, tabId: null, tabName: '' });
-  }, [closeDialog.tabId, performCloseTab]);
+  }, [closeDialog.tabId]);
+  
+  // Handle save dialog cancel
+  const handleSaveDialogCancel = useCallback(() => {
+    setSaveDialog({
+      isOpen: false,
+      tabId: null,
+      chassis: '',
+      variant: '',
+      closeAfterSave: false,
+    });
+  }, []);
+  
+  // Handle save dialog save
+  const handleSaveDialogSave = useCallback(async (
+    chassis: string,
+    variant: string,
+    overwriteId?: string
+  ) => {
+    if (!saveDialog.tabId) return;
+    
+    const unitStore = getUnitStore(saveDialog.tabId);
+    if (!unitStore) return;
+    
+    const state = unitStore.getState();
+    
+    try {
+      // Build the unit data for saving
+      const unitData = {
+        id: overwriteId || saveDialog.tabId,
+        chassis,
+        variant,
+        tonnage: state.tonnage,
+        techBase: state.techBase,
+        era: 'SUCCESSION_WARS', // TODO: Get from state when available
+        unitType: 'BattleMech' as const,
+        // Add other unit data as needed
+        engineType: state.engineType,
+        engineRating: state.engineRating,
+        gyroType: state.gyroType,
+        internalStructureType: state.internalStructureType,
+        cockpitType: state.cockpitType,
+        heatSinkType: state.heatSinkType,
+        heatSinkCount: state.heatSinkCount,
+        armorType: state.armorType,
+        armorAllocation: state.armorAllocation,
+      };
+      
+      // Save the unit
+      await customUnitService.create(unitData, overwriteId);
+      
+      // Mark as not modified
+      state.markModified(false);
+      
+      // Update tab name to match saved name
+      renameTab(saveDialog.tabId, `${chassis} ${variant}`);
+      
+      // Close save dialog
+      const shouldClose = saveDialog.closeAfterSave;
+      const tabIdToClose = saveDialog.tabId;
+      
+      setSaveDialog({
+        isOpen: false,
+        tabId: null,
+        chassis: '',
+        variant: '',
+        closeAfterSave: false,
+      });
+      
+      // Close tab if requested
+      if (shouldClose) {
+        performCloseTab(tabIdToClose);
+      }
+    } catch (error) {
+      console.error('Failed to save unit:', error);
+      // TODO: Show error toast/notification
+    }
+  }, [saveDialog.tabId, saveDialog.closeAfterSave, renameTab, performCloseTab]);
   
   // Navigate to unit library
   const handleLoadFromLibrary = useCallback(() => {
@@ -258,6 +361,16 @@ export function MultiUnitTabs({
         onClose={handleCloseDialogCancel}
         onDiscard={handleCloseDialogDiscard}
         onSave={handleCloseDialogSave}
+      />
+      
+      {/* Save unit dialog */}
+      <SaveUnitDialog
+        isOpen={saveDialog.isOpen}
+        initialChassis={saveDialog.chassis}
+        initialVariant={saveDialog.variant}
+        currentUnitId={saveDialog.tabId ?? undefined}
+        onSave={handleSaveDialogSave}
+        onCancel={handleSaveDialogCancel}
       />
     </div>
   );
