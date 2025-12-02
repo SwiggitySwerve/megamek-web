@@ -14,5 +14,6 @@ export { NewTabModal } from './NewTabModal';
 export { CustomizerTabs, useCustomizerTabs, DEFAULT_CUSTOMIZER_TABS } from './CustomizerTabs';
 export { OverviewTab } from './OverviewTab';
 export { StructureTab } from './StructureTab';
+export { CriticalSlotsTab } from './CriticalSlotsTab';
 export { FluffTab } from './FluffTab';
 

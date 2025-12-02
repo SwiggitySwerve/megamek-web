@@ -26,6 +26,7 @@ import { StructureTab } from '@/components/customizer/tabs/StructureTab';
 import { OverviewTab } from '@/components/customizer/tabs/OverviewTab';
 import { ArmorTab } from '@/components/customizer/tabs/ArmorTab';
 import { EquipmentTab } from '@/components/customizer/tabs/EquipmentTab';
+import { CriticalSlotsTab } from '@/components/customizer/tabs/CriticalSlotsTab';
 import { UnitInfoBanner, UnitStats } from '@/components/customizer/shared/UnitInfoBanner';
 import { GlobalLoadoutTray, LoadoutEquipmentItem } from '@/components/customizer/equipment/GlobalLoadoutTray';
 import { GlobalStatusBar, StatusBarStats } from '@/components/customizer/shared/GlobalStatusBar';
@@ -220,7 +221,7 @@ export function UnitEditorWithRouting({
             {activeTabId === 'armor' && <ArmorTab />}
             {activeTabId === 'weapons' && <PlaceholderTab name="Weapons" />}
             {activeTabId === 'equipment' && <EquipmentTab />}
-            {activeTabId === 'criticals' && <PlaceholderTab name="Critical Slots" />}
+            {activeTabId === 'criticals' && <CriticalSlotsTab />}
             {activeTabId === 'fluff' && <PlaceholderTab name="Fluff" />}
           </div>
         </div>
