@@ -147,6 +147,55 @@ function filterOutJumpJets(equipment: readonly IMountedEquipmentInstance[]): IMo
 }
 
 // =============================================================================
+// Internal Structure Equipment Helpers
+// =============================================================================
+
+import { 
+  InternalStructureType, 
+  getInternalStructureDefinition 
+} from '@/types/construction/InternalStructureType';
+
+/** Equipment ID for internal structure slots */
+const INTERNAL_STRUCTURE_EQUIPMENT_ID = 'internal-structure-slots';
+
+/**
+ * Create internal structure equipment items (e.g., Endo Steel slots)
+ * These are configuration-based components and NOT removable via the loadout tray.
+ */
+function createInternalStructureEquipmentList(
+  structureType: InternalStructureType
+): IMountedEquipmentInstance[] {
+  const structureDef = getInternalStructureDefinition(structureType);
+  if (!structureDef || structureDef.criticalSlots === 0) {
+    return [];
+  }
+  
+  // Create a single entry representing all the distributed slots
+  return [{
+    instanceId: generateUnitId(),
+    equipmentId: INTERNAL_STRUCTURE_EQUIPMENT_ID,
+    name: structureDef.name,
+    category: EquipmentCategory.STRUCTURAL,
+    weight: 0, // Weight is calculated separately in structure weight
+    criticalSlots: structureDef.criticalSlots,
+    heat: 0,
+    techBase: structureDef.techBase,
+    location: undefined, // Distributed across mech
+    slots: undefined,
+    isRearMounted: false,
+    linkedAmmoId: undefined,
+    isRemovable: false, // Configuration component - managed via Structure tab
+  }];
+}
+
+/**
+ * Filter out internal structure equipment from the equipment array
+ */
+function filterOutInternalStructure(equipment: readonly IMountedEquipmentInstance[]): IMountedEquipmentInstance[] {
+  return equipment.filter(e => e.equipmentId !== INTERNAL_STRUCTURE_EQUIPMENT_ID);
+}
+
+// =============================================================================
 // Store Factory
 // =============================================================================
 
@@ -380,10 +429,17 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
           lastModifiedAt: Date.now(),
         }),
         
-        setInternalStructureType: (type) => set({
-          internalStructureType: type,
-          isModified: true,
-          lastModifiedAt: Date.now(),
+        setInternalStructureType: (type) => set((state) => {
+          // Sync equipment - remove old structure equipment, add new ones
+          const nonStructureEquipment = filterOutInternalStructure(state.equipment);
+          const structureEquipment = createInternalStructureEquipmentList(type);
+          
+          return {
+            internalStructureType: type,
+            equipment: [...nonStructureEquipment, ...structureEquipment],
+            isModified: true,
+            lastModifiedAt: Date.now(),
+          };
         }),
         
         setCockpitType: (type) => set({

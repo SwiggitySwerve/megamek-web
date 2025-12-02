@@ -22,6 +22,7 @@ export type EquipmentColorType =
   | 'electronics'
   | 'physical'
   | 'movement'
+  | 'structural'
   | 'misc';
 
 /**
@@ -88,6 +89,16 @@ const EQUIPMENT_NAME_PATTERNS: Record<EquipmentColorType, readonly string[]> = {
     'supercharger',
     'partial wing',
   ],
+  structural: [
+    'endo steel',
+    'endo-steel',
+    'ferro-fibrous',
+    'ferro fibrous',
+    'light ferro',
+    'heavy ferro',
+    'stealth armor',
+    'reactive armor',
+  ],
   misc: [], // Fallback - no specific patterns
 } as const;
 
@@ -109,6 +120,7 @@ const CLASSIFICATION_PRIORITY: readonly EquipmentColorType[] = [
   'electronics',
   'physical',
   'movement',
+  'structural',
 ] as const;
 
 // =============================================================================
@@ -169,6 +181,13 @@ export const EQUIPMENT_COLORS: Record<EquipmentColorType, EquipmentColorDefiniti
     hoverBg: 'hover:bg-green-600',
     badge: 'bg-green-600 text-white',
   },
+  structural: {
+    bg: 'bg-purple-700',
+    border: 'border-purple-800',
+    text: 'text-white',
+    hoverBg: 'hover:bg-purple-600',
+    badge: 'bg-purple-600 text-white',
+  },
   misc: {
     bg: 'bg-slate-700',
     border: 'border-slate-800',
@@ -195,6 +214,7 @@ const CATEGORY_TO_COLOR_MAP: Record<EquipmentCategory, EquipmentColorType> = {
   [EquipmentCategory.ELECTRONICS]: 'electronics',
   [EquipmentCategory.PHYSICAL_WEAPON]: 'physical',
   [EquipmentCategory.MOVEMENT]: 'movement',
+  [EquipmentCategory.STRUCTURAL]: 'structural',
   [EquipmentCategory.MISC_EQUIPMENT]: 'misc',
 };
 

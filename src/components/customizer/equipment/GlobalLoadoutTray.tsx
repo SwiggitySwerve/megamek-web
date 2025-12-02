@@ -70,6 +70,7 @@ const CATEGORY_ORDER: EquipmentCategory[] = [
   EquipmentCategory.ELECTRONICS,
   EquipmentCategory.PHYSICAL_WEAPON,
   EquipmentCategory.MOVEMENT,
+  EquipmentCategory.STRUCTURAL,
   EquipmentCategory.MISC_EQUIPMENT,
 ];
 
@@ -83,6 +84,7 @@ const CATEGORY_LABELS: Record<EquipmentCategory, string> = {
   [EquipmentCategory.ELECTRONICS]: 'Electronics',
   [EquipmentCategory.PHYSICAL_WEAPON]: 'Physical Weapons',
   [EquipmentCategory.MOVEMENT]: 'Movement',
+  [EquipmentCategory.STRUCTURAL]: 'Structural',
   [EquipmentCategory.MISC_EQUIPMENT]: 'Misc Equipment',
 };
 
