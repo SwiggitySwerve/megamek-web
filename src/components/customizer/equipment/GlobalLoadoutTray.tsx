@@ -153,60 +153,66 @@ function CategorySection({
       {/* Items */}
       {isExpanded && (
         <div className="pb-1 px-1">
-          {items.map((item) => (
-            <div
-              key={item.instanceId}
-              className={`
-                mx-1 mb-0.5 px-2 py-1 rounded text-xs cursor-pointer
-                transition-colors group
-                ${selectedId === item.instanceId && item.isRemovable
-                  ? 'bg-amber-600/30 ring-1 ring-amber-500'
-                  : !item.isRemovable
-                    ? 'bg-slate-700/20 border border-slate-600/30'
-                    : 'bg-slate-700/40 hover:bg-slate-700'
-                }
-              `}
-              onClick={() => item.isRemovable && onSelect(item.instanceId)}
-              title={item.isRemovable ? 'Click to select' : 'Configuration component - managed via Structure/Armor tabs'}
-            >
-              <div className="flex items-center justify-between gap-1">
-                <span className={`truncate flex-1 ${item.isRemovable ? 'text-white' : 'text-slate-400'}`}>
-                  {item.name}
-                </span>
-                {item.isRemovable ? (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onRemove(item.instanceId);
-                    }}
-                    className="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 transition-opacity px-1"
-                    title="Remove"
-                  >
-                    ✕
-                  </button>
-                ) : (
-                  <span 
-                    className="text-slate-500 text-[10px] px-1"
-                    title="Managed via configuration tabs"
-                  >
-                    🔒
+          {items.map((item) => {
+            const colorType = categoryToColorType(item.category);
+            const colors = getEquipmentColors(colorType);
+            const isSelected = selectedId === item.instanceId && item.isRemovable;
+            
+            return (
+              <div
+                key={item.instanceId}
+                className={`
+                  mx-1 mb-0.5 px-2 py-1 rounded text-xs cursor-pointer
+                  transition-colors group border
+                  ${isSelected
+                    ? `${colors.bg} ring-1 ring-amber-400`
+                    : !item.isRemovable
+                      ? `${colors.bg}/30 ${colors.border} opacity-60`
+                      : `${colors.bg}/50 ${colors.border} ${colors.hoverBg}`
+                  }
+                `}
+                onClick={() => item.isRemovable && onSelect(item.instanceId)}
+                title={item.isRemovable ? 'Click to select' : 'Configuration component - managed via Structure/Armor tabs'}
+              >
+                <div className="flex items-center justify-between gap-1">
+                  <span className={`truncate flex-1 ${colors.text}`}>
+                    {item.name}
                   </span>
-                )}
+                  {item.isRemovable ? (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onRemove(item.instanceId);
+                      }}
+                      className="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 transition-opacity px-1"
+                      title="Remove"
+                    >
+                      ✕
+                    </button>
+                  ) : (
+                    <span 
+                      className="text-slate-300 text-[10px] px-1"
+                      title="Managed via configuration tabs"
+                    >
+                      🔒
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 text-slate-300 mt-0.5">
+                  <span>{item.weight}t</span>
+                  <span>{item.criticalSlots} slots</span>
+                  {item.location ? (
+                    <span className="text-green-300">@ {item.location}</span>
+                  ) : (
+                    <span className="text-amber-300 italic">Unallocated</span>
+                  )}
+                  {!item.isRemovable && (
+                    <span className="text-slate-400 italic text-[10px]">Fixed</span>
+                  )}
+                </div>
               </div>
-              <div className="flex items-center gap-2 text-slate-400 mt-0.5">
-                <span>{item.weight}t</span>
-                <span>{item.criticalSlots} slots</span>
-                {item.location ? (
-                  <span className="text-green-400">@ {item.location}</span>
-                ) : (
-                  <span className="text-amber-400 italic">Unallocated</span>
-                )}
-                {!item.isRemovable && (
-                  <span className="text-slate-500 italic text-[10px]">Fixed</span>
-                )}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
