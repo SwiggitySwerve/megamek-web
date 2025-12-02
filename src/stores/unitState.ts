@@ -25,6 +25,7 @@ import { MovementEnhancementType } from '@/types/construction/MovementEnhancemen
 import { MechLocation } from '@/types/construction/CriticalSlotAllocation';
 import { EquipmentCategory, IEquipmentItem } from '@/types/equipment';
 import { generateUnitId as generateUUID } from '@/utils/uuid';
+import { JumpJetType } from '@/utils/construction/movementCalculations';
 
 // =============================================================================
 // Armor Allocation Types
@@ -172,6 +173,13 @@ export interface IMountedEquipmentInstance {
   readonly isRearMounted: boolean;
   /** Linked ammunition instance ID (for weapons that use ammo) */
   readonly linkedAmmoId?: string;
+  /** 
+   * Whether this equipment can be removed via the loadout tray.
+   * Configuration components (Endo Steel, Ferro-Fibrous, Jump Jets, etc.) 
+   * are managed via their respective tabs and cannot be removed directly.
+   * Defaults to true for user-added equipment.
+   */
+  readonly isRemovable: boolean;
 }
 
 /**
@@ -336,6 +344,12 @@ export interface UnitState {
   /** Movement enhancement (MASC, TSM, etc.) or null for none */
   enhancement: MovementEnhancementType | null;
   
+  /** Jump movement points (number of jump jets) */
+  jumpMP: number;
+  
+  /** Type of jump jets installed */
+  jumpJetType: JumpJetType;
+  
   // =========================================================================
   // Equipment
   // =========================================================================
@@ -394,6 +408,8 @@ setMulId: (mulId: string) => void;
   setHeatSinkCount: (count: number) => void;
   setArmorType: (type: ArmorTypeEnum) => void;
   setEnhancement: (enhancement: MovementEnhancementType | null) => void;
+  setJumpMP: (jumpMP: number) => void;
+  setJumpJetType: (type: JumpJetType) => void;
   
   // Armor allocation
   setArmorTonnage: (tonnage: number) => void;
@@ -491,6 +507,8 @@ export function createDefaultUnitState(options: CreateUnitOptions): UnitState {
     armorTonnage: 0,
     armorAllocation: createEmptyArmorAllocation(),
     enhancement: null,
+    jumpMP: 0,
+    jumpJetType: JumpJetType.STANDARD,
     
     // Equipment
     equipment: [],

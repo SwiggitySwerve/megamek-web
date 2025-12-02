@@ -17,6 +17,7 @@ import { getHeatSinkDefinition } from '@/types/construction/HeatSinkType';
 import { getEngineDefinition } from '@/types/construction/EngineType';
 import { getArmorCriticalSlots } from '@/utils/construction/armorCalculations';
 import { ceilToHalfTon } from '@/utils/physical/weightUtils';
+import { JumpJetType, calculateJumpJetWeight, calculateJumpJetSlots } from '@/utils/construction/movementCalculations';
 
 // =============================================================================
 // Types
@@ -30,6 +31,7 @@ export interface UnitCalculations {
   cockpitWeight: number;
   heatSinkWeight: number;
   armorWeight: number;
+  jumpJetWeight: number;
   totalStructuralWeight: number;
   
   // Critical Slots
@@ -39,6 +41,7 @@ export interface UnitCalculations {
   cockpitSlots: number;
   heatSinkSlots: number;
   armorSlots: number;
+  jumpJetSlots: number;
   totalSystemSlots: number;
   
   // Heat
@@ -49,6 +52,7 @@ export interface UnitCalculations {
   // Movement
   walkMP: number;
   runMP: number;
+  jumpMP: number;
 }
 
 // =============================================================================
@@ -103,8 +107,14 @@ export function useUnitCalculations(
     // The user sets armor tonnage in the Armor tab, and weight should reflect that setting
     const armorWeight = armorTonnage;
     
-    // Total structural weight (includes armor)
-    const totalStructuralWeight = engineWeight + gyroWeight + structureWeight + cockpitWeight + heatSinkWeight + armorWeight;
+    // Jump jet calculations
+    const jumpMP = selections.jumpMP ?? 0;
+    const jumpJetType = selections.jumpJetType ?? JumpJetType.STANDARD;
+    const jumpJetWeight = calculateJumpJetWeight(tonnage, jumpMP, jumpJetType);
+    const jumpJetSlots = calculateJumpJetSlots(jumpMP, jumpJetType);
+    
+    // Total structural weight (includes armor and jump jets)
+    const totalStructuralWeight = engineWeight + gyroWeight + structureWeight + cockpitWeight + heatSinkWeight + armorWeight + jumpJetWeight;
     
     // =========================================================================
     // Critical Slot Calculations
@@ -136,7 +146,7 @@ export function useUnitCalculations(
     
     // Total system slots (not including actuators, which are fixed at ~16)
     const actuatorSlots = 16; // 4 per arm, 4 per leg (hip, upper, lower, foot/hand)
-    const totalSystemSlots = engineSlots + gyroSlots + structureSlots + cockpitSlots + heatSinkSlots + armorSlots + actuatorSlots;
+    const totalSystemSlots = engineSlots + gyroSlots + structureSlots + cockpitSlots + heatSinkSlots + armorSlots + jumpJetSlots + actuatorSlots;
     
     // =========================================================================
     // Heat Calculations
@@ -160,6 +170,7 @@ export function useUnitCalculations(
       cockpitWeight,
       heatSinkWeight,
       armorWeight,
+      jumpJetWeight,
       totalStructuralWeight,
       
       // Critical Slots
@@ -169,6 +180,7 @@ export function useUnitCalculations(
       cockpitSlots,
       heatSinkSlots,
       armorSlots,
+      jumpJetSlots,
       totalSystemSlots,
       
       // Heat
@@ -179,6 +191,7 @@ export function useUnitCalculations(
       // Movement
       walkMP,
       runMP,
+      jumpMP,
     };
   }, [tonnage, selections, armorTonnage]);
 }

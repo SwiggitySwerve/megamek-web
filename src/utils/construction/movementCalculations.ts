@@ -172,7 +172,7 @@ export function calculateJumpJetSlots(jumpMP: number, jumpJetType: JumpJetType):
  * Get maximum jump MP
  * 
  * Standard: max = walkMP
- * Improved: max = floor(walkMP × 1.5)
+ * Improved: max = runMP = ceil(walkMP × 1.5)
  * 
  * @param walkMP - Walk movement points
  * @param jumpJetType - Type of jump jets
@@ -180,7 +180,8 @@ export function calculateJumpJetSlots(jumpMP: number, jumpJetType: JumpJetType):
  */
 export function getMaxJumpMP(walkMP: number, jumpJetType: JumpJetType): number {
   if (jumpJetType === JumpJetType.IMPROVED) {
-    return Math.floor(walkMP * 1.5);
+    // Improved jets can reach up to run MP
+    return Math.ceil(walkMP * 1.5);
   }
   return walkMP;
 }

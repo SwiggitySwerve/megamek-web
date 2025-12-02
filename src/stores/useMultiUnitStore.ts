@@ -27,6 +27,7 @@ import { InternalStructureType } from '@/types/construction/InternalStructureTyp
 import { CockpitType } from '@/types/construction/CockpitType';
 import { HeatSinkType } from '@/types/construction/HeatSinkType';
 import { ArmorTypeEnum } from '@/types/construction/ArmorType';
+import { JumpJetType } from '@/utils/construction/movementCalculations';
 
 // =============================================================================
 // Component Selections Interface
@@ -55,6 +56,10 @@ export interface IComponentSelections {
   
   // Armor
   armorType: ArmorTypeEnum;
+  
+  // Jump Jets
+  jumpMP?: number;
+  jumpJetType?: JumpJetType;
 }
 
 /**

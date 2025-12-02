@@ -3,11 +3,13 @@
  * 
  * Unit editor content that uses URL-based tab navigation.
  * Receives active tab from router instead of local state.
+ * Includes global loadout tray on right and status bar at bottom.
  * 
  * @spec openspec/specs/customizer-tabs/spec.md
+ * @spec openspec/specs/equipment-tray/spec.md
  */
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 
 // Stores
 import { useUnitStore } from '@/stores/useUnitStore';
@@ -19,12 +21,14 @@ import { useEquipmentCalculations } from '@/hooks/useEquipmentCalculations';
 import { CustomizerTabId, VALID_TAB_IDS } from '@/hooks/useCustomizerRouter';
 
 // Components
-import { CustomizerTabs, DEFAULT_CUSTOMIZER_TABS, CustomizerTabConfig } from '@/components/customizer/tabs/CustomizerTabs';
+import { CustomizerTabs, DEFAULT_CUSTOMIZER_TABS } from '@/components/customizer/tabs/CustomizerTabs';
 import { StructureTab } from '@/components/customizer/tabs/StructureTab';
 import { OverviewTab } from '@/components/customizer/tabs/OverviewTab';
 import { ArmorTab } from '@/components/customizer/tabs/ArmorTab';
 import { EquipmentTab } from '@/components/customizer/tabs/EquipmentTab';
 import { UnitInfoBanner, UnitStats } from '@/components/customizer/shared/UnitInfoBanner';
+import { GlobalLoadoutTray, LoadoutEquipmentItem } from '@/components/customizer/equipment/GlobalLoadoutTray';
+import { GlobalStatusBar, StatusBarStats } from '@/components/customizer/shared/GlobalStatusBar';
 
 // Utils
 import { ValidationStatus } from '@/utils/colors/statusColors';
@@ -49,11 +53,15 @@ interface UnitEditorWithRoutingProps {
  * Unit editor content - rendered when UnitStoreProvider has a valid store
  * Shows tabbed interface with Structure, Armor, Weapons, etc.
  * Tab state is managed via URL routing.
+ * Includes global loadout tray on right and status bar at bottom.
  */
 export function UnitEditorWithRouting({
   activeTabId,
   onTabChange,
 }: UnitEditorWithRoutingProps) {
+  // Loadout tray state
+  const [isTrayExpanded, setIsTrayExpanded] = useState(true);
+  
   // Access unit state from context
   const unitName = useUnitStore((s) => s.name);
   const tonnage = useUnitStore((s) => s.tonnage);
@@ -69,6 +77,10 @@ export function UnitEditorWithRouting({
   const armorTonnage = useUnitStore((s) => s.armorTonnage);
   const armorAllocation = useUnitStore((s) => s.armorAllocation);
   const equipment = useUnitStore((s) => s.equipment);
+  const jumpMP = useUnitStore((s) => s.jumpMP);
+  const jumpJetType = useUnitStore((s) => s.jumpJetType);
+  const removeEquipment = useUnitStore((s) => s.removeEquipment);
+  const clearAllEquipment = useUnitStore((s) => s.clearAllEquipment);
   
   // Calculate equipment totals
   const equipmentCalcs = useEquipmentCalculations(equipment);
@@ -93,7 +105,9 @@ export function UnitEditorWithRouting({
     heatSinkType,
     heatSinkCount,
     armorType,
-  }), [engineType, engineRating, gyroType, internalStructureType, cockpitType, heatSinkType, heatSinkCount, armorType]);
+    jumpMP,
+    jumpJetType,
+  }), [engineType, engineRating, gyroType, internalStructureType, cockpitType, heatSinkType, heatSinkCount, armorType, jumpMP, jumpJetType]);
   
   // Calculate unit stats (weight is based on armorTonnage, not allocated points)
   const calculations = useUnitCalculations(
@@ -112,7 +126,7 @@ export function UnitEditorWithRouting({
     techBase,
     walkMP: calculations.walkMP,
     runMP: calculations.runMP,
-    jumpMP: 0, // TODO: Calculate from jump jets
+    jumpMP: calculations.jumpMP,
     weightUsed: totalWeight,
     weightRemaining: tonnage - totalWeight,
     armorPoints: allocatedArmorPoints,
@@ -125,6 +139,45 @@ export function UnitEditorWithRouting({
     errorCount: 0,
     warningCount: 0,
   }), [unitName, tonnage, techBase, calculations, equipmentCalcs, totalWeight, totalSlotsUsed, allocatedArmorPoints, maxArmorPoints]);
+  
+  // Build status bar stats
+  const statusBarStats: StatusBarStats = useMemo(() => ({
+    weightUsed: totalWeight,
+    weightMax: tonnage,
+    weightRemaining: tonnage - totalWeight,
+    slotsUsed: totalSlotsUsed,
+    slotsTotal: 78,
+    heatGenerated: equipmentCalcs.totalHeat,
+    heatDissipation: calculations.totalHeatDissipation,
+  }), [totalWeight, tonnage, totalSlotsUsed, equipmentCalcs.totalHeat, calculations.totalHeatDissipation]);
+  
+  // Convert equipment to LoadoutEquipmentItem format
+  const loadoutEquipment: LoadoutEquipmentItem[] = useMemo(() => {
+    return equipment.map((item) => ({
+      instanceId: item.instanceId,
+      name: item.name,
+      category: item.category,
+      weight: item.weight,
+      criticalSlots: item.criticalSlots,
+      isAllocated: !!item.location,
+      location: item.location,
+    }));
+  }, [equipment]);
+  
+  // Handle equipment removal
+  const handleRemoveEquipment = useCallback((instanceId: string) => {
+    removeEquipment(instanceId);
+  }, [removeEquipment]);
+  
+  // Handle remove all equipment
+  const handleRemoveAllEquipment = useCallback(() => {
+    clearAllEquipment();
+  }, [clearAllEquipment]);
+  
+  // Toggle tray expansion
+  const handleToggleTray = useCallback(() => {
+    setIsTrayExpanded((prev) => !prev);
+  }, []);
   
   // Handle tab change - delegate to router
   const handleTabChange = (tabId: string) => {
@@ -140,23 +193,42 @@ export function UnitEditorWithRouting({
         <UnitInfoBanner stats={unitStats} />
       </div>
       
-      {/* Section tabs (Structure, Armor, Weapons, etc.) */}
-      <CustomizerTabs
-        tabs={DEFAULT_CUSTOMIZER_TABS}
-        activeTab={activeTabId}
-        onTabChange={handleTabChange}
-      />
-      
-      {/* Tab content */}
-      <div className="flex-1 overflow-auto">
-        {activeTabId === 'overview' && <OverviewTab />}
-        {activeTabId === 'structure' && <StructureTab />}
-        {activeTabId === 'armor' && <ArmorTab />}
-        {activeTabId === 'weapons' && <PlaceholderTab name="Weapons" />}
-        {activeTabId === 'equipment' && <EquipmentTab />}
-        {activeTabId === 'criticals' && <PlaceholderTab name="Critical Slots" />}
-        {activeTabId === 'fluff' && <PlaceholderTab name="Fluff" />}
+      {/* Main content area with tray */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Left side: Tabs and content */}
+        <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+          {/* Section tabs (Structure, Armor, Weapons, etc.) */}
+          <CustomizerTabs
+            tabs={DEFAULT_CUSTOMIZER_TABS}
+            activeTab={activeTabId}
+            onTabChange={handleTabChange}
+          />
+          
+          {/* Tab content */}
+          <div className="flex-1 overflow-auto">
+            {activeTabId === 'overview' && <OverviewTab />}
+            {activeTabId === 'structure' && <StructureTab />}
+            {activeTabId === 'armor' && <ArmorTab />}
+            {activeTabId === 'weapons' && <PlaceholderTab name="Weapons" />}
+            {activeTabId === 'equipment' && <EquipmentTab />}
+            {activeTabId === 'criticals' && <PlaceholderTab name="Critical Slots" />}
+            {activeTabId === 'fluff' && <PlaceholderTab name="Fluff" />}
+          </div>
+        </div>
+        
+        {/* Right side: Global Loadout Tray */}
+        <GlobalLoadoutTray
+          equipment={loadoutEquipment}
+          equipmentCount={equipment.length}
+          onRemoveEquipment={handleRemoveEquipment}
+          onRemoveAllEquipment={handleRemoveAllEquipment}
+          isExpanded={isTrayExpanded}
+          onToggleExpand={handleToggleTray}
+        />
       </div>
+      
+      {/* Global Status Bar */}
+      <GlobalStatusBar stats={statusBarStats} />
     </div>
   );
 }

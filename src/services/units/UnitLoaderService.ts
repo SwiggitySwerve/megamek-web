@@ -35,6 +35,7 @@ import {
   IComponentTechBases,
   createDefaultComponentTechBases,
 } from '@/types/construction/TechBaseConfiguration';
+import { JumpJetType } from '@/utils/construction/movementCalculations';
 
 // =============================================================================
 // Types
@@ -645,6 +646,8 @@ export class UnitLoaderService {
       armorTonnage,
       armorAllocation,
       enhancement: null,
+      jumpMP: 0, // TODO: Parse from unit data
+      jumpJetType: JumpJetType.STANDARD,
       
       // Equipment
       equipment,

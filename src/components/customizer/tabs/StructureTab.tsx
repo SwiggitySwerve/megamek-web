@@ -22,6 +22,7 @@ import {
   getMovementEnhancementDefinition,
   MOVEMENT_ENHANCEMENT_DEFINITIONS 
 } from '@/types/construction/MovementEnhancement';
+import { JumpJetType, getMaxJumpMP, JUMP_JET_DEFINITIONS } from '@/utils/construction/movementCalculations';
 import { customizerStyles as cs } from '../styles';
 
 // =============================================================================
@@ -116,6 +117,8 @@ export function StructureTab({
   const armorType = useUnitStore((s) => s.armorType);
   const armorTonnage = useUnitStore((s) => s.armorTonnage);
   const enhancement = useUnitStore((s) => s.enhancement);
+  const jumpMP = useUnitStore((s) => s.jumpMP);
+  const jumpJetType = useUnitStore((s) => s.jumpJetType);
   
   // Get actions from context
   const setEngineType = useUnitStore((s) => s.setEngineType);
@@ -124,6 +127,8 @@ export function StructureTab({
   const setInternalStructureType = useUnitStore((s) => s.setInternalStructureType);
   const setCockpitType = useUnitStore((s) => s.setCockpitType);
   const setEnhancement = useUnitStore((s) => s.setEnhancement);
+  const setJumpMP = useUnitStore((s) => s.setJumpMP);
+  const setJumpJetType = useUnitStore((s) => s.setJumpJetType);
   
   // Get filtered options based on tech base
   const { filteredOptions } = useTechBaseSync(componentTechBases);
@@ -140,6 +145,8 @@ export function StructureTab({
       heatSinkType,
       heatSinkCount,
       armorType,
+      jumpMP,
+      jumpJetType,
     },
     armorTonnage
   );
@@ -148,6 +155,9 @@ export function StructureTab({
   const walkMP = useMemo(() => Math.floor(engineRating / tonnage), [engineRating, tonnage]);
   const runMP = useMemo(() => calculateRunMP(walkMP), [walkMP]);
   const walkMPRange = useMemo(() => getWalkMPRange(tonnage), [tonnage]);
+  
+  // Jump jet calculations
+  const maxJumpMP = useMemo(() => getMaxJumpMP(walkMP, jumpJetType), [walkMP, jumpJetType]);
   
   // Enhancement options
   const enhancementOptions = useMemo(() => getEnhancementOptions(enhancement), [enhancement]);
@@ -182,6 +192,16 @@ export function StructureTab({
     setEnhancement(value === '' ? null : value as MovementEnhancementType);
   }, [setEnhancement]);
   
+  const handleJumpMPChange = useCallback((newJumpMP: number) => {
+    // Clamp to valid range (0 to max)
+    const clampedJump = Math.max(0, Math.min(maxJumpMP, newJumpMP));
+    setJumpMP(clampedJump);
+  }, [maxJumpMP, setJumpMP]);
+  
+  const handleJumpJetTypeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    setJumpJetType(e.target.value as JumpJetType);
+  }, [setJumpJetType]);
+  
   return (
     <div className={`${cs.layout.tabContent} ${className}`}>
       {/* Compact Structural Weight Summary - at top */}
@@ -208,6 +228,12 @@ export function StructureTab({
               <span className={cs.text.label}>Heat Sinks:</span>
               <span className={cs.text.value}>{calculations.heatSinkWeight}t</span>
             </div>
+            {calculations.jumpJetWeight > 0 && (
+              <div className={cs.layout.statRow}>
+                <span className={cs.text.label}>Jump Jets:</span>
+                <span className={cs.text.value}>{calculations.jumpJetWeight}t</span>
+              </div>
+            )}
           </div>
           <div className={`${cs.layout.statRow} ${cs.layout.dividerV}`}>
             <span className={`text-sm ${cs.text.label}`}>Total:</span>
@@ -393,28 +419,33 @@ export function StructureTab({
             
             {/* Jump/UMU MP */}
             <div className="grid grid-cols-[140px_80px_80px] gap-2 items-center">
-              <label className={cs.text.label}>Jump/UMU MP</label>
+              <label className={cs.text.label}>Jump MP</label>
               <div className="flex items-center justify-center">
                 <button
-                  disabled={true}
-                  className={`${cs.button.stepperLeft} opacity-50`}
+                  onClick={() => handleJumpMPChange(jumpMP - 1)}
+                  disabled={readOnly || jumpMP <= 0}
+                  className={cs.button.stepperLeft}
                 >
                   −
                 </button>
                 <input
                   type="number"
-                  value={0}
-                  disabled={true}
-                  className={`w-12 ${cs.input.number} border-y opacity-50 ${cs.input.noSpinners}`}
+                  value={jumpMP}
+                  onChange={(e) => handleJumpMPChange(parseInt(e.target.value, 10) || 0)}
+                  disabled={readOnly}
+                  min={0}
+                  max={maxJumpMP}
+                  className={`w-12 ${cs.input.number} border-y ${cs.input.noSpinners}`}
                 />
                 <button
-                  disabled={true}
-                  className={`${cs.button.stepperRight} opacity-50`}
+                  onClick={() => handleJumpMPChange(jumpMP + 1)}
+                  disabled={readOnly || jumpMP >= maxJumpMP}
+                  className={cs.button.stepperRight}
                 >
                   +
                 </button>
               </div>
-              <span className={`text-sm ${cs.text.value} text-center`}>0</span>
+              <span className={`text-sm ${cs.text.value} text-center`}>{jumpMP}</span>
             </div>
             
             {/* Jump Type */}
@@ -422,12 +453,15 @@ export function StructureTab({
               <label className={cs.text.label}>Jump Type</label>
               <select 
                 className={cs.select.inline}
-                disabled={true}
-                value="jump_jet"
+                disabled={readOnly}
+                value={jumpJetType}
+                onChange={handleJumpJetTypeChange}
               >
-                <option value="jump_jet">Jump Jet</option>
-                <option value="improved_jump_jet">Improved Jump Jet</option>
-                <option value="umu">UMU</option>
+                {JUMP_JET_DEFINITIONS.filter(def => def.type !== JumpJetType.MECHANICAL).map((def) => (
+                  <option key={def.type} value={def.type}>
+                    {def.name}
+                  </option>
+                ))}
               </select>
             </div>
             
@@ -448,6 +482,10 @@ export function StructureTab({
             {/* Movement summary info */}
             <div className={`${cs.layout.divider} mt-3`}>
               <p className={cs.text.secondary}>Walk MP range: {walkMPRange.min}–{walkMPRange.max} (for {tonnage}t mech)</p>
+              <p className={cs.text.secondary}>Max Jump MP: {maxJumpMP} ({jumpJetType === JumpJetType.IMPROVED ? 'run speed' : 'walk speed'})</p>
+              {jumpMP > 0 && (
+                <p className={cs.text.secondary}>Jump Jets: {calculations.jumpJetWeight}t / {calculations.jumpJetSlots} slots</p>
+              )}
             </div>
           </div>
         </div>

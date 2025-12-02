@@ -71,9 +71,78 @@ import {
   getSelectionWithMemory,
   ComponentSelections,
 } from '@/utils/techBaseValidation';
+import { JumpJetType, getMaxJumpMP, getJumpJetDefinition } from '@/utils/construction/movementCalculations';
+import { JUMP_JETS, MiscEquipmentCategory } from '@/types/equipment/MiscEquipmentTypes';
+import { EquipmentCategory } from '@/types/equipment';
 
 // Re-export UnitStore type for convenience
 export type { UnitStore } from './unitState';
+
+// =============================================================================
+// Jump Jet Equipment Helpers
+// =============================================================================
+
+/**
+ * Get the correct jump jet equipment ID based on tonnage and jet type
+ */
+function getJumpJetEquipmentId(tonnage: number, jumpJetType: JumpJetType): string {
+  const isImproved = jumpJetType === JumpJetType.IMPROVED;
+  const prefix = isImproved ? 'improved-jump-jet' : 'jump-jet';
+  
+  if (tonnage <= 55) return `${prefix}-light`;
+  if (tonnage <= 85) return `${prefix}-medium`;
+  return `${prefix}-heavy`;
+}
+
+/**
+ * Get the jump jet equipment item for a given tonnage and type
+ */
+function getJumpJetEquipment(tonnage: number, jumpJetType: JumpJetType) {
+  const id = getJumpJetEquipmentId(tonnage, jumpJetType);
+  return JUMP_JETS.find(jj => jj.id === id);
+}
+
+/**
+ * Create jump jet equipment instances for the equipment array
+ */
+function createJumpJetEquipmentList(
+  tonnage: number,
+  jumpMP: number,
+  jumpJetType: JumpJetType
+): IMountedEquipmentInstance[] {
+  if (jumpMP <= 0) return [];
+  
+  const jetEquip = getJumpJetEquipment(tonnage, jumpJetType);
+  if (!jetEquip) return [];
+  
+  const result: IMountedEquipmentInstance[] = [];
+  for (let i = 0; i < jumpMP; i++) {
+    result.push({
+      instanceId: generateUnitId(),
+      equipmentId: jetEquip.id,
+      name: jetEquip.name,
+      category: EquipmentCategory.MISC_EQUIPMENT,
+      weight: jetEquip.weight,
+      criticalSlots: jetEquip.criticalSlots,
+      heat: 0,
+      techBase: jetEquip.techBase,
+      location: undefined,
+      slots: undefined,
+      isRearMounted: false,
+      linkedAmmoId: undefined,
+    });
+  }
+  return result;
+}
+
+/**
+ * Filter out jump jet equipment from the equipment array
+ */
+function filterOutJumpJets(equipment: readonly IMountedEquipmentInstance[]): IMountedEquipmentInstance[] {
+  // Jump jet equipment IDs to filter out
+  const jumpJetIds = JUMP_JETS.map(jj => jj.id);
+  return equipment.filter(e => !jumpJetIds.includes(e.equipmentId));
+}
 
 // =============================================================================
 // Store Factory
@@ -345,6 +414,45 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
           lastModifiedAt: Date.now(),
         }),
         
+        setJumpMP: (jumpMP) => set((state) => {
+          // Calculate walk MP for validation
+          const walkMP = Math.floor(state.engineRating / state.tonnage);
+          const maxJump = getMaxJumpMP(walkMP, state.jumpJetType);
+          const clampedJumpMP = Math.max(0, Math.min(jumpMP, maxJump));
+          
+          // Sync equipment - remove old jump jets, add new ones
+          const nonJumpEquipment = filterOutJumpJets(state.equipment);
+          const jumpJetEquipment = createJumpJetEquipmentList(state.tonnage, clampedJumpMP, state.jumpJetType);
+          
+          return {
+            jumpMP: clampedJumpMP,
+            equipment: [...nonJumpEquipment, ...jumpJetEquipment],
+            isModified: true,
+            lastModifiedAt: Date.now(),
+          };
+        }),
+        
+        setJumpJetType: (jumpJetType) => set((state) => {
+          // Calculate walk MP for validation
+          const walkMP = Math.floor(state.engineRating / state.tonnage);
+          const maxJump = getMaxJumpMP(walkMP, jumpJetType);
+          
+          // Clamp current jump MP to new max if needed
+          const clampedJumpMP = Math.min(state.jumpMP, maxJump);
+          
+          // Sync equipment with new jet type
+          const nonJumpEquipment = filterOutJumpJets(state.equipment);
+          const jumpJetEquipment = createJumpJetEquipmentList(state.tonnage, clampedJumpMP, jumpJetType);
+          
+          return {
+            jumpJetType,
+            jumpMP: clampedJumpMP,
+            equipment: [...nonJumpEquipment, ...jumpJetEquipment],
+            isModified: true,
+            lastModifiedAt: Date.now(),
+          };
+        }),
+        
         // =================================================================
         // Armor Allocation Actions
         // =================================================================
@@ -551,6 +659,8 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
           armorTonnage: state.armorTonnage,
           armorAllocation: state.armorAllocation,
           enhancement: state.enhancement,
+          jumpMP: state.jumpMP,
+          jumpJetType: state.jumpJetType,
           equipment: state.equipment,
           isModified: state.isModified,
           createdAt: state.createdAt,
