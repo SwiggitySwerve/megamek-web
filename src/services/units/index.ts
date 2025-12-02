@@ -61,3 +61,11 @@ export {
   type ISaveResult,
   type IVersionWithData,
 } from './CustomUnitApiService';
+
+export {
+  UnitLoaderService,
+  unitLoaderService,
+  type UnitSource,
+  type ISerializedUnit,
+  type ILoadUnitResult,
+} from './UnitLoaderService';

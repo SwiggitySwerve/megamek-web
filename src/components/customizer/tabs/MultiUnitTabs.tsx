@@ -15,11 +15,12 @@ import { TabBar } from './TabBar';
 import { NewTabModal } from './NewTabModal';
 import { UnsavedChangesDialog } from '@/components/customizer/dialogs/UnsavedChangesDialog';
 import { SaveUnitDialog } from '@/components/customizer/dialogs/SaveUnitDialog';
-import { UnitLoadDialog } from '@/components/customizer/dialogs/UnitLoadDialog';
+import { UnitLoadDialog, LoadUnitSource } from '@/components/customizer/dialogs/UnitLoadDialog';
 import { useTabManagerStore, UNIT_TEMPLATES, TabInfo } from '@/stores/useTabManagerStore';
 import { IUnitIndexEntry } from '@/services/common/types';
-import { getUnitStore } from '@/stores/unitStoreRegistry';
+import { getUnitStore, createUnitFromFullState } from '@/stores/unitStoreRegistry';
 import { customUnitApiService } from '@/services/units/CustomUnitApiService';
+import { unitLoaderService } from '@/services/units/UnitLoaderService';
 import { TechBase } from '@/types/enums/TechBase';
 import { DEFAULT_TAB } from '@/hooks/useCustomizerRouter';
 
@@ -79,6 +80,7 @@ export function MultiUnitTabs({
   
   // Load dialog state
   const [isLoadDialogOpen, setIsLoadDialogOpen] = useState(false);
+  const [isLoadingUnit, setIsLoadingUnit] = useState(false);
   
   // Use individual selectors for primitives and stable references
   // This avoids creating new objects on each render
@@ -268,24 +270,53 @@ export function MultiUnitTabs({
   }, []);
   
   // Handle unit load from dialog
-  const handleLoadUnit = useCallback((unit: IUnitIndexEntry) => {
-    // Find matching template for tonnage or use defaults
-    const baseTemplate = UNIT_TEMPLATES.find(t => t.tonnage === unit.tonnage) || UNIT_TEMPLATES[1];
+  const handleLoadUnit = useCallback(async (unit: IUnitIndexEntry, source: LoadUnitSource) => {
+    setIsLoadingUnit(true);
     
-    // Create a template with the loaded unit's data
-    const template = {
-      ...baseTemplate,
-      name: `${unit.chassis} ${unit.variant}`,
-      tonnage: unit.tonnage,
-      techBase: unit.techBase,
-    };
-    const newTabId = createTab(template);
-    
-    // Navigate to the new unit
-    router.push(`/customizer/${newTabId}/${DEFAULT_TAB}`, undefined, { shallow: true });
-    
-    // Close the dialog
-    setIsLoadDialogOpen(false);
+    try {
+      // Load full unit data from the appropriate source
+      const result = await unitLoaderService.loadUnit(unit.id, source);
+      
+      if (!result.success || !result.state) {
+        console.error('Failed to load unit:', result.error);
+        // Fallback to creating blank unit with basic info
+        const baseTemplate = UNIT_TEMPLATES.find(t => t.tonnage === unit.tonnage) || UNIT_TEMPLATES[1];
+        const template = {
+          ...baseTemplate,
+          name: `${unit.chassis} ${unit.variant}`,
+          tonnage: unit.tonnage,
+          techBase: unit.techBase,
+        };
+        const newTabId = createTab(template);
+        router.push(`/customizer/${newTabId}/${DEFAULT_TAB}`, undefined, { shallow: true });
+        setIsLoadDialogOpen(false);
+        setIsLoadingUnit(false);
+        return;
+      }
+      
+      // Create a store from the full loaded state
+      const store = createUnitFromFullState(result.state);
+      const newTabId = result.state.id;
+      
+      // Register the tab with the tab manager
+      useTabManagerStore.getState().addTab({
+        id: newTabId,
+        name: result.state.name,
+        tonnage: result.state.tonnage,
+        techBase: result.state.techBase,
+      });
+      
+      // Navigate to the new unit
+      router.push(`/customizer/${newTabId}/${DEFAULT_TAB}`, undefined, { shallow: true });
+      
+      // Close the dialog
+      setIsLoadDialogOpen(false);
+    } catch (error) {
+      console.error('Error loading unit:', error);
+      // TODO: Show error toast/notification
+    } finally {
+      setIsLoadingUnit(false);
+    }
   }, [createTab, router]);
   
   // Create unit from template with URL navigation

@@ -20,11 +20,16 @@ import { WeightClass } from '@/types/enums/WeightClass';
 // Types
 // =============================================================================
 
+/**
+ * Source of the unit being loaded
+ */
+export type LoadUnitSource = 'canonical' | 'custom';
+
 export interface UnitLoadDialogProps {
   /** Whether dialog is open */
   isOpen: boolean;
   /** Called when a unit is selected for loading */
-  onLoadUnit: (unit: IUnitIndexEntry) => void;
+  onLoadUnit: (unit: IUnitIndexEntry, source: LoadUnitSource) => void;
   /** Called when dialog is cancelled */
   onCancel: () => void;
 }
@@ -133,13 +138,13 @@ export function UnitLoadDialog({
   // Handle load
   const handleLoad = useCallback(() => {
     if (selectedUnit) {
-      onLoadUnit(selectedUnit);
+      onLoadUnit(selectedUnit, selectedUnit.source);
     }
   }, [selectedUnit, onLoadUnit]);
   
   // Handle double-click to load immediately
   const handleDoubleClick = useCallback((unit: UnitWithSource) => {
-    onLoadUnit(unit);
+    onLoadUnit(unit, unit.source);
   }, [onLoadUnit]);
   
   return (

@@ -222,3 +222,30 @@ export function duplicateUnit(sourceUnitId: string, newName?: string): StoreApi<
   unitStores.set(mergedState.id, store);
   return store;
 }
+
+// =============================================================================
+// Load from Full State (for unit loading feature)
+// =============================================================================
+
+/**
+ * Create and register a unit store from a complete UnitState
+ * 
+ * This is used when loading units from canonical JSON or custom units database.
+ * The state should already be fully mapped/transformed before calling this.
+ * 
+ * @param state - Complete UnitState object
+ * @returns The created store
+ */
+export function createUnitFromFullState(state: UnitState): StoreApi<UnitStore> {
+  // Check if already exists (shouldn't happen since IDs are unique UUIDs)
+  const existing = unitStores.get(state.id);
+  if (existing) {
+    console.warn(`Unit store ${state.id} already exists, returning existing`);
+    return existing;
+  }
+  
+  // Create the store with the full state
+  const store = createUnitStore(state);
+  unitStores.set(state.id, store);
+  return store;
+}

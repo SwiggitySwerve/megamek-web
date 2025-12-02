@@ -129,6 +129,9 @@ export interface TabManagerState {
   /** Reorder tabs */
   reorderTabs: (fromIndex: number, toIndex: number) => void;
   
+  /** Add a tab directly (for loaded units with pre-existing store) */
+  addTab: (tabInfo: Omit<TabInfo, 'tonnage' | 'techBase'> & { tonnage?: number; techBase?: TechBase }) => void;
+  
   // ==========================================================================
   // Modal Actions
   // ==========================================================================
@@ -277,6 +280,24 @@ export const useTabManagerStore = create<TabManagerState>()(
           newTabs.splice(toIndex, 0, removed);
           return { tabs: newTabs };
         });
+      },
+      
+      addTab: (tabInfo) => {
+        // Get unit store to fill in missing info
+        const unitStore = getUnitStore(tabInfo.id);
+        const unitState = unitStore?.getState();
+        
+        const fullTabInfo: TabInfo = {
+          id: tabInfo.id,
+          name: tabInfo.name,
+          tonnage: tabInfo.tonnage ?? unitState?.tonnage ?? 50,
+          techBase: tabInfo.techBase ?? unitState?.techBase ?? TechBase.INNER_SPHERE,
+        };
+        
+        set((state) => ({
+          tabs: [...state.tabs, fullTabInfo],
+          activeTabId: tabInfo.id,
+        }));
       },
       
       // =======================================================================
