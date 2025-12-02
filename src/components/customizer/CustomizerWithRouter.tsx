@@ -8,7 +8,7 @@
  * @spec openspec/specs/unit-store-architecture/spec.md
  */
 
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
@@ -50,6 +50,21 @@ export default function CustomizerWithRouter() {
   const isLoading = useTabManagerStore((s) => s.isLoading);
   const selectTab = useTabManagerStore((s) => s.selectTab);
   
+  // Prevent sync loops
+  const isSyncingRef = useRef(false);
+  const lastSyncedRef = useRef<{ unitId: string | null; activeTabId: string | null }>({
+    unitId: null,
+    activeTabId: null,
+  });
+  
+  // Extract stable values from router to avoid dependency on router object
+  const routerUnitId = router.unitId;
+  const routerTabId = router.tabId;
+  const routerIsValid = router.isValid;
+  const routerIsIndex = router.isIndex;
+  const routerSyncUrl = router.syncUrl;
+  const routerNavigateToIndex = router.navigateToIndex;
+  
   // Trigger hydration on mount
   useEffect(() => {
     useTabManagerStore.persist.rehydrate();
@@ -57,56 +72,63 @@ export default function CustomizerWithRouter() {
   }, []);
   
   // ==========================================================================
-  // URL -> State Sync
+  // URL -> State Sync (only when URL changes from external navigation)
   // ==========================================================================
   
-  // When URL has a unit ID, ensure it's selected in the tab manager
   useEffect(() => {
     if (!isHydrated || isLoading) return;
+    if (isSyncingRef.current) return;
     
-    const { unitId, isValid, isIndex } = router;
-    
-    // If on index and we have an active tab, sync URL to it
-    if (isIndex && activeTabId && tabs.length > 0) {
-      const activeTab = tabs.find((t) => t.id === activeTabId);
-      if (activeTab) {
-        router.syncUrl(activeTabId, router.tabId);
-      }
+    // Skip if we just synced this combination
+    if (lastSyncedRef.current.unitId === routerUnitId && 
+        lastSyncedRef.current.activeTabId === activeTabId) {
       return;
     }
     
-    // If URL has a unit ID
-    if (unitId && isValid) {
+    // If URL has a unit ID that differs from active tab
+    if (routerUnitId && routerIsValid && routerUnitId !== activeTabId) {
       // Check if this unit exists in our tabs
-      const tabExists = tabs.some((t) => t.id === unitId);
+      const tabExists = tabs.some((t) => t.id === routerUnitId);
       
       if (tabExists) {
-        // Unit exists, select it if not already selected
-        if (activeTabId !== unitId) {
-          selectTab(unitId);
-        }
+        isSyncingRef.current = true;
+        selectTab(routerUnitId);
+        lastSyncedRef.current = { unitId: routerUnitId, activeTabId: routerUnitId };
+        // Reset sync flag after a tick
+        setTimeout(() => { isSyncingRef.current = false; }, 0);
       } else {
-        // Unit doesn't exist in tabs - could be from a shared link
-        // For now, redirect to index. Future: could load from server
-        console.warn('Unit not found in tabs:', unitId);
-        router.navigateToIndex();
+        // Unit doesn't exist in tabs - redirect to index
+        console.warn('Unit not found in tabs:', routerUnitId);
+        isSyncingRef.current = true;
+        routerNavigateToIndex();
+        setTimeout(() => { isSyncingRef.current = false; }, 0);
       }
     }
-  }, [isHydrated, isLoading, router.unitId, router.isValid, router.isIndex, activeTabId, tabs, selectTab, router]);
+  }, [isHydrated, isLoading, routerUnitId, routerIsValid, activeTabId, tabs, selectTab, routerNavigateToIndex]);
   
   // ==========================================================================
-  // State -> URL Sync
+  // State -> URL Sync (only when active tab changes from user action)
   // ==========================================================================
   
-  // When active tab changes, update URL
   useEffect(() => {
-    if (!isHydrated || isLoading || !activeTabId) return;
+    if (!isHydrated || isLoading) return;
+    if (isSyncingRef.current) return;
+    if (!activeTabId) return;
     
-    // Only sync if the URL doesn't match
-    if (router.unitId !== activeTabId) {
-      router.syncUrl(activeTabId, router.tabId);
+    // Only sync if the URL doesn't match and we haven't just synced
+    if (routerUnitId !== activeTabId) {
+      // Skip if this is the same sync we just did
+      if (lastSyncedRef.current.unitId === activeTabId && 
+          lastSyncedRef.current.activeTabId === activeTabId) {
+        return;
+      }
+      
+      isSyncingRef.current = true;
+      routerSyncUrl(activeTabId, routerTabId);
+      lastSyncedRef.current = { unitId: activeTabId, activeTabId };
+      setTimeout(() => { isSyncingRef.current = false; }, 0);
     }
-  }, [isHydrated, isLoading, activeTabId, router.unitId, router.tabId, router]);
+  }, [isHydrated, isLoading, activeTabId, routerUnitId, routerTabId, routerSyncUrl]);
   
   // ==========================================================================
   // Derive active tab info for provider
@@ -134,14 +156,14 @@ export default function CustomizerWithRouter() {
   }
   
   // Invalid unit ID in URL
-  if (!router.isValid && !router.isIndex) {
+  if (!routerIsValid && !routerIsIndex) {
     return (
       <div className="min-h-screen bg-slate-900 flex items-center justify-center">
         <div className="text-center text-slate-400 p-8">
           <p className="text-lg mb-2">Invalid unit ID</p>
           <p className="text-sm mb-4">The requested unit could not be found.</p>
           <button
-            onClick={() => router.navigateToIndex()}
+            onClick={routerNavigateToIndex}
             className="px-4 py-2 bg-amber-500 text-slate-900 rounded hover:bg-amber-400 transition-colors"
           >
             Go to Customizer
@@ -170,7 +192,7 @@ export default function CustomizerWithRouter() {
           >
             {/* Unit editor with routing support */}
             <UnitEditorWithRouting
-              activeTabId={router.tabId}
+              activeTabId={routerTabId}
               onTabChange={router.navigateToTab}
             />
           </UnitStoreProvider>
