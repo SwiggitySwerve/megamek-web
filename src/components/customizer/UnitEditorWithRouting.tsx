@@ -37,6 +37,9 @@ import { JUMP_JETS } from '@/types/equipment/MiscEquipmentTypes';
 
 // Types
 import { MechLocation, LOCATION_SLOT_COUNTS } from '@/types/construction';
+import { isValidLocationForEquipment, getPlacementRule } from '@/types/equipment/EquipmentPlacement';
+import { EngineType, getEngineDefinition } from '@/types/construction/EngineType';
+import { GyroType, getGyroDefinition } from '@/types/construction/GyroType';
 
 // Utils
 import { ValidationStatus } from '@/utils/colors/statusColors';
@@ -48,6 +51,73 @@ import { getMaxTotalArmor } from '@/utils/construction/armorCalculations';
 
 /** Jump jet equipment IDs for category normalization */
 const JUMP_JET_IDS = new Set(JUMP_JETS.map(jj => jj.id));
+
+/**
+ * Get fixed slot indices for a location (occupied by system components)
+ * These slots cannot have equipment assigned to them.
+ */
+function getFixedSlotIndices(
+  location: MechLocation,
+  engineType: EngineType,
+  gyroType: GyroType
+): Set<number> {
+  const fixed = new Set<number>();
+  
+  switch (location) {
+    case MechLocation.HEAD:
+      // Life Support (0), Sensors (1), Cockpit (2), Sensors (4), Life Support (5)
+      // Slot 3 is the only assignable slot in head
+      fixed.add(0);
+      fixed.add(1);
+      fixed.add(2);
+      fixed.add(4);
+      fixed.add(5);
+      break;
+      
+    case MechLocation.CENTER_TORSO:
+      // Engine slots + Gyro slots
+      const engineDef = getEngineDefinition(engineType);
+      const gyroDef = getGyroDefinition(gyroType);
+      const engineSlots = engineDef?.ctSlots ?? 6;
+      const gyroSlots = gyroDef?.criticalSlots ?? 4;
+      // Engine takes first 3, then gyro, then remaining engine
+      for (let i = 0; i < Math.min(3, engineSlots); i++) {
+        fixed.add(i);
+      }
+      for (let i = 0; i < gyroSlots; i++) {
+        fixed.add(3 + i);
+      }
+      for (let i = 3; i < engineSlots; i++) {
+        fixed.add(3 + gyroSlots + (i - 3));
+      }
+      break;
+      
+    case MechLocation.LEFT_ARM:
+    case MechLocation.RIGHT_ARM:
+      // Actuators: Shoulder (0), Upper Arm (1), Lower Arm (2), Hand (3)
+      fixed.add(0);
+      fixed.add(1);
+      fixed.add(2);
+      fixed.add(3);
+      break;
+      
+    case MechLocation.LEFT_LEG:
+    case MechLocation.RIGHT_LEG:
+      // Actuators: Hip (0), Upper Leg (1), Lower Leg (2), Foot (3)
+      fixed.add(0);
+      fixed.add(1);
+      fixed.add(2);
+      fixed.add(3);
+      break;
+      
+    case MechLocation.LEFT_TORSO:
+    case MechLocation.RIGHT_TORSO:
+      // Side torsos have no fixed slots (XL engine slots go in side torsos but aren't "fixed")
+      break;
+  }
+  
+  return fixed;
+}
 
 // =============================================================================
 // Types
@@ -232,38 +302,83 @@ export function UnitEditorWithRouting({
     // Check each location
     const allLocations = Object.values(MechLocation) as MechLocation[];
     for (const loc of allLocations) {
+      // Check location restrictions for this equipment
+      if (!isValidLocationForEquipment(selectedItem.equipmentId, loc)) {
+        // Location is forbidden for this equipment type
+        locations.push({
+          location: loc,
+          label: locationLabels[loc],
+          availableSlots: 0,
+          canFit: false,
+        });
+        continue;
+      }
+      
       const totalSlots = LOCATION_SLOT_COUNTS[loc] || 0;
       
-      // Count equipment already in this location
-      const usedSlots = equipment
-        .filter(e => e.location === loc)
-        .reduce((sum, e) => sum + e.criticalSlots, 0);
+      // Get fixed slot indices (actuators, engine, gyro, etc.)
+      const fixedSlots = getFixedSlotIndices(loc, engineType, gyroType);
       
-      // Calculate available (this is simplified - doesn't account for fixed components)
-      // A more accurate calculation would check actual slot availability
-      const availableSlots = Math.max(0, totalSlots - usedSlots);
+      // Get slots used by existing equipment
+      const usedSlotIndices = new Set<number>();
+      for (const eq of equipment) {
+        if (eq.location === loc && eq.slots) {
+          for (const slot of eq.slots) {
+            usedSlotIndices.add(slot);
+          }
+        }
+      }
+      
+      // Calculate truly available slots (not fixed and not used by equipment)
+      let availableSlots = 0;
+      for (let i = 0; i < totalSlots; i++) {
+        if (!fixedSlots.has(i) && !usedSlotIndices.has(i)) {
+          availableSlots++;
+        }
+      }
+      
+      // Check if there's a contiguous range large enough
+      let maxContiguous = 0;
+      let currentContiguous = 0;
+      for (let i = 0; i < totalSlots; i++) {
+        if (!fixedSlots.has(i) && !usedSlotIndices.has(i)) {
+          currentContiguous++;
+          maxContiguous = Math.max(maxContiguous, currentContiguous);
+        } else {
+          currentContiguous = 0;
+        }
+      }
       
       locations.push({
         location: loc,
         label: locationLabels[loc],
         availableSlots,
-        canFit: availableSlots >= slotsNeeded,
+        canFit: maxContiguous >= slotsNeeded,
       });
     }
     
     return locations;
-  }, [selectedEquipmentId, equipment]);
+  }, [selectedEquipmentId, equipment, engineType, gyroType]);
   
   // Handle quick assign to a location
   const handleQuickAssign = useCallback((instanceId: string, location: MechLocation) => {
     const item = equipment.find(e => e.instanceId === instanceId);
     if (!item) return;
     
+    // Check location restrictions first
+    if (!isValidLocationForEquipment(item.equipmentId, location)) {
+      console.warn(`Cannot assign ${item.name} to ${location} - location restriction`);
+      return;
+    }
+    
     // Find first contiguous empty slot range in the location
     const totalSlots = LOCATION_SLOT_COUNTS[location] || 0;
     const slotsNeeded = item.criticalSlots;
     
-    // Get slots already used in this location
+    // Get fixed slot indices (actuators, engine, gyro, etc.)
+    const fixedSlots = getFixedSlotIndices(location, engineType, gyroType);
+    
+    // Get slots already used by other equipment in this location
     const usedSlotIndices = new Set<number>();
     for (const eq of equipment) {
       if (eq.location === location && eq.slots) {
@@ -273,11 +388,12 @@ export function UnitEditorWithRouting({
       }
     }
     
-    // Find first available contiguous range
+    // Find first available contiguous range (skipping fixed slots)
     for (let start = 0; start <= totalSlots - slotsNeeded; start++) {
       let canFit = true;
       for (let i = 0; i < slotsNeeded; i++) {
-        if (usedSlotIndices.has(start + i)) {
+        const slotIdx = start + i;
+        if (fixedSlots.has(slotIdx) || usedSlotIndices.has(slotIdx)) {
           canFit = false;
           break;
         }
@@ -295,7 +411,7 @@ export function UnitEditorWithRouting({
     
     // No contiguous slots found (shouldn't happen if canFit was true)
     console.warn('No contiguous slots found for quick assign');
-  }, [equipment, updateEquipmentLocation]);
+  }, [equipment, engineType, gyroType, updateEquipmentLocation]);
   
   // Handle tab change - delegate to router
   const handleTabChange = (tabId: string) => {

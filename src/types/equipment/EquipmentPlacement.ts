@@ -20,8 +20,10 @@ export enum LocationRestriction {
   HEAD_ONLY = 'Head Only',          // Head only
   NOT_HEAD = 'Not Head',            // Anywhere except head
   NOT_LEGS = 'Not Legs',            // Anywhere except legs
+  NOT_ARMS = 'Not Arms',            // Anywhere except arms
   CENTER_TORSO = 'Center Torso',    // CT only
   SIDE_TORSO = 'Side Torso',        // LT or RT only
+  TORSO_OR_LEG = 'Torso or Leg',    // CT, LT, RT, LL, RL (for jump jets)
   FRONT_ONLY = 'Front Only',        // Front-facing locations
 }
 
@@ -74,6 +76,49 @@ export const PLACEMENT_RULES: readonly EquipmentPlacementRule[] = [
     canSplit: false,
     maxPerLocation: 1,
   },
+  // Jump Jets - can only go in torsos and legs
+  {
+    equipmentId: 'jump-jet-light',
+    restriction: LocationRestriction.TORSO_OR_LEG,
+    mustBeContiguous: false,
+    canSplit: false,
+    maxPerLocation: 6,
+  },
+  {
+    equipmentId: 'jump-jet-medium',
+    restriction: LocationRestriction.TORSO_OR_LEG,
+    mustBeContiguous: false,
+    canSplit: false,
+    maxPerLocation: 6,
+  },
+  {
+    equipmentId: 'jump-jet-heavy',
+    restriction: LocationRestriction.TORSO_OR_LEG,
+    mustBeContiguous: false,
+    canSplit: false,
+    maxPerLocation: 6,
+  },
+  {
+    equipmentId: 'improved-jump-jet-light',
+    restriction: LocationRestriction.TORSO_OR_LEG,
+    mustBeContiguous: false,
+    canSplit: false,
+    maxPerLocation: 3, // 2 slots each
+  },
+  {
+    equipmentId: 'improved-jump-jet-medium',
+    restriction: LocationRestriction.TORSO_OR_LEG,
+    mustBeContiguous: false,
+    canSplit: false,
+    maxPerLocation: 3,
+  },
+  {
+    equipmentId: 'improved-jump-jet-heavy',
+    restriction: LocationRestriction.TORSO_OR_LEG,
+    mustBeContiguous: false,
+    canSplit: false,
+    maxPerLocation: 3,
+  },
 ] as const;
 
 /**
@@ -92,6 +137,12 @@ export function isValidLocationForEquipment(
   restriction?: LocationRestriction
 ): boolean {
   const rule = getPlacementRule(equipmentId);
+  
+  // Check forbiddenLocations first
+  if (rule?.forbiddenLocations?.includes(location)) {
+    return false;
+  }
+  
   const actualRestriction = restriction ?? rule?.restriction ?? LocationRestriction.NONE;
   
   switch (actualRestriction) {
@@ -115,6 +166,18 @@ export function isValidLocationForEquipment(
       
     case LocationRestriction.NOT_LEGS:
       return location !== MechLocation.LEFT_LEG && location !== MechLocation.RIGHT_LEG;
+      
+    case LocationRestriction.NOT_ARMS:
+      return location !== MechLocation.LEFT_ARM && location !== MechLocation.RIGHT_ARM;
+      
+    case LocationRestriction.TORSO_OR_LEG:
+      return [
+        MechLocation.CENTER_TORSO,
+        MechLocation.LEFT_TORSO,
+        MechLocation.RIGHT_TORSO,
+        MechLocation.LEFT_LEG,
+        MechLocation.RIGHT_LEG,
+      ].includes(location);
       
     case LocationRestriction.CENTER_TORSO:
       return location === MechLocation.CENTER_TORSO;
