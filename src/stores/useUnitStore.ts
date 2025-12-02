@@ -155,11 +155,12 @@ import {
   getInternalStructureDefinition 
 } from '@/types/construction/InternalStructureType';
 
-/** Equipment ID for internal structure slots */
-const INTERNAL_STRUCTURE_EQUIPMENT_ID = 'internal-structure-slots';
+/** Equipment ID prefix for internal structure slots */
+const INTERNAL_STRUCTURE_EQUIPMENT_ID = 'internal-structure-slot';
 
 /**
  * Create internal structure equipment items (e.g., Endo Steel slots)
+ * Creates individual 1-slot items for each required critical slot.
  * These are configuration-based components and NOT removable via the loadout tray.
  */
 function createInternalStructureEquipmentList(
@@ -170,29 +171,120 @@ function createInternalStructureEquipmentList(
     return [];
   }
   
-  // Create a single entry representing all the distributed slots
-  return [{
-    instanceId: generateUnitId(),
-    equipmentId: INTERNAL_STRUCTURE_EQUIPMENT_ID,
-    name: structureDef.name,
-    category: EquipmentCategory.STRUCTURAL,
-    weight: 0, // Weight is calculated separately in structure weight
-    criticalSlots: structureDef.criticalSlots,
-    heat: 0,
-    techBase: structureDef.techBase,
-    location: undefined, // Distributed across mech
-    slots: undefined,
-    isRearMounted: false,
-    linkedAmmoId: undefined,
-    isRemovable: false, // Configuration component - managed via Structure tab
-  }];
+  const result: IMountedEquipmentInstance[] = [];
+  const slotCount = structureDef.criticalSlots;
+  
+  // Create individual 1-slot items for each required slot
+  for (let i = 0; i < slotCount; i++) {
+    result.push({
+      instanceId: generateUnitId(),
+      equipmentId: `${INTERNAL_STRUCTURE_EQUIPMENT_ID}-${structureType}`,
+      name: structureDef.name,
+      category: EquipmentCategory.STRUCTURAL,
+      weight: 0, // Weight is calculated separately in structure weight
+      criticalSlots: 1, // Each is 1 slot
+      heat: 0,
+      techBase: structureDef.techBase,
+      location: undefined, // User assigns location
+      slots: undefined,
+      isRearMounted: false,
+      linkedAmmoId: undefined,
+      isRemovable: false, // Configuration component - managed via Structure tab
+    });
+  }
+  return result;
 }
 
 /**
  * Filter out internal structure equipment from the equipment array
  */
 function filterOutInternalStructure(equipment: readonly IMountedEquipmentInstance[]): IMountedEquipmentInstance[] {
-  return equipment.filter(e => e.equipmentId !== INTERNAL_STRUCTURE_EQUIPMENT_ID);
+  return equipment.filter(e => !e.equipmentId.startsWith(INTERNAL_STRUCTURE_EQUIPMENT_ID));
+}
+
+// =============================================================================
+// Armor Equipment Helpers
+// =============================================================================
+
+/** Equipment ID prefix for armor slots */
+const ARMOR_SLOTS_EQUIPMENT_ID = 'armor-slot';
+
+/** Stealth armor locations (2 slots each in these 6 locations) */
+const STEALTH_ARMOR_LOCATIONS: MechLocation[] = [
+  MechLocation.LEFT_ARM,
+  MechLocation.RIGHT_ARM,
+  MechLocation.LEFT_TORSO,
+  MechLocation.RIGHT_TORSO,
+  MechLocation.LEFT_LEG,
+  MechLocation.RIGHT_LEG,
+];
+
+/**
+ * Create armor equipment items (e.g., Ferro-Fibrous or Stealth slots)
+ * Creates individual slot items for each required critical slot.
+ * Stealth armor creates 6 × 2-slot items with pre-assigned locations.
+ * Other armor types create individual 1-slot items.
+ * These are configuration-based components and NOT removable via the loadout tray.
+ */
+function createArmorEquipmentList(
+  armorType: ArmorTypeEnum
+): IMountedEquipmentInstance[] {
+  const armorDef = getArmorDefinition(armorType);
+  if (!armorDef || armorDef.criticalSlots === 0) {
+    return [];
+  }
+  
+  const result: IMountedEquipmentInstance[] = [];
+  
+  // Stealth armor: 6 × 2-slot items with fixed locations
+  if (armorType === ArmorTypeEnum.STEALTH) {
+    for (const location of STEALTH_ARMOR_LOCATIONS) {
+      result.push({
+        instanceId: generateUnitId(),
+        equipmentId: `${ARMOR_SLOTS_EQUIPMENT_ID}-${armorType}`,
+        name: 'Stealth',
+        category: EquipmentCategory.STRUCTURAL,
+        weight: 0, // Weight is calculated separately in armor weight
+        criticalSlots: 2, // Each stealth component is 2 slots
+        heat: 0,
+        techBase: armorDef.techBase,
+        location, // Pre-assigned to specific location
+        slots: undefined, // Specific slot indices assigned during placement
+        isRearMounted: false,
+        linkedAmmoId: undefined,
+        isRemovable: false, // Configuration component - managed via Armor tab
+      });
+    }
+    return result;
+  }
+  
+  // Other armor types: individual 1-slot items
+  const slotCount = armorDef.criticalSlots;
+  for (let i = 0; i < slotCount; i++) {
+    result.push({
+      instanceId: generateUnitId(),
+      equipmentId: `${ARMOR_SLOTS_EQUIPMENT_ID}-${armorType}`,
+      name: armorDef.name,
+      category: EquipmentCategory.STRUCTURAL,
+      weight: 0, // Weight is calculated separately in armor weight
+      criticalSlots: 1, // Each is 1 slot
+      heat: 0,
+      techBase: armorDef.techBase,
+      location: undefined, // User assigns location
+      slots: undefined,
+      isRearMounted: false,
+      linkedAmmoId: undefined,
+      isRemovable: false, // Configuration component - managed via Armor tab
+    });
+  }
+  return result;
+}
+
+/**
+ * Filter out armor slot equipment from the equipment array
+ */
+function filterOutArmorSlots(equipment: readonly IMountedEquipmentInstance[]): IMountedEquipmentInstance[] {
+  return equipment.filter(e => !e.equipmentId.startsWith(ARMOR_SLOTS_EQUIPMENT_ID));
 }
 
 // =============================================================================
@@ -460,10 +552,17 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
           lastModifiedAt: Date.now(),
         }),
         
-        setArmorType: (type) => set({
-          armorType: type,
-          isModified: true,
-          lastModifiedAt: Date.now(),
+        setArmorType: (type) => set((state) => {
+          // Sync equipment - remove old armor slot equipment, add new ones
+          const nonArmorEquipment = filterOutArmorSlots(state.equipment);
+          const armorEquipment = createArmorEquipmentList(type);
+          
+          return {
+            armorType: type,
+            equipment: [...nonArmorEquipment, ...armorEquipment],
+            isModified: true,
+            lastModifiedAt: Date.now(),
+          };
         }),
         
         setEnhancement: (enhancement) => set({
