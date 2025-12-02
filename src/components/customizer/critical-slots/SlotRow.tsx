@@ -2,6 +2,7 @@
  * Slot Row Component
  * 
  * Single critical slot display with drag-and-drop support.
+ * Matches MegaMekLab's visual style.
  * 
  * @spec openspec/specs/critical-slots-display/spec.md
  */
@@ -11,7 +12,6 @@ import { SlotContent } from './CriticalSlotsDisplay';
 import { 
   getSlotColors, 
   classifySystemComponent,
-  isUnhittableComponent,
 } from '@/utils/colors/slotColors';
 import { 
   classifyEquipment, 
@@ -40,32 +40,22 @@ interface SlotRowProps {
  */
 function getSlotContentClasses(slot: SlotContent): string {
   if (slot.type === 'empty') {
-    return 'bg-gray-700 border-gray-600 border-dashed text-gray-400';
+    return 'bg-slate-800 border-slate-600 text-slate-500';
   }
   
   if (slot.type === 'system' && slot.name) {
     const componentType = classifySystemComponent(slot.name);
     const colors = getSlotColors(componentType);
-    // Unhittable components use dashed border (already in color definition)
     return `${colors.bg} ${colors.border} ${colors.text}`;
   }
   
   if (slot.type === 'equipment' && slot.name) {
     const colorType = classifyEquipment(slot.name);
     const colors = getEquipmentColors(colorType);
-    return `${colors.bg} ${colors.border} ${colors.text} border-solid`;
+    return `${colors.bg} ${colors.border} ${colors.text}`;
   }
   
   return 'bg-slate-700 border-slate-600 text-slate-300';
-}
-
-/**
- * Check if a slot contains an unhittable component (Endo Steel, Ferro-Fibrous)
- */
-function isUnhittableSlot(slot: SlotContent): boolean {
-  if (slot.type !== 'system' || !slot.name) return false;
-  const componentType = classifySystemComponent(slot.name);
-  return isUnhittableComponent(componentType);
 }
 
 /**
@@ -81,23 +71,22 @@ export const SlotRow = memo(function SlotRow({
   onDrop,
   onRemove,
 }: SlotRowProps) {
-  const [isHovered, setIsHovered] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
   
   const contentClasses = getSlotContentClasses(slot);
   
   // Build dynamic classes
   let dynamicClasses = '';
-  if (isAssignable && !slot.name) {
-    dynamicClasses = 'bg-green-900/50 border-green-500';
+  if (isAssignable && slot.type === 'empty') {
+    dynamicClasses = 'bg-green-900/60 border-green-500 text-green-300';
   }
   if (isDragOver) {
     dynamicClasses = slot.type === 'empty' 
-      ? 'bg-green-900/70 border-green-400 scale-[1.02]'
+      ? 'bg-green-800 border-green-400 scale-[1.02]'
       : 'bg-red-900/70 border-red-400';
   }
   if (isSelected) {
-    dynamicClasses += ' ring-2 ring-yellow-400 ring-offset-1 ring-offset-slate-900';
+    dynamicClasses += ' ring-2 ring-amber-400';
   }
   
   // Handle drag events
@@ -126,23 +115,14 @@ export const SlotRow = memo(function SlotRow({
   };
   
   // Determine display name
-  let displayName = slot.name;
+  let displayName: string;
   if (slot.type === 'empty') {
-    displayName = `[${slot.index + 1}]`;
-  } else if (slot.isFirstSlot && slot.totalSlots && slot.totalSlots > 1) {
-    displayName = `${slot.name} (${slot.totalSlots})`;
-  } else if (!slot.isFirstSlot && !slot.isLastSlot && slot.name) {
-    displayName = '│'; // Continuation marker
-  }
-  
-  // Border radius for multi-slot equipment
-  let borderRadius = 'rounded';
-  if (slot.isFirstSlot && slot.totalSlots && slot.totalSlots > 1) {
-    borderRadius = 'rounded-t rounded-b-none';
-  } else if (slot.isLastSlot) {
-    borderRadius = 'rounded-b rounded-t-none';
-  } else if (slot.totalSlots && slot.totalSlots > 1 && !slot.isFirstSlot && !slot.isLastSlot) {
-    borderRadius = 'rounded-none';
+    displayName = '- Empty -';
+  } else if (slot.name) {
+    displayName = slot.name;
+  } else {
+    // Continuation of multi-slot equipment - show empty or continuation marker
+    displayName = '';
   }
   
   return (
@@ -152,12 +132,12 @@ export const SlotRow = memo(function SlotRow({
       aria-label={slot.name ? `Slot ${slot.index + 1}: ${slot.name}` : `Empty slot ${slot.index + 1}`}
       aria-selected={isSelected}
       className={`
-        relative flex items-center border transition-all cursor-pointer
-        focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-inset
+        flex items-center border-b border-slate-700 transition-all cursor-pointer
+        focus:outline-none focus:ring-1 focus:ring-amber-400 focus:ring-inset
         ${contentClasses}
         ${dynamicClasses}
-        ${borderRadius}
-        ${compact ? 'px-1.5 py-0.5 text-xs' : 'px-2 py-1 text-sm'}
+        ${compact ? 'px-2 py-0.5 text-xs' : 'px-2 py-1 text-sm'}
+        last:border-b-0
       `}
       onClick={onClick}
       onDoubleClick={handleDoubleClick}
@@ -172,28 +152,11 @@ export const SlotRow = memo(function SlotRow({
           }
         }
       }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
       <span className="truncate flex-1">{displayName}</span>
-      
-      {/* Remove button */}
-      {isHovered && slot.isRemovable && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onRemove();
-          }}
-          className="absolute right-1 w-4 h-4 flex items-center justify-center bg-red-600 hover:bg-red-500 rounded text-white text-xs transition-colors"
-          title="Remove"
-        >
-          ×
-        </button>
-      )}
     </div>
   );
 });
-

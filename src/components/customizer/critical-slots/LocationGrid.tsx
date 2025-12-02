@@ -2,6 +2,7 @@
  * Location Grid Component
  * 
  * Grid of critical slots for a single location.
+ * Matches MegaMekLab's visual style with full location names.
  * 
  * @spec openspec/specs/critical-slots-display/spec.md
  */
@@ -12,18 +13,18 @@ import { MechLocation, LOCATION_SLOT_COUNTS } from '@/types/construction';
 import { LocationData, SlotContent } from './CriticalSlotsDisplay';
 
 /**
- * Get short location label
+ * Get full location name
  */
 function getLocationLabel(location: MechLocation): string {
   switch (location) {
     case MechLocation.HEAD: return 'Head';
-    case MechLocation.CENTER_TORSO: return 'CT';
-    case MechLocation.LEFT_TORSO: return 'LT';
-    case MechLocation.RIGHT_TORSO: return 'RT';
-    case MechLocation.LEFT_ARM: return 'LA';
-    case MechLocation.RIGHT_ARM: return 'RA';
-    case MechLocation.LEFT_LEG: return 'LL';
-    case MechLocation.RIGHT_LEG: return 'RL';
+    case MechLocation.CENTER_TORSO: return 'Center Torso';
+    case MechLocation.LEFT_TORSO: return 'Left Torso';
+    case MechLocation.RIGHT_TORSO: return 'Right Torso';
+    case MechLocation.LEFT_ARM: return 'Left Arm';
+    case MechLocation.RIGHT_ARM: return 'Right Arm';
+    case MechLocation.LEFT_LEG: return 'Left Leg';
+    case MechLocation.RIGHT_LEG: return 'Right Leg';
     default: return '';
   }
 }
@@ -72,16 +73,26 @@ export function LocationGrid({
     return existing || { index: i, type: 'empty' as const };
   });
   
+  // Determine width based on location (legs and head are narrower)
+  const isNarrow = location === MechLocation.HEAD || 
+                   location === MechLocation.LEFT_LEG || 
+                   location === MechLocation.RIGHT_LEG;
+  
   return (
-    <div className={`bg-slate-900 rounded border border-slate-700 ${className}`}>
+    <div 
+      className={`
+        bg-slate-900 border border-slate-600 
+        ${isNarrow ? 'w-40' : 'w-48'}
+        ${className}
+      `}
+    >
       {/* Location header */}
-      <div className="px-2 py-1 border-b border-slate-700 bg-slate-800">
-        <span className="text-xs font-medium text-slate-300">{label}</span>
-        <span className="text-xs text-slate-500 ml-1">({slotCount})</span>
+      <div className="px-2 py-1.5 border-b border-slate-600 bg-slate-800 text-center">
+        <span className="text-sm font-medium text-slate-200">{label}</span>
       </div>
       
       {/* Slots */}
-      <div className={`p-1 ${compact ? 'space-y-0.5' : 'space-y-1'}`}>
+      <div className="p-0.5">
         {slots.map((slot) => (
           <SlotRow
             key={slot.index}
@@ -98,4 +109,3 @@ export function LocationGrid({
     </div>
   );
 }
-

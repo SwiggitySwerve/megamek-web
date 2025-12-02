@@ -2,7 +2,7 @@
  * Critical Slots Tab Component
  * 
  * Displays the critical slots grid for assigning equipment to locations.
- * Shows fixed system components and allows assigning equipment from the loadout.
+ * Layout matches MegaMekLab's diagram style with proper humanoid mech positioning.
  * 
  * @spec openspec/specs/critical-slots-display/spec.md
  * @spec openspec/specs/critical-slot-allocation/spec.md
@@ -11,11 +11,8 @@
 import React, { useMemo, useCallback, useState } from 'react';
 import { useUnitStore } from '@/stores/useUnitStore';
 import { useCustomizerStore } from '@/stores/useCustomizerStore';
-import { 
-  CriticalSlotsDisplay, 
-  LocationData, 
-  SlotContent 
-} from '../critical-slots';
+import { LocationData, SlotContent } from '../critical-slots';
+import { LocationGrid } from '../critical-slots/LocationGrid';
 import { MechLocation, LOCATION_SLOT_COUNTS } from '@/types/construction';
 import { EquipmentCategory } from '@/types/equipment';
 import { IMountedEquipmentInstance } from '@/stores/unitState';
@@ -44,16 +41,6 @@ interface FixedComponent {
 // Constants
 // =============================================================================
 
-/** Fixed components by location */
-const HEAD_COMPONENTS: FixedComponent[] = [
-  { name: 'Life Support', type: 'lifesupport', slots: 1 },
-  { name: 'Sensors', type: 'sensors', slots: 1 },
-  { name: 'Cockpit', type: 'cockpit', slots: 1 },
-  // Slot 4 empty (can hold equipment)
-  { name: 'Sensors', type: 'sensors', slots: 1 },
-  { name: 'Life Support', type: 'lifesupport', slots: 1 },
-];
-
 /** Arm actuators (fixed positions) */
 const ARM_ACTUATORS: FixedComponent[] = [
   { name: 'Shoulder', type: 'actuator', slots: 1 },
@@ -74,51 +61,26 @@ const LEG_ACTUATORS: FixedComponent[] = [
 // Helpers
 // =============================================================================
 
-/**
- * Get engine CT slots from engine type
- */
 function getEngineSlots(engineType: EngineType): number {
   const def = getEngineDefinition(engineType);
   return def?.ctSlots ?? 6;
 }
 
-/**
- * Get gyro slots from gyro type
- */
 function getGyroSlots(gyroType: GyroType): number {
   const def = getGyroDefinition(gyroType);
   return def?.criticalSlots ?? 4;
 }
 
-/**
- * Get equipment color type based on category
- */
-function getEquipmentColorType(category: EquipmentCategory): SystemComponentType {
-  switch (category) {
-    case EquipmentCategory.STRUCTURAL:
-      return 'structure';
-    default:
-      return 'empty'; // Use default for now, equipment colors handled separately
-  }
-}
-
-/**
- * Build location slots for a given location
- */
 function buildLocationSlots(
   location: MechLocation,
   engineType: EngineType,
-  engineRating: number,
   gyroType: GyroType,
   equipment: readonly IMountedEquipmentInstance[],
 ): SlotContent[] {
   const slotCount = LOCATION_SLOT_COUNTS[location] || 6;
   const slots: SlotContent[] = [];
   
-  // Get equipment assigned to this location
   const locationEquipment = equipment.filter(e => e.location === location);
-  
-  // Track which slots are filled
   const filledSlots = new Map<number, { equipment: IMountedEquipmentInstance; position: 'first' | 'middle' | 'last' | 'only' }>();
   
   for (const eq of locationEquipment) {
@@ -136,14 +98,11 @@ function buildLocationSlots(
     }
   }
   
-  // Build slots based on location type
   switch (location) {
     case MechLocation.HEAD:
-      // Head has fixed cockpit components
       slots.push({ index: 0, type: 'system', name: 'Life Support' });
       slots.push({ index: 1, type: 'system', name: 'Sensors' });
-      slots.push({ index: 2, type: 'system', name: 'Cockpit' });
-      // Slot 3 can have equipment or be empty
+      slots.push({ index: 2, type: 'system', name: 'Standard Cockpit' });
       slots.push(filledSlots.has(3) 
         ? createEquipmentSlot(3, filledSlots.get(3)!)
         : { index: 3, type: 'empty' }
@@ -153,34 +112,21 @@ function buildLocationSlots(
       break;
       
     case MechLocation.CENTER_TORSO:
-      // Engine slots first
       const engineSlots = getEngineSlots(engineType);
-      for (let i = 0; i < engineSlots; i++) {
-        slots.push({ 
-          index: i, 
-          type: 'system', 
-          name: i === 0 ? 'Engine' : '',
-          isFirstSlot: i === 0,
-          isLastSlot: i === engineSlots - 1,
-          totalSlots: engineSlots,
-        });
+      // First 3 engine slots
+      for (let i = 0; i < Math.min(3, engineSlots); i++) {
+        slots.push({ index: i, type: 'system', name: 'Engine' });
       }
-      
-      // Gyro slots next
+      // Gyro slots
       const gyroSlots = getGyroSlots(gyroType);
       for (let i = 0; i < gyroSlots; i++) {
-        const slotIdx = engineSlots + i;
-        slots.push({ 
-          index: slotIdx, 
-          type: 'system', 
-          name: i === 0 ? 'Gyro' : '',
-          isFirstSlot: i === 0,
-          isLastSlot: i === gyroSlots - 1,
-          totalSlots: gyroSlots,
-        });
+        slots.push({ index: 3 + i, type: 'system', name: 'Standard Gyro' });
       }
-      
-      // Remaining slots are for equipment or empty
+      // Remaining engine slots after gyro
+      for (let i = 3; i < engineSlots; i++) {
+        slots.push({ index: 3 + gyroSlots + (i - 3), type: 'system', name: 'Engine' });
+      }
+      // Remaining slots for equipment
       const ctUsed = engineSlots + gyroSlots;
       for (let i = ctUsed; i < slotCount; i++) {
         if (filledSlots.has(i)) {
@@ -193,7 +139,6 @@ function buildLocationSlots(
       
     case MechLocation.LEFT_TORSO:
     case MechLocation.RIGHT_TORSO:
-      // Side torsos have no fixed components, all equipment or empty
       for (let i = 0; i < slotCount; i++) {
         if (filledSlots.has(i)) {
           slots.push(createEquipmentSlot(i, filledSlots.get(i)!));
@@ -205,11 +150,9 @@ function buildLocationSlots(
       
     case MechLocation.LEFT_ARM:
     case MechLocation.RIGHT_ARM:
-      // Arms have actuators in first 4 slots
       for (let i = 0; i < ARM_ACTUATORS.length; i++) {
         slots.push({ index: i, type: 'system', name: ARM_ACTUATORS[i].name });
       }
-      // Remaining slots for equipment
       for (let i = ARM_ACTUATORS.length; i < slotCount; i++) {
         if (filledSlots.has(i)) {
           slots.push(createEquipmentSlot(i, filledSlots.get(i)!));
@@ -221,11 +164,9 @@ function buildLocationSlots(
       
     case MechLocation.LEFT_LEG:
     case MechLocation.RIGHT_LEG:
-      // Legs have actuators in first 4 slots
       for (let i = 0; i < LEG_ACTUATORS.length; i++) {
         slots.push({ index: i, type: 'system', name: LEG_ACTUATORS[i].name });
       }
-      // Remaining slots for equipment (legs have 6 slots, so 2 available)
       for (let i = LEG_ACTUATORS.length; i < slotCount; i++) {
         if (filledSlots.has(i)) {
           slots.push(createEquipmentSlot(i, filledSlots.get(i)!));
@@ -236,7 +177,6 @@ function buildLocationSlots(
       break;
       
     default:
-      // Fallback: all empty
       for (let i = 0; i < slotCount; i++) {
         slots.push({ index: i, type: 'empty' });
       }
@@ -245,9 +185,6 @@ function buildLocationSlots(
   return slots;
 }
 
-/**
- * Create a slot content entry for equipment
- */
 function createEquipmentSlot(
   index: number, 
   data: { equipment: IMountedEquipmentInstance; position: 'first' | 'middle' | 'last' | 'only' }
@@ -256,7 +193,7 @@ function createEquipmentSlot(
   return {
     index,
     type: 'equipment',
-    name: position === 'first' || position === 'only' ? equipment.name : '',
+    name: equipment.name,
     equipmentId: equipment.instanceId,
     isFirstSlot: position === 'first' || position === 'only',
     isLastSlot: position === 'last' || position === 'only',
@@ -266,66 +203,151 @@ function createEquipmentSlot(
 }
 
 // =============================================================================
-// Unallocated Equipment Panel
+// Toolbar Component
 // =============================================================================
 
-interface UnallocatedPanelProps {
+interface ToolbarProps {
+  autoFillUnhittables: boolean;
+  autoCompact: boolean;
+  autoSort: boolean;
+  onAutoFillToggle: () => void;
+  onAutoCompactToggle: () => void;
+  onAutoSortToggle: () => void;
+  onFill: () => void;
+  onCompact: () => void;
+  onSort: () => void;
+  onReset: () => void;
+  readOnly: boolean;
+}
+
+function CriticalSlotsToolbar({
+  autoFillUnhittables,
+  autoCompact,
+  autoSort,
+  onAutoFillToggle,
+  onAutoCompactToggle,
+  onAutoSortToggle,
+  onFill,
+  onCompact,
+  onSort,
+  onReset,
+  readOnly,
+}: ToolbarProps) {
+  const toggleBtnClass = (active: boolean) => `
+    px-3 py-1.5 text-sm font-medium rounded border transition-colors
+    ${active 
+      ? 'bg-teal-600 border-teal-500 text-white' 
+      : 'bg-slate-700 border-slate-600 text-slate-300 hover:bg-slate-600'
+    }
+    ${readOnly ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+  `;
+  
+  const actionBtnClass = `
+    px-4 py-1.5 text-sm font-medium rounded border transition-colors
+    bg-slate-600 border-slate-500 text-white hover:bg-slate-500
+    ${readOnly ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+  `;
+  
+  return (
+    <div className="flex items-center gap-2 p-3 bg-slate-800 border-b border-slate-700">
+      {/* Auto toggles */}
+      <button 
+        onClick={onAutoFillToggle} 
+        disabled={readOnly}
+        className={toggleBtnClass(autoFillUnhittables)}
+      >
+        Auto Fill Unhittables
+      </button>
+      <button 
+        onClick={onAutoCompactToggle} 
+        disabled={readOnly}
+        className={toggleBtnClass(autoCompact)}
+      >
+        Auto Compact
+      </button>
+      <button 
+        onClick={onAutoSortToggle} 
+        disabled={readOnly}
+        className={toggleBtnClass(autoSort)}
+      >
+        Auto Sort
+      </button>
+      
+      <div className="w-px h-6 bg-slate-600 mx-2" />
+      
+      {/* Manual actions */}
+      <button onClick={onFill} disabled={readOnly} className={actionBtnClass}>
+        Fill
+      </button>
+      <button onClick={onCompact} disabled={readOnly} className={actionBtnClass}>
+        Compact
+      </button>
+      <button onClick={onSort} disabled={readOnly} className={actionBtnClass}>
+        Sort
+      </button>
+      
+      <div className="flex-1" />
+      
+      <button 
+        onClick={onReset} 
+        disabled={readOnly}
+        className={`${actionBtnClass} bg-slate-700 hover:bg-red-600`}
+      >
+        Reset
+      </button>
+    </div>
+  );
+}
+
+// =============================================================================
+// Unallocated Equipment Table
+// =============================================================================
+
+interface UnallocatedTableProps {
   equipment: readonly IMountedEquipmentInstance[];
   selectedId: string | null;
   onSelect: (instanceId: string) => void;
 }
 
-function UnallocatedPanel({ equipment, selectedId, onSelect }: UnallocatedPanelProps) {
-  // Group by category
-  const grouped = useMemo(() => {
-    const groups: Record<string, IMountedEquipmentInstance[]> = {};
-    for (const eq of equipment) {
-      const cat = eq.category || 'Other';
-      if (!groups[cat]) groups[cat] = [];
-      groups[cat].push(eq);
-    }
-    return groups;
-  }, [equipment]);
-  
-  const categories = Object.keys(grouped).sort();
-  
+function UnallocatedEquipmentTable({ equipment, selectedId, onSelect }: UnallocatedTableProps) {
   if (equipment.length === 0) {
     return (
       <div className="text-slate-500 text-sm text-center py-8">
-        All equipment has been assigned to slots.
+        All equipment assigned
       </div>
     );
   }
   
   return (
-    <div className="space-y-3">
-      {categories.map(category => (
-        <div key={category}>
-          <div className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">
-            {category} ({grouped[category].length})
-          </div>
-          <div className="space-y-1">
-            {grouped[category].map(eq => (
-              <button
-                key={eq.instanceId}
-                onClick={() => onSelect(eq.instanceId)}
-                className={`
-                  w-full text-left px-2 py-1.5 rounded text-sm transition-colors
-                  ${selectedId === eq.instanceId
-                    ? 'bg-amber-600 text-white'
-                    : 'bg-slate-700 text-slate-200 hover:bg-slate-600'
-                  }
-                `}
-              >
-                <div className="flex justify-between items-center">
-                  <span className="truncate">{eq.name}</span>
-                  <span className="text-xs opacity-70 ml-2">{eq.criticalSlots} slot{eq.criticalSlots !== 1 ? 's' : ''}</span>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      ))}
+    <div className="overflow-auto">
+      <table className="w-full text-sm">
+        <thead className="bg-slate-700 sticky top-0">
+          <tr>
+            <th className="text-left px-3 py-2 text-slate-300 font-medium">Name</th>
+            <th className="text-right px-3 py-2 text-teal-400 font-medium w-16">Tons</th>
+            <th className="text-right px-3 py-2 text-slate-300 font-medium w-16">Crits</th>
+          </tr>
+        </thead>
+        <tbody>
+          {equipment.map(eq => (
+            <tr
+              key={eq.instanceId}
+              onClick={() => onSelect(eq.instanceId)}
+              className={`
+                cursor-pointer transition-colors border-b border-slate-700
+                ${selectedId === eq.instanceId 
+                  ? 'bg-amber-600/30' 
+                  : 'hover:bg-slate-700/50'
+                }
+              `}
+            >
+              <td className="px-3 py-1.5 text-slate-200">{eq.name}</td>
+              <td className="px-3 py-1.5 text-right text-teal-400">{eq.weight.toFixed(1)}</td>
+              <td className="px-3 py-1.5 text-right text-slate-300">{eq.criticalSlots}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -341,7 +363,6 @@ export function CriticalSlotsTab({
   // Unit state
   const equipment = useUnitStore((s) => s.equipment);
   const engineType = useUnitStore((s) => s.engineType);
-  const engineRating = useUnitStore((s) => s.engineRating);
   const gyroType = useUnitStore((s) => s.gyroType);
   const updateEquipmentLocation = useUnitStore((s) => s.updateEquipmentLocation);
   const clearEquipmentLocation = useUnitStore((s) => s.clearEquipmentLocation);
@@ -349,12 +370,13 @@ export function CriticalSlotsTab({
   // UI state
   const autoModeSettings = useCustomizerStore((s) => s.autoModeSettings);
   const toggleAutoFillUnhittables = useCustomizerStore((s) => s.toggleAutoFillUnhittables);
-  const toggleShowPlacementPreview = useCustomizerStore((s) => s.toggleShowPlacementPreview);
   
-  // Local state for selected equipment
+  // Local state
   const [selectedEquipmentId, setSelectedEquipmentId] = useState<string | null>(null);
+  const [autoCompact, setAutoCompact] = useState(false);
+  const [autoSort, setAutoSort] = useState(false);
   
-  // Get unallocated equipment (has no location assigned)
+  // Get unallocated equipment
   const unallocatedEquipment = useMemo(() => {
     return equipment.filter(e => e.location === undefined);
   }, [equipment]);
@@ -365,70 +387,47 @@ export function CriticalSlotsTab({
     return equipment.find(e => e.instanceId === selectedEquipmentId) || null;
   }, [equipment, selectedEquipmentId]);
   
-  // Build location data for display
-  const locations: LocationData[] = useMemo(() => {
-    const allLocations = [
-      MechLocation.HEAD,
-      MechLocation.CENTER_TORSO,
-      MechLocation.LEFT_TORSO,
-      MechLocation.RIGHT_TORSO,
-      MechLocation.LEFT_ARM,
-      MechLocation.RIGHT_ARM,
-      MechLocation.LEFT_LEG,
-      MechLocation.RIGHT_LEG,
-    ];
-    
-    return allLocations.map(location => ({
-      location,
-      slots: buildLocationSlots(location, engineType, engineRating, gyroType, equipment),
-    }));
-  }, [equipment, engineType, engineRating, gyroType]);
+  // Build location data
+  const getLocationData = useCallback((location: MechLocation): LocationData => ({
+    location,
+    slots: buildLocationSlots(location, engineType, gyroType, equipment),
+  }), [equipment, engineType, gyroType]);
   
-  // Calculate assignable slots for selected equipment
-  const assignableSlots = useMemo(() => {
+  // Calculate assignable slots
+  const getAssignableSlots = useCallback((location: MechLocation): number[] => {
     if (!selectedEquipment || readOnly) return [];
     
-    const slotsNeeded = selectedEquipment.criticalSlots;
-    const result: { location: MechLocation; slots: number[] }[] = [];
+    const locData = getLocationData(location);
+    const emptySlots = locData.slots
+      .filter(s => s.type === 'empty')
+      .map(s => s.index);
     
-    for (const locData of locations) {
-      const emptySlots = locData.slots
-        .filter(s => s.type === 'empty')
-        .map(s => s.index);
-      
-      // Find contiguous runs that can fit the equipment
-      const assignable: number[] = [];
-      for (let i = 0; i <= emptySlots.length - slotsNeeded; i++) {
-        // Check if we have enough contiguous slots
-        let contiguous = true;
-        for (let j = 0; j < slotsNeeded; j++) {
-          if (j > 0 && emptySlots[i + j] !== emptySlots[i + j - 1] + 1) {
-            contiguous = false;
-            break;
-          }
-        }
-        if (contiguous) {
-          assignable.push(emptySlots[i]);
+    const slotsNeeded = selectedEquipment.criticalSlots;
+    const assignable: number[] = [];
+    
+    for (let i = 0; i <= emptySlots.length - slotsNeeded; i++) {
+      let contiguous = true;
+      for (let j = 1; j < slotsNeeded; j++) {
+        if (emptySlots[i + j] !== emptySlots[i + j - 1] + 1) {
+          contiguous = false;
+          break;
         }
       }
-      
-      if (assignable.length > 0) {
-        result.push({ location: locData.location, slots: assignable });
+      if (contiguous) {
+        assignable.push(emptySlots[i]);
       }
     }
     
-    return result;
-  }, [selectedEquipment, locations, readOnly]);
+    return assignable;
+  }, [selectedEquipment, readOnly, getLocationData]);
   
-  // Handle slot click
+  // Handlers
   const handleSlotClick = useCallback((location: MechLocation, slotIndex: number) => {
     if (readOnly || !selectedEquipment) return;
     
-    // Check if this slot is assignable
-    const locAssignable = assignableSlots.find(a => a.location === location);
-    if (!locAssignable || !locAssignable.slots.includes(slotIndex)) return;
+    const assignable = getAssignableSlots(location);
+    if (!assignable.includes(slotIndex)) return;
     
-    // Assign equipment to consecutive slots starting at slotIndex
     const slots: number[] = [];
     for (let i = 0; i < selectedEquipment.criticalSlots; i++) {
       slots.push(slotIndex + i);
@@ -436,12 +435,10 @@ export function CriticalSlotsTab({
     
     updateEquipmentLocation(selectedEquipment.instanceId, location, slots);
     setSelectedEquipmentId(null);
-  }, [readOnly, selectedEquipment, assignableSlots, updateEquipmentLocation]);
+  }, [readOnly, selectedEquipment, getAssignableSlots, updateEquipmentLocation]);
   
-  // Handle equipment drop (drag and drop)
   const handleEquipmentDrop = useCallback((location: MechLocation, slotIndex: number, equipmentId: string) => {
     if (readOnly) return;
-    
     const eq = equipment.find(e => e.instanceId === equipmentId);
     if (!eq) return;
     
@@ -449,84 +446,108 @@ export function CriticalSlotsTab({
     for (let i = 0; i < eq.criticalSlots; i++) {
       slots.push(slotIndex + i);
     }
-    
     updateEquipmentLocation(equipmentId, location, slots);
   }, [readOnly, equipment, updateEquipmentLocation]);
   
-  // Handle equipment removal
   const handleEquipmentRemove = useCallback((location: MechLocation, slotIndex: number) => {
     if (readOnly) return;
-    
-    // Find equipment at this slot
-    const locData = locations.find(l => l.location === location);
-    if (!locData) return;
-    
+    const locData = getLocationData(location);
     const slot = locData.slots.find(s => s.index === slotIndex);
-    if (!slot || slot.type !== 'equipment' || !slot.equipmentId) return;
-    if (!slot.isRemovable) return;
-    
+    if (!slot || slot.type !== 'equipment' || !slot.equipmentId || !slot.isRemovable) return;
     clearEquipmentLocation(slot.equipmentId);
-  }, [readOnly, locations, clearEquipmentLocation]);
+  }, [readOnly, getLocationData, clearEquipmentLocation]);
   
-  // Handle toolbar actions
-  const handleToolbarAction = useCallback((action: 'fill' | 'compact' | 'sort' | 'reset') => {
+  const handleReset = useCallback(() => {
     if (readOnly) return;
-    
-    switch (action) {
-      case 'fill':
-        // TODO: Auto-fill unhittable slots
-        console.log('Fill action not yet implemented');
-        break;
-      case 'compact':
-        // TODO: Compact equipment to lowest slots
-        console.log('Compact action not yet implemented');
-        break;
-      case 'sort':
-        // TODO: Sort equipment by type
-        console.log('Sort action not yet implemented');
-        break;
-      case 'reset':
-        // Clear all equipment locations
-        for (const eq of equipment) {
-          if (eq.location !== undefined && eq.isRemovable) {
-            clearEquipmentLocation(eq.instanceId);
-          }
-        }
-        break;
+    for (const eq of equipment) {
+      if (eq.location !== undefined && eq.isRemovable) {
+        clearEquipmentLocation(eq.instanceId);
+      }
     }
   }, [readOnly, equipment, clearEquipmentLocation]);
   
+  // Render location grid helper
+  const renderLocation = (location: MechLocation) => (
+    <LocationGrid
+      key={location}
+      location={location}
+      data={getLocationData(location)}
+      selectedEquipmentId={selectedEquipmentId || undefined}
+      assignableSlots={getAssignableSlots(location)}
+      onSlotClick={(i) => handleSlotClick(location, i)}
+      onEquipmentDrop={(i, e) => handleEquipmentDrop(location, i, e)}
+      onEquipmentRemove={(i) => handleEquipmentRemove(location, i)}
+    />
+  );
+  
   return (
-    <div className={`flex h-full gap-4 p-4 ${className}`}>
-      {/* Main critical slots grid */}
-      <div className="flex-1 min-w-0">
-        <CriticalSlotsDisplay
-          locations={locations}
-          selectedEquipmentId={selectedEquipmentId || undefined}
-          assignableSlots={assignableSlots}
-          autoFillUnhittables={autoModeSettings.autoFillUnhittables}
-          showPlacementPreview={autoModeSettings.showPlacementPreview}
-          onSlotClick={handleSlotClick}
-          onEquipmentDrop={handleEquipmentDrop}
-          onEquipmentRemove={handleEquipmentRemove}
-          onAutoFillToggle={toggleAutoFillUnhittables}
-          onPreviewToggle={toggleShowPlacementPreview}
-          onToolbarAction={handleToolbarAction}
-          className="h-full"
-        />
-      </div>
+    <div className={`flex flex-col h-full bg-slate-900 ${className}`}>
+      {/* Toolbar */}
+      <CriticalSlotsToolbar
+        autoFillUnhittables={autoModeSettings.autoFillUnhittables}
+        autoCompact={autoCompact}
+        autoSort={autoSort}
+        onAutoFillToggle={toggleAutoFillUnhittables}
+        onAutoCompactToggle={() => setAutoCompact(!autoCompact)}
+        onAutoSortToggle={() => setAutoSort(!autoSort)}
+        onFill={() => console.log('Fill')}
+        onCompact={() => console.log('Compact')}
+        onSort={() => console.log('Sort')}
+        onReset={handleReset}
+        readOnly={readOnly}
+      />
       
-      {/* Unallocated equipment sidebar */}
-      <div className="w-64 flex-shrink-0">
-        <div className="bg-slate-800 rounded-lg border border-slate-700 h-full flex flex-col">
-          <div className="px-4 py-3 border-b border-slate-700">
-            <h3 className="font-medium text-white">Unallocated Equipment</h3>
-            <p className="text-xs text-slate-400 mt-1">
-              {unallocatedEquipment.length} item{unallocatedEquipment.length !== 1 ? 's' : ''} to assign
-            </p>
+      {/* Main content area */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Mech diagram */}
+        <div className="flex-1 p-4 overflow-auto">
+          <div className="min-w-[800px]">
+            {/* Row 1: Left Torso | Head | Right Torso */}
+            <div className="grid grid-cols-5 gap-3 mb-3">
+              <div className="col-start-2">
+                {renderLocation(MechLocation.LEFT_TORSO)}
+              </div>
+              <div className="flex justify-center">
+                {renderLocation(MechLocation.HEAD)}
+              </div>
+              <div>
+                {renderLocation(MechLocation.RIGHT_TORSO)}
+              </div>
+            </div>
+            
+            {/* Row 2: Left Arm | Center Torso | Right Arm */}
+            <div className="grid grid-cols-5 gap-3 mb-3">
+              <div>
+                {renderLocation(MechLocation.LEFT_ARM)}
+              </div>
+              <div className="col-span-3 flex justify-center">
+                {renderLocation(MechLocation.CENTER_TORSO)}
+              </div>
+              <div>
+                {renderLocation(MechLocation.RIGHT_ARM)}
+              </div>
+            </div>
+            
+            {/* Row 3: Left Leg | Right Leg */}
+            <div className="grid grid-cols-5 gap-3">
+              <div className="col-start-2 flex justify-center">
+                {renderLocation(MechLocation.LEFT_LEG)}
+              </div>
+              <div />
+              <div className="flex justify-center">
+                {renderLocation(MechLocation.RIGHT_LEG)}
+              </div>
+            </div>
           </div>
-          <div className="flex-1 overflow-y-auto p-3">
-            <UnallocatedPanel
+        </div>
+        
+        {/* Unallocated Equipment Panel */}
+        <div className="w-80 flex-shrink-0 border-l border-slate-700 bg-slate-800 flex flex-col">
+          <div className="px-4 py-3 border-b border-slate-700 bg-slate-700">
+            <h3 className="font-medium text-white">Unallocated Equipment</h3>
+          </div>
+          <div className="flex-1 overflow-auto">
+            <UnallocatedEquipmentTable
               equipment={unallocatedEquipment}
               selectedId={selectedEquipmentId}
               onSelect={setSelectedEquipmentId}
@@ -538,21 +559,14 @@ export function CriticalSlotsTab({
                 Selected: <span className="text-amber-400 font-medium">{selectedEquipment.name}</span>
               </div>
               <div className="text-xs text-slate-400 mt-1">
-                Click a highlighted slot to assign
+                Click a highlighted slot to assign ({selectedEquipment.criticalSlots} slot{selectedEquipment.criticalSlots !== 1 ? 's' : ''})
               </div>
             </div>
           )}
         </div>
       </div>
-      
-      {readOnly && (
-        <div className="absolute bottom-4 left-4 right-4 bg-blue-900/30 border border-blue-700 rounded-lg p-4 text-blue-300 text-sm">
-          This unit is in read-only mode. Changes cannot be made.
-        </div>
-      )}
     </div>
   );
 }
 
 export default CriticalSlotsTab;
-
