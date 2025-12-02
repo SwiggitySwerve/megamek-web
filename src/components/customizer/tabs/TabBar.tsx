@@ -64,15 +64,16 @@ export function TabBar({
         ))}
       </div>
       
-      {/* Add button */}
+      {/* Add new tab button - prominent and always visible */}
       <button
         onClick={onNewTab}
-        className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 rounded transition-colors mx-1"
-        title="New Unit"
+        className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 mx-2 text-slate-300 hover:text-white bg-slate-700 hover:bg-slate-600 rounded-md transition-colors border border-slate-600 hover:border-slate-500"
+        title="Create New Unit"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
         </svg>
+        <span className="text-sm font-medium">New</span>
       </button>
     </div>
   );
