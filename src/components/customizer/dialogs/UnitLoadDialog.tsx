@@ -252,6 +252,7 @@ export function UnitLoadDialog({
                 <th className="px-3 py-2 font-medium text-right">Weight</th>
                 <th className="px-3 py-2 font-medium text-right">Year</th>
                 <th className="px-3 py-2 font-medium">Tech</th>
+                <th className="px-3 py-2 font-medium">Source</th>
                 <th className="w-8"></th>
               </tr>
             </thead>
@@ -267,14 +268,7 @@ export function UnitLoadDialog({
                       : 'hover:bg-slate-700/30'
                   }`}
                 >
-                  <td className="px-3 py-1.5 text-white">
-                    <div className="flex items-center gap-1.5">
-                      {unit.chassis}
-                      {unit.source === 'custom' && (
-                        <span className="px-1 py-0.5 text-[10px] bg-amber-500/20 text-amber-400 rounded leading-none">C</span>
-                      )}
-                    </div>
-                  </td>
+                  <td className="px-3 py-1.5 text-white">{unit.chassis}</td>
                   <td className="px-3 py-1.5 text-slate-300">
                     <div className="flex items-center gap-1.5">
                       {unit.variant}
@@ -293,6 +287,13 @@ export function UnitLoadDialog({
                     {(unit.techBase === TechBase.INNER_SPHERE || unit.techBase === 'INNER_SPHERE') ? 'IS' 
                       : (unit.techBase === TechBase.CLAN || unit.techBase === 'CLAN') ? 'Clan' 
                       : 'Mix'}
+                  </td>
+                  <td className="px-3 py-1.5">
+                    {unit.source === 'custom' ? (
+                      <span className="text-amber-400">Custom</span>
+                    ) : (
+                      <span className="text-slate-400">{unit.era}</span>
+                    )}
                   </td>
                   <td className="px-2 py-1.5 text-right">
                     {selectedUnit?.id === unit.id && (
