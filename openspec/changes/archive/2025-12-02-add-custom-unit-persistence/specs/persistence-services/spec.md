@@ -1,8 +1,5 @@
-# persistence-services Specification
+## MODIFIED Requirements
 
-## Purpose
-TBD - created by archiving change add-service-layer. Update Purpose after archive.
-## Requirements
 ### Requirement: Database Initialization
 
 The system SHALL initialize SQLite database on application startup.
@@ -116,115 +113,7 @@ The system SHALL retrieve all custom units as index entries.
 
 ---
 
-### Requirement: Export Single Unit
-
-The system SHALL export a unit as a JSON file download.
-
-**Rationale**: Users need to save their work locally.
-
-**Priority**: Critical
-
-#### Scenario: Export unit
-- **GIVEN** a valid IFullUnit
-- **WHEN** FileService.exportUnit(unit) is called
-- **THEN** trigger browser download of JSON file
-- **AND** filename defaults to "{chassis}-{variant}.json"
-
-#### Scenario: Custom filename
-- **GIVEN** a valid IFullUnit
-- **WHEN** exportUnit(unit, "my-custom-mech.json") is called
-- **THEN** trigger download with specified filename
-
----
-
-### Requirement: Export Batch Units
-
-The system SHALL export multiple units as a ZIP archive.
-
-**Rationale**: Convenient bulk export of custom units.
-
-**Priority**: Medium
-
-#### Scenario: Export multiple units
-- **GIVEN** 3 valid IFullUnit objects
-- **WHEN** exportBatch(units) is called
-- **THEN** trigger download of ZIP file
-- **AND** ZIP contains 3 JSON files
-
-#### Scenario: Custom batch filename
-- **GIVEN** multiple units
-- **WHEN** exportBatch(units, "my-lance.zip") is called
-- **THEN** download with specified filename
-
----
-
-### Requirement: Import Single Unit
-
-The system SHALL import a unit from a JSON file.
-
-**Rationale**: Users need to load previously exported units.
-
-**Priority**: Critical
-
-#### Scenario: Valid import
-- **GIVEN** a valid JSON file matching unit schema
-- **WHEN** FileService.importUnit(file) is called
-- **THEN** return IImportResult with success = true
-- **AND** include parsed IFullUnit
-
-#### Scenario: Invalid JSON
-- **GIVEN** a file with invalid JSON
-- **WHEN** importUnit(file) is called
-- **THEN** return IImportResult with success = false
-- **AND** include error message
-
-#### Scenario: Schema validation failure
-- **GIVEN** valid JSON but wrong structure
-- **WHEN** importUnit(file) is called
-- **THEN** return IImportResult with success = false
-- **AND** list specific validation errors
-
----
-
-### Requirement: Import Batch Units
-
-The system SHALL import multiple units from multiple files.
-
-**Rationale**: Bulk import convenience.
-
-**Priority**: Medium
-
-#### Scenario: Import multiple files
-- **GIVEN** 3 valid JSON files
-- **WHEN** importBatch(files) is called
-- **THEN** return array of 3 IImportResult objects
-
-#### Scenario: Mixed success/failure
-- **GIVEN** 2 valid files and 1 invalid
-- **WHEN** importBatch(files) is called
-- **THEN** return 2 successful results and 1 failure
-
----
-
-### Requirement: Validate Import File
-
-The system SHALL validate a file without importing it.
-
-**Rationale**: Preview validation before committing import.
-
-**Priority**: Medium
-
-#### Scenario: Validate valid file
-- **GIVEN** a valid unit JSON file
-- **WHEN** validateFile(file) is called
-- **THEN** return IValidationResult with isValid = true
-
-#### Scenario: Validate invalid file
-- **GIVEN** an invalid file
-- **WHEN** validateFile(file) is called
-- **THEN** return IValidationResult with specific errors
-
----
+## ADDED Requirements
 
 ### Requirement: Unique Name Constraint
 
@@ -271,6 +160,16 @@ The system SHALL manage SQLite connection lifecycle.
 - **WHEN** application shuts down
 - **THEN** close connection cleanly
 - **AND** checkpoint WAL to main database file
+
+---
+
+## REMOVED Requirements
+
+### Requirement: Clear Store
+
+**Reason**: Replaced by explicit delete operations. Bulk clear is dangerous and rarely needed.
+
+**Migration**: Use individual delete operations or database reset utility.
 
 ---
 

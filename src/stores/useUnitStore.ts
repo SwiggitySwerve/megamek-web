@@ -51,7 +51,11 @@ import {
   IArmorAllocation,
   createEmptyArmorAllocation,
   getTotalAllocatedArmor,
+  IMountedEquipmentInstance,
+  createMountedEquipment,
 } from './unitState';
+import { IEquipmentItem } from '@/types/equipment';
+import { generateUnitId } from '@/utils/uuid';
 import { MechLocation } from '@/types/construction/CriticalSlotAllocation';
 import {
   calculateArmorPoints,
@@ -121,6 +125,12 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
           isModified: true,
           lastModifiedAt: Date.now(),
         })),
+        
+        setMulId: (mulId) => set({
+          mulId,
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        }),
         
         setYear: (year) => set({
           year,
@@ -430,6 +440,76 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
         }),
         
         // =================================================================
+        // Equipment Actions
+        // =================================================================
+        
+        addEquipment: (item: IEquipmentItem) => {
+          const instanceId = generateUnitId();
+          const mountedEquipment = createMountedEquipment(item, instanceId);
+          
+          set((state) => ({
+            equipment: [...state.equipment, mountedEquipment],
+            isModified: true,
+            lastModifiedAt: Date.now(),
+          }));
+          
+          return instanceId;
+        },
+        
+        removeEquipment: (instanceId: string) => set((state) => ({
+          equipment: state.equipment.filter(e => e.instanceId !== instanceId),
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        })),
+        
+        updateEquipmentLocation: (instanceId: string, location: MechLocation, slots: readonly number[]) => 
+          set((state) => ({
+            equipment: state.equipment.map(e => 
+              e.instanceId === instanceId
+                ? { ...e, location, slots }
+                : e
+            ),
+            isModified: true,
+            lastModifiedAt: Date.now(),
+          })),
+        
+        clearEquipmentLocation: (instanceId: string) => set((state) => ({
+          equipment: state.equipment.map(e => 
+            e.instanceId === instanceId
+              ? { ...e, location: undefined, slots: undefined }
+              : e
+          ),
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        })),
+        
+        setEquipmentRearMounted: (instanceId: string, isRearMounted: boolean) => set((state) => ({
+          equipment: state.equipment.map(e => 
+            e.instanceId === instanceId
+              ? { ...e, isRearMounted }
+              : e
+          ),
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        })),
+        
+        linkAmmo: (weaponInstanceId: string, ammoInstanceId: string | undefined) => set((state) => ({
+          equipment: state.equipment.map(e => 
+            e.instanceId === weaponInstanceId
+              ? { ...e, linkedAmmoId: ammoInstanceId }
+              : e
+          ),
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        })),
+        
+        clearAllEquipment: () => set({
+          equipment: [],
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        }),
+        
+        // =================================================================
         // Metadata Actions
         // =================================================================
         
@@ -446,6 +526,12 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
         partialize: (state) => ({
           id: state.id,
           name: state.name,
+          chassis: state.chassis,
+          clanName: state.clanName,
+          model: state.model,
+          mulId: state.mulId,
+          year: state.year,
+          rulesLevel: state.rulesLevel,
           tonnage: state.tonnage,
           techBase: state.techBase,
           unitType: state.unitType,
@@ -465,6 +551,7 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
           armorTonnage: state.armorTonnage,
           armorAllocation: state.armorAllocation,
           enhancement: state.enhancement,
+          equipment: state.equipment,
           isModified: state.isModified,
           createdAt: state.createdAt,
           lastModifiedAt: state.lastModifiedAt,

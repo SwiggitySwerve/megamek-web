@@ -32,6 +32,7 @@ type UnitSource = 'all' | 'canonical' | 'custom';
 
 interface UnitWithSource extends IUnitIndexEntry {
   source: 'canonical' | 'custom';
+  currentVersion?: number;
 }
 
 // =============================================================================
@@ -81,7 +82,11 @@ export function UnitLoadDialog({
     // Combine with source tagging
     const allUnits: UnitWithSource[] = [
       ...(sourceFilter !== 'custom' ? canonicalUnits.map(u => ({ ...u, source: 'canonical' as const })) : []),
-      ...(sourceFilter !== 'canonical' ? customUnits.map(u => ({ ...u, source: 'custom' as const })) : []),
+      ...(sourceFilter !== 'canonical' ? customUnits.map(u => ({ 
+        ...u, 
+        source: 'custom' as const,
+        currentVersion: (u as UnitWithSource).currentVersion,
+      })) : []),
     ];
     
     // Apply filters
@@ -240,6 +245,11 @@ export function UnitLoadDialog({
                       <span className="text-white font-medium">{unit.chassis} {unit.variant}</span>
                       {unit.source === 'custom' && (
                         <span className="px-1.5 py-0.5 text-xs bg-amber-500/20 text-amber-400 rounded">Custom</span>
+                      )}
+                      {unit.source === 'custom' && unit.currentVersion && unit.currentVersion > 1 && (
+                        <span className="px-1.5 py-0.5 text-xs bg-blue-500/20 text-blue-400 rounded">
+                          v{unit.currentVersion}
+                        </span>
                       )}
                     </div>
                     <div className="text-sm text-slate-400 mt-0.5">

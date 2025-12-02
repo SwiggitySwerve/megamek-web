@@ -123,9 +123,10 @@ export function OverviewTab({
   }, [setModel, chassis, updateTabName]);
   
   const handleMulIdChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    // Allow numbers and hyphens only
+    // Allow numbers and hyphens only, convert to number (-1 for custom units)
     const value = e.target.value.replace(/[^0-9-]/g, '');
-    setMulId(value);
+    const numValue = value === '' || value === '-' ? -1 : parseInt(value, 10);
+    setMulId(isNaN(numValue) ? -1 : numValue);
   }, [setMulId]);
   
   const handleYearChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {

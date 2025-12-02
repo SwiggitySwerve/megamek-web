@@ -23,6 +23,7 @@ import { HeatSinkType } from '@/types/construction/HeatSinkType';
 import { ArmorTypeEnum } from '@/types/construction/ArmorType';
 import { MovementEnhancementType } from '@/types/construction/MovementEnhancement';
 import { MechLocation } from '@/types/construction/CriticalSlotAllocation';
+import { EquipmentCategory, IEquipmentItem } from '@/types/equipment';
 import { generateUnitId as generateUUID } from '@/utils/uuid';
 
 // =============================================================================
@@ -137,6 +138,101 @@ export function createEmptySelectionMemory(): ISelectionMemory {
 }
 
 // =============================================================================
+// Mounted Equipment Types
+// =============================================================================
+
+/**
+ * Mounted equipment instance on a unit
+ * 
+ * Each instance represents a single piece of equipment added to the unit.
+ * Multiple instances of the same equipment type can exist (e.g., 4 Medium Lasers).
+ */
+export interface IMountedEquipmentInstance {
+  /** Unique instance identifier (generated when added) */
+  readonly instanceId: string;
+  /** Reference to equipment definition ID */
+  readonly equipmentId: string;
+  /** Display name of the equipment */
+  readonly name: string;
+  /** Equipment category for grouping */
+  readonly category: EquipmentCategory;
+  /** Weight in tons */
+  readonly weight: number;
+  /** Number of critical slots required */
+  readonly criticalSlots: number;
+  /** Heat generated (for weapons) */
+  readonly heat: number;
+  /** Tech base of the equipment */
+  readonly techBase: TechBase;
+  /** Location where equipment is placed (undefined = unallocated) */
+  readonly location?: MechLocation;
+  /** Critical slot indices in the location (undefined = unallocated) */
+  readonly slots?: readonly number[];
+  /** Whether mounted facing rear arc */
+  readonly isRearMounted: boolean;
+  /** Linked ammunition instance ID (for weapons that use ammo) */
+  readonly linkedAmmoId?: string;
+}
+
+/**
+ * Create a mounted equipment instance from an equipment item
+ */
+export function createMountedEquipment(
+  item: IEquipmentItem,
+  instanceId: string
+): IMountedEquipmentInstance {
+  return {
+    instanceId,
+    equipmentId: item.id,
+    name: item.name,
+    category: item.category,
+    weight: item.weight,
+    criticalSlots: item.criticalSlots,
+    heat: 'heat' in item ? (item as { heat: number }).heat : 0,
+    techBase: item.techBase,
+    location: undefined,
+    slots: undefined,
+    isRearMounted: false,
+    linkedAmmoId: undefined,
+  };
+}
+
+/**
+ * Calculate total equipment weight
+ */
+export function getTotalEquipmentWeight(equipment: readonly IMountedEquipmentInstance[]): number {
+  return equipment.reduce((total, item) => total + item.weight, 0);
+}
+
+/**
+ * Calculate total equipment critical slots
+ */
+export function getTotalEquipmentSlots(equipment: readonly IMountedEquipmentInstance[]): number {
+  return equipment.reduce((total, item) => total + item.criticalSlots, 0);
+}
+
+/**
+ * Get equipment count by category
+ */
+export function getEquipmentByCategory(
+  equipment: readonly IMountedEquipmentInstance[]
+): Record<EquipmentCategory, IMountedEquipmentInstance[]> {
+  const result = {} as Record<EquipmentCategory, IMountedEquipmentInstance[]>;
+  
+  // Initialize all categories with empty arrays
+  for (const category of Object.values(EquipmentCategory)) {
+    result[category] = [];
+  }
+  
+  // Group equipment by category
+  for (const item of equipment) {
+    result[item.category].push(item);
+  }
+  
+  return result;
+}
+
+// =============================================================================
 // Unit State Interface
 // =============================================================================
 
@@ -241,6 +337,13 @@ export interface UnitState {
   enhancement: MovementEnhancementType | null;
   
   // =========================================================================
+  // Equipment
+  // =========================================================================
+  
+  /** Mounted equipment on the unit */
+  equipment: readonly IMountedEquipmentInstance[];
+  
+  // =========================================================================
   // Metadata
   // =========================================================================
   
@@ -267,6 +370,7 @@ export interface UnitActions {
   setChassis: (chassis: string) => void;
   setClanName: (clanName: string) => void;
   setModel: (model: string) => void;
+  setMulId: (mulId: number) => void;
   setYear: (year: number) => void;
   setRulesLevel: (rulesLevel: RulesLevel) => void;
   
@@ -297,6 +401,15 @@ export interface UnitActions {
   autoAllocateArmor: () => void;
   maximizeArmor: () => void;
   clearAllArmor: () => void;
+  
+  // Equipment
+  addEquipment: (item: IEquipmentItem) => string;
+  removeEquipment: (instanceId: string) => void;
+  updateEquipmentLocation: (instanceId: string, location: MechLocation, slots: readonly number[]) => void;
+  clearEquipmentLocation: (instanceId: string) => void;
+  setEquipmentRearMounted: (instanceId: string, isRearMounted: boolean) => void;
+  linkAmmo: (weaponInstanceId: string, ammoInstanceId: string | undefined) => void;
+  clearAllEquipment: () => void;
   
   // Metadata
   markModified: (modified?: boolean) => void;
@@ -378,6 +491,9 @@ export function createDefaultUnitState(options: CreateUnitOptions): UnitState {
     armorTonnage: 0,
     armorAllocation: createEmptyArmorAllocation(),
     enhancement: null,
+    
+    // Equipment
+    equipment: [],
     
     // Metadata
     isModified: true,

@@ -11,3 +11,53 @@ export {
   getUnitFactory,
   type IUnitFactoryResult,
 } from './UnitFactoryService';
+
+export {
+  CanonicalUnitService,
+  canonicalUnitService,
+  type ICanonicalUnitService,
+  type IFullUnit,
+} from './CanonicalUnitService';
+
+export {
+  CustomUnitService,
+  customUnitService,
+  type ICustomUnitService,
+  type IUnitNameEntry,
+} from './CustomUnitService';
+
+export {
+  UnitRepository,
+  getUnitRepository,
+  resetUnitRepository,
+  type IUnitRepository,
+} from './UnitRepository';
+
+export {
+  VersionRepository,
+  getVersionRepository,
+  resetVersionRepository,
+  type IVersionRepository,
+} from './VersionRepository';
+
+export {
+  UnitSearchService,
+  unitSearchService,
+  type IUnitSearchService,
+} from './UnitSearchService';
+
+export {
+  unitNameValidator,
+  type IUnitNameValidator,
+  type INameValidationResult,
+  type IUnitNameComponents,
+} from './UnitNameValidator';
+
+export {
+  CustomUnitApiService,
+  customUnitApiService,
+  type ICustomUnitApiService,
+  type IUnitWithVersion,
+  type ISaveResult,
+  type IVersionWithData,
+} from './CustomUnitApiService';

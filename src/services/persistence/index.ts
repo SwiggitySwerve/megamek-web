@@ -10,3 +10,14 @@ export type { IIndexedDBService } from './IndexedDBService';
 export { FileService, fileService } from './FileService';
 export type { IFileService } from './FileService';
 
+export { 
+  SQLiteService, 
+  getSQLiteService, 
+  resetSQLiteService,
+  DATABASE_CONFIG,
+} from './SQLiteService';
+export type { ISQLiteService, IDatabaseConfig, IMigration } from './SQLiteService';
+
+export { MigrationService, migrationService } from './MigrationService';
+export type { IMigrationService, IMigrationResult, IMigrationError } from './MigrationService';
+

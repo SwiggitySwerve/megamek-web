@@ -15,6 +15,7 @@ import { getTotalAllocatedArmor } from '@/stores/unitState';
 
 // Hooks
 import { useUnitCalculations } from '@/hooks/useUnitCalculations';
+import { useEquipmentCalculations } from '@/hooks/useEquipmentCalculations';
 import { CustomizerTabId, VALID_TAB_IDS } from '@/hooks/useCustomizerRouter';
 
 // Components
@@ -22,6 +23,7 @@ import { CustomizerTabs, DEFAULT_CUSTOMIZER_TABS, CustomizerTabConfig } from '@/
 import { StructureTab } from '@/components/customizer/tabs/StructureTab';
 import { OverviewTab } from '@/components/customizer/tabs/OverviewTab';
 import { ArmorTab } from '@/components/customizer/tabs/ArmorTab';
+import { EquipmentTab } from '@/components/customizer/tabs/EquipmentTab';
 import { UnitInfoBanner, UnitStats } from '@/components/customizer/shared/UnitInfoBanner';
 
 // Utils
@@ -66,6 +68,10 @@ export function UnitEditorWithRouting({
   const armorType = useUnitStore((s) => s.armorType);
   const armorTonnage = useUnitStore((s) => s.armorTonnage);
   const armorAllocation = useUnitStore((s) => s.armorAllocation);
+  const equipment = useUnitStore((s) => s.equipment);
+  
+  // Calculate equipment totals
+  const equipmentCalcs = useEquipmentCalculations(equipment);
   
   // Calculate armor stats for display
   const allocatedArmorPoints = useMemo(
@@ -94,25 +100,28 @@ export function UnitEditorWithRouting({
   );
   
   // Build stats object for UnitInfoBanner
+  const totalWeight = calculations.totalStructuralWeight + equipmentCalcs.totalWeight;
+  const totalSlotsUsed = calculations.totalSystemSlots + equipmentCalcs.totalSlots;
+  
   const unitStats: UnitStats = useMemo(() => ({
     name: unitName,
     tonnage,
     techBase,
     walkMP: calculations.walkMP,
     runMP: calculations.runMP,
-    jumpMP: 0, // TODO: Calculate from jump jets when equipment system is added
-    weightUsed: calculations.totalStructuralWeight,
-    weightRemaining: tonnage - calculations.totalStructuralWeight,
+    jumpMP: 0, // TODO: Calculate from jump jets
+    weightUsed: totalWeight,
+    weightRemaining: tonnage - totalWeight,
     armorPoints: allocatedArmorPoints,
     maxArmorPoints: maxArmorPoints,
-    criticalSlotsUsed: calculations.totalSystemSlots,
+    criticalSlotsUsed: totalSlotsUsed,
     criticalSlotsTotal: 78,
-    heatGenerated: 0, // TODO: Calculate from weapons
+    heatGenerated: equipmentCalcs.totalHeat,
     heatDissipation: calculations.totalHeatDissipation,
     validationStatus: 'valid' as ValidationStatus, // TODO: Get from validation
     errorCount: 0,
     warningCount: 0,
-  }), [unitName, tonnage, techBase, calculations, allocatedArmorPoints, maxArmorPoints]);
+  }), [unitName, tonnage, techBase, calculations, equipmentCalcs, totalWeight, totalSlotsUsed, allocatedArmorPoints, maxArmorPoints]);
   
   // Handle tab change - delegate to router
   const handleTabChange = (tabId: string) => {
@@ -141,7 +150,7 @@ export function UnitEditorWithRouting({
         {activeTabId === 'structure' && <StructureTab />}
         {activeTabId === 'armor' && <ArmorTab />}
         {activeTabId === 'weapons' && <PlaceholderTab name="Weapons" />}
-        {activeTabId === 'equipment' && <PlaceholderTab name="Equipment" />}
+        {activeTabId === 'equipment' && <EquipmentTab />}
         {activeTabId === 'criticals' && <PlaceholderTab name="Critical Slots" />}
         {activeTabId === 'fluff' && <PlaceholderTab name="Fluff" />}
       </div>
