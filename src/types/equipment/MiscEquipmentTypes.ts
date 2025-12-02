@@ -301,59 +301,12 @@ export const MYOMER_SYSTEMS: readonly IMiscEquipment[] = [
 // DEFENSIVE EQUIPMENT
 // ============================================================================
 
+// NOTE: AMS (Anti-Missile System) definitions are in weapon files:
+// - Standard AMS: BallisticWeapons.ts (BALLISTIC_AMS)
+// - Laser AMS: EnergyWeapons.ts (LASER_AMS)
+// They appear in "Other" category via additionalCategories in getAllEquipmentItems()
+
 export const DEFENSIVE_EQUIPMENT: readonly IMiscEquipment[] = [
-  {
-    id: 'ams',
-    name: 'Anti-Missile System',
-    category: MiscEquipmentCategory.DEFENSIVE,
-    techBase: TechBase.INNER_SPHERE,
-    rulesLevel: RulesLevel.STANDARD,
-    weight: 0.5,
-    criticalSlots: 1,
-    costCBills: 100000,
-    battleValue: 32,
-    introductionYear: 2617,
-    special: ['Intercepts incoming missiles', 'Requires ammo'],
-  },
-  {
-    id: 'clan-ams',
-    name: 'Anti-Missile System (Clan)',
-    category: MiscEquipmentCategory.DEFENSIVE,
-    techBase: TechBase.CLAN,
-    rulesLevel: RulesLevel.STANDARD,
-    weight: 0.5,
-    criticalSlots: 1,
-    costCBills: 100000,
-    battleValue: 32,
-    introductionYear: 2831,
-    special: ['Intercepts incoming missiles', 'Requires ammo'],
-  },
-  {
-    id: 'laser-ams',
-    name: 'Laser Anti-Missile System',
-    category: MiscEquipmentCategory.DEFENSIVE,
-    techBase: TechBase.INNER_SPHERE,
-    rulesLevel: RulesLevel.ADVANCED,
-    weight: 1.5,
-    criticalSlots: 2,
-    costCBills: 225000,
-    battleValue: 45,
-    introductionYear: 3059,
-    special: ['Intercepts incoming missiles', 'No ammo required', 'Generates heat'],
-  },
-  {
-    id: 'clan-laser-ams',
-    name: 'Laser Anti-Missile System (Clan)',
-    category: MiscEquipmentCategory.DEFENSIVE,
-    techBase: TechBase.CLAN,
-    rulesLevel: RulesLevel.ADVANCED,
-    weight: 1,
-    criticalSlots: 1,
-    costCBills: 225000,
-    battleValue: 45,
-    introductionYear: 3048,
-    special: ['Intercepts incoming missiles', 'No ammo required', 'Generates heat'],
-  },
   {
     id: 'reactive-armor',
     name: 'Reactive Armor',

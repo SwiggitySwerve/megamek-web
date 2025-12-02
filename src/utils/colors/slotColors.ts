@@ -6,6 +6,9 @@
  * @spec openspec/specs/color-system/spec.md
  */
 
+import { InternalStructureType } from '@/types/construction/InternalStructureType';
+import { ArmorTypeEnum } from '@/types/construction/ArmorType';
+
 /**
  * System component types that occupy critical slots
  */
@@ -16,9 +19,31 @@ export type SystemComponentType =
   | 'cockpit'
   | 'lifesupport'
   | 'sensors'
-  | 'structure'
-  | 'armor'
+  | 'structure'   // Endo Steel variants - unhittable structural slots
+  | 'armor'       // Ferro-Fibrous variants - unhittable armor slots
   | 'empty';
+
+/**
+ * Internal structure types that require critical slots (unhittable)
+ */
+const SLOTTED_STRUCTURE_TYPES: readonly string[] = [
+  InternalStructureType.ENDO_STEEL_IS,
+  InternalStructureType.ENDO_STEEL_CLAN,
+  InternalStructureType.ENDO_COMPOSITE,
+];
+
+/**
+ * Armor types that require critical slots (unhittable)
+ */
+const SLOTTED_ARMOR_TYPES: readonly string[] = [
+  ArmorTypeEnum.FERRO_FIBROUS_IS,
+  ArmorTypeEnum.FERRO_FIBROUS_CLAN,
+  ArmorTypeEnum.LIGHT_FERRO,
+  ArmorTypeEnum.HEAVY_FERRO,
+  ArmorTypeEnum.STEALTH,
+  ArmorTypeEnum.REACTIVE,
+  ArmorTypeEnum.REFLECTIVE,
+];
 
 /**
  * Color definitions for system components
@@ -76,17 +101,19 @@ export const SLOT_COLORS: Record<SystemComponentType, SlotColorDefinition> = {
     text: 'text-black',
     hoverBg: 'hover:bg-yellow-500',
   },
+  // Endo Steel - unhittable structural slots (teal with dashed border)
   structure: {
-    bg: 'bg-slate-600',
-    border: 'border-slate-700',
-    text: 'text-slate-200',
-    hoverBg: 'hover:bg-slate-500',
+    bg: 'bg-teal-800/60',
+    border: 'border-teal-500 border-dashed',
+    text: 'text-teal-200',
+    hoverBg: 'hover:bg-teal-700/60',
   },
+  // Ferro-Fibrous - unhittable armor slots (cyan with dashed border)
   armor: {
-    bg: 'bg-slate-600',
-    border: 'border-slate-700',
-    text: 'text-slate-200',
-    hoverBg: 'hover:bg-slate-500',
+    bg: 'bg-cyan-800/60',
+    border: 'border-cyan-500 border-dashed',
+    text: 'text-cyan-200',
+    hoverBg: 'hover:bg-cyan-700/60',
   },
   empty: {
     bg: 'bg-gray-700',
@@ -112,9 +139,20 @@ export function getSlotColorClasses(componentType: SystemComponentType): string 
 }
 
 /**
- * Classify a slot content name into a system component type
+ * Classify a slot content name into a system component type.
+ * Uses existing InternalStructureType and ArmorTypeEnum values for matching.
  */
 export function classifySystemComponent(name: string): SystemComponentType {
+  // Check for slotted structure types (Endo Steel variants)
+  if (SLOTTED_STRUCTURE_TYPES.some(type => name === type || name.includes(type))) {
+    return 'structure';
+  }
+  
+  // Check for slotted armor types (Ferro-Fibrous variants, Stealth, etc.)
+  if (SLOTTED_ARMOR_TYPES.some(type => name === type || name.includes(type))) {
+    return 'armor';
+  }
+  
   const lowerName = name.toLowerCase();
   
   if (lowerName.includes('engine') || lowerName.includes('fusion')) {
@@ -146,5 +184,13 @@ export function classifySystemComponent(name: string): SystemComponentType {
   }
   
   return 'empty';
+}
+
+/**
+ * Check if a system component type is unhittable (cannot be destroyed by critical hits).
+ * Structure (Endo Steel) and Armor (Ferro-Fibrous) slots are unhittable per BattleTech rules.
+ */
+export function isUnhittableComponent(componentType: SystemComponentType): boolean {
+  return componentType === 'structure' || componentType === 'armor';
 }
 

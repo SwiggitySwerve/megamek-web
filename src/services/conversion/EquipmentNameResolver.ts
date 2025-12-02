@@ -7,7 +7,7 @@
  */
 
 import { TechBase } from '@/types/enums/TechBase';
-import { getAllEquipmentItems, IEquipmentItem } from '@/types/equipment';
+import { getAllEquipmentItemsForLookup, IEquipmentItem } from '@/types/equipment';
 
 // ============================================================================
 // MEGAMEKLAB ITEM TYPE MAPPINGS
@@ -497,11 +497,12 @@ export class EquipmentNameResolver {
   
   /**
    * Initialize the resolver with equipment data
+   * Uses getAllEquipmentItemsForLookup to include all equipment (including heat sinks, jump jets)
    */
   initialize(): void {
     if (this.initialized) return;
     
-    const allEquipment = getAllEquipmentItems();
+    const allEquipment = getAllEquipmentItemsForLookup();
     
     for (const item of allEquipment) {
       // Index by ID

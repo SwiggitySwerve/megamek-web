@@ -45,7 +45,7 @@ export function EquipmentBrowser({
     sortColumn,
     sortDirection,
     setSearch,
-    toggleCategory,
+    selectCategory,
     showAll,
     toggleHidePrototype,
     toggleHideOneShot,
@@ -85,7 +85,7 @@ export function EquipmentBrowser({
         {/* Category toggles */}
         <CategoryToggleBar
           activeCategories={activeCategories}
-          onToggleCategory={toggleCategory}
+          onSelectCategory={selectCategory}
           onShowAll={showAll}
           showAll={showAllCategories}
         />

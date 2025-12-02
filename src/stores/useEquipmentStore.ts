@@ -14,6 +14,15 @@ import { TechBase } from '@/types/enums/TechBase';
 import { EquipmentCategory, IEquipmentItem } from '@/types/equipment';
 
 /**
+ * Categories that should be included when "Other" (MISC_EQUIPMENT) is toggled.
+ * This makes "Other" a catch-all for anything not in primary weapon/ammo categories.
+ */
+const OTHER_COMBINED_CATEGORIES: readonly EquipmentCategory[] = [
+  EquipmentCategory.MISC_EQUIPMENT,
+  EquipmentCategory.ELECTRONICS,
+];
+
+/**
  * Sort direction
  */
 export type SortDirection = 'asc' | 'desc';
@@ -95,7 +104,10 @@ export interface EquipmentStoreState {
   setSearch: (search: string) => void;
   setTechBaseFilter: (techBase: TechBase | null) => void;
   setCategoryFilter: (category: EquipmentCategory | null) => void;
-  toggleCategory: (category: EquipmentCategory) => void;
+  /** 
+   * Handle category click - exclusive select by default, toggle if isMultiSelect is true (Ctrl+click)
+   */
+  selectCategory: (category: EquipmentCategory, isMultiSelect: boolean) => void;
   showAllCategories: () => void;
   toggleHidePrototype: () => void;
   toggleHideOneShot: () => void;
@@ -189,18 +201,52 @@ export const useEquipmentStore = create<EquipmentStoreState>((set, get) => ({
     pagination: { ...state.pagination, currentPage: 1 },
   })),
   
-  toggleCategory: (category) => set((state) => {
-    const newCategories = new Set(state.filters.activeCategories);
-    if (newCategories.has(category)) {
-      newCategories.delete(category);
+  selectCategory: (category, isMultiSelect) => set((state) => {
+    let newCategories: Set<EquipmentCategory>;
+    
+    if (isMultiSelect) {
+      // Ctrl+click: Toggle mode - add/remove from existing selection
+      newCategories = new Set(state.filters.activeCategories);
+      
+      // "Other" (MISC_EQUIPMENT) is a combined category that includes Electronics
+      if (category === EquipmentCategory.MISC_EQUIPMENT) {
+        const isOtherActive = newCategories.has(EquipmentCategory.MISC_EQUIPMENT);
+        
+        if (isOtherActive) {
+          for (const cat of OTHER_COMBINED_CATEGORIES) {
+            newCategories.delete(cat);
+          }
+        } else {
+          for (const cat of OTHER_COMBINED_CATEGORIES) {
+            newCategories.add(cat);
+          }
+        }
+      } else {
+        if (newCategories.has(category)) {
+          newCategories.delete(category);
+        } else {
+          newCategories.add(category);
+        }
+      }
     } else {
-      newCategories.add(category);
+      // Regular click: Exclusive mode - select only this category
+      newCategories = new Set<EquipmentCategory>();
+      
+      if (category === EquipmentCategory.MISC_EQUIPMENT) {
+        // Add all "Other" combined categories
+        for (const cat of OTHER_COMBINED_CATEGORIES) {
+          newCategories.add(cat);
+        }
+      } else {
+        newCategories.add(category);
+      }
     }
+    
     return {
       filters: { 
         ...state.filters, 
         activeCategories: newCategories,
-        showAllCategories: false, // When toggling individual categories, disable show all
+        showAllCategories: false,
       },
       pagination: { ...state.pagination, currentPage: 1 },
     };
@@ -299,8 +345,19 @@ export const useEquipmentStore = create<EquipmentStoreState>((set, get) => ({
     }
     
     // Toggle category filter (multi-select)
+    // Check both primary category and additionalCategories
     if (!filters.showAllCategories && filters.activeCategories.size > 0) {
-      filtered = filtered.filter(e => filters.activeCategories.has(e.category));
+      filtered = filtered.filter(e => {
+        // Check primary category
+        if (filters.activeCategories.has(e.category)) {
+          return true;
+        }
+        // Check additional categories (for dual-purpose equipment like AMS)
+        if (e.additionalCategories) {
+          return e.additionalCategories.some(cat => filters.activeCategories.has(cat));
+        }
+        return false;
+      });
     }
     
     // Hide prototype equipment (check for rulesLevel === 'Experimental' or name contains 'Prototype')

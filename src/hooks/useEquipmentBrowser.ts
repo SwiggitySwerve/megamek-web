@@ -47,7 +47,8 @@ export interface EquipmentBrowserState {
   readonly setSearch: (search: string) => void;
   readonly setTechBaseFilter: (techBase: TechBase | null) => void;
   readonly setCategoryFilter: (category: EquipmentCategory | null) => void;
-  readonly toggleCategory: (category: EquipmentCategory) => void;
+  /** Select category - exclusive by default, multi-select with Ctrl+click */
+  readonly selectCategory: (category: EquipmentCategory, isMultiSelect: boolean) => void;
   readonly showAll: () => void;
   readonly toggleHidePrototype: () => void;
   readonly toggleHideOneShot: () => void;
@@ -86,7 +87,7 @@ export function useEquipmentBrowser(): EquipmentBrowserState {
     setSearch,
     setTechBaseFilter,
     setCategoryFilter,
-    toggleCategory,
+    selectCategory,
     showAllCategories,
     toggleHidePrototype,
     toggleHideOneShot,
@@ -122,8 +123,30 @@ export function useEquipmentBrowser(): EquipmentBrowserState {
   }, [setEquipment, setLoading, setError]);
   
   // Memoized filtered and paginated equipment
-  const filteredEquipment = useMemo(() => getFilteredEquipment(), [getFilteredEquipment]);
-  const paginatedEquipment = useMemo(() => getPaginatedEquipment(), [getPaginatedEquipment]);
+  // Include filter values in dependencies to trigger re-computation when filters change
+  const filteredEquipment = useMemo(
+    () => getFilteredEquipment(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      getFilteredEquipment,
+      equipment,
+      filters.search,
+      filters.techBase,
+      filters.category,
+      filters.activeCategories,
+      filters.showAllCategories,
+      filters.hidePrototype,
+      filters.hideOneShot,
+      filters.hideUnavailable,
+      sort.column,
+      sort.direction,
+    ]
+  );
+  const paginatedEquipment = useMemo(
+    () => getPaginatedEquipment(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [getPaginatedEquipment, filteredEquipment, pagination.currentPage, pagination.pageSize]
+  );
   
   // Total pages calculation
   const totalPages = useMemo(
@@ -175,7 +198,7 @@ export function useEquipmentBrowser(): EquipmentBrowserState {
     setSearch,
     setTechBaseFilter,
     setCategoryFilter,
-    toggleCategory,
+    selectCategory,
     showAll: showAllCategories,
     toggleHidePrototype,
     toggleHideOneShot,

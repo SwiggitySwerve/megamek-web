@@ -42,7 +42,7 @@
 ## 7. Structural Slot Handling
 - [x] 7.1 Add slot calculation for Endo Steel (14 IS / 7 Clan) - already in useUnitCalculations
 - [x] 7.2 Add slot calculation for Ferro-Fibrous (14 IS / 7 Clan) - already in useUnitCalculations
-- [ ] 7.3 Update Critical Slots display to show structural slots with distinct "unhittable" styling
+- [x] 7.3 Update Critical Slots display to show structural slots with distinct "unhittable" styling
 - [x] 7.4 Ensure structural slots appear in total slot count but not in loadout tray
 
 ## 8. Spec Updates
@@ -59,4 +59,4 @@
 - [x] 9.6 Verify tray visibility across all tabs
 - [x] 9.7 Verify status bar updates in real-time
 - [x] 9.8 Test tray collapse/expand persistence
-- [ ] 9.9 Verify structural slots display correctly in Criticals tab
+- [x] 9.9 Verify structural slots display correctly in Criticals tab

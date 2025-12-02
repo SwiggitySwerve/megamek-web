@@ -1,7 +1,7 @@
 # equipment-browser Specification
 
 ## Purpose
-TBD - created by archiving change add-customizer-ui-components. Update Purpose after archive.
+Provides a searchable, filterable equipment catalog UI for adding equipment to BattleMech units.
 ## Requirements
 ### Requirement: Equipment Table Display
 The system SHALL display equipment in a sortable table format.
@@ -30,6 +30,48 @@ The system SHALL provide filters for narrowing equipment selection.
 - **THEN** equipment is filtered by name match
 - **AND** search is case-insensitive
 
+### Requirement: Category Toggle Selection
+The system SHALL provide toggle buttons for category filtering with exclusive and multi-select modes.
+
+#### Scenario: Exclusive selection (single click)
+- **WHEN** user clicks a category button
+- **THEN** only that category is selected
+- **AND** all other categories are deselected
+- **AND** equipment list shows only items in that category
+
+#### Scenario: Multi-select (Ctrl+click)
+- **WHEN** user Ctrl+clicks (or Cmd+clicks on Mac) a category button
+- **THEN** category is toggled (added or removed from selection)
+- **AND** other selected categories remain selected
+- **AND** equipment list shows items in all selected categories
+
+#### Scenario: Show All button
+- **WHEN** user clicks "Show All"
+- **THEN** all category filters are cleared
+- **AND** equipment list shows all available equipment
+
+### Requirement: Combined "Other" Category
+The system SHALL treat "Other" as a combined category for non-primary equipment.
+
+#### Scenario: Other category contents
+- **WHEN** "Other" category is selected
+- **THEN** equipment list includes Electronics category items
+- **AND** equipment list includes Misc Equipment category items
+- **AND** equipment list includes items with additionalCategories containing MISC_EQUIPMENT
+
+#### Scenario: Dual-category equipment visibility
+- **WHEN** equipment has additionalCategories (e.g., AMS)
+- **THEN** equipment appears when its primary category is selected
+- **AND** equipment appears when any of its additionalCategories is selected
+
+### Requirement: Excluded Equipment
+The system SHALL exclude equipment configured via the Structure tab.
+
+#### Scenario: Structure-tab equipment
+- **WHEN** equipment browser loads items
+- **THEN** Jump Jets are NOT displayed (configured in Movement section)
+- **AND** Heat Sinks are NOT displayed (configured in Heat Sink section)
+
 ### Requirement: Pagination
 The system SHALL paginate large equipment lists.
 
@@ -40,13 +82,13 @@ The system SHALL paginate large equipment lists.
 - **AND** page size can be changed (10, 25, 50, 100)
 
 ### Requirement: Add Equipment Action
-The system SHALL provide a button to add equipment to the unit.
+The system SHALL provide an Add button for each equipment row to add it to the unit.
 
-#### Scenario: Add equipment
+#### Scenario: Add equipment from row
 - **WHEN** user clicks Add button on equipment row
-- **THEN** equipment is added to unallocated equipment list
-- **AND** success feedback is shown
-- **AND** equipment tray updates
+- **THEN** equipment is added to the unit's mounted equipment list
+- **AND** loadout sidebar updates to show the new item
+- **AND** status bar totals update immediately
 
 ### Requirement: Equipment Details Display
 The system SHALL display relevant equipment statistics.

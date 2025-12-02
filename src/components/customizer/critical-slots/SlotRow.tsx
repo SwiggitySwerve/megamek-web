@@ -10,8 +10,8 @@ import React, { useState, memo } from 'react';
 import { SlotContent } from './CriticalSlotsDisplay';
 import { 
   getSlotColors, 
-  getSlotColorClasses, 
-  classifySystemComponent 
+  classifySystemComponent,
+  isUnhittableComponent,
 } from '@/utils/colors/slotColors';
 import { 
   classifyEquipment, 
@@ -46,7 +46,8 @@ function getSlotContentClasses(slot: SlotContent): string {
   if (slot.type === 'system' && slot.name) {
     const componentType = classifySystemComponent(slot.name);
     const colors = getSlotColors(componentType);
-    return `${colors.bg} ${colors.border} ${colors.text} border-solid`;
+    // Unhittable components use dashed border (already in color definition)
+    return `${colors.bg} ${colors.border} ${colors.text}`;
   }
   
   if (slot.type === 'equipment' && slot.name) {
@@ -56,6 +57,15 @@ function getSlotContentClasses(slot: SlotContent): string {
   }
   
   return 'bg-slate-700 border-slate-600 text-slate-300';
+}
+
+/**
+ * Check if a slot contains an unhittable component (Endo Steel, Ferro-Fibrous)
+ */
+function isUnhittableSlot(slot: SlotContent): boolean {
+  if (slot.type !== 'system' || !slot.name) return false;
+  const componentType = classifySystemComponent(slot.name);
+  return isUnhittableComponent(componentType);
 }
 
 /**
