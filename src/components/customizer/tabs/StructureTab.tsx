@@ -421,16 +421,16 @@ export function StructureTab({
           
           <div className={cs.layout.formStack}>
             {/* Column Headers */}
-            <div className="grid grid-cols-[140px_1fr_50px] gap-2 items-center">
+            <div className="grid grid-cols-[140px_112px_1fr] gap-2 items-center">
               <span></span>
-              <span className={`${cs.text.secondary} uppercase`}>Base</span>
+              <span className={`${cs.text.secondary} text-center uppercase`}>Base</span>
               <span className={`${cs.text.secondary} text-center uppercase`}>Final</span>
             </div>
             
             {/* Walk MP */}
-            <div className="grid grid-cols-[140px_1fr_50px] gap-2 items-center">
+            <div className="grid grid-cols-[140px_112px_1fr] gap-2 items-center">
               <label className={cs.text.label}>Walk MP</label>
-              <div className="flex items-center">
+              <div className="flex items-center justify-center">
                 <button
                   onClick={() => handleWalkMPChange(walkMP - 1)}
                   disabled={readOnly || walkMP <= walkMPRange.min}
@@ -458,16 +458,10 @@ export function StructureTab({
               <span className={`text-sm ${cs.text.value} text-center`}>{walkMP}</span>
             </div>
             
-            {/* Run MP (calculated) */}
-            <div className="grid grid-cols-[140px_1fr_50px] gap-2 items-center">
+            {/* Run MP (calculated) - no stepper, just centered value */}
+            <div className="grid grid-cols-[140px_112px_1fr] gap-2 items-center">
               <label className={cs.text.label}>Run MP</label>
-              <div className="flex items-center">
-                {/* Empty space matching stepper button width for alignment */}
-                <div className="w-9"></div>
-                <div className="w-12 text-center">
-                  <span className={`text-sm ${cs.text.value}`}>{runMP}</span>
-                </div>
-              </div>
+              <span className={`text-sm ${cs.text.value} text-center`}>{runMP}</span>
               <div className="flex items-center justify-center gap-1">
                 <span className={`text-sm ${cs.text.value}`}>{runMP}</span>
                 {maxRunMP && (
@@ -490,9 +484,9 @@ export function StructureTab({
             </div>
             
             {/* Jump/UMU MP */}
-            <div className="grid grid-cols-[140px_1fr_50px] gap-2 items-center">
+            <div className="grid grid-cols-[140px_112px_1fr] gap-2 items-center">
               <label className={cs.text.label}>Jump MP</label>
-              <div className="flex items-center">
+              <div className="flex items-center justify-center">
                 <button
                   onClick={() => handleJumpMPChange(jumpMP - 1)}
                   disabled={readOnly || jumpMP <= 0}
@@ -521,7 +515,7 @@ export function StructureTab({
             </div>
             
             {/* Jump Type */}
-            <div className="grid grid-cols-[140px_1fr_50px] gap-2 items-center">
+            <div className="grid grid-cols-[140px_1fr] gap-2 items-center">
               <label className={cs.text.label}>Jump Type</label>
               <select 
                 className={cs.select.inline}
@@ -535,18 +529,19 @@ export function StructureTab({
                   </option>
                 ))}
               </select>
-              <span></span>
             </div>
             
             {/* Mech. J. Booster MP (placeholder) */}
-            <div className="grid grid-cols-[140px_1fr_50px] gap-2 items-center">
+            <div className="grid grid-cols-[140px_112px_1fr] gap-2 items-center">
               <label className={cs.text.label}>Mech. J. Booster MP</label>
-              <input
-                type="number"
-                value={0}
-                disabled={true}
-                className={`w-16 ${cs.input.compact} opacity-50 ${cs.input.noSpinners}`}
-              />
+              <div className="flex items-center justify-center">
+                <input
+                  type="number"
+                  value={0}
+                  disabled={true}
+                  className={`w-12 ${cs.input.compact} text-center opacity-50 ${cs.input.noSpinners}`}
+                />
+              </div>
               <span></span>
             </div>
             
@@ -562,7 +557,7 @@ export function StructureTab({
             {/* Enhancement Subsection */}
             <div className={`${cs.layout.divider} mt-2`}>
               <h4 className="text-sm font-semibold text-slate-300 mb-3">Enhancement</h4>
-              <div className="grid grid-cols-[140px_1fr_50px] gap-2 items-center">
+              <div className="grid grid-cols-[140px_1fr] gap-2 items-center">
                 <label className={cs.text.label}>Type</label>
                 <select 
                   className={cs.select.inline}
@@ -579,7 +574,6 @@ export function StructureTab({
                     </option>
                   ))}
                 </select>
-                <span></span>
               </div>
               {enhancement && (
                 <p className={`${cs.text.secondary} mt-2`}>
