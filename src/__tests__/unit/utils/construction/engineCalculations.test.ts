@@ -309,19 +309,20 @@ describe('Engine Calculations', () => {
   // calculateIntegralHeatSinks
   // ============================================================================
   describe('calculateIntegralHeatSinks', () => {
-    // From engine-system/spec.md:
-    // #### Scenario: Integral heat sink count
-    // - **THEN** count = min(10, floor(rating / 25))
+    // From heat-sink-system/spec.md:
+    // #### Scenario: Integral heat sinks
+    // - **THEN** capacity = floor(engineRating / 25) with no maximum cap
     describe('fusion engines', () => {
       it.each([
         [50, 2],    // floor(50/25) = 2
         [75, 3],    // floor(75/25) = 3
         [100, 4],   // floor(100/25) = 4
         [200, 8],   // floor(200/25) = 8
-        [250, 10],  // min(10, floor(250/25)) = min(10, 10) = 10
-        [275, 10],  // min(10, floor(275/25)) = min(10, 11) = 10 (capped)
-        [300, 10],  // capped at 10
-        [400, 10],  // capped at 10
+        [250, 10],  // floor(250/25) = 10
+        [275, 11],  // floor(275/25) = 11
+        [300, 12],  // floor(300/25) = 12
+        [400, 16],  // floor(400/25) = 16
+        [500, 20],  // floor(500/25) = 20 (max rating)
       ])('Standard Fusion rating %d has %d integral heat sinks', (rating, expected) => {
         expect(calculateIntegralHeatSinks(rating, EngineType.STANDARD)).toBe(expected);
       });

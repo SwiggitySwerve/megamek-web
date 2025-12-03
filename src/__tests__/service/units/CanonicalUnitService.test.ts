@@ -303,7 +303,7 @@ describe('CanonicalUnitService', () => {
   describe('query()', () => {
     beforeEach(() => {
       const mockIndex = [
-        createMockIndexEntry({ id: '1', techBase: TechBase.INNER_SPHERE, tonnage: 50, era: Era.SUCCESSION_WARS, weightClass: WeightClass.MEDIUM }),
+        createMockIndexEntry({ id: '1', techBase: TechBase.INNER_SPHERE, tonnage: 50, era: Era.LATE_SUCCESSION_WARS, weightClass: WeightClass.MEDIUM }),
         createMockIndexEntry({ id: '2', techBase: TechBase.CLAN, tonnage: 75, era: Era.CLAN_INVASION, weightClass: WeightClass.HEAVY }),
         createMockIndexEntry({ id: '3', techBase: TechBase.INNER_SPHERE, tonnage: 100, era: Era.STAR_LEAGUE, weightClass: WeightClass.ASSAULT }),
       ];
@@ -328,7 +328,7 @@ describe('CanonicalUnitService', () => {
     });
 
     it('should filter by era', async () => {
-      const result = await service.query({ era: Era.SUCCESSION_WARS });
+      const result = await service.query({ era: Era.LATE_SUCCESSION_WARS });
       
       expect(result).toHaveLength(1);
       expect(result[0].id).toBe('1');

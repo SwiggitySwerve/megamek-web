@@ -15,7 +15,7 @@ import {
   getIntroductionEra,
   getExtinctionEra,
   getAvailableEras,
-  ITemporalEntity,
+  MinimalTemporalEntity,
 } from '@/utils/temporal/availabilityUtils';
 import { Era } from '@/types/temporal/Era';
 
@@ -23,7 +23,7 @@ describe('availabilityUtils', () => {
   /**
    * Create a mock temporal entity
    */
-  function createEntity(introductionYear: number, extinctionYear?: number): ITemporalEntity {
+  function createEntity(introductionYear: number, extinctionYear?: number): MinimalTemporalEntity {
     return { introductionYear, extinctionYear };
   }
 
@@ -225,7 +225,7 @@ describe('availabilityUtils', () => {
     });
 
     it('should preserve entity type', () => {
-      interface ExtendedEntity extends ITemporalEntity {
+      interface ExtendedEntity extends MinimalTemporalEntity {
         name: string;
       }
       
@@ -287,10 +287,10 @@ describe('availabilityUtils', () => {
       expect(getIntroductionEra(entity)).toBe(Era.CLAN_INVASION);
     });
 
-    it('should return undefined for year outside eras', () => {
+    it('should return Early Spaceflight for year 1000', () => {
       const entity = createEntity(1000);
       
-      expect(getIntroductionEra(entity)).toBeUndefined();
+      expect(getIntroductionEra(entity)).toBe(Era.EARLY_SPACEFLIGHT);
     });
   });
 

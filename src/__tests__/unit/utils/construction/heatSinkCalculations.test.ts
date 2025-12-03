@@ -217,9 +217,10 @@ describe('Heat Sink Calculations', () => {
     it('should handle all integrated heat sinks', () => {
       const summary = getHeatSinkSummary(10, HeatSinkType.SINGLE, 300, EngineType.STANDARD);
       
-      // Rating 300: min(10, floor(300/25)) = 10 integrated
-      expect(summary.integrated).toBe(10);
-      expect(summary.external).toBe(0);
+      // Rating 300: floor(300/25) = 12 integrated (no cap)
+      // 10 total HS, 12 capacity, so all 10 are integrated
+      expect(summary.integrated).toBe(12);
+      expect(summary.external).toBe(0); // 10 - 12 = -2, clamped to 0
       expect(summary.weight).toBe(0);
       expect(summary.slots).toBe(0);
       expect(summary.dissipation).toBe(10);

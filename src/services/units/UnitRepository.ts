@@ -82,7 +82,7 @@ export class UnitRepository implements IUnitRepository {
     const unitData = request.data;
     const tonnage = (unitData.tonnage as number) || 0;
     const techBase = (unitData.techBase as string) || TechBase.INNER_SPHERE;
-    const era = (unitData.era as string) || Era.SUCCESSION_WARS;
+    const era = (unitData.era as string) || Era.LATE_SUCCESSION_WARS;
     const rulesLevel = (unitData.rulesLevel as string) || RulesLevel.STANDARD;
     const unitType = (unitData.unitType as string) || 'BattleMech';
 

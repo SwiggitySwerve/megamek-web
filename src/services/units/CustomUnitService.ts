@@ -174,7 +174,7 @@ export class CustomUnitService implements ICustomUnitService {
       variant: unit.variant,
       tonnage,
       techBase: unit.techBase as TechBase || TechBase.INNER_SPHERE,
-      era: unit.era as Era || Era.SUCCESSION_WARS,
+      era: unit.era as Era || Era.LATE_SUCCESSION_WARS,
       weightClass: getWeightClass(tonnage),
       unitType: (unit.unitType as IUnitIndexEntry['unitType']) || 'BattleMech',
       filePath: '', // Custom units don't have file paths

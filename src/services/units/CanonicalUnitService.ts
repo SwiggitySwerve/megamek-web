@@ -52,19 +52,21 @@ function mapRawToIndexEntry(raw: RawUnitIndexEntry): IUnitIndexEntry {
   }
   
   // Map era from file path (e.g., "2-star-league/standard/...")
-  let era: Era = Era.SUCCESSION_WARS;
+  let era: Era = Era.LATE_SUCCESSION_WARS;
   if (raw.path.includes('1-age-of-war')) {
     era = Era.AGE_OF_WAR;
   } else if (raw.path.includes('2-star-league')) {
     era = Era.STAR_LEAGUE;
   } else if (raw.path.includes('3-succession-wars')) {
-    era = Era.SUCCESSION_WARS;
+    era = Era.LATE_SUCCESSION_WARS;
   } else if (raw.path.includes('4-clan-invasion')) {
     era = Era.CLAN_INVASION;
   } else if (raw.path.includes('5-civil-war')) {
     era = Era.CIVIL_WAR;
   } else if (raw.path.includes('6-dark-age')) {
     era = Era.DARK_AGE;
+  } else if (raw.path.includes('7-ilclan')) {
+    era = Era.IL_CLAN;
   }
   
   return {

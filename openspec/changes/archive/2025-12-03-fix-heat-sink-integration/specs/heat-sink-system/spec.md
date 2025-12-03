@@ -1,21 +1,6 @@
-# heat-sink-system Specification
+# heat-sink-system Spec Delta
 
-## Purpose
-TBD - created by archiving change implement-phase2-construction. Update Purpose after archive.
-## Requirements
-### Requirement: Heat Sink Types
-The system SHALL support 5 heat sink types.
-
-#### Scenario: Single heat sinks
-- **WHEN** using single heat sinks
-- **THEN** each sink dissipates 1 heat per turn
-- **AND** external sinks require 1 critical slot each
-
-#### Scenario: Double heat sinks
-- **WHEN** using double heat sinks
-- **THEN** each sink dissipates 2 heat per turn
-- **AND** IS double sinks require 3 slots external
-- **AND** Clan double sinks require 2 slots external
+## MODIFIED Requirements
 
 ### Requirement: Engine Integration
 Heat sinks up to engine capacity SHALL be integral.
@@ -36,13 +21,7 @@ Heat sinks up to engine capacity SHALL be integral.
 - **THEN** integral capacity SHALL be 12 (300 / 25)
 - **AND** 12 heat sinks can be integrated without slots
 
-### Requirement: Minimum Heat Sinks
-All mechs SHALL have at least 10 heat sinks.
-
-#### Scenario: Minimum requirement
-- **WHEN** validating heat sink count
-- **THEN** total MUST be >= 10
-- **AND** shortfall SHALL be calculated as external sinks needed
+## ADDED Requirements
 
 ### Requirement: External Heat Sink Equipment
 Heat sinks exceeding engine integral capacity SHALL appear as equipment items.

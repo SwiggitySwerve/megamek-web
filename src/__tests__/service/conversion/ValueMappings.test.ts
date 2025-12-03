@@ -100,7 +100,7 @@ describe('ValueMappings', () => {
     it('should map year numbers to eras', () => {
       expect(mapEra(2400)).toBe(Era.AGE_OF_WAR);
       expect(mapEra(2750)).toBe(Era.STAR_LEAGUE);
-      expect(mapEra(3000)).toBe(Era.SUCCESSION_WARS);
+      expect(mapEra(3000)).toBe(Era.LATE_SUCCESSION_WARS);
       expect(mapEra(3050)).toBe(Era.CLAN_INVASION);
     });
 
@@ -112,15 +112,15 @@ describe('ValueMappings', () => {
     it('should map era names', () => {
       expect(mapEra('Age of War')).toBe(Era.AGE_OF_WAR);
       expect(mapEra('Star League')).toBe(Era.STAR_LEAGUE);
-      expect(mapEra('Succession Wars')).toBe(Era.SUCCESSION_WARS);
+      expect(mapEra('Late Succession Wars')).toBe(Era.LATE_SUCCESSION_WARS);
       expect(mapEra('Clan Invasion')).toBe(Era.CLAN_INVASION);
       expect(mapEra('Civil War')).toBe(Era.CIVIL_WAR);
       expect(mapEra('Dark Age')).toBe(Era.DARK_AGE);
-      expect(mapEra('ilClan')).toBe(Era.ILCLAN);
+      expect(mapEra('ilClan')).toBe(Era.IL_CLAN);
     });
 
-    it('should default to Succession Wars for unknown values', () => {
-      expect(mapEra('Unknown')).toBe(Era.SUCCESSION_WARS);
+    it('should default to Late Succession Wars for unknown values', () => {
+      expect(mapEra('Unknown')).toBe(Era.LATE_SUCCESSION_WARS);
     });
   });
 

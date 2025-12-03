@@ -137,6 +137,8 @@ export function useUnitCalculations(
       : 5;
     
     // Heat sink slots (only external heat sinks need slots)
+    // Note: heatSinkSlots is tracked for reference but NOT included in totalSystemSlots
+    // because heat sinks are now in the equipment array (like Jump Jets, Endo Steel, Ferro-Fibrous)
     const heatSinkSlots = heatSinkDef 
       ? externalHeatSinks * heatSinkDef.criticalSlots
       : externalHeatSinks;
@@ -145,16 +147,15 @@ export function useUnitCalculations(
     const armorSlots = getArmorCriticalSlots(selections.armorType);
     
     // Total system slots 
-    // Note: structureSlots, armorSlots, and jumpJetSlots are NOT included here
+    // Note: structureSlots, armorSlots, jumpJetSlots, and heatSinkSlots are NOT included here
     // because they are tracked in the equipment array and counted in equipmentCalcs.totalSlots.
     // Only include fixed system components not in equipment array:
     // - Engine (CT + side torso)
     // - Gyro
     // - Cockpit (life support, sensors, cockpit itself)
-    // - External heat sinks
     // - Actuators (fixed at 16: 4 per arm, 4 per leg)
     const actuatorSlots = 16; // Shoulder, upper arm, lower arm, hand × 2; Hip, upper leg, lower leg, foot × 2
-    const totalSystemSlots = engineSlots + gyroSlots + cockpitSlots + heatSinkSlots + actuatorSlots;
+    const totalSystemSlots = engineSlots + gyroSlots + cockpitSlots + actuatorSlots;
     
     // =========================================================================
     // Heat Calculations

@@ -72,7 +72,9 @@ import {
   ComponentSelections,
 } from '@/utils/techBaseValidation';
 import { JumpJetType, getMaxJumpMP, getJumpJetDefinition } from '@/utils/construction/movementCalculations';
-import { JUMP_JETS, MiscEquipmentCategory } from '@/types/equipment/MiscEquipmentTypes';
+import { JUMP_JETS, HEAT_SINKS, MiscEquipmentCategory } from '@/types/equipment/MiscEquipmentTypes';
+import { HeatSinkType, getHeatSinkDefinition } from '@/types/construction/HeatSinkType';
+import { calculateIntegralHeatSinks } from '@/utils/construction/engineCalculations';
 import { EquipmentCategory } from '@/types/equipment';
 import {
   getEquipmentDisplacedByEngineChange,
@@ -290,6 +292,83 @@ function createArmorEquipmentList(
  */
 function filterOutArmorSlots(equipment: readonly IMountedEquipmentInstance[]): IMountedEquipmentInstance[] {
   return equipment.filter(e => !e.equipmentId.startsWith(ARMOR_SLOTS_EQUIPMENT_ID));
+}
+
+// =============================================================================
+// Heat Sink Equipment Helpers
+// =============================================================================
+
+/** Heat sink equipment IDs from MiscEquipmentTypes */
+const HEAT_SINK_EQUIPMENT_IDS = HEAT_SINKS.map(hs => hs.id);
+
+/**
+ * Get the heat sink equipment ID for a given HeatSinkType
+ */
+function getHeatSinkEquipmentId(heatSinkType: HeatSinkType): string {
+  switch (heatSinkType) {
+    case HeatSinkType.SINGLE:
+      return 'single-heat-sink';
+    case HeatSinkType.DOUBLE_IS:
+      return 'double-heat-sink';
+    case HeatSinkType.DOUBLE_CLAN:
+      return 'clan-double-heat-sink';
+    case HeatSinkType.COMPACT:
+      return 'compact-heat-sink';
+    case HeatSinkType.LASER:
+      return 'laser-heat-sink';
+    default:
+      return 'single-heat-sink';
+  }
+}
+
+/**
+ * Get the heat sink equipment item for a given HeatSinkType
+ */
+function getHeatSinkEquipment(heatSinkType: HeatSinkType) {
+  const id = getHeatSinkEquipmentId(heatSinkType);
+  return HEAT_SINKS.find(hs => hs.id === id);
+}
+
+/**
+ * Create heat sink equipment instances for external heat sinks
+ * External heat sinks are those that exceed the engine's integral capacity.
+ * These are configuration-based components and NOT removable via the loadout tray.
+ */
+function createHeatSinkEquipmentList(
+  heatSinkType: HeatSinkType,
+  externalCount: number
+): IMountedEquipmentInstance[] {
+  if (externalCount <= 0) return [];
+  
+  const hsEquip = getHeatSinkEquipment(heatSinkType);
+  if (!hsEquip) return [];
+  
+  const result: IMountedEquipmentInstance[] = [];
+  for (let i = 0; i < externalCount; i++) {
+    result.push({
+      instanceId: generateUnitId(),
+      equipmentId: hsEquip.id,
+      name: hsEquip.name,
+      category: EquipmentCategory.MISC_EQUIPMENT, // Heat sinks are categorized as misc equipment
+      weight: 0, // Weight is calculated separately in heat sink weight (external only pay weight once)
+      criticalSlots: hsEquip.criticalSlots,
+      heat: 0,
+      techBase: hsEquip.techBase,
+      location: undefined,
+      slots: undefined,
+      isRearMounted: false,
+      linkedAmmoId: undefined,
+      isRemovable: false, // Configuration component - managed via Structure tab
+    });
+  }
+  return result;
+}
+
+/**
+ * Filter out heat sink equipment from the equipment array
+ */
+function filterOutHeatSinks(equipment: readonly IMountedEquipmentInstance[]): IMountedEquipmentInstance[] {
+  return equipment.filter(e => !HEAT_SINK_EQUIPMENT_IDS.includes(e.equipmentId));
 }
 
 // =============================================================================
@@ -518,10 +597,17 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
           );
           
           // Unallocate displaced equipment
-          const updatedEquipment = applyDisplacement(
+          let updatedEquipment = applyDisplacement(
             state.equipment,
             displaced.displacedEquipmentIds
           );
+          
+          // Re-sync heat sink equipment since integral capacity may have changed
+          const integralHeatSinks = calculateIntegralHeatSinks(state.engineRating, type);
+          const externalHeatSinks = Math.max(0, state.heatSinkCount - integralHeatSinks);
+          const nonHeatSinkEquipment = filterOutHeatSinks(updatedEquipment);
+          const heatSinkEquipment = createHeatSinkEquipmentList(state.heatSinkType, externalHeatSinks);
+          updatedEquipment = [...nonHeatSinkEquipment, ...heatSinkEquipment];
           
           return {
             engineType: type,
@@ -531,10 +617,19 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
           };
         }),
         
-        setEngineRating: (rating) => set({
-          engineRating: rating,
-          isModified: true,
-          lastModifiedAt: Date.now(),
+        setEngineRating: (rating) => set((state) => {
+          // Re-sync heat sink equipment since integral capacity changes with rating
+          const integralHeatSinks = calculateIntegralHeatSinks(rating, state.engineType);
+          const externalHeatSinks = Math.max(0, state.heatSinkCount - integralHeatSinks);
+          const nonHeatSinkEquipment = filterOutHeatSinks(state.equipment);
+          const heatSinkEquipment = createHeatSinkEquipmentList(state.heatSinkType, externalHeatSinks);
+          
+          return {
+            engineRating: rating,
+            equipment: [...nonHeatSinkEquipment, ...heatSinkEquipment],
+            isModified: true,
+            lastModifiedAt: Date.now(),
+          };
         }),
         
         setGyroType: (type) => set((state) => {
@@ -579,16 +674,38 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
           lastModifiedAt: Date.now(),
         }),
         
-        setHeatSinkType: (type) => set({
-          heatSinkType: type,
-          isModified: true,
-          lastModifiedAt: Date.now(),
+        setHeatSinkType: (type) => set((state) => {
+          // Calculate external heat sinks based on engine capacity
+          const integralHeatSinks = calculateIntegralHeatSinks(state.engineRating, state.engineType);
+          const externalHeatSinks = Math.max(0, state.heatSinkCount - integralHeatSinks);
+          
+          // Sync equipment - remove old heat sinks, add new ones with new type
+          const nonHeatSinkEquipment = filterOutHeatSinks(state.equipment);
+          const heatSinkEquipment = createHeatSinkEquipmentList(type, externalHeatSinks);
+          
+          return {
+            heatSinkType: type,
+            equipment: [...nonHeatSinkEquipment, ...heatSinkEquipment],
+            isModified: true,
+            lastModifiedAt: Date.now(),
+          };
         }),
         
-        setHeatSinkCount: (count) => set({
-          heatSinkCount: count,
-          isModified: true,
-          lastModifiedAt: Date.now(),
+        setHeatSinkCount: (count) => set((state) => {
+          // Calculate external heat sinks based on engine capacity
+          const integralHeatSinks = calculateIntegralHeatSinks(state.engineRating, state.engineType);
+          const externalHeatSinks = Math.max(0, count - integralHeatSinks);
+          
+          // Sync equipment - remove old heat sinks, add new ones with updated count
+          const nonHeatSinkEquipment = filterOutHeatSinks(state.equipment);
+          const heatSinkEquipment = createHeatSinkEquipmentList(state.heatSinkType, externalHeatSinks);
+          
+          return {
+            heatSinkCount: count,
+            equipment: [...nonHeatSinkEquipment, ...heatSinkEquipment],
+            isModified: true,
+            lastModifiedAt: Date.now(),
+          };
         }),
         
         setArmorType: (type) => set((state) => {

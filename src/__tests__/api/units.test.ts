@@ -145,7 +145,7 @@ describe('/api/units', () => {
 
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'GET',
-        query: { era: Era.SUCCESSION_WARS },
+        query: { era: Era.LATE_SUCCESSION_WARS },
       });
 
       await handler(req, res);
@@ -153,7 +153,7 @@ describe('/api/units', () => {
       expect(res._getStatusCode()).toBe(200);
       expect(mockQuery).toHaveBeenCalledWith(
         expect.objectContaining({
-          era: Era.SUCCESSION_WARS,
+          era: Era.LATE_SUCCESSION_WARS,
         })
       );
     });

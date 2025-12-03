@@ -86,17 +86,20 @@ export function mapEra(source: string | number): Era {
   
   // Try to match era name
   const eraMap: Record<string, Era> = {
+    'Early Spaceflight': Era.EARLY_SPACEFLIGHT,
     'Age of War': Era.AGE_OF_WAR,
     'Star League': Era.STAR_LEAGUE,
-    'Succession Wars': Era.SUCCESSION_WARS,
+    'Early Succession Wars': Era.EARLY_SUCCESSION_WARS,
+    'Late Succession Wars': Era.LATE_SUCCESSION_WARS,
+    'Renaissance': Era.RENAISSANCE,
     'Clan Invasion': Era.CLAN_INVASION,
     'Civil War': Era.CIVIL_WAR,
-    'Jihad': Era.CIVIL_WAR, // Jihad is within Civil War era
+    'Jihad': Era.JIHAD,
     'Dark Age': Era.DARK_AGE,
-    'ilClan': Era.ILCLAN,
+    'ilClan': Era.IL_CLAN,
   };
   
-  return eraMap[source] ?? Era.SUCCESSION_WARS;
+  return eraMap[source] ?? Era.LATE_SUCCESSION_WARS;
 }
 
 /**

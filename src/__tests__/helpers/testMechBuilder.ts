@@ -79,7 +79,7 @@ const DEFAULT_TEST_MECH: TestMech = {
   variant: 'HNK-4G',
   tonnage: 50,
   techBase: TechBase.INNER_SPHERE,
-  era: Era.SUCCESSION_WARS,
+  era: Era.LATE_SUCCESSION_WARS,
   rulesLevel: RulesLevel.STANDARD,
   weightClass: WeightClass.MEDIUM,
   engineType: EngineType.STANDARD,
@@ -213,7 +213,7 @@ export const CANONICAL_TEST_MECHS = {
     name: 'Hunchback HBK-4G',
     tonnage: 50,
     engineRating: 200,
-    era: Era.SUCCESSION_WARS,
+    era: Era.LATE_SUCCESSION_WARS,
   }),
   
   marauder: createHeavyMech({
@@ -229,7 +229,7 @@ export const CANONICAL_TEST_MECHS = {
     name: 'Atlas AS7-D',
     tonnage: 100,
     engineRating: 300,
-    era: Era.SUCCESSION_WARS,
+    era: Era.LATE_SUCCESSION_WARS,
   }),
   
   timberwolf: createClanMech({

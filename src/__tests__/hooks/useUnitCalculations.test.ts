@@ -677,13 +677,18 @@ describe('useUnitCalculations', () => {
         useUnitCalculations(50, clanXLBuild)
       );
       
-      // Clan should use fewer slots:
+      // Clan should use fewer slots in totalSystemSlots:
       // Engine: 10 vs 12 (2 fewer)
-      // Endo Steel: 7 vs 14 (7 fewer)
-      // Heat Sinks: 8 vs 12 (4 fewer)
-      // Total: 13 fewer slots
-      const expectedSlotSavings = 2 + 7 + 4;
+      // Note: Endo Steel and Heat Sinks are now tracked in equipment array, not totalSystemSlots
+      // So totalSystemSlots only differs by engine slots (2 fewer for Clan XL)
+      const expectedSlotSavings = 2; // Only engine difference
       expect(isResult.current.totalSystemSlots - clanResult.current.totalSystemSlots).toBe(expectedSlotSavings);
+      
+      // Heat sink slots still tracked for reference:
+      // IS Double: 4 external × 3 slots = 12
+      // Clan Double: 4 external × 2 slots = 8
+      expect(isResult.current.heatSinkSlots).toBe(12);
+      expect(clanResult.current.heatSinkSlots).toBe(8);
     });
   });
   

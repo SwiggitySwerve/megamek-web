@@ -191,7 +191,10 @@ export function getTotalEngineSlots(rating: number, engineType: EngineType): num
 /**
  * Calculate number of integral (free) heat sinks
  * 
- * count = min(10, floor(rating / 25))
+ * count = floor(rating / 25)
+ * 
+ * Per BattleTech TechManual, there is no cap on integral heat sinks.
+ * A 400-rating engine provides 16 integral heat sinks (400/25).
  * 
  * @param rating - Engine rating
  * @param engineType - Type of engine
@@ -204,7 +207,7 @@ export function calculateIntegralHeatSinks(rating: number, engineType: EngineTyp
     return 0;
   }
 
-  return Math.min(10, Math.floor(rating / 25));
+  return Math.floor(rating / 25);
 }
 
 /**

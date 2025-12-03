@@ -241,21 +241,24 @@ function parseEra(value: string): Era {
     case 'STAR_LEAGUE':
       return Era.STAR_LEAGUE;
     case 'EARLY_SUCCESSION_WARS':
+      return Era.EARLY_SUCCESSION_WARS;
     case 'LATE_SUCCESSION_WARS':
+      return Era.LATE_SUCCESSION_WARS;
     case 'RENAISSANCE':
-    case 'SUCCESSION_WARS':
-      return Era.SUCCESSION_WARS;
+      return Era.RENAISSANCE;
     case 'CLAN_INVASION':
       return Era.CLAN_INVASION;
     case 'CIVIL_WAR':
-    case 'JIHAD':
       return Era.CIVIL_WAR;
+    case 'JIHAD':
+      return Era.JIHAD;
     case 'DARK_AGE':
       return Era.DARK_AGE;
     case 'ILCLAN':
-      return Era.ILCLAN;
+    case 'IL_CLAN':
+      return Era.IL_CLAN;
     default:
-      return Era.SUCCESSION_WARS;
+      return Era.LATE_SUCCESSION_WARS;
   }
 }
 
@@ -422,8 +425,8 @@ export class UnitFactoryService {
       const heatSinks: IHeatSinkConfiguration = {
         type: parseHeatSinkType(data.heatSinks.type),
         total: data.heatSinks.count,
-        integrated: Math.min(10, engine.integralHeatSinks),
-        external: Math.max(0, data.heatSinks.count - Math.min(10, engine.integralHeatSinks)),
+        integrated: engine.integralHeatSinks,
+        external: Math.max(0, data.heatSinks.count - engine.integralHeatSinks),
       };
       
       // Build movement configuration

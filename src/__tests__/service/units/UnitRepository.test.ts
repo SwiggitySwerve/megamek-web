@@ -69,7 +69,7 @@ describe('UnitRepository', () => {
           variant: 'AS7-D-Test',
           tonnage: 100,
           techBase: TechBase.INNER_SPHERE,
-          era: Era.SUCCESSION_WARS,
+          era: Era.LATE_SUCCESSION_WARS,
           rulesLevel: RulesLevel.STANDARD,
           unitType: 'BattleMech',
         },

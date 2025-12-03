@@ -419,8 +419,10 @@ describe('UnitFactoryService', () => {
         });
         const result = factory.createFromSerialized(serialized);
 
-        expect(result.unit?.heatSinks.integrated).toBe(10);
-        expect(result.unit?.heatSinks.external).toBe(5);
+        // 300 / 25 = 12 integral heat sinks (no cap)
+        expect(result.unit?.heatSinks.integrated).toBe(12);
+        // 15 total - 12 integral = 3 external
+        expect(result.unit?.heatSinks.external).toBe(3);
       });
     });
 
