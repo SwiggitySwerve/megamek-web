@@ -160,7 +160,7 @@ function MovementStat({ walkMP, runMP, jumpMP, maxRunMP }: MovementStatProps) {
         <span className={styles.muted}>/</span>
         <span className="text-lg font-bold text-white">{runMP}</span>
         {hasEnhancement && (
-          <span className="text-sm font-bold text-cyan-400">[{maxRunMP}]</span>
+          <span className="text-lg font-bold text-white">[{maxRunMP}]</span>
         )}
         <span className={styles.muted}>/</span>
         <span className="text-lg font-bold text-white">{jumpMP}</span>
