@@ -2,15 +2,9 @@
  * Movement Enhancement Type Definitions
  * 
  * Defines MASC, TSM, Supercharger, and other movement enhancers.
+ * Static metadata only - for weight/slot calculations use EquipmentCalculatorService.
  * 
  * @spec openspec/specs/movement-system/spec.md
- * 
- * @deprecated The weight/slot functions in MOVEMENT_ENHANCEMENT_DEFINITIONS use incorrect
- * formulas (based on tonnage). For accurate calculations, use EquipmentCalculatorService
- * with the following variable equipment IDs:
- * - 'masc-is': ceil(engineRating / 20) for weight and slots
- * - 'masc-clan': ceil(engineRating / 25) for weight and slots
- * - 'supercharger': ceil(engineWeight / 10) rounded to 0.5t for weight, 1 slot (fixed)
  */
 
 import { TechBase } from '../enums/TechBase';
@@ -27,17 +21,20 @@ export enum MovementEnhancementType {
 }
 
 /**
- * Movement enhancement definition
+ * Movement enhancement definition (static metadata only)
+ * 
+ * For weight/slot calculations, use EquipmentCalculatorService with:
+ * - 'masc-is': IS MASC (tonnage × 5%, rounded to whole ton)
+ * - 'masc-clan': Clan MASC (tonnage × 4%, rounded to whole ton)
+ * - 'supercharger': Supercharger (engineWeight × 10%, rounded to 0.5t)
+ * - 'tsm': TSM (0 weight, 6 slots)
+ * - 'partial-wing': Partial Wing (tonnage × 5%, rounded to 0.5t, 6 slots)
  */
 export interface MovementEnhancementDefinition {
   readonly type: MovementEnhancementType;
   readonly name: string;
   readonly techBase: TechBase;
   readonly rulesLevel: RulesLevel;
-  /** Weight calculation function */
-  readonly getWeight: (tonnage: number) => number;
-  /** Critical slots */
-  readonly getCriticalSlots: (tonnage: number) => number;
   /** Movement multiplier when active */
   readonly activeMultiplier: number;
   /** Can be used with other enhancements? */
@@ -47,10 +44,10 @@ export interface MovementEnhancementDefinition {
 }
 
 /**
- * Movement enhancement definitions
+ * Movement enhancement definitions (static metadata)
  * 
- * @deprecated The getWeight/getCriticalSlots functions for MASC and Supercharger
- * use incorrect formulas. Use EquipmentCalculatorService for accurate calculations.
+ * Weight and slot calculations are handled by EquipmentCalculatorService
+ * using the formula registry in builtinFormulas.ts
  */
 export const MOVEMENT_ENHANCEMENT_DEFINITIONS: readonly MovementEnhancementDefinition[] = [
   {
@@ -58,17 +55,6 @@ export const MOVEMENT_ENHANCEMENT_DEFINITIONS: readonly MovementEnhancementDefin
     name: 'Myomer Accelerator Signal Circuitry (MASC)',
     techBase: TechBase.INNER_SPHERE,
     rulesLevel: RulesLevel.STANDARD,
-    // DEPRECATED: This uses tonnage but should use engineRating
-    // Correct formula: ceil(engineRating / 20) for IS, ceil(engineRating / 25) for Clan
-    // Use EquipmentCalculatorService.calculateProperties('masc-is' or 'masc-clan', context)
-    getWeight: (tonnage) => Math.ceil(tonnage / 20),
-    getCriticalSlots: (tonnage) => {
-      // DEPRECATED: Should be ceil(engineRating / 20) for IS, ceil(engineRating / 25) for Clan
-      if (tonnage <= 35) return 2;
-      if (tonnage <= 55) return 3;
-      if (tonnage <= 85) return 4;
-      return 5;
-    },
     activeMultiplier: 2.0, // sprint = walk × 2
     exclusions: [], // Can combine with Supercharger but NOT another MASC
     introductionYear: 2740,
@@ -78,11 +64,6 @@ export const MOVEMENT_ENHANCEMENT_DEFINITIONS: readonly MovementEnhancementDefin
     name: 'Supercharger',
     techBase: TechBase.INNER_SPHERE,
     rulesLevel: RulesLevel.ADVANCED,
-    // DEPRECATED: This uses tonnage but should use engineWeight
-    // Correct formula: ceil(engineWeight / 10) rounded to 0.5 tons
-    // Use EquipmentCalculatorService.calculateProperties('supercharger', { engineWeight })
-    getWeight: (tonnage) => Math.ceil(tonnage / 10) * 0.5,
-    getCriticalSlots: () => 1, // This is correct - Supercharger always has 1 slot
     activeMultiplier: 2.0, // sprint = walk × 2
     exclusions: [], // Can combine with MASC
     introductionYear: 3072,
@@ -92,8 +73,6 @@ export const MOVEMENT_ENHANCEMENT_DEFINITIONS: readonly MovementEnhancementDefin
     name: 'Triple-Strength Myomer',
     techBase: TechBase.INNER_SPHERE,
     rulesLevel: RulesLevel.STANDARD,
-    getWeight: () => 0, // No weight
-    getCriticalSlots: () => 6, // 6 total, distributed (1 per location except head)
     activeMultiplier: 1.5, // +2 walk MP when activated
     exclusions: [MovementEnhancementType.MASC], // Incompatible with MASC
     introductionYear: 3050,
@@ -103,12 +82,6 @@ export const MOVEMENT_ENHANCEMENT_DEFINITIONS: readonly MovementEnhancementDefin
     name: 'Partial Wing',
     techBase: TechBase.INNER_SPHERE,
     rulesLevel: RulesLevel.EXPERIMENTAL,
-    getWeight: (tonnage) => {
-      if (tonnage <= 55) return 3;
-      if (tonnage <= 75) return 4;
-      return 5;
-    },
-    getCriticalSlots: () => 6, // 3 per side torso
     activeMultiplier: 1.0, // Adds jump MP, doesn't multiply
     exclusions: [],
     introductionYear: 3067,
@@ -122,42 +95,6 @@ export function getMovementEnhancementDefinition(
   type: MovementEnhancementType
 ): MovementEnhancementDefinition | undefined {
   return MOVEMENT_ENHANCEMENT_DEFINITIONS.find(def => def.type === type);
-}
-
-/**
- * Calculate MASC weight
- * 
- * @deprecated This function uses incorrect formula (tonnage-based).
- * Use EquipmentCalculatorService.calculateProperties('masc-is' or 'masc-clan', { engineRating, tonnage })
- * Correct formula: ceil(engineRating / 20) for IS, ceil(engineRating / 25) for Clan
- */
-export function calculateMASCWeight(tonnage: number): number {
-  const def = getMovementEnhancementDefinition(MovementEnhancementType.MASC);
-  return def?.getWeight(tonnage) ?? 0;
-}
-
-/**
- * Calculate MASC critical slots
- * 
- * @deprecated This function uses incorrect formula (tonnage-based).
- * Use EquipmentCalculatorService.calculateProperties('masc-is' or 'masc-clan', { engineRating, tonnage })
- * Correct formula: ceil(engineRating / 20) for IS, ceil(engineRating / 25) for Clan
- */
-export function calculateMASCSlots(tonnage: number): number {
-  const def = getMovementEnhancementDefinition(MovementEnhancementType.MASC);
-  return def?.getCriticalSlots(tonnage) ?? 0;
-}
-
-/**
- * Calculate Supercharger weight
- * 
- * @deprecated This function uses incorrect formula (tonnage-based).
- * Use EquipmentCalculatorService.calculateProperties('supercharger', { engineWeight })
- * Correct formula: ceil(engineWeight / 10) rounded to 0.5 tons
- */
-export function calculateSuperchargerWeight(tonnage: number): number {
-  const def = getMovementEnhancementDefinition(MovementEnhancementType.SUPERCHARGER);
-  return def?.getWeight(tonnage) ?? 0;
 }
 
 /**
@@ -188,4 +125,3 @@ export function validateEnhancementCombination(
   
   return { isValid: errors.length === 0, errors };
 }
-
