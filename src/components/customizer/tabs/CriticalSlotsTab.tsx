@@ -24,6 +24,7 @@ import {
   fillUnhittableSlots,
   compactEquipmentSlots,
   sortEquipmentBySize,
+  getUnallocatedUnhittables,
 } from '@/utils/construction/slotOperations';
 
 // =============================================================================
@@ -463,6 +464,34 @@ export function CriticalSlotsTab({
   
   // Track if we're currently running an auto operation to prevent loops
   const isAutoRunning = useRef(false);
+  
+  // Count of unallocated unhittables for change detection
+  const unallocatedUnhittableCount = useMemo(() => {
+    return getUnallocatedUnhittables(equipment).length;
+  }, [equipment]);
+  
+  // Auto Fill effect - runs when unallocated unhittables exist and toggle is enabled
+  useEffect(() => {
+    if (readOnly || isAutoRunning.current) return;
+    if (!autoModeSettings.autoFillUnhittables) return;
+    if (unallocatedUnhittableCount === 0) return;
+    
+    isAutoRunning.current = true;
+    
+    // Small delay to batch rapid changes (e.g., when structure type changes adds many slots)
+    const timer = setTimeout(() => {
+      const result = fillUnhittableSlots(equipment, engineType, gyroType);
+      if (result.assignments.length > 0) {
+        bulkUpdateEquipmentLocations(result.assignments);
+      }
+      isAutoRunning.current = false;
+    }, 100);
+    
+    return () => {
+      clearTimeout(timer);
+      isAutoRunning.current = false;
+    };
+  }, [unallocatedUnhittableCount, autoModeSettings.autoFillUnhittables, readOnly, equipment, engineType, gyroType, bulkUpdateEquipmentLocations]);
   
   // Create a fingerprint of current equipment placements for change detection
   const placementFingerprint = useMemo(() => {
