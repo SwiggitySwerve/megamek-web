@@ -30,6 +30,8 @@ export interface UnitStats {
   runMP: number;
   /** Jump MP */
   jumpMP: number;
+  /** Max Run MP with enhancement active (MASC/TSM/Supercharger) */
+  maxRunMP?: number;
   /** Current weight used */
   weightUsed: number;
   /** Remaining weight (calculated: tonnage - weightUsed) */
@@ -136,6 +138,37 @@ function SimpleStat({ label, value, status = 'normal' }: SimpleStatProps) {
   );
 }
 
+interface MovementStatProps {
+  walkMP: number;
+  runMP: number;
+  jumpMP: number;
+  maxRunMP?: number;
+}
+
+/**
+ * Displays movement in compact format: 5 / 8 [10] / 5
+ * Shows Walk / Run [MaxRun] / Jump
+ */
+function MovementStat({ walkMP, runMP, jumpMP, maxRunMP }: MovementStatProps) {
+  const hasEnhancement = maxRunMP && maxRunMP > runMP;
+  
+  return (
+    <div className="flex flex-col items-center gap-0.5">
+      <span className={styles.label}>WALK / RUN / JUMP</span>
+      <div className="flex items-baseline gap-1">
+        <span className="text-lg font-bold text-white">{walkMP}</span>
+        <span className={styles.muted}>/</span>
+        <span className="text-lg font-bold text-white">{runMP}</span>
+        {hasEnhancement && (
+          <span className="text-sm font-bold text-cyan-400">[{maxRunMP}]</span>
+        )}
+        <span className={styles.muted}>/</span>
+        <span className="text-lg font-bold text-white">{jumpMP}</span>
+      </div>
+    </div>
+  );
+}
+
 // =============================================================================
 // Main Component
 // =============================================================================
@@ -185,9 +218,12 @@ export function UnitInfoBanner({
         
         {/* Section 2: Movement Stats */}
         <div className="px-4 py-2 flex items-center justify-center gap-4 border-b sm:border-b-0 sm:border-r border-slate-700 min-w-fit">
-          <SimpleStat label="WALK" value={stats.walkMP} />
-          <SimpleStat label="RUN" value={stats.runMP} />
-          <SimpleStat label="JUMP" value={stats.jumpMP} />
+          <MovementStat 
+            walkMP={stats.walkMP} 
+            runMP={stats.runMP} 
+            jumpMP={stats.jumpMP}
+            maxRunMP={stats.maxRunMP}
+          />
         </div>
         
         {/* Section 3: Capacity Stats - grows to fill available space */}

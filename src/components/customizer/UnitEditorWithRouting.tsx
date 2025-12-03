@@ -40,6 +40,7 @@ import { MechLocation, LOCATION_SLOT_COUNTS } from '@/types/construction';
 import { isValidLocationForEquipment, getPlacementRule } from '@/types/equipment/EquipmentPlacement';
 import { EngineType, getEngineDefinition } from '@/types/construction/EngineType';
 import { GyroType, getGyroDefinition } from '@/types/construction/GyroType';
+import { calculateEnhancedMaxRunMP } from '@/utils/construction/movementCalculations';
 
 // Utils
 import { ValidationStatus } from '@/utils/colors/statusColors';
@@ -173,6 +174,7 @@ export function UnitEditorWithRouting({
   const equipment = useUnitStore((s) => s.equipment);
   const jumpMP = useUnitStore((s) => s.jumpMP);
   const jumpJetType = useUnitStore((s) => s.jumpJetType);
+  const enhancement = useUnitStore((s) => s.enhancement);
   const removeEquipment = useUnitStore((s) => s.removeEquipment);
   const clearAllEquipment = useUnitStore((s) => s.clearAllEquipment);
   const clearEquipmentLocation = useUnitStore((s) => s.clearEquipmentLocation);
@@ -216,6 +218,12 @@ export function UnitEditorWithRouting({
   const totalWeight = calculations.totalStructuralWeight + equipmentCalcs.totalWeight;
   const totalSlotsUsed = calculations.totalSystemSlots + equipmentCalcs.totalSlots;
   
+  // Calculate max run MP with enhancement active
+  const maxRunMP = useMemo(() => {
+    if (!enhancement) return undefined;
+    return calculateEnhancedMaxRunMP(calculations.walkMP, enhancement);
+  }, [enhancement, calculations.walkMP]);
+
   const unitStats: UnitStats = useMemo(() => ({
     name: unitName,
     tonnage,
@@ -223,6 +231,7 @@ export function UnitEditorWithRouting({
     walkMP: calculations.walkMP,
     runMP: calculations.runMP,
     jumpMP: calculations.jumpMP,
+    maxRunMP,
     weightUsed: totalWeight,
     weightRemaining: tonnage - totalWeight,
     armorPoints: allocatedArmorPoints,
@@ -234,7 +243,7 @@ export function UnitEditorWithRouting({
     validationStatus: 'valid' as ValidationStatus, // TODO: Get from validation
     errorCount: 0,
     warningCount: 0,
-  }), [unitName, tonnage, techBase, calculations, equipmentCalcs, totalWeight, totalSlotsUsed, allocatedArmorPoints, maxArmorPoints]);
+  }), [unitName, tonnage, techBase, calculations, equipmentCalcs, totalWeight, totalSlotsUsed, allocatedArmorPoints, maxArmorPoints, maxRunMP]);
   
   // Convert equipment to LoadoutEquipmentItem format
   // Normalize categories for consistent display (e.g., jump jets -> Movement)

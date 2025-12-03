@@ -22,7 +22,7 @@ import {
   getMovementEnhancementDefinition,
   MOVEMENT_ENHANCEMENT_DEFINITIONS 
 } from '@/types/construction/MovementEnhancement';
-import { JumpJetType, getMaxJumpMP, JUMP_JET_DEFINITIONS } from '@/utils/construction/movementCalculations';
+import { JumpJetType, getMaxJumpMP, JUMP_JET_DEFINITIONS, calculateEnhancedMaxRunMP } from '@/utils/construction/movementCalculations';
 import { HeatSinkType } from '@/types/construction/HeatSinkType';
 import { customizerStyles as cs } from '../styles';
 
@@ -158,6 +158,12 @@ export function StructureTab({
   const walkMP = useMemo(() => Math.floor(engineRating / tonnage), [engineRating, tonnage]);
   const runMP = useMemo(() => calculateRunMP(walkMP), [walkMP]);
   const walkMPRange = useMemo(() => getWalkMPRange(tonnage), [tonnage]);
+  
+  // Calculate max run MP with enhancement active
+  const maxRunMP = useMemo(() => {
+    if (!enhancement) return undefined;
+    return calculateEnhancedMaxRunMP(walkMP, enhancement);
+  }, [enhancement, walkMP]);
   
   // Jump jet calculations
   const maxJumpMP = useMemo(() => getMaxJumpMP(walkMP, jumpJetType), [walkMP, jumpJetType]);
@@ -468,7 +474,12 @@ export function StructureTab({
             {/* Run MP (calculated) */}
             <div className="grid grid-cols-[140px_1fr_50px] gap-2 items-center">
               <label className={cs.text.label}>Run MP</label>
-              <span className={`text-sm ${cs.text.secondary}`}>{runMP}</span>
+              <div className="flex items-center gap-1">
+                <span className={`text-sm ${cs.text.secondary}`}>{runMP}</span>
+                {maxRunMP && (
+                  <span className="text-sm font-bold text-cyan-400">[{maxRunMP}]</span>
+                )}
+              </div>
               <span className={`text-sm ${cs.text.value} text-center`}>{runMP}</span>
             </div>
             
