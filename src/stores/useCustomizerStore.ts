@@ -79,7 +79,7 @@ export interface CustomizerState {
  * Default auto-mode settings
  */
 const DEFAULT_AUTO_SETTINGS: AutoModeSettings = {
-  autoFillUnhittables: true,
+  autoFillUnhittables: false,
   autoCompact: false,
   autoSort: false,
   showPlacementPreview: true,
