@@ -76,16 +76,10 @@ export function LocationGrid({
     return existing || { index: i, type: 'empty' as const };
   });
   
-  // Determine width based on location (legs and head are narrower)
-  const isNarrow = location === MechLocation.HEAD || 
-                   location === MechLocation.LEFT_LEG || 
-                   location === MechLocation.RIGHT_LEG;
-  
   return (
     <div 
       className={`
-        bg-slate-900 border border-slate-600 
-        ${isNarrow ? 'w-40' : 'w-48'}
+        bg-slate-900 border border-slate-600 w-36
         ${className}
       `}
     >

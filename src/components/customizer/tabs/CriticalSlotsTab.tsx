@@ -602,44 +602,39 @@ export function CriticalSlotsTab({
         readOnly={readOnly}
       />
       
-      {/* Mech diagram - full width now */}
+      {/* Mech diagram - MegaMekLab-style 5-column layout */}
       <div className="flex-1 p-4 overflow-auto">
-        <div className="min-w-[700px] max-w-[900px] mx-auto">
-          {/* Row 1: Left Torso | Head | Right Torso */}
-          <div className="grid grid-cols-5 gap-3 mb-3">
-            <div className="col-start-2">
-              {renderLocation(MechLocation.LEFT_TORSO)}
-            </div>
-            <div className="flex justify-center">
-              {renderLocation(MechLocation.HEAD)}
-            </div>
-            <div>
-              {renderLocation(MechLocation.RIGHT_TORSO)}
-            </div>
+        <div className="flex gap-3 items-start justify-center">
+          {/* Column 1: Left Arm (offset down to align with torso body) */}
+          <div className="flex flex-col mt-24">
+            {renderLocation(MechLocation.LEFT_ARM)}
           </div>
           
-          {/* Row 2: Left Arm | Center Torso | Right Arm */}
-          <div className="grid grid-cols-5 gap-3 mb-3">
-            <div>
-              {renderLocation(MechLocation.LEFT_ARM)}
-            </div>
-            <div className="col-span-3 flex justify-center">
-              {renderLocation(MechLocation.CENTER_TORSO)}
-            </div>
-            <div>
-              {renderLocation(MechLocation.RIGHT_ARM)}
-            </div>
-          </div>
-          
-          {/* Row 3: Left Leg | Right Leg */}
-          <div className="grid grid-cols-5 gap-3">
-            <div className="col-start-2 flex justify-center">
+          {/* Column 2: Left Torso + Left Leg stacked */}
+          <div className="flex flex-col">
+            {renderLocation(MechLocation.LEFT_TORSO)}
+            <div className="mt-16">
               {renderLocation(MechLocation.LEFT_LEG)}
             </div>
-            <div />
-            <div className="flex justify-center">
+          </div>
+          
+          {/* Column 3: Head + Center Torso stacked */}
+          <div className="flex flex-col gap-3">
+            {renderLocation(MechLocation.HEAD)}
+            {renderLocation(MechLocation.CENTER_TORSO)}
+          </div>
+          
+          {/* Column 4: Right Torso + Right Leg stacked */}
+          <div className="flex flex-col">
+            {renderLocation(MechLocation.RIGHT_TORSO)}
+            <div className="mt-16">
               {renderLocation(MechLocation.RIGHT_LEG)}
             </div>
+          </div>
+          
+          {/* Column 5: Right Arm (offset down to align with torso body) */}
+          <div className="flex flex-col mt-24">
+            {renderLocation(MechLocation.RIGHT_ARM)}
           </div>
         </div>
       </div>

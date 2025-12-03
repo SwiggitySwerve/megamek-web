@@ -9,7 +9,7 @@
 import React from 'react';
 import { LocationGrid } from './LocationGrid';
 import { CriticalSlotToolbar } from './CriticalSlotToolbar';
-import { MechLocation, LOCATION_SLOT_COUNTS } from '@/types/construction';
+import { MechLocation } from '@/types/construction';
 
 /**
  * Critical slot content data
@@ -104,81 +104,33 @@ export function CriticalSlotsDisplay({
         className="border-b border-slate-700"
       />
       
-      {/* Grid layout */}
+      {/* Grid layout - MegaMekLab style with 5 columns */}
       <div className="p-4">
-        {/* Top row: Arms and Head */}
-        <div className="grid grid-cols-5 gap-2 mb-2">
-          <LocationGrid
-            location={MechLocation.LEFT_ARM}
-            data={getLocationData(MechLocation.LEFT_ARM)}
-            selectedEquipmentId={selectedEquipmentId}
-            assignableSlots={getAssignableSlots(MechLocation.LEFT_ARM)}
-            onSlotClick={(i) => onSlotClick(MechLocation.LEFT_ARM, i)}
-            onEquipmentDrop={(i, e) => onEquipmentDrop(MechLocation.LEFT_ARM, i, e)}
-            onEquipmentRemove={(i) => onEquipmentRemove(MechLocation.LEFT_ARM, i)}
-          />
-          <div className="col-span-3">
-            <div className="flex justify-center mb-2">
-              <LocationGrid
-                location={MechLocation.HEAD}
-                data={getLocationData(MechLocation.HEAD)}
-                selectedEquipmentId={selectedEquipmentId}
-                assignableSlots={getAssignableSlots(MechLocation.HEAD)}
-                onSlotClick={(i) => onSlotClick(MechLocation.HEAD, i)}
-                onEquipmentDrop={(i, e) => onEquipmentDrop(MechLocation.HEAD, i, e)}
-                onEquipmentRemove={(i) => onEquipmentRemove(MechLocation.HEAD, i)}
-                compact
-              />
-            </div>
+        <div className="flex gap-2 items-start">
+          {/* Column 1: Left Arm */}
+          <div className="flex flex-col">
+            <LocationGrid
+              location={MechLocation.LEFT_ARM}
+              data={getLocationData(MechLocation.LEFT_ARM)}
+              selectedEquipmentId={selectedEquipmentId}
+              assignableSlots={getAssignableSlots(MechLocation.LEFT_ARM)}
+              onSlotClick={(i) => onSlotClick(MechLocation.LEFT_ARM, i)}
+              onEquipmentDrop={(i, e) => onEquipmentDrop(MechLocation.LEFT_ARM, i, e)}
+              onEquipmentRemove={(i) => onEquipmentRemove(MechLocation.LEFT_ARM, i)}
+            />
           </div>
-          <LocationGrid
-            location={MechLocation.RIGHT_ARM}
-            data={getLocationData(MechLocation.RIGHT_ARM)}
-            selectedEquipmentId={selectedEquipmentId}
-            assignableSlots={getAssignableSlots(MechLocation.RIGHT_ARM)}
-            onSlotClick={(i) => onSlotClick(MechLocation.RIGHT_ARM, i)}
-            onEquipmentDrop={(i, e) => onEquipmentDrop(MechLocation.RIGHT_ARM, i, e)}
-            onEquipmentRemove={(i) => onEquipmentRemove(MechLocation.RIGHT_ARM, i)}
-          />
-        </div>
-        
-        {/* Middle row: Torsos */}
-        <div className="grid grid-cols-5 gap-2 mb-2">
-          <div /> {/* Spacer for arm alignment */}
-          <LocationGrid
-            location={MechLocation.LEFT_TORSO}
-            data={getLocationData(MechLocation.LEFT_TORSO)}
-            selectedEquipmentId={selectedEquipmentId}
-            assignableSlots={getAssignableSlots(MechLocation.LEFT_TORSO)}
-            onSlotClick={(i) => onSlotClick(MechLocation.LEFT_TORSO, i)}
-            onEquipmentDrop={(i, e) => onEquipmentDrop(MechLocation.LEFT_TORSO, i, e)}
-            onEquipmentRemove={(i) => onEquipmentRemove(MechLocation.LEFT_TORSO, i)}
-          />
-          <LocationGrid
-            location={MechLocation.CENTER_TORSO}
-            data={getLocationData(MechLocation.CENTER_TORSO)}
-            selectedEquipmentId={selectedEquipmentId}
-            assignableSlots={getAssignableSlots(MechLocation.CENTER_TORSO)}
-            onSlotClick={(i) => onSlotClick(MechLocation.CENTER_TORSO, i)}
-            onEquipmentDrop={(i, e) => onEquipmentDrop(MechLocation.CENTER_TORSO, i, e)}
-            onEquipmentRemove={(i) => onEquipmentRemove(MechLocation.CENTER_TORSO, i)}
-          />
-          <LocationGrid
-            location={MechLocation.RIGHT_TORSO}
-            data={getLocationData(MechLocation.RIGHT_TORSO)}
-            selectedEquipmentId={selectedEquipmentId}
-            assignableSlots={getAssignableSlots(MechLocation.RIGHT_TORSO)}
-            onSlotClick={(i) => onSlotClick(MechLocation.RIGHT_TORSO, i)}
-            onEquipmentDrop={(i, e) => onEquipmentDrop(MechLocation.RIGHT_TORSO, i, e)}
-            onEquipmentRemove={(i) => onEquipmentRemove(MechLocation.RIGHT_TORSO, i)}
-          />
-          <div /> {/* Spacer for arm alignment */}
-        </div>
-        
-        {/* Bottom row: Legs */}
-        <div className="grid grid-cols-5 gap-2">
-          <div /> {/* Spacer */}
-          <div className="col-span-1 flex justify-end">
+          
+          {/* Column 2: Left Torso + Left Leg stacked */}
+          <div className="flex flex-col gap-2">
+            <LocationGrid
+              location={MechLocation.LEFT_TORSO}
+              data={getLocationData(MechLocation.LEFT_TORSO)}
+              selectedEquipmentId={selectedEquipmentId}
+              assignableSlots={getAssignableSlots(MechLocation.LEFT_TORSO)}
+              onSlotClick={(i) => onSlotClick(MechLocation.LEFT_TORSO, i)}
+              onEquipmentDrop={(i, e) => onEquipmentDrop(MechLocation.LEFT_TORSO, i, e)}
+              onEquipmentRemove={(i) => onEquipmentRemove(MechLocation.LEFT_TORSO, i)}
+            />
             <LocationGrid
               location={MechLocation.LEFT_LEG}
               data={getLocationData(MechLocation.LEFT_LEG)}
@@ -187,11 +139,42 @@ export function CriticalSlotsDisplay({
               onSlotClick={(i) => onSlotClick(MechLocation.LEFT_LEG, i)}
               onEquipmentDrop={(i, e) => onEquipmentDrop(MechLocation.LEFT_LEG, i, e)}
               onEquipmentRemove={(i) => onEquipmentRemove(MechLocation.LEFT_LEG, i)}
-              compact
             />
           </div>
-          <div /> {/* Center spacer */}
-          <div className="col-span-1 flex justify-start">
+          
+          {/* Column 3: Head + Center Torso stacked */}
+          <div className="flex flex-col gap-2">
+            <LocationGrid
+              location={MechLocation.HEAD}
+              data={getLocationData(MechLocation.HEAD)}
+              selectedEquipmentId={selectedEquipmentId}
+              assignableSlots={getAssignableSlots(MechLocation.HEAD)}
+              onSlotClick={(i) => onSlotClick(MechLocation.HEAD, i)}
+              onEquipmentDrop={(i, e) => onEquipmentDrop(MechLocation.HEAD, i, e)}
+              onEquipmentRemove={(i) => onEquipmentRemove(MechLocation.HEAD, i)}
+            />
+            <LocationGrid
+              location={MechLocation.CENTER_TORSO}
+              data={getLocationData(MechLocation.CENTER_TORSO)}
+              selectedEquipmentId={selectedEquipmentId}
+              assignableSlots={getAssignableSlots(MechLocation.CENTER_TORSO)}
+              onSlotClick={(i) => onSlotClick(MechLocation.CENTER_TORSO, i)}
+              onEquipmentDrop={(i, e) => onEquipmentDrop(MechLocation.CENTER_TORSO, i, e)}
+              onEquipmentRemove={(i) => onEquipmentRemove(MechLocation.CENTER_TORSO, i)}
+            />
+          </div>
+          
+          {/* Column 4: Right Torso + Right Leg stacked */}
+          <div className="flex flex-col gap-2">
+            <LocationGrid
+              location={MechLocation.RIGHT_TORSO}
+              data={getLocationData(MechLocation.RIGHT_TORSO)}
+              selectedEquipmentId={selectedEquipmentId}
+              assignableSlots={getAssignableSlots(MechLocation.RIGHT_TORSO)}
+              onSlotClick={(i) => onSlotClick(MechLocation.RIGHT_TORSO, i)}
+              onEquipmentDrop={(i, e) => onEquipmentDrop(MechLocation.RIGHT_TORSO, i, e)}
+              onEquipmentRemove={(i) => onEquipmentRemove(MechLocation.RIGHT_TORSO, i)}
+            />
             <LocationGrid
               location={MechLocation.RIGHT_LEG}
               data={getLocationData(MechLocation.RIGHT_LEG)}
@@ -200,10 +183,21 @@ export function CriticalSlotsDisplay({
               onSlotClick={(i) => onSlotClick(MechLocation.RIGHT_LEG, i)}
               onEquipmentDrop={(i, e) => onEquipmentDrop(MechLocation.RIGHT_LEG, i, e)}
               onEquipmentRemove={(i) => onEquipmentRemove(MechLocation.RIGHT_LEG, i)}
-              compact
             />
           </div>
-          <div /> {/* Spacer */}
+          
+          {/* Column 5: Right Arm */}
+          <div className="flex flex-col">
+            <LocationGrid
+              location={MechLocation.RIGHT_ARM}
+              data={getLocationData(MechLocation.RIGHT_ARM)}
+              selectedEquipmentId={selectedEquipmentId}
+              assignableSlots={getAssignableSlots(MechLocation.RIGHT_ARM)}
+              onSlotClick={(i) => onSlotClick(MechLocation.RIGHT_ARM, i)}
+              onEquipmentDrop={(i, e) => onEquipmentDrop(MechLocation.RIGHT_ARM, i, e)}
+              onEquipmentRemove={(i) => onEquipmentRemove(MechLocation.RIGHT_ARM, i)}
+            />
+          </div>
         </div>
       </div>
     </div>
