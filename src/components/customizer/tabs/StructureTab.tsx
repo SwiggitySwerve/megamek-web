@@ -474,13 +474,13 @@ export function StructureTab({
             {/* Run MP (calculated) */}
             <div className="grid grid-cols-[140px_1fr_50px] gap-2 items-center">
               <label className={cs.text.label}>Run MP</label>
-              <div className="flex items-center gap-1">
-                <span className={`text-sm ${cs.text.secondary}`}>{runMP}</span>
+              <span className={`text-sm ${cs.text.secondary}`}>{runMP}</span>
+              <div className="flex items-center justify-center gap-1">
+                <span className={`text-sm ${cs.text.value}`}>{runMP}</span>
                 {maxRunMP && (
                   <span className="text-sm font-bold text-cyan-400">[{maxRunMP}]</span>
                 )}
               </div>
-              <span className={`text-sm ${cs.text.value} text-center`}>{runMP}</span>
             </div>
             
             {/* Jump/UMU MP */}
