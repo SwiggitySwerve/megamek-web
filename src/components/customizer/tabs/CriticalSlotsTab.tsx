@@ -390,7 +390,8 @@ export function CriticalSlotsTab({
       slots.push(slotIndex + i);
     }
     updateEquipmentLocation(equipmentId, location, slots);
-  }, [readOnly, equipment, getLocationData, updateEquipmentLocation]);
+    onSelectEquipment?.(null); // Clear selection after successful drop
+  }, [readOnly, equipment, getLocationData, updateEquipmentLocation, onSelectEquipment]);
   
   const handleEquipmentRemove = useCallback((location: MechLocation, slotIndex: number) => {
     if (readOnly) return;
