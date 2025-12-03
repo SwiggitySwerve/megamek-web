@@ -82,6 +82,7 @@ const styles = {
     warning: 'text-amber-400',
     error: 'text-red-400',
     success: 'text-green-400',
+    engine: 'text-orange-500', // Matches engine color from slotColors
   },
   muted: 'text-slate-500',
 } as const;
@@ -123,7 +124,7 @@ function CapacityStat({ label, current, max, unit = '', status = 'normal' }: Cap
 interface SimpleStatProps {
   label: string;
   value: number | string;
-  status?: 'normal' | 'warning' | 'error' | 'success';
+  status?: 'normal' | 'warning' | 'error' | 'success' | 'engine';
 }
 
 /**
@@ -233,7 +234,7 @@ export function UnitInfoBanner({
           <SimpleStat 
             label="ENGINE"
             value={stats.engineRating}
-            status="warning"
+            status="engine"
           />
           <CapacityStat
             label="WEIGHT"
