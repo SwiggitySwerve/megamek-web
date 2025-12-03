@@ -63,31 +63,18 @@ function calculateRunMP(walkMP: number): number {
 }
 
 /**
- * Get available enhancement options (MASC and TSM are mutually exclusive)
+ * Get available enhancement options
+ * Note: MASC and TSM are mutually exclusive but we don't disable options
+ * since selecting one simply replaces the other.
  */
-function getEnhancementOptions(currentEnhancement: MovementEnhancementType | null): {
+function getEnhancementOptions(): {
   value: MovementEnhancementType | null;
   label: string;
-  disabled: boolean;
-  tooltip?: string;
 }[] {
-  const mascDef = getMovementEnhancementDefinition(MovementEnhancementType.MASC);
-  const tsmDef = getMovementEnhancementDefinition(MovementEnhancementType.TSM);
-  
   return [
-    { value: null, label: 'None', disabled: false },
-    { 
-      value: MovementEnhancementType.MASC, 
-      label: 'MASC', 
-      disabled: currentEnhancement === MovementEnhancementType.TSM,
-      tooltip: currentEnhancement === MovementEnhancementType.TSM ? 'Mutually incompatible with TSM' : undefined,
-    },
-    { 
-      value: MovementEnhancementType.TSM, 
-      label: 'Triple Strength Myomer', 
-      disabled: currentEnhancement === MovementEnhancementType.MASC,
-      tooltip: currentEnhancement === MovementEnhancementType.MASC ? 'Mutually incompatible with MASC' : undefined,
-    },
+    { value: null, label: 'None' },
+    { value: MovementEnhancementType.MASC, label: 'MASC' },
+    { value: MovementEnhancementType.TSM, label: 'Triple Strength Myomer' },
   ];
 }
 
@@ -169,7 +156,7 @@ export function StructureTab({
   const maxJumpMP = useMemo(() => getMaxJumpMP(walkMP, jumpJetType), [walkMP, jumpJetType]);
   
   // Enhancement options
-  const enhancementOptions = useMemo(() => getEnhancementOptions(enhancement), [enhancement]);
+  const enhancementOptions = useMemo(() => getEnhancementOptions(), []);
   
   // Handlers - Components
   const handleEngineTypeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -568,7 +555,6 @@ export function StructureTab({
                     <option 
                       key={opt.value ?? 'none'} 
                       value={opt.value ?? ''}
-                      disabled={opt.disabled}
                     >
                       {opt.label}
                     </option>
