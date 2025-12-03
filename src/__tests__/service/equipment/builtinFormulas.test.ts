@@ -57,8 +57,9 @@ describe('Builtin Formulas', () => {
 
     it('should have correct required context for MASC', () => {
       const formula = BUILTIN_FORMULAS['masc-is'];
-      expect(formula.requiredContext).toContain('engineRating');
+      // MASC now uses tonnage-based formula (5% for IS, 4% for Clan)
       expect(formula.requiredContext).toContain('tonnage');
+      expect(formula.requiredContext).not.toContain('engineRating');
     });
   });
 

@@ -34,16 +34,18 @@ const TEST_FORMULAS: Map<string, IVariableFormulas> = new Map([
     requiredContext: ['directFireWeaponTonnage'],
   }],
   ['masc-is', {
-    weight: ceilDivide('engineRating', 20),
+    // MASC (IS): tonnage × 5% rounded up to nearest 0.5 ton
+    weight: multiplyRound('tonnage', 0.05, 0.5),
     criticalSlots: equalsWeight(),
     cost: multiply('tonnage', 1000),
-    requiredContext: ['engineRating', 'tonnage'],
+    requiredContext: ['tonnage'],
   }],
   ['masc-clan', {
-    weight: ceilDivide('engineRating', 25),
+    // MASC (Clan): tonnage × 4% rounded up to nearest whole ton
+    weight: multiplyRound('tonnage', 0.04, 1),
     criticalSlots: equalsWeight(),
     cost: multiply('tonnage', 1000),
-    requiredContext: ['engineRating', 'tonnage'],
+    requiredContext: ['tonnage'],
   }],
   ['supercharger', {
     weight: multiplyRound('engineWeight', 0.1, 0.5),

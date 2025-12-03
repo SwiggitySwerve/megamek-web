@@ -59,7 +59,8 @@ describe('EquipmentCalculatorService', () => {
     it('should return required context for MASC', () => {
       const context = service.getRequiredContext('masc-is');
       expect(context).toContain('tonnage');
-      expect(context).toContain('engineRating');
+      // MASC now uses tonnage-based formula, not engine rating
+      expect(context).not.toContain('engineRating');
     });
 
     it('should return required context for physical weapons', () => {
@@ -141,19 +142,18 @@ describe('EquipmentCalculatorService', () => {
   // ============================================================================
   describe('calculateProperties - MASC', () => {
     describe('IS MASC', () => {
-      // Weight = ceil(tonnage × engineRating / 100 / 20)
-      // Simplified as: ceil(engineRating / 20) in the mock
+      // Weight = tonnage × 5% rounded up to nearest 0.5 ton
+      // Slots = weight (as whole number)
 
       it.each([
-        [50, 200, 10],   // ceil(200/20) = 10
-        [75, 300, 15],   // ceil(300/20) = 15
-        [100, 300, 15],  // ceil(300/20) = 15
-        [75, 375, 19],   // ceil(375/20) = 19
-      ])('%d ton mech, rating %d: %d ton MASC', 
-        (tonnage, engineRating, expectedWeight) => {
+        [20, 1],    // 20 × 0.05 = 1 ton
+        [50, 2.5],  // 50 × 0.05 = 2.5 tons
+        [75, 4],    // 75 × 0.05 = 3.75 → 4 tons (rounded to 0.5)
+        [100, 5],   // 100 × 0.05 = 5 tons
+      ])('%d ton mech: %d ton MASC', 
+        (tonnage, expectedWeight) => {
           const result = service.calculateProperties('masc-is', {
             tonnage,
-            engineRating,
           });
           expect(result.weight).toBe(expectedWeight);
         }
@@ -161,15 +161,27 @@ describe('EquipmentCalculatorService', () => {
     });
 
     describe('Clan MASC', () => {
-      // Weight = ceil(tonnage × engineRating / 100 / 25)
-      it('should weigh less than IS MASC', () => {
+      // Weight = tonnage × 4% rounded up to nearest whole ton
+      it.each([
+        [25, 1],   // 25 × 0.04 = 1 ton
+        [50, 2],   // 50 × 0.04 = 2 tons
+        [75, 3],   // 75 × 0.04 = 3 tons
+        [100, 4],  // 100 × 0.04 = 4 tons
+      ])('%d ton mech: %d ton Clan MASC',
+        (tonnage, expectedWeight) => {
+          const result = service.calculateProperties('masc-clan', {
+            tonnage,
+          });
+          expect(result.weight).toBe(expectedWeight);
+        }
+      );
+
+      it('should weigh less than IS MASC for same tonnage', () => {
         const isResult = service.calculateProperties('masc-is', {
           tonnage: 75,
-          engineRating: 300,
         });
         const clanResult = service.calculateProperties('masc-clan', {
           tonnage: 75,
-          engineRating: 300,
         });
         
         expect(clanResult.weight).toBeLessThan(isResult.weight);
@@ -262,10 +274,18 @@ describe('EquipmentCalculatorService', () => {
       ).toThrow('Missing required context');
     });
 
-    it('should throw for partial context', () => {
+    it('should throw for partial context (targeting computer)', () => {
+      // Targeting computer requires directFireWeaponTonnage
+      expect(() => 
+        service.calculateProperties('targeting-computer-is', { tonnage: 75 })
+      ).toThrow('Missing required context');
+    });
+
+    it('should not throw for MASC with only tonnage', () => {
+      // MASC now only requires tonnage (not engine rating)
       expect(() => 
         service.calculateProperties('masc-is', { tonnage: 75 })
-      ).toThrow('Missing required context');
+      ).not.toThrow();
     });
   });
 

@@ -60,28 +60,28 @@ export const BUILTIN_FORMULAS: Readonly<Record<string, IVariableFormulas>> = {
   
   /**
    * MASC (Inner Sphere)
-   * Weight: ceil(engineRating / 20)
-   * Slots: = weight
+   * Weight: tonnage × 5% rounded up to nearest 0.5 ton
+   * Slots: = weight (as whole number)
    * Cost: tonnage × 1,000
    */
   'masc-is': {
-    weight: ceilDivide('engineRating', 20),
+    weight: multiplyRound('tonnage', 0.05, 0.5),
     criticalSlots: equalsWeight(),
     cost: multiply('tonnage', 1000),
-    requiredContext: ['engineRating', 'tonnage'],
+    requiredContext: ['tonnage'],
   },
 
   /**
    * MASC (Clan)
-   * Weight: ceil(engineRating / 25)
+   * Weight: tonnage × 4% rounded up to nearest whole ton
    * Slots: = weight
    * Cost: tonnage × 1,000
    */
   'masc-clan': {
-    weight: ceilDivide('engineRating', 25),
+    weight: multiplyRound('tonnage', 0.04, 1),
     criticalSlots: equalsWeight(),
     cost: multiply('tonnage', 1000),
-    requiredContext: ['engineRating', 'tonnage'],
+    requiredContext: ['tonnage'],
   },
 
   // ============================================================================
