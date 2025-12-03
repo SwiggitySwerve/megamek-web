@@ -218,8 +218,8 @@ export function validateJumpConfiguration(
  * 
  * - MASC: Sprint = Walk × 2
  * - Supercharger: Sprint = Walk × 2
- * - TSM: Enhanced Run = ceil((Walk + 1) × 1.5)
- *        (+2 Walk from TSM, -1 from heat penalty at 9+ heat = net +1)
+ * - TSM: Enhanced Run = Base Run + 1
+ *        (+2 Walk from TSM, -1 from heat penalty at 9+ heat = net +1 Run MP)
  * - MASC + Supercharger: Sprint = Walk × 2.5
  * 
  * @param walkMP - Base walking movement points
@@ -246,8 +246,9 @@ export function calculateEnhancedMaxRunMP(
   }
   
   if (enhancementLower.includes('triple') || enhancementLower === 'tsm') {
-    // TSM: +2 Walk MP at 9+ heat, but -1 from heat penalty = net +1 Walk MP
-    return calculateRunMP(walkMP + 1);
+    // TSM: +2 Walk MP at 9+ heat, but -1 from heat penalty = net +1 Run MP
+    const baseRunMP = calculateRunMP(walkMP);
+    return baseRunMP + 1;
   }
   
   return undefined;

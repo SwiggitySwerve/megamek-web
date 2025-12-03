@@ -471,7 +471,7 @@ export function StructureTab({
                       enhancement === MovementEnhancementType.MASC 
                         ? `MASC Sprint: Walk ${walkMP} × 2 = ${maxRunMP}`
                         : enhancement === MovementEnhancementType.TSM
-                        ? `TSM at 9+ heat: Walk ${walkMP} + 2 - 1 (heat) = ${walkMP + 1}, Run = ⌈${walkMP + 1} × 1.5⌉ = ${maxRunMP}`
+                        ? `TSM at 9+ heat: Base Run ${runMP} + 1 = ${maxRunMP} (net +1 from +2 Walk, -1 heat penalty)`
                         : enhancement === MovementEnhancementType.SUPERCHARGER
                         ? `Supercharger Sprint: Walk ${walkMP} × 2 = ${maxRunMP}`
                         : `Enhanced max: ${maxRunMP}`

@@ -81,6 +81,14 @@ import {
   getEquipmentDisplacedByGyroChange,
   applyDisplacement,
 } from '@/utils/construction/displacementUtils';
+import { 
+  MovementEnhancementType,
+  getMovementEnhancementDefinition,
+} from '@/types/construction/MovementEnhancement';
+import { 
+  MOVEMENT_EQUIPMENT, 
+  MYOMER_SYSTEMS,
+} from '@/types/equipment/MiscEquipmentTypes';
 
 // Re-export UnitStore type for convenience
 export type { UnitStore } from './unitState';
@@ -369,6 +377,173 @@ function createHeatSinkEquipmentList(
  */
 function filterOutHeatSinks(equipment: readonly IMountedEquipmentInstance[]): IMountedEquipmentInstance[] {
   return equipment.filter(e => !HEAT_SINK_EQUIPMENT_IDS.includes(e.equipmentId));
+}
+
+// =============================================================================
+// Movement Enhancement Equipment Helpers
+// =============================================================================
+
+/** Equipment IDs for movement enhancements */
+const ENHANCEMENT_EQUIPMENT_IDS = [
+  'masc',
+  'clan-masc',
+  'supercharger',
+  'tsm',
+  'industrial-tsm',
+];
+
+/**
+ * Get the correct enhancement equipment ID based on type and tech base
+ */
+function getEnhancementEquipmentId(
+  enhancementType: MovementEnhancementType,
+  techBase: TechBase
+): string {
+  switch (enhancementType) {
+    case MovementEnhancementType.MASC:
+      return techBase === TechBase.CLAN ? 'clan-masc' : 'masc';
+    case MovementEnhancementType.SUPERCHARGER:
+      return 'supercharger';
+    case MovementEnhancementType.TSM:
+      return 'tsm';
+    default:
+      return 'masc';
+  }
+}
+
+/**
+ * Get the enhancement equipment item by type and tech base
+ */
+function getEnhancementEquipment(
+  enhancementType: MovementEnhancementType,
+  techBase: TechBase
+) {
+  const id = getEnhancementEquipmentId(enhancementType, techBase);
+  
+  // Check MOVEMENT_EQUIPMENT first (MASC, Supercharger)
+  const movementEquip = MOVEMENT_EQUIPMENT.find(e => e.id === id);
+  if (movementEquip) return movementEquip;
+  
+  // Check MYOMER_SYSTEMS (TSM)
+  return MYOMER_SYSTEMS.find(e => e.id === id);
+}
+
+/**
+ * Calculate enhancement weight based on type and mech parameters
+ * MASC (IS): ceil(tonnage / 20)
+ * MASC (Clan): ceil(tonnage / 25)
+ * TSM: 0
+ * Supercharger: ceil(engineWeight / 10), round to 0.5t
+ */
+function calculateEnhancementWeight(
+  enhancementType: MovementEnhancementType,
+  tonnage: number,
+  techBase: TechBase
+): number {
+  const def = getMovementEnhancementDefinition(enhancementType);
+  if (!def) return 0;
+  
+  return def.getWeight(tonnage);
+}
+
+/**
+ * Calculate enhancement critical slots based on type and mech parameters
+ * MASC: ceil(tonnage / 20) for IS, ceil(tonnage / 25) for Clan
+ * TSM: 6 (distributed)
+ * Supercharger: 1
+ */
+function calculateEnhancementSlots(
+  enhancementType: MovementEnhancementType,
+  tonnage: number,
+  techBase: TechBase
+): number {
+  const def = getMovementEnhancementDefinition(enhancementType);
+  if (!def) return 0;
+  
+  // MASC slots calculation differs from MovementEnhancement definition
+  // According to rules: slots = ceil(tonnage / 20) for IS, ceil(tonnage / 25) for Clan
+  if (enhancementType === MovementEnhancementType.MASC) {
+    return techBase === TechBase.CLAN
+      ? Math.ceil(tonnage / 25)
+      : Math.ceil(tonnage / 20);
+  }
+  
+  return def.getCriticalSlots(tonnage);
+}
+
+/**
+ * Create enhancement equipment instances for the equipment array
+ * Creates a single item for MASC or TSM with calculated weight/slots.
+ * These are configuration-based components and NOT removable via the loadout tray.
+ */
+function createEnhancementEquipmentList(
+  enhancementType: MovementEnhancementType | null,
+  tonnage: number,
+  techBase: TechBase
+): IMountedEquipmentInstance[] {
+  if (!enhancementType) return [];
+  
+  const equip = getEnhancementEquipment(enhancementType, techBase);
+  if (!equip) return [];
+  
+  const weight = calculateEnhancementWeight(enhancementType, tonnage, techBase);
+  const slots = calculateEnhancementSlots(enhancementType, tonnage, techBase);
+  
+  // Map category to EquipmentCategory
+  const category = equip.category === MiscEquipmentCategory.MYOMER
+    ? EquipmentCategory.MISC_EQUIPMENT
+    : EquipmentCategory.MOVEMENT;
+  
+  // For TSM, we need individual slots distributed across locations
+  // For MASC, it's a single item that can be placed in legs
+  if (enhancementType === MovementEnhancementType.TSM) {
+    // Create individual 1-slot items for each TSM slot (similar to Endo Steel)
+    const result: IMountedEquipmentInstance[] = [];
+    for (let i = 0; i < slots; i++) {
+      result.push({
+        instanceId: generateUnitId(),
+        equipmentId: equip.id,
+        name: equip.name,
+        category,
+        weight: 0, // TSM has no weight
+        criticalSlots: 1, // Each slot is 1 crit
+        heat: 0,
+        techBase: equip.techBase,
+        location: undefined,
+        slots: undefined,
+        isRearMounted: false,
+        linkedAmmoId: undefined,
+        isRemovable: false, // Configuration component - managed via Structure tab
+      });
+    }
+    return result;
+  }
+  
+  // MASC and Supercharger are single items
+  return [{
+    instanceId: generateUnitId(),
+    equipmentId: equip.id,
+    name: equip.name,
+    category,
+    weight,
+    criticalSlots: slots,
+    heat: 0,
+    techBase: equip.techBase,
+    location: undefined,
+    slots: undefined,
+    isRearMounted: false,
+    linkedAmmoId: undefined,
+    isRemovable: false, // Configuration component - managed via Structure tab
+  }];
+}
+
+/**
+ * Filter out enhancement equipment from the equipment array
+ */
+function filterOutEnhancementEquipment(
+  equipment: readonly IMountedEquipmentInstance[]
+): IMountedEquipmentInstance[] {
+  return equipment.filter(e => !ENHANCEMENT_EQUIPMENT_IDS.includes(e.equipmentId));
 }
 
 // =============================================================================
@@ -721,10 +896,21 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
           };
         }),
         
-        setEnhancement: (enhancement) => set({
-          enhancement,
-          isModified: true,
-          lastModifiedAt: Date.now(),
+        setEnhancement: (enhancement) => set((state) => {
+          // Sync equipment - remove old enhancement equipment, add new ones
+          const nonEnhancementEquipment = filterOutEnhancementEquipment(state.equipment);
+          const enhancementEquipment = createEnhancementEquipmentList(
+            enhancement,
+            state.tonnage,
+            state.techBase
+          );
+          
+          return {
+            enhancement,
+            equipment: [...nonEnhancementEquipment, ...enhancementEquipment],
+            isModified: true,
+            lastModifiedAt: Date.now(),
+          };
         }),
         
         setJumpMP: (jumpMP) => set((state) => {
