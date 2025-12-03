@@ -461,8 +461,12 @@ export function StructureTab({
             {/* Run MP (calculated) */}
             <div className="grid grid-cols-[140px_1fr_50px] gap-2 items-center">
               <label className={cs.text.label}>Run MP</label>
-              <div className="flex items-center justify-center">
-                <span className={`text-sm ${cs.text.value}`}>{runMP}</span>
+              <div className="flex items-center">
+                {/* Empty space matching stepper button width for alignment */}
+                <div className="w-8"></div>
+                <div className="w-12 text-center">
+                  <span className={`text-sm ${cs.text.value}`}>{runMP}</span>
+                </div>
               </div>
               <div className="flex items-center justify-center gap-1">
                 <span className={`text-sm ${cs.text.value}`}>{runMP}</span>
