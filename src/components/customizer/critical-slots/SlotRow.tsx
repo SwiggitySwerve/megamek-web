@@ -88,6 +88,8 @@ interface SlotRowProps {
   onDrop: (equipmentId: string) => void;
   /** Remove handler */
   onRemove: () => void;
+  /** Called when equipment drag starts from this slot */
+  onDragStart?: (equipmentId: string) => void;
 }
 
 /**
@@ -125,6 +127,7 @@ export const SlotRow = memo(function SlotRow({
   onClick,
   onDrop,
   onRemove,
+  onDragStart: onDragStartProp,
 }: SlotRowProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -172,6 +175,8 @@ export const SlotRow = memo(function SlotRow({
     e.dataTransfer.setData('text/equipment-id', slot.equipmentId);
     e.dataTransfer.effectAllowed = 'move';
     setIsDragging(true);
+    // Notify parent so equipment can be selected and valid slots highlighted
+    onDragStartProp?.(slot.equipmentId);
   };
   
   const handleDragEnd = () => {

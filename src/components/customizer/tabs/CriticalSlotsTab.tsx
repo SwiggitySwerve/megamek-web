@@ -411,6 +411,11 @@ export function CriticalSlotsTab({
     }
   }, [readOnly, equipment, clearEquipmentLocation]);
   
+  // Handle drag start from a slot - select the equipment to highlight valid targets
+  const handleEquipmentDragStart = useCallback((equipmentId: string) => {
+    onSelectEquipment?.(equipmentId);
+  }, [onSelectEquipment]);
+  
   // Render location grid helper
   const renderLocation = (location: MechLocation) => (
     <LocationGrid
@@ -422,6 +427,7 @@ export function CriticalSlotsTab({
       onSlotClick={(i) => handleSlotClick(location, i)}
       onEquipmentDrop={(i, e) => handleEquipmentDrop(location, i, e)}
       onEquipmentRemove={(i) => handleEquipmentRemove(location, i)}
+      onEquipmentDragStart={handleEquipmentDragStart}
     />
   );
   

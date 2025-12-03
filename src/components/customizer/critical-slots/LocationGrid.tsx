@@ -44,6 +44,8 @@ interface LocationGridProps {
   onEquipmentDrop: (slotIndex: number, equipmentId: string) => void;
   /** Called when equipment is removed */
   onEquipmentRemove: (slotIndex: number) => void;
+  /** Called when equipment drag starts from a slot */
+  onEquipmentDragStart?: (equipmentId: string) => void;
   /** Use compact layout */
   compact?: boolean;
   /** Additional CSS classes */
@@ -61,6 +63,7 @@ export function LocationGrid({
   onSlotClick,
   onEquipmentDrop,
   onEquipmentRemove,
+  onEquipmentDragStart,
   compact = false,
   className = '',
 }: LocationGridProps) {
@@ -103,6 +106,7 @@ export function LocationGrid({
             onClick={() => onSlotClick(slot.index)}
             onDrop={(equipmentId) => onEquipmentDrop(slot.index, equipmentId)}
             onRemove={() => onEquipmentRemove(slot.index)}
+            onDragStart={onEquipmentDragStart}
           />
         ))}
       </div>
