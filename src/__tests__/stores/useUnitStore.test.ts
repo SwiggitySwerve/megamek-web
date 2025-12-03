@@ -17,7 +17,7 @@ import {
   CreateUnitOptions,
 } from '@/stores/unitState';
 import { TechBase } from '@/types/enums/TechBase';
-import { TechBaseMode } from '@/types/construction/TechBaseConfiguration';
+import { TechBaseMode, TechBaseComponent } from '@/types/construction/TechBaseConfiguration';
 import { EngineType } from '@/types/construction/EngineType';
 import { GyroType } from '@/types/construction/GyroType';
 import { InternalStructureType } from '@/types/construction/InternalStructureType';
@@ -306,7 +306,7 @@ describe('Unit Store', () => {
       
       store.getState().setTechBaseMode(TechBaseMode.CLAN);
       
-      expectTechBaseMode(store, 'clan');
+      expectTechBaseMode(store, TechBaseMode.CLAN);
     });
     
     it('should reset componentTechBases to Clan when switching to clan mode', () => {
@@ -329,7 +329,7 @@ describe('Unit Store', () => {
       const store = createISTestStore();
       
       // Set a specific component to Clan
-      store.getState().setComponentTechBase('engine', TechBase.CLAN);
+      store.getState().setComponentTechBase(TechBaseComponent.ENGINE, TechBase.CLAN);
       
       // Switch to mixed mode
       store.getState().setTechBaseMode(TechBaseMode.MIXED);
@@ -357,7 +357,7 @@ describe('Unit Store', () => {
     it('should update individual component tech base', () => {
       const store = createISTestStore();
       
-      store.getState().setComponentTechBase('engine', TechBase.CLAN);
+      store.getState().setComponentTechBase(TechBaseComponent.ENGINE, TechBase.CLAN);
       
       expect(store.getState().componentTechBases.engine).toBe(TechBase.CLAN);
       // Other components remain unchanged
@@ -368,7 +368,7 @@ describe('Unit Store', () => {
       const store = createTestStore();
       store.getState().markModified(false);
       
-      store.getState().setComponentTechBase('armor', TechBase.CLAN);
+      store.getState().setComponentTechBase(TechBaseComponent.ARMOR, TechBase.CLAN);
       
       expect(store.getState().isModified).toBe(true);
     });
@@ -546,14 +546,14 @@ describe('Unit Store', () => {
       const store = createISTestStore();
       
       // Verify initial IS state
-      expectTechBaseMode(store, 'inner_sphere');
+      expectTechBaseMode(store, TechBaseMode.INNER_SPHERE);
       expectAllComponentTechBases(store.getState().componentTechBases, TechBase.INNER_SPHERE);
       
       // Switch to Clan
       store.getState().setTechBaseMode(TechBaseMode.CLAN);
       
       // Verify Clan state
-      expectTechBaseMode(store, 'clan');
+      expectTechBaseMode(store, TechBaseMode.CLAN);
       expectAllComponentTechBases(store.getState().componentTechBases, TechBase.CLAN);
     });
     
@@ -561,14 +561,14 @@ describe('Unit Store', () => {
       const store = createClanTestStore();
       
       // Verify initial Clan state
-      expectTechBaseMode(store, 'clan');
+      expectTechBaseMode(store, TechBaseMode.CLAN);
       expectAllComponentTechBases(store.getState().componentTechBases, TechBase.CLAN);
       
       // Switch to IS
       store.getState().setTechBaseMode(TechBaseMode.INNER_SPHERE);
       
       // Verify IS state
-      expectTechBaseMode(store, 'inner_sphere');
+      expectTechBaseMode(store, TechBaseMode.INNER_SPHERE);
       expectAllComponentTechBases(store.getState().componentTechBases, TechBase.INNER_SPHERE);
     });
     
@@ -576,8 +576,8 @@ describe('Unit Store', () => {
       const store = createISTestStore();
       
       // Set specific components before switching to mixed
-      store.getState().setComponentTechBase('engine', TechBase.CLAN);
-      store.getState().setComponentTechBase('heatsink', TechBase.CLAN);
+      store.getState().setComponentTechBase(TechBaseComponent.ENGINE, TechBase.CLAN);
+      store.getState().setComponentTechBase(TechBaseComponent.HEATSINK, TechBase.CLAN);
       
       // Switch to mixed
       store.getState().setTechBaseMode(TechBaseMode.MIXED);
@@ -593,8 +593,8 @@ describe('Unit Store', () => {
       
       // Switch to mixed and set varied tech bases
       store.getState().setTechBaseMode(TechBaseMode.MIXED);
-      store.getState().setComponentTechBase('engine', TechBase.CLAN);
-      store.getState().setComponentTechBase('armor', TechBase.CLAN);
+      store.getState().setComponentTechBase(TechBaseComponent.ENGINE, TechBase.CLAN);
+      store.getState().setComponentTechBase(TechBaseComponent.ARMOR, TechBase.CLAN);
       
       // Switch to Clan (non-mixed)
       store.getState().setTechBaseMode(TechBaseMode.CLAN);

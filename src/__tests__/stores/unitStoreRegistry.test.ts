@@ -25,7 +25,7 @@ import {
 import { createUnitStore, createNewUnitStore } from '@/stores/useUnitStore';
 import { createDefaultUnitState } from '@/stores/unitState';
 import { TechBase } from '@/types/enums/TechBase';
-import { TechBaseMode } from '@/types/construction/TechBaseConfiguration';
+import { TechBaseMode, TechBaseComponent } from '@/types/construction/TechBaseConfiguration';
 import { EngineType } from '@/types/construction/EngineType';
 import { GyroType } from '@/types/construction/GyroType';
 import { HeatSinkType } from '@/types/construction/HeatSinkType';
@@ -383,7 +383,7 @@ describe('unitStoreRegistry', () => {
       original.getState().setHeatSinkType(HeatSinkType.DOUBLE_CLAN);
       original.getState().setInternalStructureType(InternalStructureType.ENDO_STEEL_CLAN);
       original.getState().setTechBaseMode(TechBaseMode.MIXED);
-      original.getState().setComponentTechBase('armor', TechBase.INNER_SPHERE);
+      original.getState().setComponentTechBase(TechBaseComponent.ARMOR, TechBase.INNER_SPHERE);
       
       const duplicate = duplicateUnit(original.getState().id);
       
@@ -434,12 +434,12 @@ describe('unitStoreRegistry', () => {
         tonnage: 50,
         techBase: TechBase.INNER_SPHERE,
       });
-      original.getState().setComponentTechBase('engine', TechBase.CLAN);
+      original.getState().setComponentTechBase(TechBaseComponent.ENGINE, TechBase.CLAN);
       
       const duplicate = duplicateUnit(original.getState().id);
       
       // Modify duplicate
-      duplicate!.getState().setComponentTechBase('engine', TechBase.INNER_SPHERE);
+      duplicate!.getState().setComponentTechBase(TechBaseComponent.ENGINE, TechBase.INNER_SPHERE);
       duplicate!.getState().setEngineType(EngineType.LIGHT);
       
       // Original should be unchanged

@@ -38,7 +38,7 @@ function createMockEquipment(
     instanceId,
     equipmentId: `test-${instanceId}`,
     name,
-    category: EquipmentCategory.WEAPON,
+    category: EquipmentCategory.ENERGY_WEAPON,
     weight: 1,
     criticalSlots,
     heat: 0,
@@ -566,7 +566,7 @@ describe('Displacement Utilities', () => {
         instanceId: 'eq1',
         equipmentId: 'test-weapon',
         name: 'Test Weapon',
-        category: EquipmentCategory.WEAPON,
+        category: EquipmentCategory.ENERGY_WEAPON,
         weight: 5,
         criticalSlots: 2,
         heat: 3,
@@ -584,7 +584,7 @@ describe('Displacement Utilities', () => {
       expect(eq1.instanceId).toBe('eq1');
       expect(eq1.equipmentId).toBe('test-weapon');
       expect(eq1.name).toBe('Test Weapon');
-      expect(eq1.category).toBe(EquipmentCategory.WEAPON);
+      expect(eq1.category).toBe(EquipmentCategory.ENERGY_WEAPON);
       expect(eq1.weight).toBe(5);
       expect(eq1.criticalSlots).toBe(2);
       expect(eq1.heat).toBe(3);

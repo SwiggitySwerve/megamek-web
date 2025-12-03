@@ -48,7 +48,7 @@ function createMockEquipment(
     instanceId,
     equipmentId,
     name,
-    category: EquipmentCategory.WEAPON,
+    category: EquipmentCategory.ENERGY_WEAPON,
     weight: 1,
     criticalSlots,
     heat: 0,
@@ -146,8 +146,8 @@ describe('getFixedSlotIndices', () => {
       const xlEngine = getFixedSlotIndices(MechLocation.HEAD, EngineType.XL_IS, GyroType.STANDARD);
       const compactEngine = getFixedSlotIndices(MechLocation.HEAD, EngineType.COMPACT, GyroType.STANDARD);
       
-      expect([...standardEngine]).toEqual([...xlEngine]);
-      expect([...standardEngine]).toEqual([...compactEngine]);
+      expect(Array.from(standardEngine)).toEqual(Array.from(xlEngine));
+      expect(Array.from(standardEngine)).toEqual(Array.from(compactEngine));
     });
   });
 
@@ -265,7 +265,7 @@ describe('getFixedSlotIndices', () => {
       const withStandard = getFixedSlotIndices(MechLocation.LEFT_ARM, EngineType.STANDARD, GyroType.STANDARD);
       const withXL = getFixedSlotIndices(MechLocation.LEFT_ARM, EngineType.XL_IS, GyroType.XL);
       
-      expect([...withStandard]).toEqual([...withXL]);
+      expect(Array.from(withStandard)).toEqual(Array.from(withXL));
     });
   });
 

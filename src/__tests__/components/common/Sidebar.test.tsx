@@ -7,14 +7,12 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import Sidebar from '@/components/common/Sidebar';
 
 // Mock Next.js Link component
-jest.mock('next/link', () => {
-  return ({ children, href, legacyBehavior }: { children: React.ReactNode; href: string; legacyBehavior?: boolean }) => {
-    if (legacyBehavior) {
-      return React.cloneElement(children as React.ReactElement, { href });
-    }
-    return <a href={href}>{children}</a>;
-  };
-});
+jest.mock('next/link', () => ({
+  __esModule: true,
+  default: ({ children, href }: { children: React.ReactNode; href: string }) => (
+    <a href={href}>{children}</a>
+  ),
+}));
 
 describe('Sidebar', () => {
   const defaultProps = {
