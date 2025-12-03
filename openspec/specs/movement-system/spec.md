@@ -29,8 +29,8 @@ The system SHALL support MASC, TSM, Supercharger, and Partial Wing with accurate
 
 #### Scenario: MASC weight calculation (IS)
 - **WHEN** calculating Inner Sphere MASC weight
-- **THEN** weight = tonnage × 5% rounded up to nearest 0.5 ton
-- **AND** criticalSlots = weight (as whole number)
+- **THEN** weight = tonnage × 5% rounded up to nearest whole ton
+- **AND** criticalSlots = weight
 - **AND** cost = mechTonnage × 1000 C-Bills
 
 #### Scenario: MASC weight calculation (Clan)

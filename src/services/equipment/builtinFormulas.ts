@@ -60,12 +60,12 @@ export const BUILTIN_FORMULAS: Readonly<Record<string, IVariableFormulas>> = {
   
   /**
    * MASC (Inner Sphere)
-   * Weight: tonnage × 5% rounded up to nearest 0.5 ton
-   * Slots: = weight (as whole number)
+   * Weight: tonnage × 5% rounded up to nearest whole ton
+   * Slots: = weight
    * Cost: tonnage × 1,000
    */
   'masc-is': {
-    weight: multiplyRound('tonnage', 0.05, 0.5),
+    weight: multiplyRound('tonnage', 0.05, 1),
     criticalSlots: equalsWeight(),
     cost: multiply('tonnage', 1000),
     requiredContext: ['tonnage'],

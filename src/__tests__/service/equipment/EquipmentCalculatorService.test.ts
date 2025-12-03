@@ -142,13 +142,13 @@ describe('EquipmentCalculatorService', () => {
   // ============================================================================
   describe('calculateProperties - MASC', () => {
     describe('IS MASC', () => {
-      // Weight = tonnage × 5% rounded up to nearest 0.5 ton
-      // Slots = weight (as whole number)
+      // Weight = tonnage × 5% rounded up to nearest whole ton
+      // Slots = weight
 
       it.each([
         [20, 1],    // 20 × 0.05 = 1 ton
-        [50, 2.5],  // 50 × 0.05 = 2.5 tons
-        [75, 4],    // 75 × 0.05 = 3.75 → 4 tons (rounded to 0.5)
+        [50, 3],    // 50 × 0.05 = 2.5 → 3 tons (rounded up)
+        [75, 4],    // 75 × 0.05 = 3.75 → 4 tons (rounded up)
         [100, 5],   // 100 × 0.05 = 5 tons
       ])('%d ton mech: %d ton MASC', 
         (tonnage, expectedWeight) => {
@@ -156,6 +156,7 @@ describe('EquipmentCalculatorService', () => {
             tonnage,
           });
           expect(result.weight).toBe(expectedWeight);
+          expect(result.criticalSlots).toBe(expectedWeight); // Slots = weight
         }
       );
     });
