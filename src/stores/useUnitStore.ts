@@ -657,9 +657,22 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
           const newEngineRating = tonnage * walkMP;
           // Clamp engine rating to valid range
           const clampedRating = Math.max(10, Math.min(500, newEngineRating));
+          
+          // Re-sync enhancement equipment since MASC/Supercharger depend on engine
+          const engineWeight = calculateEngineWeight(clampedRating, state.engineType);
+          const nonEnhancementEquipment = filterOutEnhancementEquipment(state.equipment);
+          const enhancementEquipment = createEnhancementEquipmentList(
+            state.enhancement,
+            tonnage,
+            state.techBase,
+            clampedRating,
+            engineWeight
+          );
+          
           return {
             tonnage,
             engineRating: clampedRating,
+            equipment: [...nonEnhancementEquipment, ...enhancementEquipment],
             isModified: true,
             lastModifiedAt: Date.now(),
           };
@@ -723,11 +736,24 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
             memoryTechBase
           );
           
+          // Re-sync enhancement equipment since MASC calculation differs by tech base
+          const engineWeight = calculateEngineWeight(state.engineRating, validatedSelections.engineType ?? state.engineType);
+          const nonEnhancementEquipment = filterOutEnhancementEquipment(state.equipment);
+          const enhancementEquipment = createEnhancementEquipmentList(
+            state.enhancement,
+            state.tonnage,
+            newTechBase,
+            state.engineRating,
+            engineWeight
+          );
+          
           return {
             techBaseMode: mode,
+            techBase: newTechBase,
             componentTechBases: newComponentTechBases,
             selectionMemory: updatedMemory,
             ...validatedSelections,
+            equipment: [...nonEnhancementEquipment, ...enhancementEquipment],
             isModified: true,
             lastModifiedAt: Date.now(),
           };
