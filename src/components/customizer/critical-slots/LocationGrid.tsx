@@ -98,7 +98,7 @@ export function LocationGrid({
             key={slot.index}
             slot={slot}
             isAssignable={assignableSlots.includes(slot.index)}
-            isSelected={slot.equipmentId === selectedEquipmentId}
+            isSelected={!!(selectedEquipmentId && slot.equipmentId === selectedEquipmentId)}
             compact={compact}
             onClick={() => onSlotClick(slot.index)}
             onDrop={(equipmentId) => onEquipmentDrop(slot.index, equipmentId)}

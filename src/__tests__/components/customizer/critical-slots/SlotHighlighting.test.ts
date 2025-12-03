@@ -395,6 +395,39 @@ describe('Slot Highlighting', () => {
   // ===========================================================================
   // Regression Tests - Prevent re-introduction of highlighting bugs
   // ===========================================================================
+  describe('regression: slot selection logic', () => {
+    /**
+     * Tests the isSelected calculation: slot.equipmentId === selectedEquipmentId
+     * When both are undefined, this would incorrectly return true!
+     */
+    function isSlotSelected(slotEquipmentId: string | undefined, selectedEquipmentId: string | undefined): boolean {
+      // CORRECT implementation: require selectedEquipmentId to be truthy
+      return !!(selectedEquipmentId && slotEquipmentId === selectedEquipmentId);
+    }
+
+    it('should NOT select empty slots when no equipment is selected', () => {
+      // Both undefined - should be FALSE
+      const result = isSlotSelected(undefined, undefined);
+      expect(result).toBe(false);
+    });
+
+    it('should NOT select empty slots even when equipment IS selected', () => {
+      // Slot has no equipment, but we have equipment selected
+      const result = isSlotSelected(undefined, 'test-equipment-id');
+      expect(result).toBe(false);
+    });
+
+    it('should select slots that have matching equipment', () => {
+      const result = isSlotSelected('test-equipment-id', 'test-equipment-id');
+      expect(result).toBe(true);
+    });
+
+    it('should NOT select slots with different equipment', () => {
+      const result = isSlotSelected('equipment-a', 'equipment-b');
+      expect(result).toBe(false);
+    });
+  });
+
   describe('regression: no highlighting when nothing selected', () => {
     it('should NEVER highlight slots when selectedEquipment is null', () => {
       // This is the key invariant: no selection = no highlighting
