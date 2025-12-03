@@ -101,6 +101,35 @@ function groupByCategory(equipment: LoadoutEquipmentItem[]): Map<EquipmentCatego
   return groups;
 }
 
+// =============================================================================
+// Common Styles
+// =============================================================================
+
+/** Shared styles for consistent row heights and text sizes */
+const trayStyles = {
+  /** Standard row height for all items */
+  row: 'h-7 flex items-center',
+  /** Equipment item row */
+  equipmentRow: 'px-2 h-7 flex items-center transition-all group border-b border-slate-700/30',
+  /** Category header row */
+  categoryRow: 'px-2 h-7 bg-slate-800/50 flex items-center gap-1.5',
+  /** Section header row */
+  sectionRow: 'w-full h-7 flex items-center justify-between px-2 hover:bg-slate-700/50 transition-colors bg-slate-700/30',
+  /** Text sizes */
+  text: {
+    /** Primary text (equipment names, section titles) */
+    primary: 'text-xs',
+    /** Secondary text (weight, crits, counts) */
+    secondary: 'text-[10px]',
+    /** Tertiary text (icons, small labels) */
+    tertiary: 'text-[9px]',
+  },
+  /** Category dot indicator */
+  categoryDot: 'w-2 h-2 rounded-sm',
+  /** Action button base */
+  actionButton: 'opacity-0 group-hover:opacity-100 transition-opacity text-[10px] px-0.5',
+} as const;
+
 /** Convert location names to shorthand (e.g., "Right Torso" -> "RT") */
 function getLocationShorthand(location: string): string {
   const shortcuts: Record<string, string> = {
@@ -248,112 +277,69 @@ function EquipmentItem({ item, isSelected, onSelect, onRemove, onContextMenu, on
     setIsDragging(false);
   };
   
-  // Allocated items use compact single-line display
-  if (item.isAllocated) {
-    return (
-      <div
-        className={`
-          px-2 py-0.5 text-xs transition-all group border-b border-slate-700/30 cursor-pointer
-          ${colors.bg}
-          ${isDragging ? 'opacity-50' : ''}
-          ${isSelected
-            ? 'ring-1 ring-amber-400 ring-inset brightness-110'
-            : 'hover:brightness-110'
-          }
-        `}
-        onClick={onSelect}
-        onContextMenu={onContextMenu}
-        title="Right-click to unassign"
-      >
-        <div className="flex items-center justify-between gap-1">
-          <span className="truncate flex-1 text-white text-[11px] drop-shadow-sm">
-            {item.name}
-          </span>
-          <div className="flex items-center gap-1">
-            {item.location && (
-              <span className="text-white/60 text-[9px] font-medium">{getLocationShorthand(item.location)}</span>
-            )}
-            {/* Unassign button */}
-            {onUnassign && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onUnassign();
-                }}
-                className="opacity-0 group-hover:opacity-100 text-amber-300 hover:text-amber-200 transition-opacity text-[10px]"
-                title="Unassign from slot"
-              >
-                ↩
-              </button>
-            )}
-            {/* Delete button - only for removable items */}
-            {item.isRemovable ? (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onRemove();
-                }}
-                className="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 transition-opacity"
-                title="Remove from unit"
-              >
-                ✕
-              </button>
-            ) : (
-              <span className="text-white/40 text-[9px]" title="Configuration component">⚙</span>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  }
-  
-  // Unallocated items show full info
+  // Unified inline single-line layout for both allocated and unallocated items
   return (
     <div
       draggable={canDrag}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       className={`
-        px-2 py-1 text-xs transition-all group border-b border-slate-700/30
+        ${trayStyles.equipmentRow}
         ${colors.bg}
         ${canDrag ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer'}
         ${isDragging ? 'opacity-50' : ''}
         ${isSelected
-          ? 'ring-2 ring-amber-400 ring-inset brightness-110'
+          ? 'ring-1 ring-amber-400 ring-inset brightness-110'
           : 'hover:brightness-110'
         }
       `}
       onClick={onSelect}
       onContextMenu={onContextMenu}
-      title="Drag to critical slot or click to select"
+      title={canDrag ? 'Drag to critical slot or click to select' : 'Right-click to unassign'}
     >
-      <div className="flex items-center justify-between gap-1">
-        <span className="truncate flex-1 text-white font-medium drop-shadow-sm">
+      <div className="flex items-center gap-1 w-full">
+        {/* Name */}
+        <span className={`truncate flex-1 text-white ${trayStyles.text.primary} drop-shadow-sm`}>
           {item.name}
         </span>
-        <div className="flex items-center gap-1">
-          {/* Delete button - only for removable items (not config components) */}
+        {/* Info: weight, crits, and location (if allocated) */}
+        <span className={`text-white/50 ${trayStyles.text.secondary} whitespace-nowrap`}>
+          {item.weight}t {item.criticalSlots}c
+          {item.isAllocated && item.location && (
+            <span className="text-white/80 ml-1">{getLocationShorthand(item.location)}</span>
+          )}
+        </span>
+        {/* Action buttons */}
+        <div className="flex items-center">
+          {/* Unassign button - only for allocated items */}
+          {item.isAllocated && onUnassign && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onUnassign();
+              }}
+              className={`${trayStyles.actionButton} text-amber-300 hover:text-amber-200`}
+              title="Unassign from slot"
+            >
+              ↩
+            </button>
+          )}
+          {/* Delete button - only for removable items */}
           {item.isRemovable ? (
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 onRemove();
               }}
-              className="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 transition-opacity"
+              className={`${trayStyles.actionButton} text-red-400 hover:text-red-300`}
               title="Remove from unit"
             >
               ✕
             </button>
           ) : (
-            <span className="text-white/40 text-[10px]" title="Configuration component - change via Structure/Armor tabs">
-              ⚙
-            </span>
+            <span className={`text-white/40 ${trayStyles.text.tertiary}`} title="Configuration component">⚙</span>
           )}
         </div>
-      </div>
-      <div className="flex items-center gap-2 text-white/60 text-[10px] mt-0.5">
-        <span>{item.weight}t</span>
-        <span>{item.criticalSlots} crit{item.criticalSlots !== 1 ? 's' : ''}</span>
       </div>
     </div>
   );
@@ -420,12 +406,12 @@ function AllocationSection({
     >
       <button
         onClick={onToggle}
-        className="w-full flex items-center justify-between px-3 py-2 hover:bg-slate-700/50 transition-colors bg-slate-700/30"
+        className={trayStyles.sectionRow}
       >
-        <span className={`text-sm font-medium ${titleColor}`}>{title}</span>
-        <span className="flex items-center gap-2">
-          <span className="text-xs text-slate-400">({count})</span>
-          <span className={`text-[10px] text-slate-500 transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+        <span className={`${trayStyles.text.primary} font-medium ${titleColor}`}>{title}</span>
+        <span className="flex items-center gap-1">
+          <span className={`${trayStyles.text.secondary} text-slate-400`}>({count})</span>
+          <span className={`${trayStyles.text.tertiary} text-slate-500 transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
             ▼
           </span>
         </span>
@@ -456,10 +442,10 @@ function CategoryGroup({ category, items, selectedId, onSelect, onRemove, onUnas
   
   return (
     <div>
-      <div className="px-3 py-1 bg-slate-800/50 flex items-center gap-2">
-        <span className={`w-2 h-2 rounded-sm ${colors.bg}`} />
-        <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wide">{label}</span>
-        <span className="text-[10px] text-slate-500">({items.length})</span>
+      <div className={trayStyles.categoryRow}>
+        <span className={`${trayStyles.categoryDot} ${colors.bg}`} />
+        <span className={`${trayStyles.text.secondary} font-medium text-slate-400 uppercase tracking-wide`}>{label}</span>
+        <span className={`${trayStyles.text.secondary} text-slate-500`}>({items.length})</span>
       </div>
       {items.map(item => (
         <EquipmentItem
@@ -651,8 +637,8 @@ export function GlobalLoadoutTray({
                 onDrop={handleDropToUnallocated}
               >
                 {unallocated.length === 0 ? (
-                  <div className="px-3 py-4 text-center text-slate-500 text-xs">
-                    Drag equipment here to unassign
+                  <div className="px-2 py-1 text-center text-slate-500 text-[9px]">
+                    Drag here to unassign
                   </div>
                 ) : (
                   CATEGORY_ORDER.map(category => {
