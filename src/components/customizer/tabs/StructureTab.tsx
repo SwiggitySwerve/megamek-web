@@ -23,6 +23,7 @@ import {
   MOVEMENT_ENHANCEMENT_DEFINITIONS 
 } from '@/types/construction/MovementEnhancement';
 import { JumpJetType, getMaxJumpMP, JUMP_JET_DEFINITIONS } from '@/utils/construction/movementCalculations';
+import { HeatSinkType } from '@/types/construction/HeatSinkType';
 import { customizerStyles as cs } from '../styles';
 
 // =============================================================================
@@ -126,6 +127,8 @@ export function StructureTab({
   const setGyroType = useUnitStore((s) => s.setGyroType);
   const setInternalStructureType = useUnitStore((s) => s.setInternalStructureType);
   const setCockpitType = useUnitStore((s) => s.setCockpitType);
+  const setHeatSinkType = useUnitStore((s) => s.setHeatSinkType);
+  const setHeatSinkCount = useUnitStore((s) => s.setHeatSinkCount);
   const setEnhancement = useUnitStore((s) => s.setEnhancement);
   const setJumpMP = useUnitStore((s) => s.setJumpMP);
   const setJumpJetType = useUnitStore((s) => s.setJumpJetType);
@@ -201,6 +204,17 @@ export function StructureTab({
   const handleJumpJetTypeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     setJumpJetType(e.target.value as JumpJetType);
   }, [setJumpJetType]);
+  
+  // Heat sink handlers
+  const handleHeatSinkTypeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    setHeatSinkType(e.target.value as HeatSinkType);
+  }, [setHeatSinkType]);
+  
+  const handleHeatSinkCountChange = useCallback((newCount: number) => {
+    // Minimum 10 heat sinks, no explicit maximum (limited by tonnage/slots)
+    const clampedCount = Math.max(10, newCount);
+    setHeatSinkCount(clampedCount);
+  }, [setHeatSinkCount]);
   
   return (
     <div className={`${cs.layout.tabContent} ${className}`}>
@@ -487,6 +501,121 @@ export function StructureTab({
                 <p className={cs.text.secondary}>Jump Jets: {calculations.jumpJetWeight}t / {calculations.jumpJetSlots} slots</p>
               )}
             </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Heat Sinks Section - Full Width */}
+      <div className={cs.panel.main}>
+        <h3 className={cs.text.sectionTitle}>Heat Sinks</h3>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Left: Heat Sink Configuration */}
+          <div className={cs.layout.formStack}>
+            {/* Heat Sink Type */}
+            <div className={cs.layout.field}>
+              <div className={cs.layout.rowBetween}>
+                <label className={cs.text.label}>Type</label>
+                <span className={cs.text.secondary}>
+                  {heatSinkType === HeatSinkType.SINGLE ? '1 heat/sink' : '2 heat/sink'}
+                </span>
+              </div>
+              <select 
+                className={cs.select.compact}
+                disabled={readOnly}
+                value={heatSinkType}
+                onChange={handleHeatSinkTypeChange}
+              >
+                {filteredOptions.heatSinks.map((hs) => (
+                  <option key={hs.type} value={hs.type}>
+                    {hs.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            {/* Heat Sink Count */}
+            <div className={cs.layout.field}>
+              <div className={cs.layout.rowBetween}>
+                <label className={cs.text.label}>Number</label>
+                <span className={cs.text.secondary}>
+                  {calculations.heatSinkWeight}t / {calculations.heatSinkSlots} slots
+                </span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center">
+                  <button
+                    onClick={() => handleHeatSinkCountChange(heatSinkCount - 1)}
+                    disabled={readOnly || heatSinkCount <= 10}
+                    className={cs.button.stepperLeft}
+                  >
+                    −
+                  </button>
+                  <input
+                    type="number"
+                    value={heatSinkCount}
+                    onChange={(e) => handleHeatSinkCountChange(parseInt(e.target.value, 10) || 10)}
+                    disabled={readOnly}
+                    min={10}
+                    className={`w-14 ${cs.input.number} border-y ${cs.input.noSpinners}`}
+                  />
+                  <button
+                    onClick={() => handleHeatSinkCountChange(heatSinkCount + 1)}
+                    disabled={readOnly}
+                    className={cs.button.stepperRight}
+                  >
+                    +
+                  </button>
+                </div>
+                <span className={cs.text.secondary}>
+                  (min: 10)
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          {/* Right: Heat Sink Summary */}
+          <div className="bg-slate-900/50 rounded-lg p-4 space-y-3">
+            <div className="grid grid-cols-2 gap-4">
+              {/* Engine Free */}
+              <div className="text-center p-3 bg-slate-800/50 rounded-lg">
+                <div className={`text-2xl font-bold ${cs.text.valuePositive}`}>
+                  {calculations.integralHeatSinks}
+                </div>
+                <div className={cs.text.secondary}>Engine Free</div>
+              </div>
+              
+              {/* External */}
+              <div className="text-center p-3 bg-slate-800/50 rounded-lg">
+                <div className={`text-2xl font-bold ${calculations.externalHeatSinks > 0 ? cs.text.valueWarning : cs.text.value}`}>
+                  {calculations.externalHeatSinks}
+                </div>
+                <div className={cs.text.secondary}>External</div>
+              </div>
+            </div>
+            
+            {/* Dissipation Summary */}
+            <div className={`${cs.layout.divider} text-center`}>
+              <div className="flex items-center justify-center gap-2">
+                <span className={cs.text.label}>Total Dissipation:</span>
+                <span className={`text-lg font-bold ${cs.text.valueHighlight}`}>
+                  {calculations.totalHeatDissipation}
+                </span>
+                <span className={cs.text.secondary}>heat/turn</span>
+              </div>
+            </div>
+            
+            {/* Slot breakdown if external */}
+            {calculations.externalHeatSinks > 0 && (
+              <div className={cs.text.secondary}>
+                <p>
+                  {calculations.externalHeatSinks} external × {
+                    heatSinkType === HeatSinkType.SINGLE ? '1' :
+                    heatSinkType === HeatSinkType.DOUBLE_CLAN ? '2' : '3'
+                  } slots = {calculations.heatSinkSlots} critical slots
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>
