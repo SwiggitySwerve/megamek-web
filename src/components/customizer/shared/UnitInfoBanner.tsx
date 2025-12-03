@@ -24,6 +24,8 @@ export interface UnitStats {
   tonnage: number;
   /** Tech base */
   techBase: TechBase;
+  /** Engine rating */
+  engineRating: number;
   /** Walk MP */
   walkMP: number;
   /** Run MP */
@@ -216,8 +218,13 @@ export function UnitInfoBanner({
           </div>
         </div>
         
-        {/* Section 2: Movement Stats */}
-        <div className="px-4 py-2 flex items-center justify-center gap-4 border-b sm:border-b-0 sm:border-r border-slate-700 min-w-fit">
+        {/* Section 2: Movement Stats + Engine */}
+        <div className="px-4 py-2 flex items-center justify-center gap-6 border-b sm:border-b-0 sm:border-r border-slate-700 min-w-fit">
+          <SimpleStat 
+            label="ENGINE"
+            value={stats.engineRating}
+            status={stats.engineRating >= 400 ? 'warning' : 'normal'}
+          />
           <MovementStat 
             walkMP={stats.walkMP} 
             runMP={stats.runMP} 

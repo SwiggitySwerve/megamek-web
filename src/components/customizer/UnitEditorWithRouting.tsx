@@ -228,6 +228,7 @@ export function UnitEditorWithRouting({
     name: unitName,
     tonnage,
     techBase,
+    engineRating,
     walkMP: calculations.walkMP,
     runMP: calculations.runMP,
     jumpMP: calculations.jumpMP,
@@ -243,7 +244,7 @@ export function UnitEditorWithRouting({
     validationStatus: 'valid' as ValidationStatus, // TODO: Get from validation
     errorCount: 0,
     warningCount: 0,
-  }), [unitName, tonnage, techBase, calculations, equipmentCalcs, totalWeight, totalSlotsUsed, allocatedArmorPoints, maxArmorPoints, maxRunMP]);
+  }), [unitName, tonnage, techBase, engineRating, calculations, equipmentCalcs, totalWeight, totalSlotsUsed, allocatedArmorPoints, maxArmorPoints, maxRunMP]);
   
   // Convert equipment to LoadoutEquipmentItem format
   // Normalize categories for consistent display (e.g., jump jets -> Movement)
