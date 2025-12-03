@@ -9,7 +9,7 @@
  * @spec openspec/specs/critical-slot-allocation/spec.md
  */
 
-import React, { useMemo, useCallback, useState } from 'react';
+import React, { useMemo, useCallback, useEffect, useRef } from 'react';
 import { useUnitStore } from '@/stores/useUnitStore';
 import { useCustomizerStore } from '@/stores/useCustomizerStore';
 import { LocationData, SlotContent } from '../critical-slots';
@@ -20,6 +20,11 @@ import { SystemComponentType } from '@/utils/colors/slotColors';
 import { EngineType, getEngineDefinition } from '@/types/construction/EngineType';
 import { GyroType, getGyroDefinition } from '@/types/construction/GyroType';
 import { isValidLocationForEquipment } from '@/types/equipment/EquipmentPlacement';
+import {
+  fillUnhittableSlots,
+  compactEquipmentSlots,
+  sortEquipmentBySize,
+} from '@/utils/construction/slotOperations';
 
 // =============================================================================
 // Types
@@ -289,15 +294,14 @@ export function CriticalSlotsTab({
   const engineType = useUnitStore((s) => s.engineType);
   const gyroType = useUnitStore((s) => s.gyroType);
   const updateEquipmentLocation = useUnitStore((s) => s.updateEquipmentLocation);
+  const bulkUpdateEquipmentLocations = useUnitStore((s) => s.bulkUpdateEquipmentLocations);
   const clearEquipmentLocation = useUnitStore((s) => s.clearEquipmentLocation);
   
   // UI state
   const autoModeSettings = useCustomizerStore((s) => s.autoModeSettings);
   const toggleAutoFillUnhittables = useCustomizerStore((s) => s.toggleAutoFillUnhittables);
-  
-  // Local state for auto-mode toggles
-  const [autoCompact, setAutoCompact] = useState(false);
-  const [autoSort, setAutoSort] = useState(false);
+  const toggleAutoCompact = useCustomizerStore((s) => s.toggleAutoCompact);
+  const toggleAutoSort = useCustomizerStore((s) => s.toggleAutoSort);
   
   // Get selected equipment item
   const selectedEquipment = useMemo(() => {
@@ -349,19 +353,37 @@ export function CriticalSlotsTab({
   
   // Handlers
   const handleSlotClick = useCallback((location: MechLocation, slotIndex: number) => {
-    if (readOnly || !selectedEquipment) return;
+    if (readOnly) return;
     
-    const assignable = getAssignableSlots(location);
-    if (!assignable.includes(slotIndex)) return;
+    const locData = getLocationData(location);
+    const clickedSlot = locData.slots.find(s => s.index === slotIndex);
     
-    const slots: number[] = [];
-    for (let i = 0; i < selectedEquipment.criticalSlots; i++) {
-      slots.push(slotIndex + i);
+    // Case 1: Clicked on equipment slot - select it for reassignment
+    if (clickedSlot?.type === 'equipment' && clickedSlot.equipmentId) {
+      // If clicking same equipment that's already selected, deselect
+      if (selectedEquipment?.instanceId === clickedSlot.equipmentId) {
+        onSelectEquipment?.(null);
+      } else {
+        // Select this equipment for reassignment
+        onSelectEquipment?.(clickedSlot.equipmentId);
+      }
+      return;
     }
     
-    updateEquipmentLocation(selectedEquipment.instanceId, location, slots);
-    onSelectEquipment?.(null); // Clear selection after assignment
-  }, [readOnly, selectedEquipment, getAssignableSlots, updateEquipmentLocation, onSelectEquipment]);
+    // Case 2: Clicked on empty slot with equipment selected - place it
+    if (selectedEquipment && clickedSlot?.type === 'empty') {
+      const assignable = getAssignableSlots(location);
+      if (!assignable.includes(slotIndex)) return;
+      
+      const slots: number[] = [];
+      for (let i = 0; i < selectedEquipment.criticalSlots; i++) {
+        slots.push(slotIndex + i);
+      }
+      
+      updateEquipmentLocation(selectedEquipment.instanceId, location, slots);
+      onSelectEquipment?.(null); // Clear selection after assignment
+    }
+  }, [readOnly, selectedEquipment, getLocationData, getAssignableSlots, updateEquipmentLocation, onSelectEquipment]);
   
   const handleEquipmentDrop = useCallback((location: MechLocation, slotIndex: number, equipmentId: string) => {
     if (readOnly) return;
@@ -412,6 +434,93 @@ export function CriticalSlotsTab({
     }
   }, [readOnly, equipment, clearEquipmentLocation]);
   
+  // Fill: Distribute unallocated unhittables evenly
+  const handleFill = useCallback(() => {
+    if (readOnly) return;
+    const result = fillUnhittableSlots(equipment, engineType, gyroType);
+    if (result.assignments.length > 0) {
+      bulkUpdateEquipmentLocations(result.assignments);
+    }
+  }, [readOnly, equipment, engineType, gyroType, bulkUpdateEquipmentLocations]);
+  
+  // Compact: Move equipment to lowest slot indices
+  const handleCompact = useCallback(() => {
+    if (readOnly) return;
+    const result = compactEquipmentSlots(equipment, engineType, gyroType);
+    if (result.assignments.length > 0) {
+      bulkUpdateEquipmentLocations(result.assignments);
+    }
+  }, [readOnly, equipment, engineType, gyroType, bulkUpdateEquipmentLocations]);
+  
+  // Sort: Reorder by size (largest first), then compact
+  const handleSort = useCallback(() => {
+    if (readOnly) return;
+    const result = sortEquipmentBySize(equipment, engineType, gyroType);
+    if (result.assignments.length > 0) {
+      bulkUpdateEquipmentLocations(result.assignments);
+    }
+  }, [readOnly, equipment, engineType, gyroType, bulkUpdateEquipmentLocations]);
+  
+  // Track if we're currently running an auto operation to prevent loops
+  const isAutoRunning = useRef(false);
+  
+  // Create a fingerprint of current equipment placements for change detection
+  const placementFingerprint = useMemo(() => {
+    return equipment
+      .filter(eq => eq.location !== undefined)
+      .map(eq => `${eq.instanceId}:${eq.location}:${(eq.slots || []).join(',')}`)
+      .sort()
+      .join('|');
+  }, [equipment]);
+  
+  // Auto trigger effect - runs sort/compact when placements change
+  useEffect(() => {
+    if (readOnly || isAutoRunning.current) return;
+    
+    // Check if any auto mode is enabled
+    if (!autoModeSettings.autoSort && !autoModeSettings.autoCompact) return;
+    
+    // Only process if there's placed equipment
+    const placedEquipment = equipment.filter(eq => eq.location !== undefined);
+    if (placedEquipment.length === 0) return;
+    
+    // Run the appropriate auto operation
+    isAutoRunning.current = true;
+    
+    // Small delay to batch rapid changes
+    const timer = setTimeout(() => {
+      let result;
+      if (autoModeSettings.autoSort) {
+        result = sortEquipmentBySize(equipment, engineType, gyroType);
+      } else if (autoModeSettings.autoCompact) {
+        result = compactEquipmentSlots(equipment, engineType, gyroType);
+      }
+      
+      if (result && result.assignments.length > 0) {
+        // Check if the assignments would actually change anything
+        const wouldChange = result.assignments.some(assignment => {
+          const eq = equipment.find(e => e.instanceId === assignment.instanceId);
+          if (!eq) return false;
+          if (eq.location !== assignment.location) return true;
+          const currentSlots = eq.slots || [];
+          if (currentSlots.length !== assignment.slots.length) return true;
+          return currentSlots.some((s, i) => s !== assignment.slots[i]);
+        });
+        
+        if (wouldChange) {
+          bulkUpdateEquipmentLocations(result.assignments);
+        }
+      }
+      
+      isAutoRunning.current = false;
+    }, 50);
+    
+    return () => {
+      clearTimeout(timer);
+      isAutoRunning.current = false;
+    };
+  }, [placementFingerprint, readOnly, autoModeSettings, equipment, engineType, gyroType, bulkUpdateEquipmentLocations]);
+  
   // Handle drag start from a slot - select the equipment to highlight valid targets
   const handleEquipmentDragStart = useCallback((equipmentId: string) => {
     onSelectEquipment?.(equipmentId);
@@ -437,14 +546,14 @@ export function CriticalSlotsTab({
       {/* Toolbar */}
       <CriticalSlotsToolbar
         autoFillUnhittables={autoModeSettings.autoFillUnhittables}
-        autoCompact={autoCompact}
-        autoSort={autoSort}
+        autoCompact={autoModeSettings.autoCompact}
+        autoSort={autoModeSettings.autoSort}
         onAutoFillToggle={toggleAutoFillUnhittables}
-        onAutoCompactToggle={() => setAutoCompact(!autoCompact)}
-        onAutoSortToggle={() => setAutoSort(!autoSort)}
-        onFill={() => console.log('Fill')}
-        onCompact={() => console.log('Compact')}
-        onSort={() => console.log('Sort')}
+        onAutoCompactToggle={toggleAutoCompact}
+        onAutoSortToggle={toggleAutoSort}
+        onFill={handleFill}
+        onCompact={handleCompact}
+        onSort={handleSort}
         onReset={handleReset}
         readOnly={readOnly}
       />

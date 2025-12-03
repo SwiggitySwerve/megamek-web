@@ -427,6 +427,7 @@ setMulId: (mulId: string) => void;
   addEquipment: (item: IEquipmentItem) => string;
   removeEquipment: (instanceId: string) => void;
   updateEquipmentLocation: (instanceId: string, location: MechLocation, slots: readonly number[]) => void;
+  bulkUpdateEquipmentLocations: (updates: ReadonlyArray<{ instanceId: string; location: MechLocation; slots: readonly number[] }>) => void;
   clearEquipmentLocation: (instanceId: string) => void;
   setEquipmentRearMounted: (instanceId: string, isRearMounted: boolean) => void;
   linkAmmo: (weaponInstanceId: string, ammoInstanceId: string | undefined) => void;

@@ -738,6 +738,22 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
             lastModifiedAt: Date.now(),
           })),
         
+        bulkUpdateEquipmentLocations: (updates: ReadonlyArray<{ instanceId: string; location: MechLocation; slots: readonly number[] }>) =>
+          set((state) => {
+            // Create a map for O(1) lookup
+            const updateMap = new Map(updates.map(u => [u.instanceId, u]));
+            return {
+              equipment: state.equipment.map(e => {
+                const update = updateMap.get(e.instanceId);
+                return update
+                  ? { ...e, location: update.location, slots: update.slots }
+                  : e;
+              }),
+              isModified: true,
+              lastModifiedAt: Date.now(),
+            };
+          }),
+        
         clearEquipmentLocation: (instanceId: string) => set((state) => ({
           equipment: state.equipment.map(e => 
             e.instanceId === instanceId

@@ -35,8 +35,12 @@ export interface EquipmentSelection {
  * Auto-mode settings for critical slot management
  */
 export interface AutoModeSettings {
-  /** Automatically fill empty slots when equipment changes */
+  /** Automatically fill empty slots when structure/armor changes */
   readonly autoFillUnhittables: boolean;
+  /** Automatically compact equipment after placement */
+  readonly autoCompact: boolean;
+  /** Automatically sort equipment by size after placement */
+  readonly autoSort: boolean;
   /** Show placement preview on hover */
   readonly showPlacementPreview: boolean;
 }
@@ -62,6 +66,8 @@ export interface CustomizerState {
   selectLocation: (location: MechLocation | null) => void;
   setSelectionMode: (mode: SelectionMode) => void;
   toggleAutoFillUnhittables: () => void;
+  toggleAutoCompact: () => void;
+  toggleAutoSort: () => void;
   toggleShowPlacementPreview: () => void;
   toggleEquipmentTray: () => void;
   toggleColorLegend: () => void;
@@ -74,6 +80,8 @@ export interface CustomizerState {
  */
 const DEFAULT_AUTO_SETTINGS: AutoModeSettings = {
   autoFillUnhittables: true,
+  autoCompact: false,
+  autoSort: false,
   showPlacementPreview: true,
 };
 
@@ -104,6 +112,24 @@ export const useCustomizerStore = create<CustomizerState>((set) => ({
     autoModeSettings: {
       ...state.autoModeSettings,
       autoFillUnhittables: !state.autoModeSettings.autoFillUnhittables,
+    },
+  })),
+  
+  toggleAutoCompact: () => set((state) => ({
+    autoModeSettings: {
+      ...state.autoModeSettings,
+      autoCompact: !state.autoModeSettings.autoCompact,
+      // Auto sort implies auto compact, so disable sort if compact is being disabled
+      autoSort: !state.autoModeSettings.autoCompact ? state.autoModeSettings.autoSort : false,
+    },
+  })),
+  
+  toggleAutoSort: () => set((state) => ({
+    autoModeSettings: {
+      ...state.autoModeSettings,
+      // Sort includes compact, so enable compact if sort is being enabled
+      autoCompact: !state.autoModeSettings.autoSort ? true : state.autoModeSettings.autoCompact,
+      autoSort: !state.autoModeSettings.autoSort,
     },
   })),
   
