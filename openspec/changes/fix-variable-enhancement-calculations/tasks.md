@@ -12,6 +12,8 @@
 - [x] 2.1 Update `setEnhancement()` action to pass `engineRating` and `engineWeight` to equipment list creator
 - [x] 2.2 Update `setEngineRating()` action to recalculate enhancement equipment when engine changes
 - [x] 2.3 Update `setEngineType()` action to recalculate enhancement equipment (engine weight depends on type)
+- [x] 2.4 Update `setTonnage()` action to recalculate enhancement equipment (tonnage affects engine rating)
+- [x] 2.5 Update `setTechBaseMode()` action to recalculate enhancement equipment (MASC formula differs by tech base)
 
 ## 3. Deprecate MovementEnhancement.ts Functions
 
