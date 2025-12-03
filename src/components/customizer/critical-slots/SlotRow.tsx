@@ -127,6 +127,7 @@ export const SlotRow = memo(function SlotRow({
   onRemove,
 }: SlotRowProps) {
   const [isDragOver, setIsDragOver] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
   
   // Check if this slot has equipment that can be unassigned
@@ -134,6 +135,9 @@ export const SlotRow = memo(function SlotRow({
   // Only truly fixed items (like cockpit, gyro) cannot be unassigned
   const canUnassign = slot.type === 'equipment' || 
     (slot.type === 'system' && slot.equipmentId); // System with equipment ID can be unassigned
+  
+  // Slots with equipment can be dragged to other locations or back to tray
+  const canDrag = !!(slot.equipmentId && canUnassign);
   
   // Determine styling classes - assignable/drag states override content classes
   // This is needed because Tailwind classes don't override by className order
@@ -155,7 +159,22 @@ export const SlotRow = memo(function SlotRow({
   const styleClasses = getStyleClasses();
   const selectionClasses = isSelected ? 'ring-2 ring-amber-400' : '';
   
-  // Handle drag events
+  // Handle drag start (this slot is the source)
+  const handleDragStart = (e: React.DragEvent) => {
+    if (!canDrag || !slot.equipmentId) {
+      e.preventDefault();
+      return;
+    }
+    e.dataTransfer.setData('text/equipment-id', slot.equipmentId);
+    e.dataTransfer.effectAllowed = 'move';
+    setIsDragging(true);
+  };
+  
+  const handleDragEnd = () => {
+    setIsDragging(false);
+  };
+  
+  // Handle drag events (this slot is the target)
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragOver(true);
@@ -205,11 +224,14 @@ export const SlotRow = memo(function SlotRow({
       <div
         role="gridcell"
         tabIndex={0}
+        draggable={canDrag}
         aria-label={slot.name ? `Slot ${slot.index + 1}: ${slot.name}` : `Empty slot ${slot.index + 1}`}
         aria-selected={isSelected}
         className={`
-          flex items-center border-b border-slate-700 transition-all cursor-pointer
+          flex items-center border-b border-slate-700 transition-all
           focus:outline-none
+          ${canDrag ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer'}
+          ${isDragging ? 'opacity-50' : ''}
           ${isAssignable ? 'focus:ring-1 focus:ring-green-400 focus:ring-inset' : ''}
           ${styleClasses}
           ${selectionClasses}
@@ -230,10 +252,12 @@ export const SlotRow = memo(function SlotRow({
             }
           }
         }}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        title={canUnassign ? 'Double-click or right-click to unassign' : undefined}
+        title={canDrag ? 'Drag to move, double-click or right-click to unassign' : (canUnassign ? 'Double-click or right-click to unassign' : undefined)}
       >
         <span className="truncate flex-1">{displayName}</span>
       </div>

@@ -212,14 +212,37 @@ interface EquipmentItemProps {
 function EquipmentItem({ item, isSelected, onSelect, onRemove, onContextMenu, onUnassign }: EquipmentItemProps) {
   const colorType = categoryToColorType(item.category);
   const colors = getEquipmentColors(colorType);
+  const [isDragging, setIsDragging] = useState(false);
+  
+  // Unallocated items can be dragged to critical slots
+  const canDrag = !item.isAllocated;
+  
+  const handleDragStart = (e: React.DragEvent) => {
+    if (!canDrag) {
+      e.preventDefault();
+      return;
+    }
+    e.dataTransfer.setData('text/equipment-id', item.instanceId);
+    e.dataTransfer.effectAllowed = 'move';
+    setIsDragging(true);
+  };
+  
+  const handleDragEnd = () => {
+    setIsDragging(false);
+  };
   
   // All items can be selected and assigned to slots
   // isRemovable only controls whether the item can be DELETED from the unit
   return (
     <div
+      draggable={canDrag}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
       className={`
-        px-2 py-1 text-xs cursor-pointer transition-all group border-b border-slate-700/30
+        px-2 py-1 text-xs transition-all group border-b border-slate-700/30
         ${colors.bg}
+        ${canDrag ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer'}
+        ${isDragging ? 'opacity-50' : ''}
         ${isSelected
           ? 'ring-2 ring-amber-400 ring-inset brightness-110'
           : 'hover:brightness-110'
@@ -227,7 +250,7 @@ function EquipmentItem({ item, isSelected, onSelect, onRemove, onContextMenu, on
       `}
       onClick={onSelect}
       onContextMenu={onContextMenu}
-      title={item.isAllocated ? 'Right-click to unassign' : 'Click to select, right-click for options'}
+      title={item.isAllocated ? 'Right-click to unassign' : 'Drag to critical slot or click to select'}
     >
       <div className="flex items-center justify-between gap-1">
         <span className="truncate flex-1 text-white font-medium drop-shadow-sm">
@@ -288,11 +311,54 @@ interface AllocationSectionProps {
   onToggle: () => void;
   children: React.ReactNode;
   titleColor?: string;
+  /** Is this section a drop zone */
+  isDropZone?: boolean;
+  /** Called when equipment is dropped on this section */
+  onDrop?: (equipmentId: string) => void;
 }
 
-function AllocationSection({ title, count, isExpanded, onToggle, children, titleColor = 'text-slate-300' }: AllocationSectionProps) {
+function AllocationSection({ 
+  title, 
+  count, 
+  isExpanded, 
+  onToggle, 
+  children, 
+  titleColor = 'text-slate-300',
+  isDropZone = false,
+  onDrop,
+}: AllocationSectionProps) {
+  const [isDragOver, setIsDragOver] = useState(false);
+  
+  const handleDragOver = (e: React.DragEvent) => {
+    if (!isDropZone) return;
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+  
+  const handleDragLeave = (e: React.DragEvent) => {
+    // Only trigger if leaving the section, not child elements
+    if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+      setIsDragOver(false);
+    }
+  };
+  
+  const handleDrop = (e: React.DragEvent) => {
+    if (!isDropZone) return;
+    e.preventDefault();
+    setIsDragOver(false);
+    const equipmentId = e.dataTransfer.getData('text/equipment-id');
+    if (equipmentId && onDrop) {
+      onDrop(equipmentId);
+    }
+  };
+  
   return (
-    <div className="border-b border-slate-600">
+    <div 
+      className={`border-b border-slate-600 transition-all ${isDragOver ? 'ring-2 ring-amber-400 ring-inset bg-amber-900/20' : ''}`}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
       <button
         onClick={onToggle}
         className="w-full flex items-center justify-between px-3 py-2 hover:bg-slate-700/50 transition-colors bg-slate-700/30"
@@ -424,6 +490,15 @@ export function GlobalLoadoutTray({
     onUnassignEquipment?.(instanceId);
   }, [onUnassignEquipment]);
   
+  // Handle drop to unallocate (drag from slot to tray)
+  const handleDropToUnallocated = useCallback((equipmentId: string) => {
+    // Find the item being dropped
+    const item = equipment.find(e => e.instanceId === equipmentId);
+    if (item?.isAllocated) {
+      onUnassignEquipment?.(equipmentId);
+    }
+  }, [equipment, onUnassignEquipment]);
+  
   // Handle remove all (only removable items)
   const removableCount = equipment.filter(e => e.isRemovable).length;
   const handleRemoveAll = useCallback(() => {
@@ -506,16 +581,22 @@ export function GlobalLoadoutTray({
             </div>
           ) : (
             <>
-              {/* Unallocated Section */}
-              {unallocated.length > 0 && (
-                <AllocationSection
-                  title="Unallocated"
-                  count={unallocated.length}
-                  isExpanded={unallocatedExpanded}
-                  onToggle={() => setUnallocatedExpanded(!unallocatedExpanded)}
-                  titleColor="text-amber-400"
-                >
-                  {CATEGORY_ORDER.map(category => {
+              {/* Unallocated Section - also serves as drop zone for unallocation */}
+              <AllocationSection
+                title="Unallocated"
+                count={unallocated.length}
+                isExpanded={unallocatedExpanded}
+                onToggle={() => setUnallocatedExpanded(!unallocatedExpanded)}
+                titleColor="text-amber-400"
+                isDropZone={true}
+                onDrop={handleDropToUnallocated}
+              >
+                {unallocated.length === 0 ? (
+                  <div className="px-3 py-4 text-center text-slate-500 text-xs">
+                    Drag equipment here to unassign
+                  </div>
+                ) : (
+                  CATEGORY_ORDER.map(category => {
                     const items = unallocatedByCategory.get(category);
                     if (!items || items.length === 0) return null;
                     return (
@@ -529,9 +610,9 @@ export function GlobalLoadoutTray({
                         onContextMenu={handleContextMenu}
                       />
                     );
-                  })}
-                </AllocationSection>
-              )}
+                  })
+                )}
+              </AllocationSection>
               
               {/* Allocated Section */}
               {allocated.length > 0 && (
