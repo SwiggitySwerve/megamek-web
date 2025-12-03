@@ -218,13 +218,8 @@ export function UnitInfoBanner({
           </div>
         </div>
         
-        {/* Section 2: Movement Stats + Engine */}
-        <div className="px-4 py-2 flex items-center justify-center gap-6 border-b sm:border-b-0 sm:border-r border-slate-700 min-w-fit">
-          <SimpleStat 
-            label="ENGINE"
-            value={stats.engineRating}
-            status={stats.engineRating >= 400 ? 'warning' : 'normal'}
-          />
+        {/* Section 2: Movement Stats */}
+        <div className="px-4 py-2 flex items-center justify-center gap-4 border-b sm:border-b-0 sm:border-r border-slate-700 min-w-fit">
           <MovementStat 
             walkMP={stats.walkMP} 
             runMP={stats.runMP} 
@@ -234,7 +229,12 @@ export function UnitInfoBanner({
         </div>
         
         {/* Section 3: Capacity Stats - grows to fill available space */}
-        <div className="flex-1 px-4 py-2 flex items-center justify-around gap-2 border-b sm:border-b-0 sm:border-r border-slate-700 min-w-[280px]">
+        <div className="flex-1 px-4 py-2 flex items-center justify-around gap-2 border-b sm:border-b-0 sm:border-r border-slate-700 min-w-[340px]">
+          <SimpleStat 
+            label="ENGINE"
+            value={stats.engineRating}
+            status={stats.engineRating >= 400 ? 'warning' : 'normal'}
+          />
           <CapacityStat
             label="WEIGHT"
             current={stats.weightUsed.toFixed(1)}
