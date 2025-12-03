@@ -209,7 +209,8 @@ export const SlotRow = memo(function SlotRow({
         aria-selected={isSelected}
         className={`
           flex items-center border-b border-slate-700 transition-all cursor-pointer
-          focus:outline-none focus:ring-1 focus:ring-amber-400 focus:ring-inset
+          focus:outline-none
+          ${isAssignable ? 'focus:ring-1 focus:ring-green-400 focus:ring-inset' : ''}
           ${styleClasses}
           ${selectionClasses}
           ${compact ? 'px-2 py-0.5 text-xs' : 'px-2 py-1 text-sm'}
