@@ -182,11 +182,11 @@ export const EQUIPMENT_COLORS: Record<EquipmentColorType, EquipmentColorDefiniti
     badge: 'bg-green-600 text-white',
   },
   structural: {
-    bg: 'bg-purple-700',
-    border: 'border-purple-800',
-    text: 'text-white',
-    hoverBg: 'hover:bg-purple-600',
-    badge: 'bg-purple-600 text-white',
+    bg: 'bg-slate-500/50',
+    border: 'border-slate-400',
+    text: 'text-slate-200',
+    hoverBg: 'hover:bg-slate-500/60',
+    badge: 'bg-slate-500 text-white',
   },
   misc: {
     bg: 'bg-slate-700',

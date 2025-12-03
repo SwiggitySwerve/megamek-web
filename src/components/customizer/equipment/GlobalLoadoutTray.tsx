@@ -101,6 +101,21 @@ function groupByCategory(equipment: LoadoutEquipmentItem[]): Map<EquipmentCatego
   return groups;
 }
 
+/** Convert location names to shorthand (e.g., "Right Torso" -> "RT") */
+function getLocationShorthand(location: string): string {
+  const shortcuts: Record<string, string> = {
+    'Head': 'HD',
+    'Center Torso': 'CT',
+    'Left Torso': 'LT',
+    'Right Torso': 'RT',
+    'Left Arm': 'LA',
+    'Right Arm': 'RA',
+    'Left Leg': 'LL',
+    'Right Leg': 'RL',
+  };
+  return shortcuts[location] || location;
+}
+
 // =============================================================================
 // Context Menu Component
 // =============================================================================
@@ -233,8 +248,66 @@ function EquipmentItem({ item, isSelected, onSelect, onRemove, onContextMenu, on
     setIsDragging(false);
   };
   
-  // All items can be selected and assigned to slots
-  // isRemovable only controls whether the item can be DELETED from the unit
+  // Allocated items use compact single-line display
+  if (item.isAllocated) {
+    return (
+      <div
+        className={`
+          px-2 py-0.5 text-xs transition-all group border-b border-slate-700/30 cursor-pointer
+          ${colors.bg}
+          ${isDragging ? 'opacity-50' : ''}
+          ${isSelected
+            ? 'ring-1 ring-amber-400 ring-inset brightness-110'
+            : 'hover:brightness-110'
+          }
+        `}
+        onClick={onSelect}
+        onContextMenu={onContextMenu}
+        title="Right-click to unassign"
+      >
+        <div className="flex items-center justify-between gap-1">
+          <span className="truncate flex-1 text-white text-[11px] drop-shadow-sm">
+            {item.name}
+          </span>
+          <div className="flex items-center gap-1">
+            {item.location && (
+              <span className="text-white/60 text-[9px] font-medium">{getLocationShorthand(item.location)}</span>
+            )}
+            {/* Unassign button */}
+            {onUnassign && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onUnassign();
+                }}
+                className="opacity-0 group-hover:opacity-100 text-amber-300 hover:text-amber-200 transition-opacity text-[10px]"
+                title="Unassign from slot"
+              >
+                ↩
+              </button>
+            )}
+            {/* Delete button - only for removable items */}
+            {item.isRemovable ? (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRemove();
+                }}
+                className="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 transition-opacity"
+                title="Remove from unit"
+              >
+                ✕
+              </button>
+            ) : (
+              <span className="text-white/40 text-[9px]" title="Configuration component">⚙</span>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  // Unallocated items show full info
   return (
     <div
       draggable={canDrag}
@@ -252,29 +325,13 @@ function EquipmentItem({ item, isSelected, onSelect, onRemove, onContextMenu, on
       `}
       onClick={onSelect}
       onContextMenu={onContextMenu}
-      title={item.isAllocated ? 'Right-click to unassign' : 'Drag to critical slot or click to select'}
+      title="Drag to critical slot or click to select"
     >
       <div className="flex items-center justify-between gap-1">
         <span className="truncate flex-1 text-white font-medium drop-shadow-sm">
           {item.name}
         </span>
         <div className="flex items-center gap-1">
-          {item.location && (
-            <span className="text-white/70 text-[10px]">{item.location}</span>
-          )}
-          {/* Unassign button - available for all allocated items */}
-          {item.isAllocated && onUnassign && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onUnassign();
-              }}
-              className="opacity-0 group-hover:opacity-100 text-amber-300 hover:text-amber-200 transition-opacity text-[10px]"
-              title="Unassign from slot"
-            >
-              ↩
-            </button>
-          )}
           {/* Delete button - only for removable items (not config components) */}
           {item.isRemovable ? (
             <button

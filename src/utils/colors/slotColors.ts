@@ -101,19 +101,19 @@ export const SLOT_COLORS: Record<SystemComponentType, SlotColorDefinition> = {
     text: 'text-black',
     hoverBg: 'hover:bg-yellow-500',
   },
-  // Endo Steel - unhittable structural slots (teal with dashed border)
+  // Endo Steel - unhittable structural slots (light faded gray with dashed border)
   structure: {
-    bg: 'bg-teal-800/60',
-    border: 'border-teal-500 border-dashed',
-    text: 'text-teal-200',
-    hoverBg: 'hover:bg-teal-700/60',
+    bg: 'bg-slate-500/40',
+    border: 'border-slate-400 border-dashed',
+    text: 'text-slate-300',
+    hoverBg: 'hover:bg-slate-500/50',
   },
-  // Ferro-Fibrous - unhittable armor slots (cyan with dashed border)
+  // Ferro-Fibrous - unhittable armor slots (light faded gray with dashed border)
   armor: {
-    bg: 'bg-cyan-800/60',
-    border: 'border-cyan-500 border-dashed',
-    text: 'text-cyan-200',
-    hoverBg: 'hover:bg-cyan-700/60',
+    bg: 'bg-slate-500/40',
+    border: 'border-slate-400 border-dashed',
+    text: 'text-slate-300',
+    hoverBg: 'hover:bg-slate-500/50',
   },
   empty: {
     bg: 'bg-gray-700',
