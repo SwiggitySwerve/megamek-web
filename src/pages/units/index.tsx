@@ -27,7 +27,7 @@ interface FilterState {
   era: string;
 }
 
-type SortColumn = 'name' | 'tonnage' | 'weightClass' | 'techBase' | 'unitType';
+type SortColumn = 'chassis' | 'variant' | 'tonnage' | 'year' | 'weightClass' | 'techBase' | 'unitType';
 type SortDirection = 'asc' | 'desc';
 
 interface SortState {
@@ -44,7 +44,7 @@ const WEIGHT_CLASS_ORDER: Record<string, number> = {
   [WeightClass.MEDIUM]: 2,
   [WeightClass.HEAVY]: 3,
   [WeightClass.ASSAULT]: 4,
-  [WeightClass.SUPER_HEAVY]: 5,
+  [WeightClass.SUPERHEAVY]: 5,
 };
 
 const TECH_BASE_OPTIONS = [
@@ -70,7 +70,7 @@ export default function UnitsListPage() {
     era: '',
   });
   const [sort, setSort] = useState<SortState>({
-    column: 'name',
+    column: 'chassis',
     direction: 'asc',
   });
 
@@ -141,13 +141,21 @@ export default function UnitsListPage() {
       let bVal: string | number;
 
       switch (column) {
-        case 'name':
-          aVal = a.name.toLowerCase();
-          bVal = b.name.toLowerCase();
+        case 'chassis':
+          aVal = a.chassis.toLowerCase();
+          bVal = b.chassis.toLowerCase();
+          break;
+        case 'variant':
+          aVal = a.variant.toLowerCase();
+          bVal = b.variant.toLowerCase();
           break;
         case 'tonnage':
           aVal = a.tonnage;
           bVal = b.tonnage;
+          break;
+        case 'year':
+          aVal = a.year ?? 9999;
+          bVal = b.year ?? 9999;
           break;
         case 'weightClass':
           aVal = WEIGHT_CLASS_ORDER[a.weightClass] ?? 99;
@@ -257,19 +265,34 @@ export default function UnitsListPage() {
             <thead className="bg-slate-800">
               <tr className="text-left text-slate-400 text-xs uppercase tracking-wide">
                 <SortableHeader
-                  label="Unit"
-                  column="name"
+                  label="Chassis"
+                  column="chassis"
                   currentColumn={sort.column}
                   direction={sort.direction}
                   onSort={handleSort}
                 />
                 <SortableHeader
-                  label="Tons"
+                  label="Model"
+                  column="variant"
+                  currentColumn={sort.column}
+                  direction={sort.direction}
+                  onSort={handleSort}
+                />
+                <SortableHeader
+                  label="Weight"
                   column="tonnage"
                   currentColumn={sort.column}
                   direction={sort.direction}
                   onSort={handleSort}
-                  className="w-20"
+                  className="w-20 text-right"
+                />
+                <SortableHeader
+                  label="Year"
+                  column="year"
+                  currentColumn={sort.column}
+                  direction={sort.direction}
+                  onSort={handleSort}
+                  className="w-16 text-right"
                 />
                 <SortableHeader
                   label="Class"
@@ -300,7 +323,7 @@ export default function UnitsListPage() {
             <tbody className="divide-y divide-slate-700/50">
               {displayedUnits.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-3 py-8 text-center text-slate-400">
+                  <td colSpan={7} className="px-3 py-8 text-center text-slate-400">
                     No units found matching your filters
                   </td>
                 </tr>
@@ -313,12 +336,18 @@ export default function UnitsListPage() {
                     <td className="px-3 py-2">
                       <Link href={`/units/${unit.id}`} className="group">
                         <span className="font-medium text-sm text-white group-hover:text-amber-400 transition-colors whitespace-nowrap">
-                          {unit.name}
+                          {unit.chassis}
                         </span>
                       </Link>
                     </td>
-                    <td className="px-3 py-2 text-slate-300 font-mono text-sm">
-                      {unit.tonnage}t
+                    <td className="px-3 py-2 text-slate-300 text-sm whitespace-nowrap">
+                      {unit.variant}
+                    </td>
+                    <td className="px-3 py-2 text-slate-300 font-mono text-sm text-right">
+                      {unit.tonnage} t
+                    </td>
+                    <td className="px-3 py-2 text-slate-400 font-mono text-sm text-right">
+                      {unit.year ?? '—'}
                     </td>
                     <td className="px-3 py-2">
                       <WeightClassBadge weightClass={unit.weightClass} />
@@ -326,7 +355,7 @@ export default function UnitsListPage() {
                     <td className="px-3 py-2">
                       <TechBaseBadge techBase={unit.techBase} />
                     </td>
-                    <td className="px-3 py-2 text-slate-400 text-sm">
+                    <td className="px-3 py-2 text-slate-400 text-sm whitespace-nowrap">
                       {unit.unitType}
                     </td>
                   </tr>
@@ -370,13 +399,14 @@ function SortableHeader({
   className = '',
 }: SortableHeaderProps) {
   const isActive = column === currentColumn;
+  const isRightAligned = className.includes('text-right');
 
   return (
     <th
       className={`px-3 py-2 font-medium cursor-pointer hover:text-white transition-colors select-none ${className}`}
       onClick={() => onSort(column)}
     >
-      <span className="flex items-center gap-1">
+      <span className={`flex items-center gap-1 ${isRightAligned ? 'justify-end' : ''}`}>
         {label}
         {isActive && (
           <span className="text-amber-400 text-[10px]">

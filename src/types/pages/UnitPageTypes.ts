@@ -21,6 +21,10 @@ export interface IUnitEntry {
   era: Era;
   weightClass: WeightClass;
   unitType: string;
+  /** Introduction year */
+  year?: number;
+  /** Role (e.g., Juggernaut, Scout, Striker) */
+  role?: string;
 }
 
 /**
