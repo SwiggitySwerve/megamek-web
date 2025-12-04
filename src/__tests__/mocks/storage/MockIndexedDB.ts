@@ -208,7 +208,7 @@ export function setupMockIndexedDB(): void {
  */
 export function teardownMockIndexedDB(): void {
   clearAllMockDatabases();
-  // @ts-expect-error - Cleanup
+  // @ts-expect-error - Delete global.indexedDB property for cleanup
   delete global.indexedDB;
 }
 

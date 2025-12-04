@@ -1,4 +1,6 @@
 import type { NextConfig } from "next";
+import type { Configuration } from "webpack";
+import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 
 const nextConfig: NextConfig = {
   // Enable React strict mode for better development experience
@@ -14,13 +16,20 @@ const nextConfig: NextConfig = {
   },
 
   // Webpack configuration for bundle optimization
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+  webpack: (config: Configuration, { buildId: _buildId, dev, isServer, defaultLoaders: _defaultLoaders, webpack }: { buildId: string; dev: boolean; isServer: boolean; defaultLoaders: unknown; webpack: typeof import('webpack') }) => {
+    // Type assertion for webpack config - Configuration type has complex unions
+    const webpackConfig = config as {
+      optimization: { sideEffects?: boolean; splitChunks?: { cacheGroups?: Record<string, unknown> } };
+      module: { rules: unknown[] };
+      plugins: unknown[];
+      resolve: { alias?: Record<string, string> };
+    };
     // Enable tree-shaking for equipment data files
     if (!dev) {
-      config.optimization.sideEffects = false;
-      
+      webpackConfig.optimization.sideEffects = false;
+
       // Add specific tree-shaking rules for equipment files
-      config.module.rules.push({
+      webpackConfig.module.rules.push({
         test: /src\/data\/equipment.*\.ts$/,
         sideEffects: false,
       });
@@ -28,8 +37,7 @@ const nextConfig: NextConfig = {
 
     // Add bundle analyzer in development
     if (dev && !isServer) {
-      const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-      config.plugins.push(
+      webpackConfig.plugins.push(
         new BundleAnalyzerPlugin({
           analyzerMode: 'server',
           analyzerPort: 8888,
@@ -43,7 +51,7 @@ const nextConfig: NextConfig = {
       config.optimization.splitChunks = {
         ...config.optimization.splitChunks,
         cacheGroups: {
-          ...config.optimization.splitChunks.cacheGroups,
+          ...config.optimization.splitChunks?.cacheGroups,
           
           // Separate chunk for equipment data
           equipment: {
@@ -82,7 +90,7 @@ const nextConfig: NextConfig = {
 
     // Add progress plugin for build feedback
     if (!dev) {
-      config.plugins.push(
+      webpackConfig.plugins.push(
         new webpack.ProgressPlugin({
           activeModules: true,
           entries: true,
@@ -93,8 +101,8 @@ const nextConfig: NextConfig = {
     }
 
     // Optimize module resolution for faster builds
-    config.resolve.alias = {
-      ...config.resolve.alias,
+    webpackConfig.resolve.alias = {
+      ...webpackConfig.resolve.alias,
       '@/services': './src/services',
       '@/utils': './src/utils',
       '@/components': './src/components',
@@ -102,7 +110,7 @@ const nextConfig: NextConfig = {
       '@/types': './src/types',
     };
 
-    return config;
+    return webpackConfig;
   },
 
   // Enable static optimization

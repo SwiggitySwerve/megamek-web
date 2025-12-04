@@ -24,7 +24,6 @@ import { ArmorTypeEnum } from '@/types/construction/ArmorType';
 import { IComponentSelections } from '@/stores/useMultiUnitStore';
 import {
   createISComponentSelections,
-  createISXLComponentSelections,
   createClanComponentSelections,
 } from '../helpers/storeTestHelpers';
 

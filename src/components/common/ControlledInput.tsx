@@ -62,7 +62,7 @@ export function ControlledInput<T = string>({
   const [localValue, setLocalValue] = useState<T>(value)
   const [validationResult, setValidationResult] = useState<ValidationResult>({ isValid: true })
   const [isDirty, setIsDirty] = useState(false)
-  const [isFocused, setIsFocused] = useState(false)
+  const [_isFocused, _setIsFocused] = useState(false)
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -304,7 +304,7 @@ export function ControlledInput<T = string>({
 export function useControlledInput<T = string>(
   initialValue: T,
   validation?: (value: T) => ValidationResult,
-  debounceMs: number = 300
+  _debounceMs: number = 300
 ) {
   const [value, setValue] = useState<T>(initialValue)
   const [validationResult, setValidationResult] = useState<ValidationResult>({ isValid: true })

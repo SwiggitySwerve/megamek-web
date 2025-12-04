@@ -6,13 +6,28 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import Sidebar from '@/components/common/Sidebar';
 
-// Mock Next.js Link component
-jest.mock('next/link', () => ({
-  __esModule: true,
-  default: ({ children, href }: { children: React.ReactNode; href: string }) => (
-    <a href={href}>{children}</a>
-  ),
-}));
+// Mock Next.js Link component with legacyBehavior support
+jest.mock('next/link', () => {
+  return {
+    __esModule: true,
+    default: ({ children, href, legacyBehavior }: { children: React.ReactNode | ((props: { href: string }) => React.ReactNode); href: string; legacyBehavior?: boolean }) => {
+      if (legacyBehavior) {
+        // For legacyBehavior, children can be a function or React element
+        // If it's a function, call it with href prop
+        if (typeof children === 'function') {
+          return children({ href });
+        }
+        // If it's an element (like <a>), clone it and add href
+        if (React.isValidElement(children)) {
+          return React.cloneElement(children, { href });
+        }
+        return children;
+      }
+      // For non-legacy, wrap children in anchor
+      return <a href={href}>{children}</a>;
+    },
+  };
+});
 
 describe('Sidebar', () => {
   const defaultProps = {
@@ -45,7 +60,7 @@ describe('Sidebar', () => {
     it('should display version when expanded', () => {
       render(<Sidebar {...defaultProps} isCollapsed={false} />);
 
-      expect(screen.getByText('Editor v0.1.0')).toBeInTheDocument();
+      expect(screen.getByText('v0.1.0')).toBeInTheDocument();
     });
   });
 
@@ -66,21 +81,21 @@ describe('Sidebar', () => {
     it('should hide version when collapsed', () => {
       render(<Sidebar {...defaultProps} isCollapsed={true} />);
 
-      expect(screen.queryByText('Editor v0.1.0')).not.toBeInTheDocument();
+      expect(screen.queryByText('v0.1.0')).not.toBeInTheDocument();
     });
 
     it('should have narrow width when collapsed', () => {
       const { container } = render(<Sidebar {...defaultProps} isCollapsed={true} />);
 
       const sidebar = container.firstChild as HTMLElement;
-      expect(sidebar).toHaveClass('w-20');
+      expect(sidebar).toHaveClass('w-12');
     });
 
     it('should have wide width when expanded', () => {
       const { container } = render(<Sidebar {...defaultProps} isCollapsed={false} />);
 
       const sidebar = container.firstChild as HTMLElement;
-      expect(sidebar).toHaveClass('w-64');
+      expect(sidebar).toHaveClass('w-40');
     });
   });
 

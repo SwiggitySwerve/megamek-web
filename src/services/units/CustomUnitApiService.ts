@@ -7,9 +7,6 @@
  * @spec openspec/specs/unit-services/spec.md
  */
 
-import { TechBase } from '@/types/enums/TechBase';
-import { Era } from '@/types/enums/Era';
-import { WeightClass, getWeightClass } from '@/types/enums/WeightClass';
 import {
   ICustomUnitIndexEntry,
   IVersionMetadata,
@@ -28,6 +25,27 @@ export interface IUnitWithVersion extends IFullUnit {
   readonly createdAt: string;
   readonly updatedAt: string;
 }
+
+/**
+ * API Response types
+ */
+interface IUnitListResponse {
+  readonly units: readonly ICustomUnitIndexEntry[];
+}
+
+interface IUnitDetailsResponse {
+  readonly success: boolean;
+  readonly data?: IUnitWithVersion;
+  readonly error?: string;
+}
+
+interface IUnitCreateResponse {
+  readonly id: string;
+  readonly version: number;
+  readonly error?: string;
+  readonly errorCode?: string;
+}
+
 
 /**
  * Save result
@@ -92,13 +110,13 @@ export class CustomUnitApiService implements ICustomUnitApiService {
    */
   async list(): Promise<readonly ICustomUnitIndexEntry[]> {
     const response = await fetch(`${API_BASE}/custom`);
-    
+
     if (!response.ok) {
       throw new Error(`Failed to list units: ${response.statusText}`);
     }
-    
-    const data = await response.json();
-    return data.units as ICustomUnitIndexEntry[];
+
+    const data = await response.json() as IUnitListResponse;
+    return data.units;
   }
 
   /**
@@ -115,17 +133,21 @@ export class CustomUnitApiService implements ICustomUnitApiService {
       throw new Error(`Failed to get unit: ${response.statusText}`);
     }
     
-    const data = await response.json();
-    
+    const data = await response.json() as IUnitDetailsResponse;
+
+    if (!data.success || !data.data) {
+      throw new Error(`Failed to get unit: ${data.error || 'Unknown error'}`);
+    }
+
     // Convert API response to IFullUnit format
     return {
-      ...data.parsedData,
-      id: data.id,
-      chassis: data.chassis,
-      variant: data.variant,
-      currentVersion: data.currentVersion,
-      createdAt: data.createdAt,
-      updatedAt: data.updatedAt,
+      ...data.data.parsedData,
+      id: data.data.id,
+      chassis: data.data.chassis,
+      variant: data.data.variant,
+      currentVersion: data.data.currentVersion,
+      createdAt: data.data.createdAt,
+      updatedAt: data.data.updatedAt,
     } as IUnitWithVersion;
   }
 
@@ -156,8 +178,8 @@ export class CustomUnitApiService implements ICustomUnitApiService {
       }),
     });
     
-    const result = await response.json();
-    
+    const result = await response.json() as IUnitCreateResponse;
+
     if (!response.ok) {
       return {
         success: false,
@@ -165,7 +187,7 @@ export class CustomUnitApiService implements ICustomUnitApiService {
         requiresRename: result.errorCode === 'DUPLICATE_NAME',
       };
     }
-    
+
     return {
       success: true,
       id: result.id,
@@ -186,15 +208,15 @@ export class CustomUnitApiService implements ICustomUnitApiService {
       }),
     });
     
-    const result = await response.json();
-    
+    const result = await response.json() as IUnitCreateResponse;
+
     if (!response.ok) {
       return {
         success: false,
         error: result.error || 'Failed to save unit',
       };
     }
-    
+
     return {
       success: true,
       id: result.id,

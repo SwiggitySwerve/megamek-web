@@ -67,7 +67,7 @@ export interface TestMech {
 /**
  * Options for creating a test mech
  */
-export interface TestMechOptions extends Partial<TestMech> {}
+export type TestMechOptions = Partial<TestMech>;
 
 /**
  * Default values for a standard test mech (50-ton Hunchback-like)

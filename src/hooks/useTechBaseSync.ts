@@ -119,7 +119,7 @@ function filterEngines(techBase: TechBase): EngineDefinition[] {
  * Filter gyro options by tech base
  * All gyros are currently IS-based but available to both
  */
-function filterGyros(techBase: TechBase): GyroDefinition[] {
+function filterGyros(_techBase: TechBase): GyroDefinition[] {
   // All gyro types are available to both tech bases
   return [...GYRO_DEFINITIONS];
 }
@@ -143,7 +143,7 @@ function filterStructures(techBase: TechBase): InternalStructureDefinition[] {
  * Filter cockpit options by tech base
  * All cockpits are currently IS-based but most are available to both
  */
-function filterCockpits(techBase: TechBase): CockpitDefinition[] {
+function filterCockpits(_techBase: TechBase): CockpitDefinition[] {
   // All cockpit types are available to both tech bases
   return [...COCKPIT_DEFINITIONS];
 }

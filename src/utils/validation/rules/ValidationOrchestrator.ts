@@ -13,7 +13,6 @@ import {
   IValidationOptions,
   IValidationResult,
   IValidationRuleResult,
-  IValidationError,
   ValidationCategory,
   ValidationSeverity,
 } from '../../../types/validation/rules/ValidationRuleInterfaces';

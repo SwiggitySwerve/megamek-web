@@ -36,21 +36,16 @@ import { TechBase } from '@/types/enums/TechBase';
 import {
   TechBaseMode,
   TechBaseComponent,
-  IComponentTechBases,
   createDefaultComponentTechBases,
 } from '@/types/construction/TechBaseConfiguration';
 import {
   UnitState,
-  UnitActions,
   UnitStore,
   CreateUnitOptions,
   createDefaultUnitState,
   ISelectionMemory,
-  ITechBaseMemory,
-  createEmptySelectionMemory,
   IArmorAllocation,
   createEmptyArmorAllocation,
-  getTotalAllocatedArmor,
   IMountedEquipmentInstance,
   createMountedEquipment,
 } from './unitState';

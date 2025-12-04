@@ -8,23 +8,16 @@
  * @spec openspec/specs/unit-store-architecture/spec.md
  */
 
-import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
 // Router
-import { 
-  useCustomizerRouter, 
-  CustomizerTabId,
-  DEFAULT_TAB,
-  isValidTabId,
-} from '@/hooks/useCustomizerRouter';
+import { useCustomizerRouter } from '@/hooks/useCustomizerRouter';
 
 // Stores
-import { useTabManagerStore, TabInfo } from '@/stores/useTabManagerStore';
+import { useTabManagerStore } from '@/stores/useTabManagerStore';
 import { UnitStoreProvider, ActiveTabInfo } from '@/stores/UnitStoreProvider';
-import { hasUnitStore, hydrateOrCreateUnit } from '@/stores/unitStoreRegistry';
-import { TechBase } from '@/types/enums/TechBase';
 
 // Components
 import { MultiUnitTabs } from '@/components/customizer/tabs';

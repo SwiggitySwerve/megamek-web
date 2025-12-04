@@ -72,7 +72,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   private static isRecoverableError(error: Error): boolean {
     // CRITICAL: Determine if error is recoverable based on error type
-    const recoverableErrors = [
+    const _recoverableErrors = [
       'TypeError',
       'ReferenceError',
       'RangeError'

@@ -21,7 +21,6 @@ import { IComponentTechBases } from '@/types/construction/TechBaseConfiguration'
 import {
   createISComponentTechBases,
   createClanComponentTechBases,
-  createMixedComponentTechBases,
   createISComponentSelections,
   createISXLComponentSelections,
   createClanComponentSelections,

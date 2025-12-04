@@ -38,11 +38,18 @@ const ThrowingComponent = ({ shouldThrow = true }: { shouldThrow?: boolean }) =>
   return <div>No error</div>;
 };
 
-// Component that throws non-recoverable error
-const NonRecoverableComponent = () => {
-  const error = new SyntaxError('Invalid JSON');
-  throw error;
-};
+// Types for test data
+interface ErrorReportData {
+  componentName: string;
+  errorMessage: string;
+  timestamp: string;
+  stack?: string;
+}
+
+interface MockCall {
+  calls: unknown[][];
+}
+
 
 describe('ErrorBoundary', () => {
   // Suppress console.error for expected errors
@@ -117,8 +124,13 @@ describe('ErrorBoundary', () => {
       );
 
       expect(onError).toHaveBeenCalled();
-      expect(onError.mock.calls[0][0]).toBeInstanceOf(Error);
-      expect(onError.mock.calls[0][0].message).toBe('Test error');
+      const mockCall = onError.mock as MockCall;
+      const errorArg = mockCall.calls[0][0];
+      if (!(errorArg instanceof Error)) {
+        throw new Error('Expected Error instance');
+      }
+      expect(errorArg).toBeInstanceOf(Error);
+      expect(errorArg.message).toBe('Test error');
     });
   });
 
@@ -180,7 +192,12 @@ describe('ErrorBoundary', () => {
       fireEvent.click(reportButton);
 
       expect(mockClipboard.writeText).toHaveBeenCalled();
-      const clipboardContent = JSON.parse(mockClipboard.writeText.mock.calls[0][0]);
+      const mockClipboardCall = mockClipboard.writeText.mock as MockCall;
+      const clipboardArg = mockClipboardCall.calls[0][0];
+      if (typeof clipboardArg !== 'string') {
+        throw new Error('Expected string argument for clipboard.writeText');
+      }
+      const clipboardContent = JSON.parse(clipboardArg) as ErrorReportData;
       expect(clipboardContent.componentName).toBe('TestComponent');
       expect(clipboardContent.errorMessage).toBe('Test error');
     });
@@ -194,7 +211,11 @@ describe('ErrorBoundary', () => {
         </ErrorBoundary>
       );
 
-      const storedLogs = JSON.parse(mockLocalStorage.getItem('errorLogs') || '[]');
+      const storedLogsString = mockLocalStorage.getItem('errorLogs');
+      if (storedLogsString === null) {
+        throw new Error('Expected errorLogs to be stored');
+      }
+      const storedLogs = JSON.parse(storedLogsString) as ErrorReportData[];
       expect(storedLogs.length).toBeGreaterThan(0);
       expect(storedLogs[storedLogs.length - 1].componentName).toBe('TestComponent');
     });

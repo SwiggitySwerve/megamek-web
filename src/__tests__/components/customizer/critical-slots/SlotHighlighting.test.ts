@@ -163,7 +163,7 @@ describe('Slot Highlighting', () => {
         MechLocation.RIGHT_LEG,
       ];
       
-      locations.forEach(location => {
+      locations.forEach(_location => {
         const slots: EquipmentSlot[] = Array.from({ length: 12 }, (_, i) => ({
           index: i,
           type: 'empty',
@@ -444,7 +444,7 @@ describe('Slot Highlighting', () => {
         Array.from({ length: 6 }, (_, i) => ({ index: i, type: 'system' as const })),
       ];
       
-      testCases.forEach((slots, caseIndex) => {
+      testCases.forEach((slots, _caseIndex) => {
         const assignable = getAssignableSlots(slots, null);
         expect(assignable).toEqual([]);
         

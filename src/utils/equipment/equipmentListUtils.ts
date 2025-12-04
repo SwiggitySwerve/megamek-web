@@ -77,7 +77,7 @@ export function getJumpJetEquipmentId(tonnage: number, jumpJetType: JumpJetType)
 /**
  * Get the jump jet equipment item for a given tonnage and type
  */
-export function getJumpJetEquipment(tonnage: number, jumpJetType: JumpJetType) {
+export function getJumpJetEquipment(tonnage: number, jumpJetType: JumpJetType): IEquipment | undefined {
   const id = getJumpJetEquipmentId(tonnage, jumpJetType);
   return JUMP_JETS.find(jj => jj.id === id);
 }
@@ -271,7 +271,7 @@ export function getHeatSinkEquipmentId(heatSinkType: HeatSinkType): string {
 /**
  * Get the heat sink equipment item for a given HeatSinkType
  */
-export function getHeatSinkEquipment(heatSinkType: HeatSinkType) {
+export function getHeatSinkEquipment(heatSinkType: HeatSinkType): IEquipment | undefined {
   const id = getHeatSinkEquipmentId(heatSinkType);
   return HEAT_SINKS.find(hs => hs.id === id);
 }
@@ -347,7 +347,7 @@ export function getEnhancementEquipmentId(
 export function getEnhancementEquipment(
   enhancementType: MovementEnhancementType,
   techBase: TechBase
-) {
+): IEquipment | undefined {
   const id = getEnhancementEquipmentId(enhancementType, techBase);
   
   // Check MOVEMENT_EQUIPMENT first (MASC, Supercharger)
@@ -408,7 +408,7 @@ export function calculateEnhancementSlots(
   enhancementType: MovementEnhancementType,
   tonnage: number,
   techBase: TechBase,
-  engineWeight: number
+  _engineWeight: number
 ): number {
   if (enhancementType === MovementEnhancementType.MASC) {
     const equipId = techBase === TechBase.CLAN ? VARIABLE_EQUIPMENT.MASC_CLAN : VARIABLE_EQUIPMENT.MASC_IS;
