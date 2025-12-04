@@ -117,17 +117,18 @@ export function UnitTab({
         <span className="flex-shrink-0 w-2 h-2 rounded-full bg-orange-500" title="Unsaved changes" />
       )}
       
-      {/* Close button - always visible with dark X on light background */}
+      {/* Close button - dark X with bubble background */}
       {canClose && !isEditing && (
         <button
           onClick={handleCloseClick}
-          className="flex-shrink-0 min-w-[20px] w-5 h-5 flex items-center justify-center rounded bg-slate-200 hover:bg-red-500 transition-colors group/close"
+          className="flex-shrink-0 min-w-[20px] w-5 h-5 flex items-center justify-center rounded-full bg-slate-400/60 hover:bg-red-500 transition-colors group/close"
           title="Close (Ctrl+W)"
         >
           <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none">
             <path 
               d="M6 6L18 18M6 18L18 6" 
-              className="stroke-slate-700 group-hover/close:stroke-white"
+              stroke="black"
+              className="group-hover/close:stroke-white"
               strokeWidth="4" 
               strokeLinecap="round"
             />
