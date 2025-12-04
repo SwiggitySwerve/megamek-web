@@ -135,7 +135,7 @@ const trayStyles = {
   /** Standard row height for all items */
   row: 'h-7 flex items-center',
   /** Equipment item row */
-  equipmentRow: 'px-2 h-7 flex items-center gap-1.5 transition-all group border-b border-slate-700/30',
+  equipmentRow: 'px-2 h-7 flex items-center gap-1.5 transition-all group rounded-md border border-slate-700/30 my-0.5',
   /** Category header row */
   categoryRow: 'px-2 h-7 bg-slate-800/50 flex items-center gap-1.5',
   /** Section header row */

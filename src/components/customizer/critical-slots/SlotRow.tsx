@@ -240,7 +240,7 @@ export const SlotRow = memo(function SlotRow({
         aria-label={slot.name ? `Slot ${slot.index + 1}: ${slot.name}` : `Empty slot ${slot.index + 1}`}
         aria-selected={isSelected}
         className={`
-          flex items-center border-b border-slate-700 transition-all
+          flex items-center border border-slate-700 rounded-sm my-0.5 transition-all
           focus:outline-none
           ${canDrag ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer'}
           ${isDragging ? 'opacity-50' : ''}
@@ -248,7 +248,6 @@ export const SlotRow = memo(function SlotRow({
           ${styleClasses}
           ${selectionClasses}
           ${compact ? 'px-2 py-0.5 text-xs' : 'px-2 py-1 text-sm'}
-          last:border-b-0
         `}
         onClick={onClick}
         onDoubleClick={handleDoubleClick}
