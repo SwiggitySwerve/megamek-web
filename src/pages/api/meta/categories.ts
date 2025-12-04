@@ -23,7 +23,7 @@ const UNIT_CATEGORIES = [
 
 export type UnitCategory = typeof UNIT_CATEGORIES[number];
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
   if (req.method !== 'GET') {
     return res.status(405).json({ message: 'Method not allowed' });
   }

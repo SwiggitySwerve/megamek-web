@@ -119,7 +119,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       console.error('[ErrorBoundary] Error log:', errorLog)
       
       // CRITICAL: Store in localStorage for debugging
-      const errorLogs = JSON.parse(localStorage.getItem('errorLogs') || '[]')
+      const errorLogs = JSON.parse(localStorage.getItem('errorLogs') || '[]') as Array<typeof errorLog>
       errorLogs.push(errorLog)
       
       // CRITICAL: Keep only last 10 errors

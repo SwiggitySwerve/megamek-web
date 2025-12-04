@@ -146,7 +146,7 @@ interface EmptyStateProps {
   action?: React.ReactNode;
 }
 
-export function EmptyState({ icon, title, message, action }: EmptyStateProps) {
+export function EmptyState({ icon, title, message, action }: EmptyStateProps): React.ReactElement {
   return (
     <div className="bg-slate-700/30 rounded-lg p-8 text-center text-slate-400 border border-dashed border-slate-600">
       {icon && <div className="mb-3">{icon}</div>}

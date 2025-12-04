@@ -267,7 +267,7 @@ export function ImportUnitDialog({
               <div>
                 <div className="text-amber-400 font-medium">Name Conflict</div>
                 <div className="text-sm text-amber-200/80">
-                  A unit named "{parsedUnit?.chassis} {parsedUnit?.variant}" already exists.
+                  A unit named &quot;{parsedUnit?.chassis} {parsedUnit?.variant}&quot; already exists.
                 </div>
               </div>
             </div>

@@ -131,7 +131,7 @@ export function SimpleStatCard({
   label,
   loading = false,
   valueColor = 'amber',
-}: SimpleStatCardProps) {
+}: SimpleStatCardProps): React.ReactElement {
   return (
     <div className="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-xl p-6 text-center">
       <div className={`text-3xl font-bold mb-1 ${simpleCardValueColors[valueColor]}`}>

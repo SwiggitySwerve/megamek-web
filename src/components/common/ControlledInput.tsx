@@ -355,9 +355,9 @@ export function useControlledInput<T = string>(
 }
 
 // CRITICAL: Higher-order component for easy controlled input wrapping
-export function withControlledInput<P extends { value?: any }>(
+export function withControlledInput<P extends { value?: string | number }>(
   Component: React.ComponentType<P>,
-  validation?: (value: any) => ValidationResult
+  validation?: (value: string | number) => ValidationResult
 ) {
   return function WithControlledInput(props: P) {
     const controlledProps = useControlledInput(props.value || '', validation)
