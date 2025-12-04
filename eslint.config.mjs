@@ -26,6 +26,8 @@ export default [
       '**/*.config.js',
       '**/*.config.mjs',
       '**/jest.setup.js',
+      '**/desktop/**',
+      '**/scripts/**',
     ],
   },
   
