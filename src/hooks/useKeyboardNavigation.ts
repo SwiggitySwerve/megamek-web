@@ -127,7 +127,7 @@ export function useKeyboardNavigation<T>({
     if (newIndex >= 0 && newIndex < items.length && newIndex !== currentIndex) {
       onSelect(items[newIndex]);
     }
-  }, [items, currentIndex, onSelect, wrap, horizontal, columns, enabled, getKey]);
+  }, [items, currentIndex, onSelect, wrap, horizontal, columns, enabled]);
 
   // Handle keyboard events
   const handleKeyDown = useCallback((e: KeyboardEvent) => {

@@ -62,7 +62,6 @@ export function OverviewTab({
   const engineRating = useUnitStore((s) => s.engineRating);
   const gyroType = useUnitStore((s) => s.gyroType);
   const internalStructureType = useUnitStore((s) => s.internalStructureType);
-  const cockpitType = useUnitStore((s) => s.cockpitType);
   const heatSinkType = useUnitStore((s) => s.heatSinkType);
   const heatSinkCount = useUnitStore((s) => s.heatSinkCount);
   const armorType = useUnitStore((s) => s.armorType);
@@ -165,7 +164,7 @@ export function OverviewTab({
       movement: movementName,
       armor: armorDef?.name ?? 'Standard',
     };
-  }, [engineType, engineRating, gyroType, internalStructureType, cockpitType, heatSinkType, heatSinkCount, armorType, enhancement]);
+  }, [engineType, engineRating, gyroType, internalStructureType, heatSinkType, heatSinkCount, armorType, enhancement]);
 
   return (
     <div className={`space-y-6 p-4 ${className}`}>
