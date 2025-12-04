@@ -117,14 +117,14 @@ export function UnitTab({
         <span className="flex-shrink-0 w-2 h-2 rounded-full bg-orange-500" title="Unsaved changes" />
       )}
       
-      {/* Close button - dark X with bubble background */}
+      {/* Close button - Chrome style */}
       {canClose && !isEditing && (
         <button
           onClick={handleCloseClick}
-          className="flex-shrink-0 w-5 h-5 flex items-center justify-center rounded-full bg-slate-400 text-slate-900 hover:bg-red-500 hover:text-white transition-colors text-base font-black leading-none"
+          className="flex-shrink-0 w-[18px] h-[18px] flex items-center justify-center rounded-full text-slate-400 hover:bg-slate-500 hover:text-white transition-all duration-100 text-xs leading-none"
           title="Close (Ctrl+W)"
         >
-          ✕
+          ×
         </button>
       )}
     </div>
