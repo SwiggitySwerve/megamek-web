@@ -16,7 +16,7 @@ import { NewTabModal } from './NewTabModal';
 import { UnsavedChangesDialog } from '@/components/customizer/dialogs/UnsavedChangesDialog';
 import { SaveUnitDialog } from '@/components/customizer/dialogs/SaveUnitDialog';
 import { UnitLoadDialog, LoadUnitSource } from '@/components/customizer/dialogs/UnitLoadDialog';
-import { useTabManagerStore, UNIT_TEMPLATES, TabInfo } from '@/stores/useTabManagerStore';
+import { useTabManagerStore, UNIT_TEMPLATES } from '@/stores/useTabManagerStore';
 import { IUnitIndexEntry } from '@/services/common/types';
 import { getUnitStore, createUnitFromFullState } from '@/stores/unitStoreRegistry';
 import { customUnitApiService } from '@/services/units/CustomUnitApiService';
@@ -80,7 +80,7 @@ export function MultiUnitTabs({
   
   // Load dialog state
   const [isLoadDialogOpen, setIsLoadDialogOpen] = useState(false);
-  const [isLoadingUnit, setIsLoadingUnit] = useState(false);
+  const [, setIsLoadingUnit] = useState(false);
   
   // Use individual selectors for primitives and stable references
   // This avoids creating new objects on each render
@@ -295,7 +295,7 @@ export function MultiUnitTabs({
       }
       
       // Create a store from the full loaded state
-      const store = createUnitFromFullState(result.state);
+      createUnitFromFullState(result.state);
       const newTabId = result.state.id;
       
       // Register the tab with the tab manager

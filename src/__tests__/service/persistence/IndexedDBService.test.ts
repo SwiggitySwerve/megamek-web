@@ -1,6 +1,5 @@
 import { IndexedDBService, STORES } from '@/services/persistence/IndexedDBService';
 import { StorageError } from '@/services/common/errors';
-import { setupMockIndexedDB, teardownMockIndexedDB, clearAllMockDatabases } from '@/__tests__/mocks/storage/MockIndexedDB';
 
 // Enhanced mock that supports transactions
 class MockTransaction {
@@ -394,8 +393,7 @@ describe('IndexedDBService', () => {
       await service.initialize();
       
       // Mock transaction error
-      const originalTransaction = mockIndexedDBWithTransactions.open().result?.transaction;
-      const mockTransaction = {
+      const _mockTransactionSetup = {
         objectStore: jest.fn(() => ({
           put: jest.fn(() => ({
             onerror: null,

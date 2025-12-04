@@ -270,7 +270,7 @@ interface EquipmentItemProps {
   onUnassign?: () => void;
 }
 
-function EquipmentItem({ item, isSelected, onSelect, onRemove, onContextMenu, onUnassign }: EquipmentItemProps) {
+function EquipmentItem({ item, isSelected, onSelect, onRemove, onContextMenu, onUnassign: _onUnassign }: EquipmentItemProps) {
   const colorType = categoryToColorType(item.category);
   const colors = getEquipmentColors(colorType);
   const [isDragging, setIsDragging] = useState(false);

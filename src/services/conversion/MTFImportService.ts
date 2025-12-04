@@ -9,15 +9,9 @@
 
 import {
   ISerializedUnit,
-  ISerializedEngine,
-  ISerializedGyro,
-  ISerializedStructure,
   ISerializedArmor,
-  ISerializedHeatSinks,
-  ISerializedMovement,
   ISerializedEquipment,
   ISerializedCriticalSlots,
-  ISerializedFluff,
   IDeserializationResult,
   IMTFImporter,
 } from '@/types/unit/UnitSerialization';

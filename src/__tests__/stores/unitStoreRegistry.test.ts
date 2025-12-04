@@ -7,7 +7,6 @@
  * @spec openspec/specs/unit-store-architecture/spec.md
  */
 
-import { act } from '@testing-library/react';
 import {
   getUnitStore,
   hasUnitStore,
@@ -22,7 +21,7 @@ import {
   duplicateUnit,
   createUnitFromFullState,
 } from '@/stores/unitStoreRegistry';
-import { createUnitStore, createNewUnitStore } from '@/stores/useUnitStore';
+import { createUnitStore } from '@/stores/useUnitStore';
 import { createDefaultUnitState } from '@/stores/unitState';
 import { TechBase } from '@/types/enums/TechBase';
 import { TechBaseMode, TechBaseComponent } from '@/types/construction/TechBaseConfiguration';

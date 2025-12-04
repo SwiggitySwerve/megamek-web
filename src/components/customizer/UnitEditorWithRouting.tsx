@@ -29,7 +29,6 @@ import { EquipmentTab } from '@/components/customizer/tabs/EquipmentTab';
 import { CriticalSlotsTab } from '@/components/customizer/tabs/CriticalSlotsTab';
 import { UnitInfoBanner, UnitStats } from '@/components/customizer/shared/UnitInfoBanner';
 import { GlobalLoadoutTray, LoadoutEquipmentItem, AvailableLocation } from '@/components/customizer/equipment/GlobalLoadoutTray';
-import { GlobalStatusBar, StatusBarStats } from '@/components/customizer/shared/GlobalStatusBar';
 
 // Equipment
 import { EquipmentCategory } from '@/types/equipment';
@@ -37,7 +36,7 @@ import { JUMP_JETS } from '@/types/equipment/MiscEquipmentTypes';
 
 // Types
 import { MechLocation, LOCATION_SLOT_COUNTS } from '@/types/construction';
-import { isValidLocationForEquipment, getPlacementRule } from '@/types/equipment/EquipmentPlacement';
+import { isValidLocationForEquipment } from '@/types/equipment/EquipmentPlacement';
 import { EngineType, getEngineDefinition } from '@/types/construction/EngineType';
 import { GyroType, getGyroDefinition } from '@/types/construction/GyroType';
 import { TechBaseMode, isEffectivelyMixed } from '@/types/construction/TechBaseConfiguration';

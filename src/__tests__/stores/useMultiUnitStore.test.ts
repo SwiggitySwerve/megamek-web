@@ -227,7 +227,6 @@ describe('useMultiUnitStore', () => {
       });
       
       const { tabs } = useMultiUnitStore.getState();
-      const originalId = tabs[0].id;
       const copyId = tabs[1].id;
       
       // Modify copy

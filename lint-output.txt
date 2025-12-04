@@ -10,7 +10,6 @@ E:\Projects\megamek-web\next.config.ts
    27:21  warning  Unsafe member access .module on an `any` value          @typescript-eslint/no-unsafe-member-access
    35:7   warning  Unsafe call of a(n) `any` typed value                   @typescript-eslint/no-unsafe-call
    35:21  warning  Unsafe member access .plugins on an `any` value         @typescript-eslint/no-unsafe-member-access
-   36:9   warning  Unsafe construction of a(n) `error` type typed value    @typescript-eslint/no-unsafe-call
    46:7   warning  Unsafe assignment of an `any` value                     @typescript-eslint/no-unsafe-assignment
    46:14  warning  Unsafe member access .optimization on an `any` value    @typescript-eslint/no-unsafe-member-access
    47:19  warning  Unsafe member access .optimization on an `any` value    @typescript-eslint/no-unsafe-member-access
@@ -24,70 +23,6 @@ E:\Projects\megamek-web\next.config.ts
    99:19  warning  Unsafe member access .resolve on an `any` value         @typescript-eslint/no-unsafe-member-access
   100:24  warning  Unsafe member access .resolve on an `any` value         @typescript-eslint/no-unsafe-member-access
   108:5   warning  Unsafe return of a value of type `any`                  @typescript-eslint/no-unsafe-return
-
-E:\Projects\megamek-web\src\__tests__\api\units\custom\[id].test.ts
-   35:10  warning  Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
-   37:65  warning  Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
-   50:13  warning  Unsafe assignment of an `any` value                 @typescript-eslint/no-unsafe-assignment
-   51:19  warning  Unsafe member access .error on an `any` value       @typescript-eslint/no-unsafe-member-access
-   88:13  warning  Unsafe assignment of an `any` value                 @typescript-eslint/no-unsafe-assignment
-   89:19  warning  Unsafe member access .id on an `any` value          @typescript-eslint/no-unsafe-member-access
-   90:19  warning  Unsafe member access .chassis on an `any` value     @typescript-eslint/no-unsafe-member-access
-   91:19  warning  Unsafe member access .parsedData on an `any` value  @typescript-eslint/no-unsafe-member-access
-  105:13  warning  Unsafe assignment of an `any` value                 @typescript-eslint/no-unsafe-assignment
-  106:19  warning  Unsafe member access .error on an `any` value       @typescript-eslint/no-unsafe-member-access
-  128:13  warning  Unsafe assignment of an `any` value                 @typescript-eslint/no-unsafe-assignment
-  129:19  warning  Unsafe member access .error on an `any` value       @typescript-eslint/no-unsafe-member-access
-  160:13  warning  Unsafe assignment of an `any` value                 @typescript-eslint/no-unsafe-assignment
-  161:19  warning  Unsafe member access .success on an `any` value     @typescript-eslint/no-unsafe-member-access
-  162:19  warning  Unsafe member access .version on an `any` value     @typescript-eslint/no-unsafe-member-access
-  178:13  warning  Unsafe assignment of an `any` value                 @typescript-eslint/no-unsafe-assignment
-  179:19  warning  Unsafe member access .error on an `any` value       @typescript-eslint/no-unsafe-member-access
-  218:13  warning  Unsafe assignment of an `any` value                 @typescript-eslint/no-unsafe-assignment
-  219:19  warning  Unsafe member access .error on an `any` value       @typescript-eslint/no-unsafe-member-access
-  238:13  warning  Unsafe assignment of an `any` value                 @typescript-eslint/no-unsafe-assignment
-  239:19  warning  Unsafe member access .success on an `any` value     @typescript-eslint/no-unsafe-member-access
-  240:19  warning  Unsafe member access .id on an `any` value          @typescript-eslint/no-unsafe-member-access
-  258:13  warning  Unsafe assignment of an `any` value                 @typescript-eslint/no-unsafe-assignment
-  259:19  warning  Unsafe member access .success on an `any` value     @typescript-eslint/no-unsafe-member-access
-  275:13  warning  Unsafe assignment of an `any` value                 @typescript-eslint/no-unsafe-assignment
-  276:19  warning  Unsafe member access .error on an `any` value       @typescript-eslint/no-unsafe-member-access
-  290:13  warning  Unsafe assignment of an `any` value                 @typescript-eslint/no-unsafe-assignment
-  291:19  warning  Unsafe member access .error on an `any` value       @typescript-eslint/no-unsafe-member-access
-  301:12  warning  Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
-  311:13  warning  Unsafe assignment of an `any` value                 @typescript-eslint/no-unsafe-assignment
-  312:19  warning  Unsafe member access .error on an `any` value       @typescript-eslint/no-unsafe-member-access
-
-E:\Projects\megamek-web\src\__tests__\api\units\custom\index.test.ts
-   33:10  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
-   35:65  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
-   47:13  warning  Unsafe assignment of an `any` value              @typescript-eslint/no-unsafe-assignment
-   48:19  warning  Unsafe member access .error on an `any` value    @typescript-eslint/no-unsafe-member-access
-   78:13  warning  Unsafe assignment of an `any` value              @typescript-eslint/no-unsafe-assignment
-   79:19  warning  Unsafe member access .units on an `any` value    @typescript-eslint/no-unsafe-member-access
-   80:19  warning  Unsafe member access .count on an `any` value    @typescript-eslint/no-unsafe-member-access
-   93:13  warning  Unsafe assignment of an `any` value              @typescript-eslint/no-unsafe-assignment
-   94:19  warning  Unsafe member access .units on an `any` value    @typescript-eslint/no-unsafe-member-access
-   95:19  warning  Unsafe member access .count on an `any` value    @typescript-eslint/no-unsafe-member-access
-  110:13  warning  Unsafe assignment of an `any` value              @typescript-eslint/no-unsafe-assignment
-  111:19  warning  Unsafe member access .error on an `any` value    @typescript-eslint/no-unsafe-member-access
-  143:13  warning  Unsafe assignment of an `any` value              @typescript-eslint/no-unsafe-assignment
-  144:19  warning  Unsafe member access .success on an `any` value  @typescript-eslint/no-unsafe-member-access
-  145:19  warning  Unsafe member access .id on an `any` value       @typescript-eslint/no-unsafe-member-access
-  161:13  warning  Unsafe assignment of an `any` value              @typescript-eslint/no-unsafe-assignment
-  162:19  warning  Unsafe member access .error on an `any` value    @typescript-eslint/no-unsafe-member-access
-  177:13  warning  Unsafe assignment of an `any` value              @typescript-eslint/no-unsafe-assignment
-  178:19  warning  Unsafe member access .error on an `any` value    @typescript-eslint/no-unsafe-member-access
-  193:13  warning  Unsafe assignment of an `any` value              @typescript-eslint/no-unsafe-assignment
-  194:19  warning  Unsafe member access .error on an `any` value    @typescript-eslint/no-unsafe-member-access
-  216:13  warning  Unsafe assignment of an `any` value              @typescript-eslint/no-unsafe-assignment
-  217:19  warning  Unsafe member access .success on an `any` value  @typescript-eslint/no-unsafe-member-access
-  218:19  warning  Unsafe member access .error on an `any` value    @typescript-eslint/no-unsafe-member-access
-  238:13  warning  Unsafe assignment of an `any` value              @typescript-eslint/no-unsafe-assignment
-  239:19  warning  Unsafe member access .error on an `any` value    @typescript-eslint/no-unsafe-member-access
-  249:12  warning  Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
-  258:13  warning  Unsafe assignment of an `any` value              @typescript-eslint/no-unsafe-assignment
-  259:19  warning  Unsafe member access .error on an `any` value    @typescript-eslint/no-unsafe-member-access
 
 E:\Projects\megamek-web\src\__tests__\components\common\ControlledInput.test.tsx
    98:7  warning  Unsafe call of a(n) `error` type typed value  @typescript-eslint/no-unsafe-call
@@ -188,9 +123,6 @@ E:\Projects\megamek-web\src\__tests__\components\customizer\tabs\TabBar.test.tsx
   11:24  warning  Unsafe assignment of an `any` value           @typescript-eslint/no-unsafe-assignment
   12:30  warning  Unsafe return of a value of type `any`        @typescript-eslint/no-unsafe-return
   12:30  warning  Unsafe call of a(n) `any` typed value         @typescript-eslint/no-unsafe-call
-
-E:\Projects\megamek-web\src\__tests__\helpers\storeTestHelpers.ts
-  162:3  warning  Unsafe return of a value of type error  @typescript-eslint/no-unsafe-return
 
 E:\Projects\megamek-web\src\__tests__\integration\dataLoading\EquipmentLoading.test.ts
    65:22  warning  Unsafe return of a value of type `any`  @typescript-eslint/no-unsafe-return
@@ -383,7 +315,6 @@ E:\Projects\megamek-web\src\__tests__\service\units\UnitSearchService.test.ts
 E:\Projects\megamek-web\src\__tests__\stores\unitStoreRegistry.test.ts
   10:10  warning  'act' is defined but never used                 @typescript-eslint/no-unused-vars
   25:27  warning  'createNewUnitStore' is defined but never used  @typescript-eslint/no-unused-vars
-  90:13  warning  Unsafe assignment of an error typed value       @typescript-eslint/no-unsafe-assignment
 
 E:\Projects\megamek-web\src\__tests__\stores\useMultiUnitStore.test.ts
   230:13  warning  'originalId' is assigned a value but never used  @typescript-eslint/no-unused-vars
@@ -395,26 +326,12 @@ E:\Projects\megamek-web\src\__tests__\stores\useTabManagerStore.test.ts
   415:13  warning  'thirdId' is assigned a value but never used  @typescript-eslint/no-unused-vars
 
 E:\Projects\megamek-web\src\__tests__\stores\useUnitStore.test.ts
-    9:10  warning  'act' is defined but never used                           @typescript-eslint/no-unused-vars
-   10:10  warning  'StoreApi' is defined but never used                      @typescript-eslint/no-unused-vars
-   13:3   warning  'UnitState' is defined but never used                     @typescript-eslint/no-unused-vars
-   14:3   warning  'UnitStore' is defined but never used                     @typescript-eslint/no-unused-vars
-  215:13  warning  Unsafe assignment of an error typed value                 @typescript-eslint/no-unsafe-assignment
-  216:13  warning  Unsafe assignment of an error typed value                 @typescript-eslint/no-unsafe-assignment
-  216:21  warning  Unsafe call of a(n) `error` type typed value              @typescript-eslint/no-unsafe-call
-  216:27  warning  Unsafe member access .getState on an `error` typed value  @typescript-eslint/no-unsafe-member-access
-  218:20  warning  Unsafe member access .name on an `error` typed value      @typescript-eslint/no-unsafe-member-access
-  219:20  warning  Unsafe member access .tonnage on an `error` typed value   @typescript-eslint/no-unsafe-member-access
-  220:20  warning  Unsafe member access .techBase on an `error` typed value  @typescript-eslint/no-unsafe-member-access
-  248:13  warning  Unsafe assignment of an error typed value                 @typescript-eslint/no-unsafe-assignment
-  254:13  warning  Unsafe assignment of an error typed value                 @typescript-eslint/no-unsafe-assignment
-  254:21  warning  Unsafe call of a(n) `error` type typed value              @typescript-eslint/no-unsafe-call
-  254:27  warning  Unsafe member access .getState on an `error` typed value  @typescript-eslint/no-unsafe-member-access
-  256:20  warning  Unsafe member access .name on an `error` typed value      @typescript-eslint/no-unsafe-member-access
-  257:20  warning  Unsafe member access .tonnage on an `error` typed value   @typescript-eslint/no-unsafe-member-access
-  259:20  warning  Unsafe member access .id on an `error` typed value        @typescript-eslint/no-unsafe-member-access
-  286:13  warning  'originalTime' is assigned a value but never used         @typescript-eslint/no-unused-vars
-  528:13  warning  'originalTime' is assigned a value but never used         @typescript-eslint/no-unused-vars
+    9:10  warning  'act' is defined but never used                    @typescript-eslint/no-unused-vars
+   10:10  warning  'StoreApi' is defined but never used               @typescript-eslint/no-unused-vars
+   13:3   warning  'UnitState' is defined but never used              @typescript-eslint/no-unused-vars
+   14:3   warning  'UnitStore' is defined but never used              @typescript-eslint/no-unused-vars
+  286:13  warning  'originalTime' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  528:13  warning  'originalTime' is assigned a value but never used  @typescript-eslint/no-unused-vars
 
 E:\Projects\megamek-web\src\__tests__\unit\utils\construction\displacementUtils.test.ts
   12:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
@@ -703,24 +620,6 @@ E:\Projects\megamek-web\src\components\ui\StatDisplay.tsx
 E:\Projects\megamek-web\src\hooks\useCustomizerRouter.ts
   16:32  warning  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
 
-E:\Projects\megamek-web\src\hooks\useEquipmentBrowser.ts
-   86:9   warning  Unsafe assignment of an error typed value                  @typescript-eslint/no-unsafe-assignment
-   99:11  warning  Unsafe assignment of an error typed value                  @typescript-eslint/no-unsafe-assignment
-   99:19  warning  Unsafe call of a(n) `error` type typed value               @typescript-eslint/no-unsafe-call
-   99:29  warning  Unsafe member access .getState on an `error` typed value   @typescript-eslint/no-unsafe-member-access
-  100:17  warning  Unsafe assignment of an error typed value                  @typescript-eslint/no-unsafe-assignment
-  100:29  warning  Unsafe member access .year on an `error` typed value       @typescript-eslint/no-unsafe-member-access
-  100:35  warning  Unsafe assignment of an error typed value                  @typescript-eslint/no-unsafe-assignment
-  100:51  warning  Unsafe member access .techBase on an `error` typed value   @typescript-eslint/no-unsafe-member-access
-  103:11  warning  Unsafe assignment of an error typed value                  @typescript-eslint/no-unsafe-assignment
-  103:25  warning  Unsafe call of a(n) `error` type typed value               @typescript-eslint/no-unsafe-call
-  103:35  warning  Unsafe member access .subscribe on an `error` typed value  @typescript-eslint/no-unsafe-member-access
-  104:19  warning  Unsafe assignment of an `any` value                        @typescript-eslint/no-unsafe-assignment
-  104:31  warning  Unsafe member access .year on an `any` value               @typescript-eslint/no-unsafe-member-access
-  104:37  warning  Unsafe assignment of an `any` value                        @typescript-eslint/no-unsafe-assignment
-  104:53  warning  Unsafe member access .techBase on an `any` value           @typescript-eslint/no-unsafe-member-access
-  107:5   warning  Unsafe return of a value of type error                     @typescript-eslint/no-unsafe-return
-
 E:\Projects\megamek-web\src\hooks\useKeyboardNavigation.ts
     9:34  warning  'useState' is defined but never used                                                                              @typescript-eslint/no-unused-vars
    43:8   warning  Missing return type on function                                                                                   @typescript-eslint/explicit-module-boundary-types
@@ -731,9 +630,6 @@ E:\Projects\megamek-web\src\hooks\useKeyboardNavigation.ts
 E:\Projects\megamek-web\src\hooks\useTechBaseSync.ts
   81:10  warning  'isCompatibleWithTechBase' is defined but never used  @typescript-eslint/no-unused-vars
 
-E:\Projects\megamek-web\src\hooks\useTechBaseSyncEffect.ts
-  51:7  warning  'COMPONENT_TECH_BASE_MAP' is assigned a value but never used  @typescript-eslint/no-unused-vars
-
 E:\Projects\megamek-web\src\hooks\useUnit.ts
   156:8  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
@@ -742,24 +638,6 @@ E:\Projects\megamek-web\src\pages\_app.tsx
 
 E:\Projects\megamek-web\src\pages\_document.tsx
   3:16  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
-E:\Projects\megamek-web\src\pages\api\catalog.ts
-  22:16  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
-E:\Projects\megamek-web\src\pages\api\custom-variants.ts
-  33:16  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
-E:\Projects\megamek-web\src\pages\api\custom-variants\[variantId].ts
-  17:16  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
-E:\Projects\megamek-web\src\pages\api\equipment.ts
-  72:16  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
-E:\Projects\megamek-web\src\pages\api\equipment\catalog.ts
-  41:16  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
-E:\Projects\megamek-web\src\pages\api\equipment\filters.ts
-  37:16  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
 E:\Projects\megamek-web\src\pages\api\meta\categories.ts
   26:16  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
@@ -782,33 +660,8 @@ E:\Projects\megamek-web\src\pages\api\meta\unit_tech_bases.ts
 E:\Projects\megamek-web\src\pages\api\meta\unit_weight_classes.ts
   4:16  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
 
-E:\Projects\megamek-web\src\pages\api\units.ts
-  75:16  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
-E:\Projects\megamek-web\src\pages\api\units\custom\[id].ts
-  34:16  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
-E:\Projects\megamek-web\src\pages\api\units\custom\[id]\export.ts
-  29:16  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
-E:\Projects\megamek-web\src\pages\api\units\custom\[id]\revert\[version].ts
-  31:16  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
-E:\Projects\megamek-web\src\pages\api\units\custom\[id]\versions\[version].ts
-  23:16  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
-E:\Projects\megamek-web\src\pages\api\units\custom\[id]\versions\index.ts
-  29:16  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
-E:\Projects\megamek-web\src\pages\api\units\custom\index.ts
-  34:16  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
-E:\Projects\megamek-web\src\pages\api\units\custom\suggest-name.ts
-  33:16  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
-
 E:\Projects\megamek-web\src\pages\api\units\import.ts
-  15:3   warning  'UnitErrorCode' is defined but never used  @typescript-eslint/no-unused-vars
-  48:16  warning  Missing return type on function            @typescript-eslint/explicit-module-boundary-types
+  15:3  warning  'UnitErrorCode' is defined but never used  @typescript-eslint/no-unused-vars
 
 E:\Projects\megamek-web\src\pages\compare\index.tsx
   16:16  warning  Missing return type on function                  @typescript-eslint/explicit-module-boundary-types
@@ -883,37 +736,36 @@ E:\Projects\megamek-web\src\services\conversion\MTFImportService.ts
   331:13  warning  Unsafe assignment of an `any` value                                           @typescript-eslint/no-unsafe-assignment
 
 E:\Projects\megamek-web\src\services\conversion\UnitFormatConverter.ts
-   11:10  warning  'RulesLevel' is defined but never used                                      @typescript-eslint/no-unused-vars
-   12:10  warning  'Era' is defined but never used                                             @typescript-eslint/no-unused-vars
-   13:10  warning  'WeightClass' is defined but never used                                     @typescript-eslint/no-unused-vars
-   13:23  warning  'getWeightClass' is defined but never used                                  @typescript-eslint/no-unused-vars
-   14:10  warning  'EngineType' is defined but never used                                      @typescript-eslint/no-unused-vars
-   15:10  warning  'InternalStructureType' is defined but never used                           @typescript-eslint/no-unused-vars
-   16:10  warning  'HeatSinkType' is defined but never used                                    @typescript-eslint/no-unused-vars
-   17:10  warning  'ArmorTypeEnum' is defined but never used                                   @typescript-eslint/no-unused-vars
-   20:10  warning  'MechLocation' is defined but never used                                    @typescript-eslint/no-unused-vars
-   21:10  warning  'IArmorAllocation' is defined but never used                                @typescript-eslint/no-unused-vars
-   23:3   warning  'UnitType' is defined but never used                                        @typescript-eslint/no-unused-vars
-   24:3   warning  'MechConfiguration' is defined but never used                               @typescript-eslint/no-unused-vars
-   25:3   warning  'IUnitMetadata' is defined but never used                                   @typescript-eslint/no-unused-vars
-   26:3   warning  'IEngineConfiguration' is defined but never used                            @typescript-eslint/no-unused-vars
-   27:3   warning  'IGyroConfiguration' is defined but never used                              @typescript-eslint/no-unused-vars
-   28:3   warning  'IStructureConfiguration' is defined but never used                         @typescript-eslint/no-unused-vars
-   29:3   warning  'IHeatSinkConfiguration' is defined but never used                          @typescript-eslint/no-unused-vars
-   30:3   warning  'IMovementConfiguration' is defined but never used                          @typescript-eslint/no-unused-vars
-   31:3   warning  'IMountedEquipment' is defined but never used                               @typescript-eslint/no-unused-vars
-   32:3   warning  'ICriticalSlotAssignment' is defined but never used                         @typescript-eslint/no-unused-vars
-   33:3   warning  'ICriticalSlot' is defined but never used                                   @typescript-eslint/no-unused-vars
-   34:3   warning  'IBattleMech' is defined but never used                                     @typescript-eslint/no-unused-vars
-   35:3   warning  'IOmniMech' is defined but never used                                       @typescript-eslint/no-unused-vars
-   51:3   warning  'mapGyroType' is defined but never used                                     @typescript-eslint/no-unused-vars
-   59:3   warning  'calculateTotalArmor' is defined but never used                             @typescript-eslint/no-unused-vars
-   63:3   warning  'ParsedCriticalSlots' is defined but never used                             @typescript-eslint/no-unused-vars
-   64:3   warning  'BIPED_SLOT_COUNTS' is defined but never used                               @typescript-eslint/no-unused-vars
-   69:3   warning  'EquipmentResolution' is defined but never used                             @typescript-eslint/no-unused-vars
-  307:11  warning  'cockpit' is assigned a value but never used                                @typescript-eslint/no-unused-vars
-  392:23  warning  'source' is defined but never used. Allowed unused args must match /^_/u    @typescript-eslint/no-unused-vars
-  597:49  warning  'itemName' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+   11:10  warning  'Era' is defined but never used                                             @typescript-eslint/no-unused-vars
+   12:10  warning  'WeightClass' is defined but never used                                     @typescript-eslint/no-unused-vars
+   12:23  warning  'getWeightClass' is defined but never used                                  @typescript-eslint/no-unused-vars
+   13:10  warning  'EngineType' is defined but never used                                      @typescript-eslint/no-unused-vars
+   14:10  warning  'InternalStructureType' is defined but never used                           @typescript-eslint/no-unused-vars
+   15:10  warning  'HeatSinkType' is defined but never used                                    @typescript-eslint/no-unused-vars
+   16:10  warning  'ArmorTypeEnum' is defined but never used                                   @typescript-eslint/no-unused-vars
+   19:10  warning  'MechLocation' is defined but never used                                    @typescript-eslint/no-unused-vars
+   20:10  warning  'IArmorAllocation' is defined but never used                                @typescript-eslint/no-unused-vars
+   22:3   warning  'UnitType' is defined but never used                                        @typescript-eslint/no-unused-vars
+   23:3   warning  'MechConfiguration' is defined but never used                               @typescript-eslint/no-unused-vars
+   24:3   warning  'IUnitMetadata' is defined but never used                                   @typescript-eslint/no-unused-vars
+   25:3   warning  'IEngineConfiguration' is defined but never used                            @typescript-eslint/no-unused-vars
+   26:3   warning  'IGyroConfiguration' is defined but never used                              @typescript-eslint/no-unused-vars
+   27:3   warning  'IStructureConfiguration' is defined but never used                         @typescript-eslint/no-unused-vars
+   28:3   warning  'IHeatSinkConfiguration' is defined but never used                          @typescript-eslint/no-unused-vars
+   29:3   warning  'IMovementConfiguration' is defined but never used                          @typescript-eslint/no-unused-vars
+   30:3   warning  'IMountedEquipment' is defined but never used                               @typescript-eslint/no-unused-vars
+   31:3   warning  'ICriticalSlotAssignment' is defined but never used                         @typescript-eslint/no-unused-vars
+   32:3   warning  'ICriticalSlot' is defined but never used                                   @typescript-eslint/no-unused-vars
+   33:3   warning  'IBattleMech' is defined but never used                                     @typescript-eslint/no-unused-vars
+   34:3   warning  'IOmniMech' is defined but never used                                       @typescript-eslint/no-unused-vars
+   50:3   warning  'mapGyroType' is defined but never used                                     @typescript-eslint/no-unused-vars
+   58:3   warning  'calculateTotalArmor' is defined but never used                             @typescript-eslint/no-unused-vars
+   62:3   warning  'ParsedCriticalSlots' is defined but never used                             @typescript-eslint/no-unused-vars
+   63:3   warning  'BIPED_SLOT_COUNTS' is defined but never used                               @typescript-eslint/no-unused-vars
+   68:3   warning  'EquipmentResolution' is defined but never used                             @typescript-eslint/no-unused-vars
+  306:11  warning  'cockpit' is assigned a value but never used                                @typescript-eslint/no-unused-vars
+  391:23  warning  'source' is defined but never used. Allowed unused args must match /^_/u    @typescript-eslint/no-unused-vars
+  596:49  warning  'itemName' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
 
 E:\Projects\megamek-web\src\services\equipment\EquipmentLoaderService.ts
   465:17  warning  Unsafe assignment of an `any` value  @typescript-eslint/no-unsafe-assignment
@@ -925,14 +777,8 @@ E:\Projects\megamek-web\src\services\equipment\EquipmentLoaderService.ts
   600:9   warning  Unsafe assignment of an `any` value  @typescript-eslint/no-unsafe-assignment
   603:9   warning  Unsafe assignment of an `any` value  @typescript-eslint/no-unsafe-assignment
 
-E:\Projects\megamek-web\src\services\equipment\EquipmentLookupService.ts
-  11:10  warning  'RulesLevel' is defined but never used  @typescript-eslint/no-unused-vars
-
 E:\Projects\megamek-web\src\services\equipment\EquipmentNameMapper.ts
   359:13  warning  Unsafe assignment of an `any` value  @typescript-eslint/no-unsafe-assignment
-
-E:\Projects\megamek-web\src\services\equipment\EquipmentRegistry.ts
-  11:10  warning  'RulesLevel' is defined but never used  @typescript-eslint/no-unused-vars
 
 E:\Projects\megamek-web\src\services\equipment\variableEquipmentFormulas.ts
   20:3  warning  'max' is defined but never used  @typescript-eslint/no-unused-vars
@@ -990,19 +836,6 @@ E:\Projects\megamek-web\src\services\units\CustomUnitApiService.ts
   415:7   warning  Unsafe assignment of an `any` value                    @typescript-eslint/no-unsafe-assignment
   415:18  warning  Unsafe member access .unitId on an `any` value         @typescript-eslint/no-unsafe-member-access
 
-E:\Projects\megamek-web\src\services\units\CustomUnitService.ts
-  16:10  warning  'WeightClass' is defined but never used  @typescript-eslint/no-unused-vars
-
-E:\Projects\megamek-web\src\services\units\UnitFactoryService.ts
-  43:16  warning  'uuidv4' is defined but never used  @typescript-eslint/no-unused-vars
-
-E:\Projects\megamek-web\src\services\units\UnitLoaderService.ts
-   11:32  warning  'IFullUnit' is defined but never used                                          @typescript-eslint/no-unused-vars
-   12:32  warning  'IUnitWithVersion' is defined but never used                                   @typescript-eslint/no-unused-vars
-   29:3   warning  'ISelectionMemory' is defined but never used                                   @typescript-eslint/no-unused-vars
-   35:3   warning  'IComponentTechBases' is defined but never used                                @typescript-eslint/no-unused-vars
-  562:47  warning  'isCanonical' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
-
 E:\Projects\megamek-web\src\services\units\UnitRepository.ts
   12:26  warning  'WeightClass' is defined but never used  @typescript-eslint/no-unused-vars
 
@@ -1010,34 +843,15 @@ E:\Projects\megamek-web\src\services\units\VersionRepository.ts
   13:3  warning  'IVersionEntry' is defined but never used  @typescript-eslint/no-unused-vars
 
 E:\Projects\megamek-web\src\stores\UnitStoreProvider.tsx
-   49:8  warning  Missing return type on function                                                                             @typescript-eslint/explicit-module-boundary-types
-   78:6  warning  React Hook useMemo has a missing dependency: 'activeTab'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
-  106:9  warning  Unsafe assignment of an error typed value                                                                   @typescript-eslint/no-unsafe-assignment
+  49:8  warning  Missing return type on function                                                                             @typescript-eslint/explicit-module-boundary-types
+  78:6  warning  React Hook useMemo has a missing dependency: 'activeTab'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
 
 E:\Projects\megamek-web\src\stores\unitStoreRegistry.ts
-   84:9   warning  Unsafe assignment of an error typed value                 @typescript-eslint/no-unsafe-assignment
-   85:9   warning  Unsafe assignment of an error typed value                 @typescript-eslint/no-unsafe-assignment
-   85:17  warning  Unsafe call of a(n) `error` type typed value              @typescript-eslint/no-unsafe-call
-   85:23  warning  Unsafe member access .getState on an `error` typed value  @typescript-eslint/no-unsafe-member-access
-   86:24  warning  Unsafe member access .id on an `error` typed value        @typescript-eslint/no-unsafe-member-access
-   87:3   warning  Unsafe return of a value of type error                    @typescript-eslint/no-unsafe-return
-  145:13  warning  Unsafe assignment of an `any` value                       @typescript-eslint/no-unsafe-assignment
-  146:28  warning  Unsafe member access .state on an `any` value             @typescript-eslint/no-unsafe-member-access
-  159:13  warning  Unsafe assignment of an error typed value                 @typescript-eslint/no-unsafe-assignment
-  161:7   warning  Unsafe return of a value of type error                    @typescript-eslint/no-unsafe-return
-  168:9   warning  Unsafe assignment of an error typed value                 @typescript-eslint/no-unsafe-assignment
-  170:3   warning  Unsafe return of a value of type error                    @typescript-eslint/no-unsafe-return
-  247:9   warning  Unsafe assignment of an error typed value                 @typescript-eslint/no-unsafe-assignment
-  249:3   warning  Unsafe return of a value of type error                    @typescript-eslint/no-unsafe-return
-  282:9   warning  Unsafe assignment of an error typed value                 @typescript-eslint/no-unsafe-assignment
-  284:3   warning  Unsafe return of a value of type error                    @typescript-eslint/no-unsafe-return
+  145:13  warning  Unsafe assignment of an `any` value            @typescript-eslint/no-unsafe-assignment
+  146:28  warning  Unsafe member access .state on an `any` value  @typescript-eslint/no-unsafe-member-access
 
 E:\Projects\megamek-web\src\stores\useUnitStore.ts
-   68:10  warning  'equipmentCalculatorService' is defined but never used  @typescript-eslint/no-unused-vars
-  117:17  warning  Unsafe return of a value of type `any`                  @typescript-eslint/no-unsafe-return
-  786:44  warning  Unsafe member access .id on an `error` typed value      @typescript-eslint/no-unsafe-member-access
-  858:9   warning  Unsafe assignment of an error typed value               @typescript-eslint/no-unsafe-assignment
-  875:9   warning  Unsafe assignment of an error typed value               @typescript-eslint/no-unsafe-assignment
+  69:10  warning  'equipmentCalculatorService' is defined but never used  @typescript-eslint/no-unused-vars
 
 E:\Projects\megamek-web\src\types\equipment\EquipmentPlacement.ts
   301:3  warning  'hasHandActuator' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
@@ -1060,5 +874,5 @@ E:\Projects\megamek-web\src\utils\construction\gyroCalculations.ts
 E:\Projects\megamek-web\src\utils\construction\heatSinkCalculations.ts
   9:24  warning  'HeatSinkDefinition' is defined but never used  @typescript-eslint/no-unused-vars
 
-✖ 753 problems (0 errors, 753 warnings)
+✖ 615 problems (0 errors, 615 warnings)
 

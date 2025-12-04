@@ -6,7 +6,7 @@
  * @spec openspec/specs/persistence-services/spec.md
  */
 
-import { FileError, ValidationError } from '../common/errors';
+import { FileError } from '../common/errors';
 import { IImportResult, IValidationResult, validResult, invalidResult, ValidationSeverity } from '../common/types';
 
 /**

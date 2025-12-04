@@ -125,7 +125,7 @@ describe('UnitSearchService', () => {
     });
 
     it('should search units by query', () => {
-      const results = service.search('Atlas');
+      service.search('Atlas');
       
       expect(mockSearchIndex.search).toHaveBeenCalledWith('Atlas', expect.any(Object));
     });
@@ -137,13 +137,13 @@ describe('UnitSearchService', () => {
     });
 
     it('should filter by tech base when provided', () => {
-      const results = service.search('Atlas', { techBase: TechBase.INNER_SPHERE });
+      service.search('Atlas', { techBase: TechBase.INNER_SPHERE });
       
       expect(mockSearchIndex.search).toHaveBeenCalled();
     });
 
     it('should filter by weight class when provided', () => {
-      const results = service.search('Atlas', { weightClass: WeightClass.ASSAULT });
+      service.search('Atlas', { weightClass: WeightClass.ASSAULT });
       
       expect(mockSearchIndex.search).toHaveBeenCalled();
     });

@@ -298,7 +298,7 @@ export function validateArmWeaponPlacement(
   weaponCategory: WeaponCategory,
   location: MechLocation,
   hasLowerArmActuator: boolean,
-  hasHandActuator: boolean
+  _hasHandActuator: boolean
 ): { isValid: boolean; warnings: string[] } {
   const warnings: string[] = [];
   

@@ -12,13 +12,12 @@ import React, { useCallback, useMemo } from 'react';
 import { TechBase } from '@/types/enums/TechBase';
 import { RulesLevel, ALL_RULES_LEVELS } from '@/types/enums/RulesLevel';
 import { TechBaseConfiguration, IComponentValues } from '../shared/TechBaseConfiguration';
-import { TechBaseMode, TechBaseComponent, IComponentTechBases } from '@/types/construction/TechBaseConfiguration';
+import { TechBaseMode, TechBaseComponent } from '@/types/construction/TechBaseConfiguration';
 import { useUnitStore } from '@/stores/useUnitStore';
 import { useTabManagerStore } from '@/stores/useTabManagerStore';
 import { getEngineDefinition } from '@/types/construction/EngineType';
 import { getGyroDefinition } from '@/types/construction/GyroType';
 import { getInternalStructureDefinition } from '@/types/construction/InternalStructureType';
-import { getCockpitDefinition } from '@/types/construction/CockpitType';
 import { getHeatSinkDefinition } from '@/types/construction/HeatSinkType';
 import { getArmorDefinition } from '@/types/construction/ArmorType';
 import { getMovementEnhancementDefinition, MovementEnhancementType } from '@/types/construction/MovementEnhancement';
@@ -137,7 +136,6 @@ export function OverviewTab({
     const engineDef = getEngineDefinition(engineType);
     const gyroDef = getGyroDefinition(gyroType);
     const structureDef = getInternalStructureDefinition(internalStructureType);
-    const cockpitDef = getCockpitDefinition(cockpitType);
     const heatSinkDef = getHeatSinkDefinition(heatSinkType);
     const armorDef = getArmorDefinition(armorType);
     

@@ -6,12 +6,8 @@
  * @spec openspec/specs/unit-store-architecture/spec.md
  */
 
-import { act } from '@testing-library/react';
-import { StoreApi } from 'zustand';
 import { createUnitStore, createNewUnitStore } from '@/stores/useUnitStore';
 import { 
-  UnitState, 
-  UnitStore, 
   createDefaultUnitState,
   generateUnitId,
   CreateUnitOptions,
@@ -283,7 +279,6 @@ describe('Unit Store', () => {
     
     it('should update lastModifiedAt', () => {
       const store = createTestStore();
-      const originalTime = store.getState().lastModifiedAt;
       
       // Wait a bit to ensure time difference
       const later = Date.now() + 1;
@@ -525,7 +520,6 @@ describe('Unit Store', () => {
     
     it('should update lastModifiedAt', () => {
       const store = createTestStore();
-      const originalTime = store.getState().lastModifiedAt;
       
       const later = Date.now() + 1000;
       jest.spyOn(Date, 'now').mockReturnValue(later);

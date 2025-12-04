@@ -9,7 +9,7 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import { getSQLiteService } from '../persistence/SQLiteService';
-import { getWeightClass, WeightClass } from '@/types/enums/WeightClass';
+import { getWeightClass } from '@/types/enums/WeightClass';
 import { TechBase } from '@/types/enums/TechBase';
 import { Era } from '@/types/enums/Era';
 import { RulesLevel } from '@/types/enums/RulesLevel';

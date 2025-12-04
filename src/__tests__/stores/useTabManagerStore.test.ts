@@ -11,7 +11,6 @@ import { act } from '@testing-library/react';
 import {
   useTabManagerStore,
   UNIT_TEMPLATES,
-  TabInfo,
 } from '@/stores/useTabManagerStore';
 import {
   clearAllStores,
@@ -20,7 +19,6 @@ import {
   getStoreCount,
 } from '@/stores/unitStoreRegistry';
 import { TechBase } from '@/types/enums/TechBase';
-import { EngineType } from '@/types/construction/EngineType';
 import { isValidUUID } from '@/utils/uuid';
 import {
   setupMockLocalStorage,
@@ -409,10 +407,6 @@ describe('useTabManagerStore', () => {
         useTabManagerStore.getState().createTab(UNIT_TEMPLATES[1], 'Second');
         useTabManagerStore.getState().createTab(UNIT_TEMPLATES[2], 'Third');
       });
-      
-      const initialTabs = useTabManagerStore.getState().tabs;
-      const firstId = initialTabs[0].id;
-      const thirdId = initialTabs[2].id;
       
       // Move first to last position
       act(() => {

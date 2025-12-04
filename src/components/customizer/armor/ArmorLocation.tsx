@@ -9,7 +9,6 @@
 import React from 'react';
 import { MechLocation } from '@/types/construction';
 import { LocationArmorData } from './ArmorDiagram';
-import { getArmorLocationColorClass } from '@/utils/colors/statusColors';
 
 interface ArmorLocationProps {
   /** Mech location */

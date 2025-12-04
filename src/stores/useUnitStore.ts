@@ -66,7 +66,6 @@ import {
 } from '@/utils/techBaseValidation';
 import { getMaxJumpMP } from '@/utils/construction/movementCalculations';
 import { calculateIntegralHeatSinks, calculateEngineWeight } from '@/utils/construction/engineCalculations';
-import { equipmentCalculatorService } from '@/services/equipment/EquipmentCalculatorService';
 import {
   getEquipmentDisplacedByEngineChange,
   getEquipmentDisplacedByGyroChange,

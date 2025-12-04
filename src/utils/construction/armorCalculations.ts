@@ -6,7 +6,7 @@
  * @spec openspec/specs/armor-system/spec.md
  */
 
-import { ArmorTypeEnum, ArmorDefinition, getArmorDefinition } from '../../types/construction/ArmorType';
+import { ArmorTypeEnum, getArmorDefinition } from '../../types/construction/ArmorType';
 import { getStructurePoints } from '../../types/construction/InternalStructureType';
 import { ceilToHalfTon } from '../physical/weightUtils';
 

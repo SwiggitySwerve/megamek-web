@@ -10,7 +10,6 @@ import {
   ARMOR_FORMULAS,
   getFormula,
   getFormulasByCategory,
-  FormulaDefinition,
 } from '@/utils/construction/formulaRegistry';
 
 describe('Formula Registry', () => {

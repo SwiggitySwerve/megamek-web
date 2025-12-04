@@ -7,7 +7,7 @@
  */
 
 import React, { memo } from 'react';
-import { IEquipmentItem, EquipmentCategory } from '@/types/equipment';
+import { IEquipmentItem } from '@/types/equipment';
 import { categoryToColorType, getEquipmentColors } from '@/utils/colors/equipmentColors';
 
 interface EquipmentRowProps {
@@ -23,11 +23,11 @@ interface EquipmentRowProps {
  * Format range display (short/medium/long)
  */
 function formatRange(equipment: IEquipmentItem): string {
-  // Check if equipment has range properties
-  const rangeMin = (equipment as any).rangeMin;
-  const rangeShort = (equipment as any).rangeShort;
-  const rangeMedium = (equipment as any).rangeMedium;
-  const rangeLong = (equipment as any).rangeLong;
+  // Check if equipment has range properties - cast through unknown to access weapon-specific properties
+  const equipmentRecord = equipment as unknown as Record<string, unknown>;
+  const rangeShort = equipmentRecord.rangeShort as number | undefined;
+  const rangeMedium = equipmentRecord.rangeMedium as number | undefined;
+  const rangeLong = equipmentRecord.rangeLong as number | undefined;
   
   if (rangeShort && rangeMedium && rangeLong) {
     return `${rangeShort}/${rangeMedium}/${rangeLong}`;
@@ -42,7 +42,7 @@ function formatRange(equipment: IEquipmentItem): string {
  * Get damage display
  */
 function formatDamage(equipment: IEquipmentItem): string {
-  const damage = (equipment as any).damage;
+  const damage = (equipment as unknown as Record<string, unknown>).damage as number | undefined;
   if (damage !== undefined && damage !== null) {
     return String(damage);
   }
@@ -53,8 +53,8 @@ function formatDamage(equipment: IEquipmentItem): string {
  * Get heat display
  */
 function formatHeat(equipment: IEquipmentItem): string {
-  // Heat is only on weapon types, access via any cast
-  const heat = (equipment as any).heat;
+  // Heat is only on weapon types, access via type cast
+  const heat = (equipment as unknown as Record<string, unknown>).heat as number | undefined;
   if (heat !== undefined && heat !== null && heat > 0) {
     return String(heat);
   }

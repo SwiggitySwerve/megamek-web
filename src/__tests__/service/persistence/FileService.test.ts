@@ -1,13 +1,10 @@
 import { FileService } from '@/services/persistence/FileService';
-import { FileError } from '@/services/common/errors';
 
 describe('FileService', () => {
   let service: FileService;
   let mockCreateElement: jest.SpyInstance;
   let mockCreateObjectURL: jest.SpyInstance;
   let mockRevokeObjectURL: jest.SpyInstance;
-  let mockAppendChild: jest.SpyInstance;
-  let mockRemoveChild: jest.SpyInstance;
   let mockClick: jest.Mock;
 
   beforeEach(() => {

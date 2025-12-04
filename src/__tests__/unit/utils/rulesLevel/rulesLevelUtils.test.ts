@@ -8,7 +8,6 @@ import {
   filterByRulesLevel,
   getRulesLevelDisplayName,
   getRulesLevelDescription,
-  RULES_LEVEL_ORDER,
 } from '@/utils/rulesLevel/rulesLevelUtils';
 import { RulesLevel } from '@/types/enums/RulesLevel';
 

@@ -9,7 +9,6 @@
  */
 
 import { IUnitIndexEntry, IUnitQueryCriteria } from '../common/types';
-import { NotFoundError } from '../common/errors';
 import { TechBase } from '@/types/enums/TechBase';
 import { Era } from '@/types/enums/Era';
 import { WeightClass } from '@/types/enums/WeightClass';

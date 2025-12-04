@@ -12,7 +12,6 @@ import { getUnitRepository } from '@/services/units/UnitRepository';
 import {
   ISerializedUnitEnvelope,
   IImportResult,
-  UnitErrorCode,
 } from '@/types/persistence/UnitPersistence';
 
 /**

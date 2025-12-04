@@ -197,7 +197,6 @@ export class CalculationService implements ICalculationService {
     }
     
     // 2. Engine cost: rating × 5000 × weight / standard weight
-    const engineWeight = this.getEngineWeight(mech.engineRating, mech.engineType);
     let engineCostMultiplier = 1.0;
     if (mech.engineType.toLowerCase().includes('xl')) {
       engineCostMultiplier = 2.0;
@@ -211,7 +210,6 @@ export class CalculationService implements ICalculationService {
     const engineCost = (mech.engineRating * 5000) * engineCostMultiplier;
     
     // 3. Gyro cost: rating × 300 (standard)
-    const gyroWeight = Math.ceil(mech.engineRating / 100);
     let gyroCostMultiplier = 1.0;
     if (mech.gyroType.toLowerCase().includes('xl')) {
       gyroCostMultiplier = 2.0;

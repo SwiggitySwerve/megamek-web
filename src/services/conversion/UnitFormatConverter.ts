@@ -8,30 +8,10 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import { TechBase } from '@/types/enums/TechBase';
-import { Era } from '@/types/enums/Era';
-import { WeightClass, getWeightClass } from '@/types/enums/WeightClass';
-import { EngineType } from '@/types/construction/EngineType';
-import { InternalStructureType } from '@/types/construction/InternalStructureType';
-import { HeatSinkType } from '@/types/construction/HeatSinkType';
-import { ArmorTypeEnum } from '@/types/construction/ArmorType';
 import { GyroType } from '@/types/construction/GyroType';
 import { CockpitType } from '@/types/construction/CockpitType';
-import { MechLocation } from '@/types/construction/CriticalSlotAllocation';
-import { IArmorAllocation } from '@/types/construction/ComponentInterfaces';
 import {
-  UnitType,
-  MechConfiguration,
-  IUnitMetadata,
-  IEngineConfiguration,
-  IGyroConfiguration,
-  IStructureConfiguration,
-  IHeatSinkConfiguration,
-  IMovementConfiguration,
-  IMountedEquipment,
-  ICriticalSlotAssignment,
-  ICriticalSlot,
   IBattleMech,
-  IOmniMech,
 } from '@/types/unit/BattleMechInterfaces';
 import {
   ISerializedUnit,
@@ -55,17 +35,13 @@ import {
 import {
   parseLocation,
   convertArmorLocations,
-  calculateTotalArmor,
   parseCriticalSlots,
   SourceArmorLocation,
   SourceCriticalEntry,
-  ParsedCriticalSlots,
-  BIPED_SLOT_COUNTS,
 } from './LocationMappings';
 
 import {
   equipmentNameResolver,
-  EquipmentResolution,
 } from './EquipmentNameResolver';
 
 // ============================================================================
@@ -302,9 +278,6 @@ export class UnitFormatConverter {
     // Convert gyro (defaults to standard - source doesn't always specify)
     const gyro = this.convertGyro(source, techBase);
     
-    // Convert cockpit (defaults to standard - source doesn't always specify)
-    const cockpit = this.convertCockpit(source);
-    
     // Convert structure
     const structure = this.convertStructure(source.structure, techBase);
     
@@ -340,7 +313,7 @@ export class UnitFormatConverter {
       tonnage: source.mass,
       engine,
       gyro,
-      cockpit: CockpitType.STANDARD, // Default - source doesn't usually specify
+      cockpit: this.convertCockpit(source), // Defaults to standard if not specified
       structure,
       armor,
       heatSinks,

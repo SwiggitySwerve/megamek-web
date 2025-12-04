@@ -6,7 +6,7 @@
  * @spec openspec/specs/engine-system/spec.md
  */
 
-import { EngineType, EngineDefinition, getEngineDefinition, ENGINE_DEFINITIONS } from '../../types/construction/EngineType';
+import { EngineType, getEngineDefinition } from '../../types/construction/EngineType';
 import { roundToHalfTon, ceilToHalfTon } from '../physical/weightUtils';
 
 /**

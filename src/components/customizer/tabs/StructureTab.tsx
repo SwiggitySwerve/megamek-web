@@ -19,8 +19,6 @@ import { InternalStructureType } from '@/types/construction/InternalStructureTyp
 import { CockpitType } from '@/types/construction/CockpitType';
 import { 
   MovementEnhancementType, 
-  getMovementEnhancementDefinition,
-  MOVEMENT_ENHANCEMENT_DEFINITIONS 
 } from '@/types/construction/MovementEnhancement';
 import { JumpJetType, getMaxJumpMP, JUMP_JET_DEFINITIONS, calculateEnhancedMaxRunMP } from '@/utils/construction/movementCalculations';
 import { HeatSinkType } from '@/types/construction/HeatSinkType';
@@ -167,7 +165,6 @@ export function StructureTab({
   
   // Engine rating limit warnings
   const isAtMaxEngineRating = engineRating >= MAX_ENGINE_RATING;
-  const isNearMaxEngineRating = engineRating >= MAX_ENGINE_RATING - tonnage; // Would exceed on +1 Walk MP
   
   // Calculate max run MP with enhancement active
   const maxRunMP = useMemo(() => {

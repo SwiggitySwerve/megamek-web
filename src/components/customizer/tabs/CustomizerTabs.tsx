@@ -6,7 +6,7 @@
  * @spec openspec/specs/customizer-tabs/spec.md
  */
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState } from 'react';
 import { useTabKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
 
 /**

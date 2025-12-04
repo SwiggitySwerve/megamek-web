@@ -104,7 +104,7 @@ export default function HomePage() {
           loading: false,
           error: null,
         });
-      } catch (err) {
+      } catch {
         setStats(prev => ({
           ...prev,
           loading: false,

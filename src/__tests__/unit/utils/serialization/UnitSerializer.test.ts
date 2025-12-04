@@ -195,7 +195,7 @@ describe('UnitSerializer', () => {
     });
 
     it('should support same major version', () => {
-      const [major, minor, patch] = CURRENT_FORMAT_VERSION.split('.');
+      const [major, minor] = CURRENT_FORMAT_VERSION.split('.');
       const sameMajor = `${major}.${parseInt(minor) + 1}.0`;
       const supported = isFormatVersionSupported(sameMajor);
       expect(supported).toBe(true);

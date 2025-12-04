@@ -17,7 +17,6 @@ import {
   multiplyRound, 
   equalsWeight,
   plus,
-  max,
 } from '@/types/equipment/VariableEquipment';
 
 /**

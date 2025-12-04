@@ -6,7 +6,7 @@
  * @spec openspec/specs/gyro-system/spec.md
  */
 
-import { GyroType, GyroDefinition, getGyroDefinition } from '../../types/construction/GyroType';
+import { GyroType, getGyroDefinition } from '../../types/construction/GyroType';
 import { ceilToHalfTon } from '../physical/weightUtils';
 
 /**

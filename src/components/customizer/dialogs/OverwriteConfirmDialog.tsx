@@ -36,7 +36,7 @@ export interface OverwriteConfirmDialogProps {
 
 export function OverwriteConfirmDialog({
   isOpen,
-  newUnitName,
+  newUnitName: _newUnitName,
   existingUnitName,
   onOverwrite,
   onSaveAsNew,

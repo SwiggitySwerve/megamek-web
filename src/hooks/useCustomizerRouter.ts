@@ -13,7 +13,7 @@
  */
 
 import { useRouter } from 'next/router';
-import { useCallback, useMemo, useEffect, useRef } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { isValidUnitId } from '@/utils/uuid';
 
 // =============================================================================

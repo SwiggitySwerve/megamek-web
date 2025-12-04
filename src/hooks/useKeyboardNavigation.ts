@@ -6,7 +6,7 @@
  * @spec openspec/specs/confirmation-dialogs/spec.md
  */
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 
 /**
  * Navigation direction

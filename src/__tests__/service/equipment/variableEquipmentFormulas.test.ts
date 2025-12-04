@@ -160,7 +160,7 @@ describe('Variable Equipment Formulas', () => {
     });
 
     it('should have required context for all formulas', () => {
-      for (const [id, formula] of Object.entries(VARIABLE_EQUIPMENT_FORMULAS)) {
+      for (const [, formula] of Object.entries(VARIABLE_EQUIPMENT_FORMULAS)) {
         expect(formula.requiredContext).toBeDefined();
         expect(Array.isArray(formula.requiredContext)).toBe(true);
       }
