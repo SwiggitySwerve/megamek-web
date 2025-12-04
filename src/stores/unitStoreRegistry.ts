@@ -142,23 +142,25 @@ export function hydrateOrCreateUnit(
   
   if (savedState) {
     try {
-      const parsed = JSON.parse(savedState);
-      const state = parsed.state as Partial<UnitState>;
+      const parsed = JSON.parse(savedState) as { state?: Partial<UnitState> };
+      const state = parsed.state;
       
-      // Validate the ID from localStorage as well (the function logs a warning if invalid)
-      ensureValidUnitId(state.id, 'localStorage state');
+      if (state) {
+        // Validate the ID from localStorage as well (the function logs a warning if invalid)
+        ensureValidUnitId(state.id, 'localStorage state');
+        
+        // Create store with saved state merged with defaults
+        const defaultState = createDefaultUnitState({ ...fallbackOptions, id: validUnitId });
+        const mergedState: UnitState = {
+          ...defaultState,
+          ...state,
+          id: validUnitId, // Always use the validated ID we were called with
+        };
       
-      // Create store with saved state merged with defaults
-      const defaultState = createDefaultUnitState({ ...fallbackOptions, id: validUnitId });
-      const mergedState: UnitState = {
-        ...defaultState,
-        ...state,
-        id: validUnitId, // Always use the validated ID we were called with
-      };
-      
-      const store = createUnitStore(mergedState);
-      unitStores.set(validUnitId, store);
-      return store;
+        const store = createUnitStore(mergedState);
+        unitStores.set(validUnitId, store);
+        return store;
+      }
     } catch (e) {
       console.warn(`Failed to hydrate unit ${validUnitId}, creating new:`, e);
     }

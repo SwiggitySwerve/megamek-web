@@ -272,7 +272,7 @@ export class CustomUnitApiService implements ICustomUnitApiService {
       };
     }
     
-    return response.json();
+    return response.json() as Promise<ICloneNameSuggestion>;
   }
 
   /**
@@ -312,8 +312,8 @@ export class CustomUnitApiService implements ICustomUnitApiService {
       throw new Error(`Failed to get version history: ${response.statusText}`);
     }
     
-    const data = await response.json();
-    return data.versions as IVersionMetadata[];
+    const data = await response.json() as { versions: IVersionMetadata[] };
+    return data.versions;
   }
 
   /**

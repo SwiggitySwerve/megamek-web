@@ -10,9 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { TechBase } from '@/types/enums/TechBase';
 import { GyroType } from '@/types/construction/GyroType';
 import { CockpitType } from '@/types/construction/CockpitType';
-import type {
-  IBattleMech as _IBattleMech,
-} from '@/types/unit/BattleMechInterfaces';
+// IBattleMech import removed - using ISerializedUnit for conversion
 import {
   ISerializedUnit,
   ISerializedFluff,
@@ -360,7 +358,7 @@ export class UnitFormatConverter {
   /**
    * Convert gyro data
    */
-  private convertGyro(source: MegaMekLabUnit, _techBase: TechBase): { type: string } {
+  private convertGyro(_source: MegaMekLabUnit, _techBase: TechBase): { type: string } {
     // MegaMekLab doesn't usually include gyro type in exported JSON
     // We default to standard, but could infer from criticals
     return {

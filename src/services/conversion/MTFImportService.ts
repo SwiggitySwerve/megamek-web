@@ -239,7 +239,7 @@ export class MTFImportService implements IMTFImporter {
     // Calculate total armor points
     let totalArmor = 0;
     
-    for (const [location, value] of Object.entries(armor.allocation)) {
+    for (const [_location, value] of Object.entries(armor.allocation)) {
       if (typeof value === 'number') {
         totalArmor += value;
       } else if (typeof value === 'object' && value !== null) {
@@ -322,7 +322,7 @@ export class MTFImportService implements IMTFImporter {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
       
-      const data: ISerializedUnit = await response.json();
+      const data = await response.json() as ISerializedUnit;
       return this.importFromJSON(data, options);
     } catch (e) {
       return {

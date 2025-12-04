@@ -222,7 +222,7 @@ export function useTabKeyboardNavigation(
 export function useFocusOnSelect(
   ref: React.RefObject<HTMLElement>,
   isSelected: boolean
-) {
+): void {
   useEffect(() => {
     if (isSelected && ref.current) {
       ref.current.focus();
