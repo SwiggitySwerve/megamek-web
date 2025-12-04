@@ -30,7 +30,8 @@ export type CustomizerTabId =
   | 'weapons'
   | 'equipment'
   | 'criticals'
-  | 'fluff';
+  | 'fluff'
+  | 'preview';
 
 /**
  * All valid tab IDs for validation
@@ -43,6 +44,7 @@ export const VALID_TAB_IDS: readonly CustomizerTabId[] = [
   'equipment',
   'criticals',
   'fluff',
+  'preview',
 ] as const;
 
 /**

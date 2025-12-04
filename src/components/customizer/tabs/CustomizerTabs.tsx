@@ -41,6 +41,7 @@ interface CustomizerTabsProps {
  * 
  * @spec openspec/specs/customizer-tabs/spec.md
  * Note: Weapons tab merged into Equipment tab per unify-equipment-tab change
+ * Note: Preview tab added for record sheet generation per add-record-sheet-pdf-export change
  */
 export const DEFAULT_CUSTOMIZER_TABS: CustomizerTabConfig[] = [
   { id: 'overview', label: 'Overview' },
@@ -49,6 +50,7 @@ export const DEFAULT_CUSTOMIZER_TABS: CustomizerTabConfig[] = [
   { id: 'equipment', label: 'Equipment' },
   { id: 'criticals', label: 'Critical Slots' },
   { id: 'fluff', label: 'Fluff' },
+  { id: 'preview', label: 'Preview' },
 ];
 
 /**
