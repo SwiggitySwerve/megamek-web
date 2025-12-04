@@ -8,7 +8,6 @@
 
 import { ValidationService, validationService } from '@/services/construction/ValidationService';
 import { IEditableMech, IEquipmentSlot } from '@/services/construction/MechBuilderService';
-import { ValidationSeverity } from '@/services/common/types';
 import { TechBase } from '@/types/enums/TechBase';
 
 describe('ValidationService', () => {

@@ -11,6 +11,7 @@
 
 import { TechBase } from '@/types/enums/TechBase';
 import { EquipmentCategory } from '@/types/equipment';
+import { IEquipment } from '@/types/core/EquipmentInterfaces';
 import { IMountedEquipmentInstance } from '@/stores/unitState';
 import { generateUnitId } from '@/utils/uuid';
 import { MechLocation } from '@/types/construction/CriticalSlotAllocation';

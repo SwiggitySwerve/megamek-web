@@ -1,5 +1,4 @@
 import type { NextConfig } from "next";
-import type { Configuration } from "webpack";
 import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 
 const nextConfig: NextConfig = {
@@ -16,14 +15,10 @@ const nextConfig: NextConfig = {
   },
 
   // Webpack configuration for bundle optimization
-  webpack: (config: Configuration, { buildId: _buildId, dev, isServer, defaultLoaders: _defaultLoaders, webpack }: { buildId: string; dev: boolean; isServer: boolean; defaultLoaders: unknown; webpack: typeof import('webpack') }) => {
-    // Type assertion for webpack config - Configuration type has complex unions
-    const webpackConfig = config as {
-      optimization: { sideEffects?: boolean; splitChunks?: { cacheGroups?: Record<string, unknown> } };
-      module: { rules: unknown[] };
-      plugins: unknown[];
-      resolve: { alias?: Record<string, string> };
-    };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  webpack: (config: any, { buildId: _buildId, dev, isServer, defaultLoaders: _defaultLoaders, webpack }: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const webpackConfig = config as any;
     // Enable tree-shaking for equipment data files
     if (!dev) {
       webpackConfig.optimization.sideEffects = false;

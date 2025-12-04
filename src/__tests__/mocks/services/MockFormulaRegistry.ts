@@ -15,7 +15,6 @@ import {
   fixed,
   plus,
   multiplyRound,
-  max,
 } from '@/types/equipment/VariableEquipment';
 
 /**

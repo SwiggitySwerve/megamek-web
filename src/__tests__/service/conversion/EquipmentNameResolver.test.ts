@@ -9,7 +9,6 @@
 import {
   EquipmentNameResolver,
   equipmentNameResolver,
-  EquipmentResolution,
 } from '@/services/conversion/EquipmentNameResolver';
 import { TechBase } from '@/types/enums/TechBase';
 

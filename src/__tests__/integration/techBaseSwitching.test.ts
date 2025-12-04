@@ -34,8 +34,6 @@ import { IComponentSelections } from '@/stores/useMultiUnitStore';
 import {
   setupMockLocalStorage,
   expectAllComponentTechBases,
-  createISComponentTechBases,
-  createClanComponentTechBases,
 } from '../helpers/storeTestHelpers';
 
 describe('Tech Base Switching Integration', () => {

@@ -13,14 +13,13 @@ import { InternalStructureType } from '@/types/construction/InternalStructureTyp
 import { CockpitType } from '@/types/construction/CockpitType';
 import { HeatSinkType } from '@/types/construction/HeatSinkType';
 import { ArmorTypeEnum } from '@/types/construction/ArmorType';
-import { 
-  UnitState, 
-  UnitStore, 
+import {
+  UnitState,
+  UnitStore,
   CreateUnitOptions,
   createDefaultUnitState,
-  generateUnitId,
 } from '@/stores/unitState';
-import { createUnitStore, createNewUnitStore } from '@/stores/useUnitStore';
+import { createUnitStore } from '@/stores/useUnitStore';
 import { IComponentTechBases, TechBaseMode, createDefaultComponentTechBases } from '@/types/construction/TechBaseConfiguration';
 import { IComponentSelections } from '@/stores/useMultiUnitStore';
 

@@ -1,5 +1,4 @@
 import { EquipmentRegistry } from '@/services/equipment/EquipmentRegistry';
-import { EquipmentLoaderService } from '@/services/equipment/EquipmentLoaderService';
 
 // Mock EquipmentLoaderService
 jest.mock('@/services/equipment/EquipmentLoaderService', () => ({

@@ -10,8 +10,6 @@ import {
   UnitFormatConverter,
   unitFormatConverter,
   MegaMekLabUnit,
-  ConversionResult,
-  BatchConversionResult,
 } from '@/services/conversion/UnitFormatConverter';
 import { TechBase } from '@/types/enums/TechBase';
 import { RulesLevel } from '@/types/enums/RulesLevel';

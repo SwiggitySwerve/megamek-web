@@ -108,7 +108,7 @@ export function ControlledInput<T = string>({
 
   // CRITICAL: Handle input blur
   const handleBlur = useCallback(() => {
-    setIsFocused(false)
+    _setIsFocused(false)
     
     // CRITICAL: Force validation on blur
     if (validation) {
@@ -132,7 +132,7 @@ export function ControlledInput<T = string>({
 
   // CRITICAL: Handle input focus
   const handleFocus = useCallback(() => {
-    setIsFocused(true)
+    _setIsFocused(true)
     if (onFocus) {
       onFocus()
     }

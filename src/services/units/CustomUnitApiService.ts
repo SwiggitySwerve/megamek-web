@@ -141,7 +141,7 @@ export class CustomUnitApiService implements ICustomUnitApiService {
 
     // Convert API response to IFullUnit format
     return {
-      ...data.data.parsedData,
+      ...(data.data.parsedData as IFullUnit),
       id: data.data.id,
       chassis: data.data.chassis,
       variant: data.data.variant,

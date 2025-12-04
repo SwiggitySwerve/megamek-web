@@ -6,7 +6,7 @@
  * @spec openspec/specs/construction-services/spec.md
  */
 
-import { CalculationService, IMechTotals } from '@/services/construction/CalculationService';
+import { CalculationService } from '@/services/construction/CalculationService';
 import { MechBuilderService, IEditableMech } from '@/services/construction/MechBuilderService';
 import { TechBase } from '@/types/enums/TechBase';
 
