@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { TechBase } from '@/types/enums/TechBase';
 import { WeightClass } from '@/types/enums/WeightClass';
+import { RulesLevel, ALL_RULES_LEVELS } from '@/types/enums/RulesLevel';
 import { IUnitEntry } from '@/types/pages';
 import {
   PageLayout,
@@ -24,7 +25,13 @@ interface FilterState {
   search: string;
   techBase: string;
   weightClass: string;
-  era: string;
+  rulesLevel: string;
+  yearMin: string;
+  yearMax: string;
+  tonnageMin: string;
+  tonnageMax: string;
+  bvMin: string;
+  bvMax: string;
 }
 
 type SortColumn = 'chassis' | 'variant' | 'tonnage' | 'year' | 'weightClass' | 'techBase' | 'unitType' | 'rulesLevel' | 'cost' | 'bv';
@@ -49,30 +56,34 @@ const WEIGHT_CLASS_ORDER: Record<string, number> = {
 
 // Rules level sort order (ascending complexity)
 const RULES_LEVEL_ORDER: Record<string, number> = {
-  'INTRODUCTORY': 0,
-  'STANDARD': 1,
-  'ADVANCED': 2,
-  'EXPERIMENTAL': 3,
-  'UNOFFICIAL': 4,
+  [RulesLevel.INTRODUCTORY]: 0,
+  [RulesLevel.STANDARD]: 1,
+  [RulesLevel.ADVANCED]: 2,
+  [RulesLevel.EXPERIMENTAL]: 3,
 };
 
 // Rules level display labels
 const RULES_LEVEL_LABELS: Record<string, string> = {
-  'INTRODUCTORY': 'Intro',
-  'STANDARD': 'Std',
-  'ADVANCED': 'Adv',
-  'EXPERIMENTAL': 'Exp',
-  'UNOFFICIAL': 'Unoff',
+  [RulesLevel.INTRODUCTORY]: 'Intro',
+  [RulesLevel.STANDARD]: 'Std',
+  [RulesLevel.ADVANCED]: 'Adv',
+  [RulesLevel.EXPERIMENTAL]: 'Exp',
 };
 
 const TECH_BASE_OPTIONS = [
-  { value: '', label: 'All Tech Bases' },
-  ...Object.values(TechBase).map(tb => ({ value: tb, label: tb.replace(/_/g, ' ') })),
+  { value: '', label: 'All Tech' },
+  { value: TechBase.INNER_SPHERE, label: 'Inner Sphere' },
+  { value: TechBase.CLAN, label: 'Clan' },
 ];
 
 const WEIGHT_CLASS_OPTIONS = [
-  { value: '', label: 'All Weight Classes' },
+  { value: '', label: 'All Classes' },
   ...Object.values(WeightClass).map(wc => ({ value: wc, label: wc })),
+];
+
+const RULES_LEVEL_OPTIONS = [
+  { value: '', label: 'All Levels' },
+  ...ALL_RULES_LEVELS.map(rl => ({ value: rl, label: rl })),
 ];
 
 export default function UnitsListPage() {
@@ -85,8 +96,15 @@ export default function UnitsListPage() {
     search: '',
     techBase: '',
     weightClass: '',
-    era: '',
+    rulesLevel: '',
+    yearMin: '',
+    yearMax: '',
+    tonnageMin: '',
+    tonnageMax: '',
+    bvMin: '',
+    bvMax: '',
   });
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [sort, setSort] = useState<SortState>({
     column: 'chassis',
     direction: 'asc',
@@ -119,6 +137,7 @@ export default function UnitsListPage() {
   const applyFilters = useCallback(() => {
     let result = [...units];
 
+    // Text search
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
       result = result.filter(unit =>
@@ -128,16 +147,61 @@ export default function UnitsListPage() {
       );
     }
 
+    // Tech base filter
     if (filters.techBase) {
       result = result.filter(unit => unit.techBase === filters.techBase);
     }
 
+    // Weight class filter
     if (filters.weightClass) {
       result = result.filter(unit => unit.weightClass === filters.weightClass);
     }
 
-    if (filters.era) {
-      result = result.filter(unit => unit.era === filters.era);
+    // Rules level filter
+    if (filters.rulesLevel) {
+      result = result.filter(unit => unit.rulesLevel === filters.rulesLevel);
+    }
+
+    // Year range filter
+    if (filters.yearMin) {
+      const minYear = parseInt(filters.yearMin, 10);
+      if (!isNaN(minYear)) {
+        result = result.filter(unit => (unit.year ?? 0) >= minYear);
+      }
+    }
+    if (filters.yearMax) {
+      const maxYear = parseInt(filters.yearMax, 10);
+      if (!isNaN(maxYear)) {
+        result = result.filter(unit => (unit.year ?? 9999) <= maxYear);
+      }
+    }
+
+    // Tonnage range filter
+    if (filters.tonnageMin) {
+      const minTon = parseInt(filters.tonnageMin, 10);
+      if (!isNaN(minTon)) {
+        result = result.filter(unit => unit.tonnage >= minTon);
+      }
+    }
+    if (filters.tonnageMax) {
+      const maxTon = parseInt(filters.tonnageMax, 10);
+      if (!isNaN(maxTon)) {
+        result = result.filter(unit => unit.tonnage <= maxTon);
+      }
+    }
+
+    // BV range filter
+    if (filters.bvMin) {
+      const minBV = parseInt(filters.bvMin, 10);
+      if (!isNaN(minBV)) {
+        result = result.filter(unit => (unit.bv ?? 0) >= minBV);
+      }
+    }
+    if (filters.bvMax) {
+      const maxBV = parseInt(filters.bvMax, 10);
+      if (!isNaN(maxBV)) {
+        result = result.filter(unit => (unit.bv ?? 99999) <= maxBV);
+      }
     }
 
     setFilteredUnits(result);
@@ -230,8 +294,26 @@ export default function UnitsListPage() {
   };
 
   const clearFilters = () => {
-    setFilters({ search: '', techBase: '', weightClass: '', era: '' });
+    setFilters({
+      search: '',
+      techBase: '',
+      weightClass: '',
+      rulesLevel: '',
+      yearMin: '',
+      yearMax: '',
+      tonnageMin: '',
+      tonnageMax: '',
+      bvMin: '',
+      bvMax: '',
+    });
   };
+
+  // Check if any advanced filters are active
+  const hasAdvancedFilters = Boolean(
+    filters.yearMin || filters.yearMax ||
+    filters.tonnageMin || filters.tonnageMax ||
+    filters.bvMin || filters.bvMax
+  );
 
   if (loading) {
     return <PageLoading message="Loading unit database..." />;
@@ -248,11 +330,12 @@ export default function UnitsListPage() {
     >
       {/* Filters */}
       <Card className="mb-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        {/* Primary Filters Row */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
           <div className="lg:col-span-2">
             <Input
               type="text"
-              placeholder="Search by name, chassis, or variant..."
+              placeholder="Search chassis, model, or variant..."
               value={filters.search}
               onChange={(e) => handleFilterChange('search', e.target.value)}
               aria-label="Search units"
@@ -273,17 +356,133 @@ export default function UnitsListPage() {
             aria-label="Filter by weight class"
           />
 
-          <Button variant="secondary" onClick={clearFilters}>
-            Clear Filters
-          </Button>
+          <Select
+            value={filters.rulesLevel}
+            onChange={(e) => handleFilterChange('rulesLevel', e.target.value)}
+            options={RULES_LEVEL_OPTIONS}
+            aria-label="Filter by rules level"
+          />
+
+          <div className="flex gap-2">
+            <Button
+              variant="ghost"
+              onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+              className={`flex-1 text-xs ${hasAdvancedFilters ? 'text-amber-400' : ''}`}
+            >
+              {showAdvancedFilters ? '▼' : '▶'} Filters
+              {hasAdvancedFilters && ' •'}
+            </Button>
+            <Button variant="secondary" onClick={clearFilters} className="text-xs px-3">
+              Clear
+            </Button>
+          </div>
         </div>
 
-        <div className="mt-4 text-sm text-slate-400">
-          Showing {displayedUnits.length} of {filteredUnits.length} results
-          {filteredUnits.length !== units.length && (
-            <span className="text-amber-400 ml-2">
-              (filtered from {units.length} total)
-            </span>
+        {/* Advanced Filters Panel */}
+        {showAdvancedFilters && (
+          <div className="mt-4 pt-4 border-t border-slate-700">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* Year Range */}
+              <div>
+                <label className="block text-xs text-slate-400 mb-1.5 uppercase tracking-wide">
+                  Design Year
+                </label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Min"
+                    value={filters.yearMin}
+                    onChange={(e) => handleFilterChange('yearMin', e.target.value)}
+                    className="text-center text-sm"
+                    min={2000}
+                    max={3150}
+                  />
+                  <span className="text-slate-500">–</span>
+                  <Input
+                    type="number"
+                    placeholder="Max"
+                    value={filters.yearMax}
+                    onChange={(e) => handleFilterChange('yearMax', e.target.value)}
+                    className="text-center text-sm"
+                    min={2000}
+                    max={3150}
+                  />
+                </div>
+              </div>
+
+              {/* Tonnage Range */}
+              <div>
+                <label className="block text-xs text-slate-400 mb-1.5 uppercase tracking-wide">
+                  Tonnage
+                </label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Min"
+                    value={filters.tonnageMin}
+                    onChange={(e) => handleFilterChange('tonnageMin', e.target.value)}
+                    className="text-center text-sm"
+                    min={10}
+                    max={200}
+                  />
+                  <span className="text-slate-500">–</span>
+                  <Input
+                    type="number"
+                    placeholder="Max"
+                    value={filters.tonnageMax}
+                    onChange={(e) => handleFilterChange('tonnageMax', e.target.value)}
+                    className="text-center text-sm"
+                    min={10}
+                    max={200}
+                  />
+                </div>
+              </div>
+
+              {/* BV Range */}
+              <div>
+                <label className="block text-xs text-slate-400 mb-1.5 uppercase tracking-wide">
+                  Battle Value
+                </label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Min"
+                    value={filters.bvMin}
+                    onChange={(e) => handleFilterChange('bvMin', e.target.value)}
+                    className="text-center text-sm"
+                    min={0}
+                    max={5000}
+                  />
+                  <span className="text-slate-500">–</span>
+                  <Input
+                    type="number"
+                    placeholder="Max"
+                    value={filters.bvMax}
+                    onChange={(e) => handleFilterChange('bvMax', e.target.value)}
+                    className="text-center text-sm"
+                    min={0}
+                    max={5000}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Results Count */}
+        <div className="mt-4 flex items-center justify-between text-sm text-slate-400">
+          <div>
+            Showing {displayedUnits.length} of {filteredUnits.length} results
+            {filteredUnits.length !== units.length && (
+              <span className="text-amber-400 ml-2">
+                (filtered from {units.length.toLocaleString()} total)
+              </span>
+            )}
+          </div>
+          {hasAdvancedFilters && (
+            <div className="text-xs text-amber-400/70">
+              Advanced filters active
+            </div>
           )}
         </div>
       </Card>
