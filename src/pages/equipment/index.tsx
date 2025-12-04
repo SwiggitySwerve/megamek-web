@@ -24,7 +24,7 @@ import {
 interface EquipmentEntry {
   id: string;
   name: string;
-  category?: string;
+  category?: EquipmentCategory;
   techBase?: TechBase;
   rulesLevel?: RulesLevel;
   weight?: number;
@@ -37,28 +37,26 @@ interface EquipmentEntry {
 
 interface FilterState {
   search: string;
-  category: string;
-  techBase: string;
-  rulesLevel: string;
+  category: EquipmentCategory | '';
+  techBase: TechBase | '';
+  rulesLevel: RulesLevel | '';
 }
 
 const ITEMS_PER_PAGE = 30;
 
-// Category display names and badge colors
-const categoryConfig: Record<string, { label: string; variant: 'red' | 'orange' | 'cyan' | 'yellow' | 'emerald' | 'violet' }> = {
-  ENERGY_WEAPON: { label: 'Energy Weapons', variant: 'red' },
-  BALLISTIC_WEAPON: { label: 'Ballistic Weapons', variant: 'red' },
-  MISSILE_WEAPON: { label: 'Missile Weapons', variant: 'red' },
-  PHYSICAL_WEAPON: { label: 'Physical Weapons', variant: 'red' },
-  AMMUNITION: { label: 'Ammunition', variant: 'orange' },
-  ELECTRONICS: { label: 'Electronics', variant: 'cyan' },
-  HEAT_SINK: { label: 'Heat Sinks', variant: 'yellow' },
-  JUMP_JET: { label: 'Jump Jets', variant: 'emerald' },
-  MYOMER: { label: 'Myomer', variant: 'violet' },
-  MOVEMENT_ENHANCEMENT: { label: 'Movement Enhancements', variant: 'emerald' },
-  TARGETING_SYSTEM: { label: 'Targeting Systems', variant: 'cyan' },
-  INDUSTRIAL: { label: 'Industrial Equipment', variant: 'violet' },
-  MISC_EQUIPMENT: { label: 'Misc Equipment', variant: 'violet' },
+// Category display names and badge colors - uses EquipmentCategory enum values
+const categoryConfig: Record<EquipmentCategory, { label: string; variant: 'red' | 'orange' | 'cyan' | 'yellow' | 'emerald' | 'violet' }> = {
+  [EquipmentCategory.ENERGY_WEAPON]: { label: 'Energy Weapons', variant: 'red' },
+  [EquipmentCategory.BALLISTIC_WEAPON]: { label: 'Ballistic Weapons', variant: 'red' },
+  [EquipmentCategory.MISSILE_WEAPON]: { label: 'Missile Weapons', variant: 'red' },
+  [EquipmentCategory.ARTILLERY]: { label: 'Artillery', variant: 'red' },
+  [EquipmentCategory.CAPITAL_WEAPON]: { label: 'Capital Weapons', variant: 'red' },
+  [EquipmentCategory.PHYSICAL_WEAPON]: { label: 'Physical Weapons', variant: 'orange' },
+  [EquipmentCategory.AMMUNITION]: { label: 'Ammunition', variant: 'yellow' },
+  [EquipmentCategory.ELECTRONICS]: { label: 'Electronics', variant: 'cyan' },
+  [EquipmentCategory.MOVEMENT]: { label: 'Movement', variant: 'emerald' },
+  [EquipmentCategory.STRUCTURAL]: { label: 'Structural', variant: 'violet' },
+  [EquipmentCategory.MISC_EQUIPMENT]: { label: 'Misc Equipment', variant: 'violet' },
 };
 
 export default function EquipmentListPage() {
@@ -73,6 +71,22 @@ export default function EquipmentListPage() {
     techBase: '',
     rulesLevel: '',
   });
+  
+  // Build select options from enums
+  const categoryOptions = Object.values(EquipmentCategory).map(cat => ({
+    value: cat,
+    label: categoryConfig[cat]?.label ?? cat,
+  }));
+
+  const techBaseOptions = Object.values(TechBase).map(tb => ({
+    value: tb,
+    label: tb,
+  }));
+  
+  const rulesLevelOptions = Object.values(RulesLevel).map(rl => ({
+    value: rl,
+    label: rl,
+  }));
 
   // Fetch equipment on mount
   useEffect(() => {
@@ -134,24 +148,13 @@ export default function EquipmentListPage() {
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const displayedEquipment = filteredEquipment.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
-  const handleFilterChange = (key: keyof FilterState, value: string) => {
+  const handleFilterChange = <K extends keyof FilterState>(key: K, value: FilterState[K]) => {
     setFilters(prev => ({ ...prev, [key]: value }));
   };
 
   const clearFilters = () => {
     setFilters({ search: '', category: '', techBase: '', rulesLevel: '' });
   };
-
-  // Build select options
-  const categoryOptions = Object.entries(categoryConfig).map(([value, config]) => ({
-    value,
-    label: config.label,
-  }));
-
-  const techBaseOptions = Object.values(TechBase).map(tb => ({
-    value: tb,
-    label: tb.replace(/_/g, ' '),
-  }));
 
   if (loading) {
     return <PageLoading message="Loading equipment catalog..." />;
@@ -175,7 +178,7 @@ export default function EquipmentListPage() {
     >
       {/* Filters */}
       <Card variant="header" className="mb-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
           {/* Search */}
           <div className="lg:col-span-2">
             <Input
@@ -191,7 +194,7 @@ export default function EquipmentListPage() {
           {/* Category */}
           <Select
             value={filters.category}
-            onChange={(e) => handleFilterChange('category', e.target.value)}
+            onChange={(e) => handleFilterChange('category', e.target.value as EquipmentCategory | '')}
             options={categoryOptions}
             placeholder="All Categories"
             accent="cyan"
@@ -201,11 +204,21 @@ export default function EquipmentListPage() {
           {/* Tech Base */}
           <Select
             value={filters.techBase}
-            onChange={(e) => handleFilterChange('techBase', e.target.value)}
+            onChange={(e) => handleFilterChange('techBase', e.target.value as TechBase | '')}
             options={techBaseOptions}
             placeholder="All Tech Bases"
             accent="cyan"
             aria-label="Filter by tech base"
+          />
+
+          {/* Rules Level */}
+          <Select
+            value={filters.rulesLevel}
+            onChange={(e) => handleFilterChange('rulesLevel', e.target.value as RulesLevel | '')}
+            options={rulesLevelOptions}
+            placeholder="All Rules Levels"
+            accent="cyan"
+            aria-label="Filter by rules level"
           />
 
           {/* Clear Filters */}
@@ -225,8 +238,8 @@ export default function EquipmentListPage() {
         </div>
       </Card>
 
-      {/* Equipment Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+      {/* Equipment Grid - Compact layout */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 mb-6">
         {displayedEquipment.length === 0 ? (
           <div className="col-span-full">
             <EmptyState
@@ -240,40 +253,39 @@ export default function EquipmentListPage() {
               key={eq.id}
               href={`/equipment/${encodeURIComponent(eq.id)}`}
             >
-              <Card variant="interactive" className="h-full">
-                <div className="flex items-start justify-between mb-2">
-                  <h3 className="font-medium text-white group-hover:text-cyan-400 transition-colors">
-                    {eq.name}
-                  </h3>
-                  {eq.techBase && <TechBaseBadge techBase={eq.techBase} />}
-                </div>
-
-                {eq.category && categoryConfig[eq.category] && (
-                  <Badge 
-                    variant={categoryConfig[eq.category].variant} 
-                    size="sm"
-                    className="mb-3"
-                  >
-                    {categoryConfig[eq.category].label}
-                  </Badge>
-                )}
-
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  {eq.weight !== undefined && (
-                    <div className="text-slate-400">
-                      Weight: <span className="text-slate-300 font-mono">{eq.weight}t</span>
+              <Card variant="interactive" className="h-full !p-2.5">
+                {/* Top row: Name + Badges stacked */}
+                <div className="flex items-start justify-between gap-2">
+                  {/* Left: Name + Stats */}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm font-medium text-white leading-tight line-clamp-1 mb-1">
+                      {eq.name}
+                    </h3>
+                    {/* Stats inline under name */}
+                    <div className="flex flex-wrap gap-x-2 text-xs text-slate-400">
+                      {eq.weight !== undefined && (
+                        <span><span className="text-slate-300 font-mono">{eq.weight}</span> tons</span>
+                      )}
+                      {eq.criticalSlots !== undefined && (
+                        <span><span className="text-slate-300 font-mono">{eq.criticalSlots}</span> slots</span>
+                      )}
+                      {eq.damage !== undefined && (
+                        <span><span className="text-slate-300 font-mono">{eq.damage}</span> dmg</span>
+                      )}
                     </div>
-                  )}
-                  {eq.criticalSlots !== undefined && (
-                    <div className="text-slate-400">
-                      Slots: <span className="text-slate-300 font-mono">{eq.criticalSlots}</span>
-                    </div>
-                  )}
-                  {eq.damage !== undefined && (
-                    <div className="text-slate-400">
-                      Damage: <span className="text-slate-300 font-mono">{eq.damage}</span>
-                    </div>
-                  )}
+                  </div>
+                  {/* Right: Badges stacked */}
+                  <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                    {eq.techBase && <TechBaseBadge techBase={eq.techBase} />}
+                    {eq.category && categoryConfig[eq.category as EquipmentCategory] && (
+                      <Badge 
+                        variant={categoryConfig[eq.category as EquipmentCategory].variant} 
+                        size="sm"
+                      >
+                        {categoryConfig[eq.category as EquipmentCategory].label}
+                      </Badge>
+                    )}
+                  </div>
                 </div>
               </Card>
             </Link>
