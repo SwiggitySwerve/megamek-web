@@ -1,6 +1,18 @@
 import { EquipmentLoaderService, getEquipmentLoader, IEquipmentFilter } from '@/services/equipment/EquipmentLoaderService';
 import { TechBase } from '@/types/enums/TechBase';
 import { RulesLevel } from '@/types/enums/RulesLevel';
+import { IWeapon } from '@/types/equipment/weapons';
+import { IAmmunition } from '@/types/equipment/AmmunitionTypes';
+import { IElectronics } from '@/types/equipment/ElectronicsTypes';
+import { IMiscEquipment } from '@/types/equipment/MiscEquipmentTypes';
+
+// Type for accessing private maps on the service
+type ServiceWithMaps = {
+  weapons: Map<string, Partial<IWeapon>>;
+  ammunition: Map<string, Partial<IAmmunition>>;
+  electronics: Map<string, Partial<IElectronics>>;
+  miscEquipment: Map<string, Partial<IMiscEquipment>>;
+};
 
 // Mock fetch globally
 global.fetch = jest.fn();
@@ -159,21 +171,21 @@ describe('EquipmentLoaderService', () => {
   describe('searchWeapons()', () => {
     beforeEach(() => {
       // Add test weapons
-      (service as any).weapons.set('medium-laser', {
+      (service as unknown as ServiceWithMaps).weapons.set('medium-laser', {
         id: 'medium-laser',
         name: 'Medium Laser',
         techBase: TechBase.INNER_SPHERE,
         rulesLevel: RulesLevel.STANDARD,
         introductionYear: 2470,
       });
-      (service as any).weapons.set('large-laser', {
+      (service as unknown as ServiceWithMaps).weapons.set('large-laser', {
         id: 'large-laser',
         name: 'Large Laser',
         techBase: TechBase.INNER_SPHERE,
         rulesLevel: RulesLevel.STANDARD,
         introductionYear: 2470,
       });
-      (service as any).weapons.set('clan-er-large', {
+      (service as unknown as ServiceWithMaps).weapons.set('clan-er-large', {
         id: 'clan-er-large',
         name: 'ER Large Laser',
         techBase: TechBase.CLAN,
@@ -253,11 +265,11 @@ describe('EquipmentLoaderService', () => {
 
   describe('getTotalCount()', () => {
     it('should return correct total count', () => {
-      (service as any).weapons.set('w1', {});
-      (service as any).weapons.set('w2', {});
-      (service as any).ammunition.set('a1', {});
-      (service as any).electronics.set('e1', {});
-      (service as any).miscEquipment.set('m1', {});
+      (service as unknown as ServiceWithMaps).weapons.set('w1', {});
+      (service as unknown as ServiceWithMaps).weapons.set('w2', {});
+      (service as unknown as ServiceWithMaps).ammunition.set('a1', {});
+      (service as unknown as ServiceWithMaps).electronics.set('e1', {});
+      (service as unknown as ServiceWithMaps).miscEquipment.set('m1', {});
       
       expect(service.getTotalCount()).toBe(5);
     });

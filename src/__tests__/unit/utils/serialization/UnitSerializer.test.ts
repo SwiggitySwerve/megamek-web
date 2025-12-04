@@ -91,7 +91,7 @@ describe('UnitSerializer', () => {
       const result = serializeUnit(unit);
       
       if (result.success && result.data) {
-        const envelope = JSON.parse(result.data);
+        const envelope = JSON.parse(result.data) as { application: { name: string } };
         expect(envelope.application).toBeDefined();
         expect(envelope.application.name).toBe('BattleTech Editor');
       }
@@ -102,7 +102,7 @@ describe('UnitSerializer', () => {
       const result = serializeUnit(unit);
       
       if (result.success && result.data) {
-        const envelope = JSON.parse(result.data);
+        const envelope = JSON.parse(result.data) as { unit: { chassis: string; model: string; variant: string } };
         expect(envelope.unit.chassis).toBe('Test');
         expect(envelope.unit.model).toBe('TST-1');
         expect(envelope.unit.variant).toBe('TST-1');
@@ -114,7 +114,7 @@ describe('UnitSerializer', () => {
       const result = serializeUnit(unit);
       
       if (result.success && result.data) {
-        const envelope = JSON.parse(result.data);
+        const envelope = JSON.parse(result.data) as { unit: { engine: { type: string; rating: number } } };
         expect(envelope.unit.engine.type).toBe('Standard Fusion');
         expect(envelope.unit.engine.rating).toBe(250);
       }
@@ -125,14 +125,14 @@ describe('UnitSerializer', () => {
       const result = serializeUnit(unit);
       
       if (result.success && result.data) {
-        const envelope = JSON.parse(result.data);
+        const envelope = JSON.parse(result.data) as { unit: { armor: { allocation: { head: number; centerTorso: number } } } };
         expect(envelope.unit.armor.allocation.head).toBe(9);
         expect(envelope.unit.armor.allocation.centerTorso).toBe(16);
       }
     });
 
     it('should handle errors during serialization', () => {
-      const invalidUnit = null as any;
+      const invalidUnit = null as unknown;
       const result = serializeUnit(invalidUnit);
       
       expect(result.success).toBe(false);

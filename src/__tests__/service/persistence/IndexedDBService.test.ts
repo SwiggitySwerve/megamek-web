@@ -145,7 +145,7 @@ class MockDatabase {
 const mockDatabases = new Map<string, MockDatabase>();
 
 const mockIndexedDBWithTransactions = {
-  open(name: string, version?: number): any {
+  open(name: string, version?: number): IDBOpenDBRequest {
     const dbVersion = version ?? 1;
     const request = {
       result: null as MockDatabase | null,
@@ -392,17 +392,6 @@ describe('IndexedDBService', () => {
     it('should handle transaction errors in put', async () => {
       await service.initialize();
       
-      // Mock transaction error
-      const _mockTransactionSetup = {
-        objectStore: jest.fn(() => ({
-          put: jest.fn(() => ({
-            onerror: null,
-            onsuccess: null,
-            error: new Error('Transaction error'),
-          })),
-        })),
-      };
-      
       // Force error by triggering onerror
       const db = mockDatabases.get('battletech-editor');
       if (db) {
@@ -526,7 +515,7 @@ describe('IndexedDBService', () => {
     it('should handle null values', async () => {
       await service.initialize();
       
-      await service.put(STORES.CUSTOM_UNITS, 'null-key', null as any);
+      await service.put(STORES.CUSTOM_UNITS, 'null-key', null as unknown);
       const retrieved = await service.get(STORES.CUSTOM_UNITS, 'null-key');
       expect(retrieved).toBeNull();
     });
@@ -534,7 +523,7 @@ describe('IndexedDBService', () => {
     it('should handle undefined values', async () => {
       await service.initialize();
       
-      await service.put(STORES.CUSTOM_UNITS, 'undefined-key', undefined as any);
+      await service.put(STORES.CUSTOM_UNITS, 'undefined-key', undefined as unknown);
       const retrieved = await service.get(STORES.CUSTOM_UNITS, 'undefined-key');
       expect(retrieved).toBeUndefined();
     });

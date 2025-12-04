@@ -295,7 +295,7 @@ describe('LocationMappings', () => {
 
     it('should trim slots to actual capacity', () => {
       const entries: SourceCriticalEntry[] = [
-        { location: 'Head', slots: Array(12).fill('Slot') }, // Head only has 6 slots
+        { location: 'Head', slots: Array(12).fill('Slot') as string[] }, // Head only has 6 slots
       ];
 
       const result = parseCriticalSlots(entries);

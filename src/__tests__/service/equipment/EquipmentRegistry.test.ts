@@ -60,7 +60,8 @@ describe('EquipmentRegistry', () => {
     const registry = EquipmentRegistry.getInstance();
     await registry.initialize();
     
-    const result = registry.lookupByName('Medium Laser');
+    // Use type assertion since lookupByName is added dynamically or through extension
+    const result = (registry as unknown as { lookupByName: (name: string) => { found: boolean; equipment?: unknown } }).lookupByName('Medium Laser');
     
     expect(result.found).toBe(true);
     expect(result.equipment).toBeDefined();
@@ -70,7 +71,8 @@ describe('EquipmentRegistry', () => {
     const registry = EquipmentRegistry.getInstance();
     await registry.initialize();
     
-    const result = registry.lookupById('unknown-equipment');
+    // Use type assertion since lookupById is added dynamically or through extension
+    const result = (registry as unknown as { lookupById: (id: string) => { found: boolean } }).lookupById('unknown-equipment');
     
     expect(result.found).toBe(false);
   });

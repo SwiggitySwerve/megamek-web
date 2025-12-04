@@ -135,8 +135,8 @@ describe('equipmentListUtils', () => {
 
     it('should filter out internal structure', () => {
       const equipment = [
-        { equipmentId: 'internal-structure-slot-Endo Steel IS', name: 'Endo Steel' } as any,
-        { equipmentId: 'medium-laser', name: 'Medium Laser' } as any,
+        { equipmentId: 'internal-structure-slot-Endo Steel IS', name: 'Endo Steel' } as { equipmentId: string; name: string },
+        { equipmentId: 'medium-laser', name: 'Medium Laser' } as { equipmentId: string; name: string },
       ];
       
       const filtered = filterOutInternalStructure(equipment);
@@ -172,8 +172,8 @@ describe('equipmentListUtils', () => {
 
     it('should filter out armor slots', () => {
       const equipment = [
-        { equipmentId: 'armor-slot-Ferro-Fibrous', name: 'Ferro-Fibrous' } as any,
-        { equipmentId: 'medium-laser', name: 'Medium Laser' } as any,
+        { equipmentId: 'armor-slot-Ferro-Fibrous', name: 'Ferro-Fibrous' } as { equipmentId: string; name: string },
+        { equipmentId: 'medium-laser', name: 'Medium Laser' } as { equipmentId: string; name: string },
       ];
       
       const filtered = filterOutArmorSlots(equipment);
@@ -213,8 +213,8 @@ describe('equipmentListUtils', () => {
 
     it('should filter out heat sinks', () => {
       const equipment = [
-        { equipmentId: 'double-heat-sink', name: 'DHS' } as any,
-        { equipmentId: 'medium-laser', name: 'Medium Laser' } as any,
+        { equipmentId: 'double-heat-sink', name: 'DHS' } as { equipmentId: string; name: string },
+        { equipmentId: 'medium-laser', name: 'Medium Laser' } as { equipmentId: string; name: string },
       ];
       
       const filtered = filterOutHeatSinks(equipment);
@@ -296,8 +296,8 @@ describe('equipmentListUtils', () => {
 
     it('should filter out enhancement equipment', () => {
       const equipment = [
-        { equipmentId: 'masc', name: 'MASC' } as any,
-        { equipmentId: 'medium-laser', name: 'Medium Laser' } as any,
+        { equipmentId: 'masc', name: 'MASC' } as { equipmentId: string; name: string },
+        { equipmentId: 'medium-laser', name: 'Medium Laser' } as { equipmentId: string; name: string },
       ];
       
       const filtered = filterOutEnhancementEquipment(equipment);

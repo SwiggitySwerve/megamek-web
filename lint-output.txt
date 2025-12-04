@@ -84,30 +84,8 @@ E:\Projects\megamek-web\src\components\customizer\tabs\OverviewTab.tsx
 E:\Projects\megamek-web\src\hooks\useKeyboardNavigation.ts
   130:6  warning  React Hook useCallback has an unnecessary dependency: 'getKey'. Either exclude it or remove the dependency array  react-hooks/exhaustive-deps
 
-E:\Projects\megamek-web\src\services\equipment\EquipmentLoaderService.ts
-  600:9  warning  Unsafe assignment of an `any` value  @typescript-eslint/no-unsafe-assignment
-  603:9  warning  Unsafe assignment of an `any` value  @typescript-eslint/no-unsafe-assignment
-
-E:\Projects\megamek-web\src\services\units\CustomUnitApiService.ts
-  365:11  warning  Unsafe assignment of an `any` value                    @typescript-eslint/no-unsafe-assignment
-  369:7   warning  Unsafe assignment of an `any` value                    @typescript-eslint/no-unsafe-assignment
-  369:18  warning  Unsafe member access .id on an `any` value             @typescript-eslint/no-unsafe-member-access
-  370:7   warning  Unsafe assignment of an `any` value                    @typescript-eslint/no-unsafe-assignment
-  370:23  warning  Unsafe member access .version on an `any` value        @typescript-eslint/no-unsafe-member-access
-  371:7   warning  Unsafe assignment of an `any` value                    @typescript-eslint/no-unsafe-assignment
-  371:21  warning  Unsafe member access .error on an `any` value          @typescript-eslint/no-unsafe-member-access
-  391:5   warning  Unsafe return of a value of type `Promise<any>`        @typescript-eslint/no-unsafe-return
-  404:11  warning  Unsafe assignment of an `any` value                    @typescript-eslint/no-unsafe-assignment
-  409:9   warning  Unsafe assignment of an `any` value                    @typescript-eslint/no-unsafe-assignment
-  409:23  warning  Unsafe member access .error on an `any` value          @typescript-eslint/no-unsafe-member-access
-  411:31  warning  Unsafe member access .suggestedName on an `any` value  @typescript-eslint/no-unsafe-member-access
-  414:11  warning  Unsafe assignment of an `any` value                    @typescript-eslint/no-unsafe-assignment
-  414:36  warning  Unsafe member access .suggestedName on an `any` value  @typescript-eslint/no-unsafe-member-access
-  421:7   warning  Unsafe assignment of an `any` value                    @typescript-eslint/no-unsafe-assignment
-  421:18  warning  Unsafe member access .unitId on an `any` value         @typescript-eslint/no-unsafe-member-access
-
 E:\Projects\megamek-web\src\stores\UnitStoreProvider.tsx
   78:6  warning  React Hook useMemo has a missing dependency: 'activeTab'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
 
-✖ 82 problems (0 errors, 82 warnings)
+✖ 64 problems (0 errors, 64 warnings)
 
