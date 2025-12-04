@@ -121,18 +121,10 @@ export function UnitTab({
       {canClose && !isEditing && (
         <button
           onClick={handleCloseClick}
-          className="flex-shrink-0 min-w-[20px] w-5 h-5 flex items-center justify-center rounded-full bg-slate-400/60 hover:bg-red-500 transition-colors group/close"
+          className="flex-shrink-0 w-5 h-5 flex items-center justify-center rounded-full bg-slate-400 text-slate-900 hover:bg-red-500 hover:text-white transition-colors text-sm font-bold leading-none"
           title="Close (Ctrl+W)"
         >
-          <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none">
-            <path 
-              d="M6 6L18 18M6 18L18 6" 
-              stroke="black"
-              className="group-hover/close:stroke-white"
-              strokeWidth="4" 
-              strokeLinecap="round"
-            />
-          </svg>
+          ✕
         </button>
       )}
     </div>
