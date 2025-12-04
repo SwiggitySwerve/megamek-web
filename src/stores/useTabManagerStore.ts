@@ -253,7 +253,7 @@ export const useTabManagerStore = create<TabManagerState>()(
       // =======================================================================
       
       createTab: (template, customName) => {
-        const name = customName ?? `New ${template.name}`;
+        const name = customName ?? 'Mek';
         
         // Create unit store in registry
         const store = createAndRegisterUnit({

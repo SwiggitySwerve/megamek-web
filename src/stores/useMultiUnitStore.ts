@@ -230,7 +230,7 @@ export const useMultiUnitStore = create<MultiUnitState>()(
       createTab: (template, customName) => {
         const id = generateTabId();
         const now = Date.now();
-        const name = customName || `New ${template.name}`;
+        const name = customName || 'Mek';
         
         // Determine initial tech base mode based on template
         const initialMode: TechBaseMode = template.techBase === TechBase.CLAN ? TechBaseMode.CLAN : TechBaseMode.INNER_SPHERE;
