@@ -597,10 +597,10 @@ export class EquipmentLoaderService {
         if (!response.ok) {
           throw new Error(`Failed to fetch: ${response.status}`);
         }
-        data = await response.json();
+        data = await response.json() as typeof data;
       } else if (source instanceof File) {
         const text = await source.text();
-        data = JSON.parse(text);
+        data = JSON.parse(text) as typeof data;
       } else {
         data = source as IEquipmentFile<IRawWeaponData>;
       }

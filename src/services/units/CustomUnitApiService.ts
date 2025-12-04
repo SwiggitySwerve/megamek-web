@@ -362,7 +362,7 @@ export class CustomUnitApiService implements ICustomUnitApiService {
       }
     );
     
-    const result = await response.json();
+    const result = await response.json() as { id?: string; version?: number; error?: string };
     
     return {
       success: response.ok,
@@ -388,7 +388,7 @@ export class CustomUnitApiService implements ICustomUnitApiService {
       throw new Error(`Failed to export unit: ${response.statusText}`);
     }
     
-    return response.json();
+    return response.json() as Promise<ISerializedUnitEnvelope>;
   }
 
   /**
@@ -401,7 +401,7 @@ export class CustomUnitApiService implements ICustomUnitApiService {
       body: JSON.stringify(data),
     });
     
-    const result = await response.json();
+    const result = await response.json() as { error?: string; suggestedName?: string; id?: string; version?: number; unitId?: string };
     
     if (!response.ok) {
       return {
