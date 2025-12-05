@@ -608,7 +608,7 @@ export function GlobalLoadoutTray({
                 onClick={handleRemoveAll}
                 className={`w-full px-2 py-1 ${trayStyles.text.primary} bg-red-900/40 hover:bg-red-900/60 rounded text-red-300 transition-colors`}
               >
-                Clear All ({removableCount})
+                Remove All ({removableCount})
               </button>
             </div>
           )}

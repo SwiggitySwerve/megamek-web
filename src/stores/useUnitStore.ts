@@ -856,11 +856,13 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
           lastModifiedAt: Date.now(),
         })),
         
-        clearAllEquipment: () => set({
-          equipment: [],
+        clearAllEquipment: () => set((state) => ({
+          // Only remove equipment that is removable (from equipment catalog)
+          // Keep configuration equipment (heat sinks, structure, etc.)
+          equipment: state.equipment.filter(e => !e.isRemovable),
           isModified: true,
           lastModifiedAt: Date.now(),
-        }),
+        })),
         
         // =================================================================
         // Metadata Actions

@@ -173,43 +173,46 @@ export function OverviewTab({
         <h3 className={cs.text.sectionTitle}>Basic Information</h3>
         
         <div className={cs.layout.formStack}>
-          {/* Chassis */}
-          <div className={cs.layout.field}>
-            <label className={cs.text.label}>Chassis</label>
-            <input
-              type="text"
-              value={chassis}
-              onChange={handleChassisChange}
-              disabled={readOnly}
-              className={cs.input.full}
-              placeholder="e.g., Atlas, Timber Wolf"
-            />
-          </div>
-          
-          {/* Clan Name (optional) */}
-          <div className={cs.layout.field}>
-            <label className={cs.text.label}>Clan Name <span className={cs.text.secondary}>(optional)</span></label>
-            <input
-              type="text"
-              value={clanName}
-              onChange={handleClanNameChange}
-              disabled={readOnly}
-              className={cs.input.full}
-              placeholder="e.g., Mad Cat for Timber Wolf"
-            />
-          </div>
-          
-          {/* Model */}
-          <div className={cs.layout.field}>
-            <label className={cs.text.label}>Model</label>
-            <input
-              type="text"
-              value={model}
-              onChange={handleModelChange}
-              disabled={readOnly}
-              className={cs.input.full}
-              placeholder="e.g., AS7-D, Prime"
-            />
+          {/* Chassis, Clan Name, Model - split row */}
+          <div className={cs.layout.threeColumn}>
+            {/* Chassis */}
+            <div className={cs.layout.field}>
+              <label className={cs.text.label}>Chassis</label>
+              <input
+                type="text"
+                value={chassis}
+                onChange={handleChassisChange}
+                disabled={readOnly}
+                className={cs.input.full}
+                placeholder="New"
+              />
+            </div>
+            
+            {/* Clan Name (optional) */}
+            <div className={cs.layout.field}>
+              <label className={cs.text.label}>Clan Name <span className={cs.text.secondary}>(opt)</span></label>
+              <input
+                type="text"
+                value={clanName}
+                onChange={handleClanNameChange}
+                disabled={readOnly}
+                className={cs.input.full}
+                placeholder=""
+              />
+            </div>
+            
+            {/* Model */}
+            <div className={cs.layout.field}>
+              <label className={cs.text.label}>Model</label>
+              <input
+                type="text"
+                value={model}
+                onChange={handleModelChange}
+                disabled={readOnly}
+                className={cs.input.full}
+                placeholder="Mek"
+              />
+            </div>
           </div>
           
           {/* MUL ID, Year, Tech Level - split row */}
