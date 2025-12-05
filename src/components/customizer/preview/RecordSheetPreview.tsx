@@ -52,30 +52,28 @@ export function RecordSheetPreview({
       const containerWidth = containerRef.current.clientWidth - 32; // Account for padding
       const { width } = PAPER_DIMENSIONS[paperSize];
       const fitScale = containerWidth / width;
-      setZoom(Math.min(fitScale, 2.0)); // Cap at 200%
+      setZoom(Math.min(fitScale, 3.0)); // Cap at 300%
     }
   }, [paperSize]);
 
-  // Fit to width on initial load and when container resizes
+  // Calculate fit-to-height scale
+  const fitToHeight = useCallback(() => {
+    if (containerRef.current) {
+      const containerHeight = containerRef.current.clientHeight - 32; // Account for padding
+      const { height } = PAPER_DIMENSIONS[paperSize];
+      const fitScale = containerHeight / height;
+      setZoom(Math.min(fitScale, 3.0)); // Cap at 300%
+    }
+  }, [paperSize]);
+
+  // Fit to width on initial load
   useEffect(() => {
     fitToWidth();
-    
-    const resizeObserver = new ResizeObserver(() => {
-      // Only auto-fit if current zoom is close to a "fit" value
-      // This prevents overriding manual zoom adjustments
-    });
-    
-    if (containerRef.current) {
-      resizeObserver.observe(containerRef.current);
-    }
-    
-    return () => resizeObserver.disconnect();
   }, [fitToWidth]);
   
   // Zoom controls
-  const zoomIn = () => setZoom(z => Math.min(z + 0.1, 3.0));
-  const zoomOut = () => setZoom(z => Math.max(z - 0.1, 0.3));
-  const resetZoom = () => setZoom(1.0);
+  const zoomIn = () => setZoom(z => Math.min(z + 0.15, 3.0));
+  const zoomOut = () => setZoom(z => Math.max(z - 0.15, 0.2));
   
   // Get unit state from store
   const name = useUnitStore((s) => s.name);
@@ -167,7 +165,7 @@ export function RecordSheetPreview({
   /**
    * Render the record sheet to canvas
    */
-  const renderPreview = useCallback(() => {
+  const renderPreview = useCallback(async () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -226,11 +224,8 @@ export function RecordSheetPreview({
       // Extract record sheet data
       const data = recordSheetService.extractData(unitConfig);
       
-      // Try SVG rendering first (MegaMekLab-style), fall back to canvas
-      recordSheetService.renderSVGPreview(canvas, data, paperSize).catch((svgError) => {
-        console.warn('SVG rendering failed, using canvas fallback:', svgError);
-        recordSheetService.renderPreview(canvas, data, paperSize);
-      });
+      // Render using MegaMekLab-style SVG templates
+      await recordSheetService.renderPreview(canvas, data, paperSize);
     } catch (error) {
       console.error('Error rendering record sheet preview:', error);
       
@@ -267,80 +262,15 @@ export function RecordSheetPreview({
   const displayHeight = height * zoom;
 
   return (
-    <div className={`record-sheet-preview ${className}`} style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      {/* Zoom Controls */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        gap: '8px',
-        padding: '8px',
-        backgroundColor: '#333',
-        borderBottom: '1px solid #444',
-      }}>
-        <button
-          onClick={zoomOut}
-          style={{
-            padding: '4px 12px',
-            backgroundColor: '#555',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontSize: '14px',
-          }}
-        >
-          −
-        </button>
-        <span style={{ color: '#fff', fontSize: '14px', minWidth: '60px', textAlign: 'center' }}>
-          {Math.round(zoom * 100)}%
-        </span>
-        <button
-          onClick={zoomIn}
-          style={{
-            padding: '4px 12px',
-            backgroundColor: '#555',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontSize: '14px',
-          }}
-        >
-          +
-        </button>
-        <button
-          onClick={resetZoom}
-          style={{
-            padding: '4px 12px',
-            backgroundColor: '#555',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontSize: '12px',
-            marginLeft: '8px',
-          }}
-        >
-          100%
-        </button>
-        <button
-          onClick={fitToWidth}
-          style={{
-            padding: '4px 12px',
-            backgroundColor: '#4a7c59',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontSize: '12px',
-            marginLeft: '8px',
-          }}
-        >
-          Fit Width
-        </button>
-      </div>
-      
+    <div 
+      className={`record-sheet-preview ${className}`} 
+      style={{ 
+        position: 'relative',
+        display: 'flex', 
+        flexDirection: 'column', 
+        height: '100%',
+      }}
+    >
       {/* Preview Area */}
       <div 
         ref={containerRef}
@@ -351,7 +281,7 @@ export function RecordSheetPreview({
           alignItems: 'flex-start',
           overflow: 'auto',
           padding: '16px',
-          backgroundColor: '#f0f0f0',
+          backgroundColor: '#2a2a3e',
         }}
       >
         <canvas
@@ -359,10 +289,141 @@ export function RecordSheetPreview({
           style={{
             width: displayWidth,
             height: displayHeight,
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
             backgroundColor: '#fff',
           }}
         />
+      </div>
+      
+      {/* Floating Zoom Controls */}
+      <div style={{
+        position: 'absolute',
+        bottom: '20px',
+        right: '20px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '4px',
+        backgroundColor: 'rgba(30, 30, 45, 0.95)',
+        borderRadius: '8px',
+        padding: '8px',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+      }}>
+        {/* Zoom In */}
+        <button
+          onClick={zoomIn}
+          title="Zoom In"
+          style={{
+            width: '36px',
+            height: '36px',
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontSize: '18px',
+            fontWeight: 'bold',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'background-color 0.15s',
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+        >
+          +
+        </button>
+        
+        {/* Zoom Level Display */}
+        <div style={{ 
+          color: '#fff', 
+          fontSize: '11px', 
+          textAlign: 'center',
+          padding: '4px 0',
+          fontFamily: 'monospace',
+        }}>
+          {Math.round(zoom * 100)}%
+        </div>
+        
+        {/* Zoom Out */}
+        <button
+          onClick={zoomOut}
+          title="Zoom Out"
+          style={{
+            width: '36px',
+            height: '36px',
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontSize: '18px',
+            fontWeight: 'bold',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'background-color 0.15s',
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+        >
+          −
+        </button>
+        
+        {/* Divider */}
+        <div style={{ 
+          height: '1px', 
+          backgroundColor: 'rgba(255, 255, 255, 0.15)', 
+          margin: '4px 0',
+        }} />
+        
+        {/* Fit Width */}
+        <button
+          onClick={fitToWidth}
+          title="Fit to Width"
+          style={{
+            width: '36px',
+            height: '36px',
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontSize: '14px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'background-color 0.15s',
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+        >
+          ↔
+        </button>
+        
+        {/* Fit Height */}
+        <button
+          onClick={fitToHeight}
+          title="Fit to Height"
+          style={{
+            width: '36px',
+            height: '36px',
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontSize: '14px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'background-color 0.15s',
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+        >
+          ↕
+        </button>
       </div>
     </div>
   );

@@ -22,14 +22,12 @@ import {
   PaperSize,
   PAPER_DIMENSIONS,
   PDF_DPI_MULTIPLIER,
-  PREVIEW_DPI_MULTIPLIER,
   LOCATION_ABBREVIATIONS,
   LOCATION_NAMES,
   IPDFExportOptions,
 } from '@/types/printing';
-import { MechRecordSheetRenderer } from './MechRecordSheetRenderer';
 import { SVGRecordSheetRenderer } from './SVGRecordSheetRenderer';
-import { MechLocation, STANDARD_FIXED_ALLOCATIONS, LOCATION_SLOT_COUNTS } from '@/types/construction/CriticalSlotAllocation';
+import { MechLocation, LOCATION_SLOT_COUNTS } from '@/types/construction/CriticalSlotAllocation';
 import { STRUCTURE_POINTS_TABLE } from '@/types/construction/InternalStructureType';
 import { getAllWeapons, IWeapon, WeaponCategory } from '@/types/equipment';
 
@@ -149,40 +147,9 @@ export class RecordSheetService {
   }
 
   /**
-   * Render preview to canvas (legacy canvas-based rendering)
-   * Uses high-DPI rendering (4x) for crisp text at all zoom levels.
-   */
-  renderPreview(
-    canvas: HTMLCanvasElement,
-    data: IRecordSheetData,
-    paperSize: PaperSize = PaperSize.LETTER
-  ): void {
-    const ctx = canvas.getContext('2d');
-    if (!ctx) {
-      throw new Error('Could not get canvas 2D context');
-    }
-
-    // Set canvas size with high-DPI multiplier for crisp preview
-    const { width, height } = PAPER_DIMENSIONS[paperSize];
-    canvas.width = width * PREVIEW_DPI_MULTIPLIER;
-    canvas.height = height * PREVIEW_DPI_MULTIPLIER;
-
-    // Scale context so rendering code uses paper coordinates
-    ctx.scale(PREVIEW_DPI_MULTIPLIER, PREVIEW_DPI_MULTIPLIER);
-    
-    // Enable high-quality rendering
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = 'high';
-
-    // Render record sheet
-    const renderer = new MechRecordSheetRenderer(ctx, paperSize);
-    renderer.render(data);
-  }
-
-  /**
    * Render preview using SVG template (MegaMekLab-style)
    */
-  async renderSVGPreview(
+  async renderPreview(
     canvas: HTMLCanvasElement,
     data: IRecordSheetData,
     paperSize: PaperSize = PaperSize.LETTER
@@ -190,23 +157,17 @@ export class RecordSheetService {
     // Get template path based on mech type
     const templatePath = SVG_TEMPLATES[data.mechType] || SVG_TEMPLATES.biped;
     
-    try {
-      const renderer = new SVGRecordSheetRenderer();
-      await renderer.loadTemplate(templatePath);
-      renderer.fillTemplate(data);
-      
-      // Load and insert armor pips
-      await renderer.fillArmorPips(data.armor);
-      
-      // Fill structure pips and text values
-      await renderer.fillStructurePips(data.structure, data.header.tonnage);
-      
-      await renderer.renderToCanvas(canvas);
-    } catch (error) {
-      console.warn('SVG rendering failed, falling back to canvas rendering:', error);
-      // Fallback to canvas rendering
-      this.renderPreview(canvas, data, paperSize);
-    }
+    const renderer = new SVGRecordSheetRenderer();
+    await renderer.loadTemplate(templatePath);
+    renderer.fillTemplate(data);
+    
+    // Load and insert armor pips
+    await renderer.fillArmorPips(data.armor);
+    
+    // Fill structure pips and text values
+    await renderer.fillStructurePips(data.structure, data.header.tonnage);
+    
+    await renderer.renderToCanvas(canvas);
   }
 
   /**
@@ -230,65 +191,9 @@ export class RecordSheetService {
 
   /**
    * Export to PDF and trigger download
-   * Uses high-DPI rendering (3x) for crisp text and graphics.
+   * Uses SVG template rendering with high-DPI (3x) for crisp text and graphics.
    */
   async exportPDF(
-    data: IRecordSheetData,
-    options: IPDFExportOptions = { paperSize: PaperSize.LETTER, includePilotData: false }
-  ): Promise<void> {
-    const { paperSize, filename } = options;
-    const { width, height } = PAPER_DIMENSIONS[paperSize];
-
-    // Create off-screen canvas at high DPI for crisp PDF output
-    // 3x multiplier = 216 DPI (vs 72 DPI at 1x)
-    const canvas = document.createElement('canvas');
-    const scaledWidth = width * PDF_DPI_MULTIPLIER;
-    const scaledHeight = height * PDF_DPI_MULTIPLIER;
-    canvas.width = scaledWidth;
-    canvas.height = scaledHeight;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) {
-      throw new Error('Could not get canvas 2D context');
-    }
-
-    // Scale the context so rendering code uses the same coordinates
-    // but produces a higher resolution output
-    ctx.scale(PDF_DPI_MULTIPLIER, PDF_DPI_MULTIPLIER);
-
-    // Enable high-quality rendering
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = 'high';
-
-    // Render record sheet (the renderer uses paper-sized coordinates)
-    const renderer = new MechRecordSheetRenderer(ctx, paperSize);
-    renderer.render(data);
-
-    // Create PDF
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'pt',
-      format: paperSize === PaperSize.A4 ? 'a4' : 'letter',
-    });
-
-    // Add high-res canvas image to PDF, scaled down to paper dimensions
-    // jsPDF will use the full resolution image but fit it to the specified dimensions
-    // Using JPEG for better compatibility with jsPDF
-    const imgData = canvas.toDataURL('image/jpeg', 0.95);
-    pdf.addImage(imgData, 'JPEG', 0, 0, width, height);
-
-    // Generate filename
-    const pdfFilename = filename || `${data.header.chassis}-${data.header.model}.pdf`.replace(/\s+/g, '-');
-
-    // Trigger download
-    pdf.save(pdfFilename);
-  }
-
-  /**
-   * Export to PDF using SVG template rendering (higher quality)
-   * Uses high-DPI rendering (3x) for crisp text and graphics.
-   */
-  async exportSVGPDF(
     data: IRecordSheetData,
     options: IPDFExportOptions = { paperSize: PaperSize.LETTER, includePilotData: false }
   ): Promise<void> {
@@ -305,24 +210,13 @@ export class RecordSheetService {
     // Get template path based on mech type
     const templatePath = SVG_TEMPLATES[data.mechType] || SVG_TEMPLATES.biped;
 
-    try {
-      // Use SVG renderer with high-DPI canvas
-      const renderer = new SVGRecordSheetRenderer();
-      await renderer.loadTemplate(templatePath);
-      renderer.fillTemplate(data);
-      await renderer.fillArmorPips(data.armor);
-      await renderer.fillStructurePips(data.structure, data.header.tonnage);
-      await renderer.renderToCanvasHighDPI(canvas, PDF_DPI_MULTIPLIER);
-    } catch (error) {
-      console.warn('SVG PDF rendering failed, falling back to canvas rendering:', error);
-      // Fallback to canvas rendering
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.scale(PDF_DPI_MULTIPLIER, PDF_DPI_MULTIPLIER);
-        const fallbackRenderer = new MechRecordSheetRenderer(ctx, paperSize);
-        fallbackRenderer.render(data);
-      }
-    }
+    // Use SVG renderer with high-DPI canvas
+    const renderer = new SVGRecordSheetRenderer();
+    await renderer.loadTemplate(templatePath);
+    renderer.fillTemplate(data);
+    await renderer.fillArmorPips(data.armor);
+    await renderer.fillStructurePips(data.structure, data.header.tonnage);
+    await renderer.renderToCanvasHighDPI(canvas, PDF_DPI_MULTIPLIER);
 
     // Create PDF
     const pdf = new jsPDF({

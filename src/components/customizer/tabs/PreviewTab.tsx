@@ -186,7 +186,7 @@ export function PreviewTab({
     const unitConfig = buildUnitConfig();
     const data = recordSheetService.extractData(unitConfig);
     
-    await recordSheetService.exportSVGPDF(data, {
+    await recordSheetService.exportPDF(data, {
       paperSize,
       includePilotData: false,
     });
@@ -195,7 +195,7 @@ export function PreviewTab({
   /**
    * Handle print
    */
-  const handlePrint = useCallback(() => {
+  const handlePrint = useCallback(async () => {
     const canvas = canvasRef.current;
     if (!canvas) {
       // Create a temporary canvas for printing
@@ -206,7 +206,7 @@ export function PreviewTab({
       
       const unitConfig = buildUnitConfig();
       const data = recordSheetService.extractData(unitConfig);
-      recordSheetService.renderPreview(tempCanvas, data, paperSize);
+      await recordSheetService.renderPreview(tempCanvas, data, paperSize);
       recordSheetService.print(tempCanvas);
     } else {
       recordSheetService.print(canvas);
