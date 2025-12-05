@@ -190,9 +190,25 @@ export class SVGRecordSheetRenderer {
     // === Copyright Year ===
     this.fixCopyrightYear();
 
+    // === Hide second crew damage panel (for single-pilot mechs) ===
+    this.hideSecondCrewPanel();
+
     // === Render dynamic content ===
     this.renderEquipmentTable(data.equipment);
     this.renderCriticalSlots(data.criticals);
+  }
+
+  /**
+   * Hide the second crew damage panel (crewDamage1) for single-pilot mechs
+   * The template has two crew panels for dual-cockpit mechs, but most mechs only have one pilot
+   */
+  private hideSecondCrewPanel(): void {
+    if (!this.svgDoc) return;
+    
+    const crewDamage1 = this.svgDoc.getElementById('crewDamage1');
+    if (crewDamage1) {
+      crewDamage1.setAttribute('visibility', 'hidden');
+    }
   }
 
   /**
