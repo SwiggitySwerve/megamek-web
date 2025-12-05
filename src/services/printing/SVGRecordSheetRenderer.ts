@@ -212,7 +212,7 @@ export class SVGRecordSheetRenderer {
   }
 
   /**
-   * Fix the copyright year placeholder (%d) with the current year
+   * Fix the copyright text: replace year placeholder and remove text stretching
    */
   private fixCopyrightYear(): void {
     if (!this.svgDoc) return;
@@ -221,6 +221,16 @@ export class SVGRecordSheetRenderer {
     if (copyrightElement && copyrightElement.textContent) {
       const currentYear = new Date().getFullYear();
       copyrightElement.textContent = copyrightElement.textContent.replace('%d', String(currentYear));
+      // Remove textLength and lengthAdjust to prevent text stretching
+      copyrightElement.removeAttribute('textLength');
+      copyrightElement.removeAttribute('lengthAdjust');
+    }
+    
+    // Also fix the second line of copyright (Catalyst Game Labs)
+    const catalystElement = this.svgDoc.getElementById('tspan221');
+    if (catalystElement) {
+      catalystElement.removeAttribute('textLength');
+      catalystElement.removeAttribute('lengthAdjust');
     }
   }
 
