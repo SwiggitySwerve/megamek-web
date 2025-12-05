@@ -4914,23 +4914,6 @@
       "special": []
     },
     {
-      "id": "ammo-ac-10i",
-      "name": "AC/10i Ammo",
-      "category": "Autocannon",
-      "variant": "Standard",
-      "techBase": "INNER_SPHERE",
-      "rulesLevel": "UNOFFICIAL",
-      "compatibleWeaponIds": [],
-      "shotsPerTon": 10,
-      "weight": 1,
-      "criticalSlots": 1,
-      "costPerTon": 12000,
-      "battleValue": 21,
-      "isExplosive": true,
-      "introductionYear": 2443,
-      "special": []
-    },
-    {
       "id": "ammo-gac-2",
       "name": "GAC/2 Ammo",
       "category": "Autocannon",

@@ -111,9 +111,11 @@ describe('HideToggleBar', () => {
     hidePrototype: false,
     hideOneShot: false,
     hideUnavailable: false,
+    hideAmmoWithoutWeapon: false,
     onTogglePrototype: jest.fn(),
     onToggleOneShot: jest.fn(),
     onToggleUnavailable: jest.fn(),
+    onToggleAmmoWithoutWeapon: jest.fn(),
   };
 
   beforeEach(() => {
@@ -125,6 +127,7 @@ describe('HideToggleBar', () => {
     
     expect(screen.getByText('Prototype')).toBeInTheDocument();
     expect(screen.getByText('One-Shot')).toBeInTheDocument();
+    expect(screen.getByText('Ammo w/o Weapon')).toBeInTheDocument();
     expect(screen.getByText('Unavailable')).toBeInTheDocument();
   });
 

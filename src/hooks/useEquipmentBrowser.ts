@@ -211,11 +211,13 @@ export function useEquipmentBrowser(): EquipmentBrowserState {
       filters.hidePrototype,
       filters.hideOneShot,
       filters.hideUnavailable,
+      filters.hideAmmoWithoutWeapon,
       sort.column,
       sort.direction,
-      // Unit context affects filtering when hideUnavailable is true
+      // Unit context affects filtering when hideUnavailable or hideAmmoWithoutWeapon is true
       unitYear,
       unitTechBase,
+      unitWeaponIds,
     ]
   );
   const paginatedEquipment = useMemo(
@@ -269,6 +271,7 @@ export function useEquipmentBrowser(): EquipmentBrowserState {
     hidePrototype: filters.hidePrototype,
     hideOneShot: filters.hideOneShot,
     hideUnavailable: filters.hideUnavailable,
+    hideAmmoWithoutWeapon: filters.hideAmmoWithoutWeapon,
     
     // Sort
     sortColumn: sort.column,
@@ -283,6 +286,7 @@ export function useEquipmentBrowser(): EquipmentBrowserState {
     toggleHidePrototype,
     toggleHideOneShot,
     toggleHideUnavailable,
+    toggleHideAmmoWithoutWeapon,
     clearFilters,
     
     // Pagination actions

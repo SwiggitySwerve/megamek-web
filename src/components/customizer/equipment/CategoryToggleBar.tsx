@@ -35,10 +35,13 @@ interface HideToggleBarProps {
   hideOneShot: boolean;
   /** Hide unavailable equipment (tech base/era incompatible) */
   hideUnavailable: boolean;
+  /** Hide ammunition without matching weapon on the unit */
+  hideAmmoWithoutWeapon: boolean;
   /** Toggle handlers */
   onTogglePrototype: () => void;
   onToggleOneShot: () => void;
   onToggleUnavailable: () => void;
+  onToggleAmmoWithoutWeapon: () => void;
   /** Additional CSS classes */
   className?: string;
 }
@@ -163,9 +166,11 @@ export function HideToggleBar({
   hidePrototype,
   hideOneShot,
   hideUnavailable,
+  hideAmmoWithoutWeapon,
   onTogglePrototype,
   onToggleOneShot,
   onToggleUnavailable,
+  onToggleAmmoWithoutWeapon,
   className = '',
 }: HideToggleBarProps): React.ReactElement {
   return (
@@ -182,6 +187,12 @@ export function HideToggleBar({
         label="One-Shot"
         isActive={hideOneShot}
         onClick={onToggleOneShot}
+      />
+      
+      <ToggleButton
+        label="Ammo w/o Weapon"
+        isActive={hideAmmoWithoutWeapon}
+        onClick={onToggleAmmoWithoutWeapon}
       />
       
       <ToggleButton

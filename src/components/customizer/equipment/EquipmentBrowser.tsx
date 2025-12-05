@@ -44,6 +44,7 @@ export function EquipmentBrowser({
     hidePrototype,
     hideOneShot,
     hideUnavailable,
+    hideAmmoWithoutWeapon,
     sortColumn,
     sortDirection,
     setSearch,
@@ -52,6 +53,7 @@ export function EquipmentBrowser({
     toggleHidePrototype,
     toggleHideOneShot,
     toggleHideUnavailable,
+    toggleHideAmmoWithoutWeapon,
     clearFilters,
     setPage,
     setSort,
@@ -97,9 +99,11 @@ export function EquipmentBrowser({
           hidePrototype={hidePrototype}
           hideOneShot={hideOneShot}
           hideUnavailable={hideUnavailable}
+          hideAmmoWithoutWeapon={hideAmmoWithoutWeapon}
           onTogglePrototype={toggleHidePrototype}
           onToggleOneShot={toggleHideOneShot}
           onToggleUnavailable={toggleHideUnavailable}
+          onToggleAmmoWithoutWeapon={toggleHideAmmoWithoutWeapon}
         />
         
         {/* Unit context info - shows when filtering by availability */}
@@ -136,7 +140,7 @@ export function EquipmentBrowser({
               </button>
             )}
           </div>
-          {(search || !showAllCategories || hidePrototype || hideOneShot) && (
+          {(search || !showAllCategories || hidePrototype || hideOneShot || hideAmmoWithoutWeapon) && (
             <button
               onClick={clearFilters}
               className="px-2 py-1 text-xs bg-slate-700 hover:bg-slate-600 text-slate-300 rounded transition-colors"
