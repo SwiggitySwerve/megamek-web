@@ -120,28 +120,20 @@ export interface ICanonicalUnitService {
 }
 
 /**
- * Check if running on server side (Node.js)
+ * Get the base URL for fetching data
+ * On server-side, we need an absolute URL
+ * On client-side, relative URLs work fine
  */
-function isServerSide(): boolean {
-  return typeof window === 'undefined';
-}
-
-/**
- * Load JSON data from file system (server-side only)
- * Uses dynamic import to avoid bundling Node.js modules in browser
- */
-async function loadJsonFromFs<T>(relativePath: string): Promise<T | null> {
-  try {
-    // Dynamic import to avoid bundling fs/path in browser
-    const fs = await import('fs').then(m => m.promises);
-    const path = await import('path');
-    
-    const filePath = path.join(process.cwd(), 'public', relativePath);
-    const content = await fs.readFile(filePath, 'utf-8');
-    return JSON.parse(content) as T;
-  } catch {
-    return null;
+function getBaseUrl(): string {
+  if (typeof window !== 'undefined') {
+    // Client-side: use relative URL
+    return '';
   }
+  // Server-side: construct absolute URL
+  // Use NEXT_PUBLIC_BASE_URL if set, otherwise default to localhost
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 
+    `http://localhost:${process.env.PORT || 3000}`;
+  return baseUrl;
 }
 
 /**
@@ -153,23 +145,19 @@ export class CanonicalUnitService implements ICanonicalUnitService {
   private indexPath = '/data/units/battlemechs/index.json';
 
   /**
-   * Load JSON data - works on both server and client side
+   * Load JSON data - works on both server and client side using fetch
    */
   private async loadJson<T>(relativePath: string): Promise<T | null> {
-    if (isServerSide()) {
-      // Server-side: use Node.js fs module via dynamic import
-      return await loadJsonFromFs<T>(relativePath);
-    } else {
-      // Client-side: use fetch
-      try {
-        const response = await fetch(relativePath);
-        if (!response.ok) {
-          return null;
-        }
-        return await response.json() as T;
-      } catch {
+    try {
+      const baseUrl = getBaseUrl();
+      const url = `${baseUrl}${relativePath}`;
+      const response = await fetch(url);
+      if (!response.ok) {
         return null;
       }
+      return await response.json() as T;
+    } catch {
+      return null;
     }
   }
 
