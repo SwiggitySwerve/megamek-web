@@ -21,11 +21,12 @@ import {
 } from '@/types/construction/InternalStructureType';
 import { JumpJetType } from '@/utils/construction/movementCalculations';
 import { HeatSinkType } from '@/types/construction/HeatSinkType';
-import { JUMP_JETS, HEAT_SINKS, MiscEquipmentCategory, IMiscEquipment } from '@/types/equipment/MiscEquipmentTypes';
-import { MOVEMENT_EQUIPMENT, MYOMER_SYSTEMS } from '@/types/equipment/MiscEquipmentTypes';
+import { MiscEquipmentCategory, IMiscEquipment } from '@/types/equipment/MiscEquipmentTypes';
 import { MovementEnhancementType } from '@/types/construction/MovementEnhancement';
+import { getEquipmentLoader } from '@/services/equipment/EquipmentLoaderService';
+import { RulesLevel } from '@/types/enums/RulesLevel';
 import { equipmentCalculatorService, VARIABLE_EQUIPMENT } from '@/services/equipment/EquipmentCalculatorService';
-import { TARGETING_COMPUTERS, IElectronics } from '@/types/equipment/ElectronicsTypes';
+import { IElectronics, ElectronicsCategory } from '@/types/equipment/ElectronicsTypes';
 
 // =============================================================================
 // Constants
@@ -56,8 +57,30 @@ export const ENHANCEMENT_EQUIPMENT_IDS = [
   'industrial-tsm',
 ];
 
-/** Heat sink equipment IDs from MiscEquipmentTypes */
-export const HEAT_SINK_EQUIPMENT_IDS = HEAT_SINKS.map(hs => hs.id);
+/** Heat sink equipment IDs - hardcoded since these are essential for construction */
+export const HEAT_SINK_EQUIPMENT_IDS = [
+  'single-heat-sink',
+  'double-heat-sink',
+  'clan-double-heat-sink',
+  'compact-heat-sink',
+  'laser-heat-sink',
+];
+
+/** Jump jet equipment IDs - hardcoded since these are essential for construction */
+export const JUMP_JET_EQUIPMENT_IDS = [
+  'jump-jet-light',
+  'jump-jet-medium',
+  'jump-jet-heavy',
+  'improved-jump-jet-light',
+  'improved-jump-jet-medium',
+  'improved-jump-jet-heavy',
+];
+
+/** Targeting computer equipment IDs - hardcoded since these are essential for construction */
+export const TARGETING_COMPUTER_IDS = [
+  'targeting-computer',
+  'clan-targeting-computer',
+];
 
 // =============================================================================
 // Jump Jet Equipment Helpers
@@ -76,11 +99,100 @@ export function getJumpJetEquipmentId(tonnage: number, jumpJetType: JumpJetType)
 }
 
 /**
+ * Fallback jump jet equipment definitions
+ * Used when the equipment loader hasn't loaded JSON data yet
+ */
+const JUMP_JET_FALLBACKS: Record<string, IMiscEquipment> = {
+  'jump-jet-light': {
+    id: 'jump-jet-light',
+    name: 'Jump Jet (Light)',
+    category: MiscEquipmentCategory.JUMP_JET,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    weight: 0.5,
+    criticalSlots: 1,
+    costCBills: 200,
+    battleValue: 0,
+    introductionYear: 2471,
+  },
+  'jump-jet-medium': {
+    id: 'jump-jet-medium',
+    name: 'Jump Jet (Medium)',
+    category: MiscEquipmentCategory.JUMP_JET,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    weight: 1.0,
+    criticalSlots: 1,
+    costCBills: 200,
+    battleValue: 0,
+    introductionYear: 2471,
+  },
+  'jump-jet-heavy': {
+    id: 'jump-jet-heavy',
+    name: 'Jump Jet (Heavy)',
+    category: MiscEquipmentCategory.JUMP_JET,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    weight: 2.0,
+    criticalSlots: 1,
+    costCBills: 200,
+    battleValue: 0,
+    introductionYear: 2471,
+  },
+  'improved-jump-jet-light': {
+    id: 'improved-jump-jet-light',
+    name: 'Improved Jump Jet (Light)',
+    category: MiscEquipmentCategory.JUMP_JET,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.ADVANCED,
+    weight: 1.0,
+    criticalSlots: 2,
+    costCBills: 500,
+    battleValue: 0,
+    introductionYear: 3069,
+  },
+  'improved-jump-jet-medium': {
+    id: 'improved-jump-jet-medium',
+    name: 'Improved Jump Jet (Medium)',
+    category: MiscEquipmentCategory.JUMP_JET,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.ADVANCED,
+    weight: 2.0,
+    criticalSlots: 2,
+    costCBills: 500,
+    battleValue: 0,
+    introductionYear: 3069,
+  },
+  'improved-jump-jet-heavy': {
+    id: 'improved-jump-jet-heavy',
+    name: 'Improved Jump Jet (Heavy)',
+    category: MiscEquipmentCategory.JUMP_JET,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.ADVANCED,
+    weight: 4.0,
+    criticalSlots: 2,
+    costCBills: 500,
+    battleValue: 0,
+    introductionYear: 3069,
+  },
+};
+
+/**
  * Get the jump jet equipment item for a given tonnage and type
+ * Uses JSON-loaded equipment from EquipmentLoaderService with fallback definitions
  */
 export function getJumpJetEquipment(tonnage: number, jumpJetType: JumpJetType): IMiscEquipment | undefined {
   const id = getJumpJetEquipmentId(tonnage, jumpJetType);
-  return JUMP_JETS.find(jj => jj.id === id);
+  
+  // Try to get from the loader first (JSON data)
+  const loader = getEquipmentLoader();
+  if (loader.getIsLoaded()) {
+    const loaded = loader.getMiscEquipmentById(id);
+    if (loaded) return loaded;
+  }
+  
+  // Fallback to hardcoded definitions for essential jump jet equipment
+  return JUMP_JET_FALLBACKS[id];
 }
 
 /**
@@ -122,8 +234,7 @@ export function createJumpJetEquipmentList(
  * Filter out jump jet equipment from the equipment array
  */
 export function filterOutJumpJets(equipment: readonly IMountedEquipmentInstance[]): IMountedEquipmentInstance[] {
-  const jumpJetIds = JUMP_JETS.map(jj => jj.id);
-  return equipment.filter(e => !jumpJetIds.includes(e.equipmentId));
+  return equipment.filter(e => !JUMP_JET_EQUIPMENT_IDS.includes(e.equipmentId));
 }
 
 // =============================================================================
@@ -270,11 +381,88 @@ export function getHeatSinkEquipmentId(heatSinkType: HeatSinkType): string {
 }
 
 /**
+ * Fallback heat sink equipment definitions
+ * Used when the equipment loader hasn't loaded JSON data yet
+ */
+const HEAT_SINK_FALLBACKS: Record<string, IMiscEquipment> = {
+  'single-heat-sink': {
+    id: 'single-heat-sink',
+    name: 'Single Heat Sink',
+    category: MiscEquipmentCategory.HEAT_SINK,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.INTRODUCTORY,
+    weight: 1.0,
+    criticalSlots: 1,
+    costCBills: 2000,
+    battleValue: 0,
+    introductionYear: 2022,
+  },
+  'double-heat-sink': {
+    id: 'double-heat-sink',
+    name: 'Double Heat Sink',
+    category: MiscEquipmentCategory.HEAT_SINK,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    weight: 1.0,
+    criticalSlots: 3,
+    costCBills: 6000,
+    battleValue: 0,
+    introductionYear: 2567,
+  },
+  'clan-double-heat-sink': {
+    id: 'clan-double-heat-sink',
+    name: 'Double Heat Sink (Clan)',
+    category: MiscEquipmentCategory.HEAT_SINK,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    weight: 1.0,
+    criticalSlots: 2,
+    costCBills: 6000,
+    battleValue: 0,
+    introductionYear: 2567,
+  },
+  'compact-heat-sink': {
+    id: 'compact-heat-sink',
+    name: 'Compact Heat Sink',
+    category: MiscEquipmentCategory.HEAT_SINK,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.EXPERIMENTAL,
+    weight: 1.5,
+    criticalSlots: 1,
+    costCBills: 3000,
+    battleValue: 0,
+    introductionYear: 3058,
+  },
+  'laser-heat-sink': {
+    id: 'laser-heat-sink',
+    name: 'Laser Heat Sink',
+    category: MiscEquipmentCategory.HEAT_SINK,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.EXPERIMENTAL,
+    weight: 1.0,
+    criticalSlots: 2,
+    costCBills: 6000,
+    battleValue: 0,
+    introductionYear: 3067,
+  },
+};
+
+/**
  * Get the heat sink equipment item for a given HeatSinkType
+ * Uses JSON-loaded equipment from EquipmentLoaderService with fallback definitions
  */
 export function getHeatSinkEquipment(heatSinkType: HeatSinkType): IMiscEquipment | undefined {
   const id = getHeatSinkEquipmentId(heatSinkType);
-  return HEAT_SINKS.find(hs => hs.id === id);
+  
+  // Try to get from the loader first (JSON data)
+  const loader = getEquipmentLoader();
+  if (loader.getIsLoaded()) {
+    const loaded = loader.getMiscEquipmentById(id);
+    if (loaded) return loaded;
+  }
+  
+  // Fallback to hardcoded definitions for essential heat sink equipment
+  return HEAT_SINK_FALLBACKS[id];
 }
 
 /**
@@ -343,7 +531,67 @@ export function getEnhancementEquipmentId(
 }
 
 /**
+ * Fallback enhancement equipment definitions
+ * Used when the equipment loader hasn't loaded JSON data yet
+ */
+const ENHANCEMENT_FALLBACKS: Record<string, IMiscEquipment> = {
+  'masc': {
+    id: 'masc',
+    name: 'MASC',
+    category: MiscEquipmentCategory.MOVEMENT,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    weight: 0, // Variable based on tonnage
+    criticalSlots: 0, // Variable based on tonnage
+    costCBills: 0, // Variable based on tonnage
+    battleValue: 0,
+    introductionYear: 2740,
+    variableEquipmentId: 'masc-is',
+  },
+  'clan-masc': {
+    id: 'clan-masc',
+    name: 'MASC (Clan)',
+    category: MiscEquipmentCategory.MOVEMENT,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    weight: 0,
+    criticalSlots: 0,
+    costCBills: 0,
+    battleValue: 0,
+    introductionYear: 2827,
+    variableEquipmentId: 'masc-clan',
+  },
+  'supercharger': {
+    id: 'supercharger',
+    name: 'Supercharger',
+    category: MiscEquipmentCategory.MOVEMENT,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.ADVANCED,
+    weight: 0,
+    criticalSlots: 1,
+    costCBills: 0,
+    battleValue: 0,
+    introductionYear: 3068,
+    variableEquipmentId: 'supercharger',
+  },
+  'tsm': {
+    id: 'tsm',
+    name: 'Triple Strength Myomer',
+    category: MiscEquipmentCategory.MYOMER,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    weight: 0,
+    criticalSlots: 6,
+    costCBills: 0,
+    battleValue: 0,
+    introductionYear: 3050,
+    variableEquipmentId: 'tsm',
+  },
+};
+
+/**
  * Get the enhancement equipment item by type and tech base
+ * Uses JSON-loaded equipment from EquipmentLoaderService with fallback definitions
  */
 export function getEnhancementEquipment(
   enhancementType: MovementEnhancementType,
@@ -351,12 +599,15 @@ export function getEnhancementEquipment(
 ): IMiscEquipment | undefined {
   const id = getEnhancementEquipmentId(enhancementType, techBase);
   
-  // Check MOVEMENT_EQUIPMENT first (MASC, Supercharger)
-  const movementEquip = MOVEMENT_EQUIPMENT.find(e => e.id === id);
-  if (movementEquip) return movementEquip;
+  // Try to get from the loader first (JSON data)
+  const loader = getEquipmentLoader();
+  if (loader.getIsLoaded()) {
+    const loaded = loader.getMiscEquipmentById(id);
+    if (loaded) return loaded;
+  }
   
-  // Check MYOMER_SYSTEMS (TSM)
-  return MYOMER_SYSTEMS.find(e => e.id === id);
+  // Fallback to hardcoded definitions for essential enhancement equipment
+  return ENHANCEMENT_FALLBACKS[id];
 }
 
 /**
@@ -518,16 +769,60 @@ export function filterOutEnhancementEquipment(
 // =============================================================================
 
 /** Targeting computer equipment IDs */
-export const TARGETING_COMPUTER_EQUIPMENT_IDS = TARGETING_COMPUTERS.map(tc => tc.id);
+export const TARGETING_COMPUTER_EQUIPMENT_IDS = TARGETING_COMPUTER_IDS;
+
+/**
+ * Fallback targeting computer equipment definitions
+ * Used when the equipment loader hasn't loaded JSON data yet
+ */
+const TARGETING_COMPUTER_FALLBACKS: Record<string, IElectronics> = {
+  'targeting-computer': {
+    id: 'targeting-computer',
+    name: 'Targeting Computer',
+    category: ElectronicsCategory.TARGETING,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    weight: 0, // Variable
+    criticalSlots: 0, // Variable
+    costCBills: 0, // Variable
+    battleValue: 0,
+    introductionYear: 3062,
+    variableEquipmentId: 'targeting-computer-is',
+  },
+  'clan-targeting-computer': {
+    id: 'clan-targeting-computer',
+    name: 'Targeting Computer (Clan)',
+    category: ElectronicsCategory.TARGETING,
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    weight: 0, // Variable
+    criticalSlots: 0, // Variable
+    costCBills: 0, // Variable
+    battleValue: 0,
+    introductionYear: 2860,
+    variableEquipmentId: 'targeting-computer-clan',
+  },
+};
 
 /**
  * Get the correct targeting computer equipment based on tech base
+ * Uses JSON-loaded equipment from EquipmentLoaderService with fallback definitions
  * 
  * @param techBase - Tech base (IS or Clan)
  * @returns The targeting computer IElectronics definition
  */
 export function getTargetingComputerEquipment(techBase: TechBase): IElectronics | undefined {
-  return TARGETING_COMPUTERS.find(tc => tc.techBase === techBase);
+  const id = techBase === TechBase.CLAN ? 'clan-targeting-computer' : 'targeting-computer';
+  
+  // Try to get from the loader first (JSON data)
+  const loader = getEquipmentLoader();
+  if (loader.getIsLoaded()) {
+    const loaded = loader.getElectronicsById(id);
+    if (loaded) return loaded;
+  }
+  
+  // Fallback to hardcoded definitions for essential targeting computer equipment
+  return TARGETING_COMPUTER_FALLBACKS[id];
 }
 
 /**
@@ -652,6 +947,6 @@ export function createTargetingComputerEquipmentList(
 export function filterOutTargetingComputer(
   equipment: readonly IMountedEquipmentInstance[]
 ): IMountedEquipmentInstance[] {
-  return equipment.filter(e => !TARGETING_COMPUTER_EQUIPMENT_IDS.includes(e.equipmentId));
+  return equipment.filter(e => !TARGETING_COMPUTER_IDS.includes(e.equipmentId));
 }
 

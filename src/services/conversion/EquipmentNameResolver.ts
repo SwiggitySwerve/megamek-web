@@ -7,7 +7,105 @@
  */
 
 import { TechBase } from '@/types/enums/TechBase';
-import { getAllEquipmentItemsForLookup, IEquipmentItem } from '@/types/equipment';
+import { IEquipmentItem, EquipmentCategory } from '@/types/equipment';
+import { getEquipmentLoader } from '@/services/equipment/EquipmentLoaderService';
+import { WeaponCategory } from '@/types/equipment/weapons/interfaces';
+
+/**
+ * Get all equipment items for lookup (from JSON loader or empty if not loaded)
+ */
+function getAllEquipmentItemsForResolver(): IEquipmentItem[] {
+  const loader = getEquipmentLoader();
+  if (!loader.getIsLoaded()) {
+    return [];
+  }
+  
+  const items: IEquipmentItem[] = [];
+  
+  // Weapons
+  for (const weapon of loader.getAllWeapons()) {
+    let category: EquipmentCategory;
+    switch (weapon.category) {
+      case WeaponCategory.ENERGY:
+        category = EquipmentCategory.ENERGY_WEAPON;
+        break;
+      case WeaponCategory.BALLISTIC:
+        category = EquipmentCategory.BALLISTIC_WEAPON;
+        break;
+      case WeaponCategory.MISSILE:
+        category = EquipmentCategory.MISSILE_WEAPON;
+        break;
+      case WeaponCategory.ARTILLERY:
+        category = EquipmentCategory.ARTILLERY;
+        break;
+      default:
+        category = EquipmentCategory.MISC_EQUIPMENT;
+    }
+    
+    items.push({
+      id: weapon.id,
+      name: weapon.name,
+      category,
+      techBase: weapon.techBase,
+      rulesLevel: weapon.rulesLevel,
+      weight: weapon.weight,
+      criticalSlots: weapon.criticalSlots,
+      costCBills: weapon.costCBills,
+      battleValue: weapon.battleValue,
+      introductionYear: weapon.introductionYear,
+    });
+  }
+  
+  // Ammunition
+  for (const ammo of loader.getAllAmmunition()) {
+    items.push({
+      id: ammo.id,
+      name: ammo.name,
+      category: EquipmentCategory.AMMUNITION,
+      techBase: ammo.techBase,
+      rulesLevel: ammo.rulesLevel,
+      weight: ammo.weight,
+      criticalSlots: ammo.criticalSlots,
+      costCBills: ammo.costPerTon,
+      battleValue: ammo.battleValue,
+      introductionYear: ammo.introductionYear,
+    });
+  }
+  
+  // Electronics
+  for (const elec of loader.getAllElectronics()) {
+    items.push({
+      id: elec.id,
+      name: elec.name,
+      category: EquipmentCategory.ELECTRONICS,
+      techBase: elec.techBase,
+      rulesLevel: elec.rulesLevel,
+      weight: elec.weight,
+      criticalSlots: elec.criticalSlots,
+      costCBills: elec.costCBills,
+      battleValue: elec.battleValue,
+      introductionYear: elec.introductionYear,
+    });
+  }
+  
+  // Misc Equipment
+  for (const misc of loader.getAllMiscEquipment()) {
+    items.push({
+      id: misc.id,
+      name: misc.name,
+      category: EquipmentCategory.MISC_EQUIPMENT,
+      techBase: misc.techBase,
+      rulesLevel: misc.rulesLevel,
+      weight: misc.weight,
+      criticalSlots: misc.criticalSlots,
+      costCBills: misc.costCBills,
+      battleValue: misc.battleValue,
+      introductionYear: misc.introductionYear,
+    });
+  }
+  
+  return items;
+}
 
 // ============================================================================
 // MEGAMEKLAB ITEM TYPE MAPPINGS
@@ -497,12 +595,12 @@ export class EquipmentNameResolver {
   
   /**
    * Initialize the resolver with equipment data
-   * Uses getAllEquipmentItemsForLookup to include all equipment (including heat sinks, jump jets)
+   * Uses JSON-loaded equipment data from EquipmentLoaderService
    */
   initialize(): void {
     if (this.initialized) return;
     
-    const allEquipment = getAllEquipmentItemsForLookup();
+    const allEquipment = getAllEquipmentItemsForResolver();
     
     for (const item of allEquipment) {
       // Index by ID

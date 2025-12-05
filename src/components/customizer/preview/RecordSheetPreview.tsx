@@ -126,16 +126,13 @@ export function RecordSheetPreview({
         rightLeg: armorAllocation[MechLocation.RIGHT_LEG],
       };
 
-      // Convert equipment to IEquipmentSlot format
-      const equipmentSlots = equipment
-        .filter(eq => eq.location && eq.slots && eq.slots.length > 0)
-        .flatMap(eq => 
-          eq.slots!.map((slotIndex) => ({
-            equipmentId: eq.equipmentId,
-            location: eq.location as string,
-            slotIndex: slotIndex,
-          }))
-        );
+      // Convert ALL equipment to IEquipmentSlot format for BV calculation
+      // BV should include all equipment on the mech, whether allocated or not
+      const equipmentSlots = equipment.map(eq => ({
+        equipmentId: eq.equipmentId,
+        location: eq.location ?? '',
+        slotIndex: eq.slots?.[0] ?? 0,
+      }));
 
       const editableMech: IEditableMech = {
         id: 'preview',

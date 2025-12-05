@@ -49,6 +49,7 @@ export interface EquipmentBrowserState {
   readonly hidePrototype: boolean;
   readonly hideOneShot: boolean;
   readonly hideUnavailable: boolean;
+  readonly hideAmmoWithoutWeapon: boolean;
   
   // Sort
   readonly sortColumn: SortColumn;
@@ -64,6 +65,7 @@ export interface EquipmentBrowserState {
   readonly toggleHidePrototype: () => void;
   readonly toggleHideOneShot: () => void;
   readonly toggleHideUnavailable: () => void;
+  readonly toggleHideAmmoWithoutWeapon: () => void;
   readonly clearFilters: () => void;
   
   // Pagination actions
@@ -85,26 +87,42 @@ export interface EquipmentBrowserState {
  * Hook to safely get unit store values if within a unit context
  * Uses subscription pattern to avoid conditional hook calls
  */
-function useUnitContextValues(): { year: number | null; techBase: TechBase | null } {
+function useUnitContextValues(): { 
+  year: number | null; 
+  techBase: TechBase | null;
+  weaponIds: readonly string[];
+} {
   const unitStore = useContext(UnitStoreContext);
-  const [values, setValues] = useState<{ year: number | null; techBase: TechBase | null }>({
+  const [values, setValues] = useState<{ 
+    year: number | null; 
+    techBase: TechBase | null;
+    weaponIds: readonly string[];
+  }>({
     year: null,
     techBase: null,
+    weaponIds: [],
   });
   
   useEffect(() => {
     if (!unitStore) {
-      setValues({ year: null, techBase: null });
+      setValues({ year: null, techBase: null, weaponIds: [] });
       return;
     }
     
     // Get initial values
     const state = unitStore.getState();
-    setValues({ year: state.year, techBase: state.techBase });
+    // Extract weapon IDs from equipment (non-ammo items with weapon-like categories)
+    const weaponIds = state.equipment
+      .filter(eq => !eq.equipmentId.toLowerCase().includes('ammo'))
+      .map(eq => eq.equipmentId);
+    setValues({ year: state.year, techBase: state.techBase, weaponIds });
     
     // Subscribe to changes
     const unsubscribe = unitStore.subscribe((state: UnitStore) => {
-      setValues({ year: state.year, techBase: state.techBase });
+      const weaponIds = state.equipment
+        .filter(eq => !eq.equipmentId.toLowerCase().includes('ammo'))
+        .map(eq => eq.equipmentId);
+      setValues({ year: state.year, techBase: state.techBase, weaponIds });
     });
     
     return unsubscribe;
@@ -136,6 +154,7 @@ export function useEquipmentBrowser(): EquipmentBrowserState {
     toggleHidePrototype,
     toggleHideOneShot,
     toggleHideUnavailable,
+    toggleHideAmmoWithoutWeapon,
     clearFilters,
     setPage,
     setPageSize,
@@ -144,13 +163,13 @@ export function useEquipmentBrowser(): EquipmentBrowserState {
     getPaginatedEquipment,
   } = useEquipmentStore();
   
-  // Get unit year and tech base from unit store context (if available)
-  const { year: unitYear, techBase: unitTechBase } = useUnitContextValues();
+  // Get unit year, tech base, and weapon IDs from unit store context (if available)
+  const { year: unitYear, techBase: unitTechBase, weaponIds: unitWeaponIds } = useUnitContextValues();
   
   // Sync unit context with equipment store when unit changes
   useEffect(() => {
-    setUnitContext(unitYear, unitTechBase);
-  }, [unitYear, unitTechBase, setUnitContext]);
+    setUnitContext(unitYear, unitTechBase, unitWeaponIds);
+  }, [unitYear, unitTechBase, unitWeaponIds, setUnitContext]);
   
   // Load equipment on mount
   useEffect(() => {

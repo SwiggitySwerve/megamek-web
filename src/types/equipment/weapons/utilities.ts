@@ -8,52 +8,66 @@
 
 import { TechBase } from '../../enums/TechBase';
 import { IWeapon, WeaponCategory } from './interfaces';
-import { ENERGY_WEAPONS } from './EnergyWeapons';
-import { BALLISTIC_WEAPONS } from './BallisticWeapons';
-import { MISSILE_WEAPONS } from './MissileWeapons';
+import { getEquipmentLoader } from '@/services/equipment/EquipmentLoaderService';
 
 /**
- * All standard weapons combined
+ * Get all standard weapons (excluding artillery and capital weapons)
+ * Uses JSON-loaded data from EquipmentLoaderService
  */
-export const ALL_STANDARD_WEAPONS: readonly IWeapon[] = [
-  ...ENERGY_WEAPONS,
-  ...BALLISTIC_WEAPONS,
-  ...MISSILE_WEAPONS,
-] as const;
+export function getAllStandardWeapons(): IWeapon[] {
+  const loader = getEquipmentLoader();
+  if (loader.getIsLoaded()) {
+    return loader.getAllWeapons().filter(w => 
+      w.category !== WeaponCategory.ARTILLERY
+    );
+  }
+  return [];
+}
+
+/**
+ * All standard weapons combined (legacy export)
+ * @deprecated Use getAllStandardWeapons() for runtime-loaded data
+ */
+export const ALL_STANDARD_WEAPONS: readonly IWeapon[] = [] as const;
 
 /**
  * Get weapon by ID
+ * Uses JSON-loaded data from EquipmentLoaderService
  */
 export function getWeaponById(id: string): IWeapon | undefined {
-  return ALL_STANDARD_WEAPONS.find(w => w.id === id);
+  const loader = getEquipmentLoader();
+  if (loader.getIsLoaded()) {
+    return loader.getWeaponById(id) ?? undefined;
+  }
+  return undefined;
 }
 
 /**
  * Get weapons by category
  */
 export function getWeaponsByCategory(category: WeaponCategory): IWeapon[] {
-  return ALL_STANDARD_WEAPONS.filter(w => w.category === category);
+  return getAllStandardWeapons().filter(w => w.category === category);
 }
 
 /**
  * Get weapons by tech base
  */
 export function getWeaponsByTechBase(techBase: TechBase): IWeapon[] {
-  return ALL_STANDARD_WEAPONS.filter(w => w.techBase === techBase);
+  return getAllStandardWeapons().filter(w => w.techBase === techBase);
 }
 
 /**
  * Get weapons by sub-type
  */
 export function getWeaponsBySubType(subType: string): IWeapon[] {
-  return ALL_STANDARD_WEAPONS.filter(w => w.subType === subType);
+  return getAllStandardWeapons().filter(w => w.subType === subType);
 }
 
 /**
  * Get weapons available by year
  */
 export function getWeaponsAvailableByYear(year: number): IWeapon[] {
-  return ALL_STANDARD_WEAPONS.filter(w => w.introductionYear <= year);
+  return getAllStandardWeapons().filter(w => w.introductionYear <= year);
 }
 
 // ============================================================================
@@ -117,7 +131,7 @@ export function isDirectFireWeaponById(weaponId: string): boolean {
  * Get all direct fire weapons
  */
 export function getDirectFireWeapons(): IWeapon[] {
-  return ALL_STANDARD_WEAPONS.filter(isDirectFireWeapon);
+  return getAllStandardWeapons().filter(isDirectFireWeapon);
 }
 
 /**
@@ -152,4 +166,3 @@ export function calculateDirectFireTonnageFromWeapons(weapons: readonly IWeapon[
     .filter(isDirectFireWeapon)
     .reduce((sum, weapon) => sum + weapon.weight, 0);
 }
-

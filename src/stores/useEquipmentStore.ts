@@ -41,6 +41,8 @@ export interface UnitContext {
   readonly unitYear: number | null;
   /** The unit's tech base (used for compatibility filtering) */
   readonly unitTechBase: TechBase | null;
+  /** The unit's mounted weapon IDs (used for ammo filtering) */
+  readonly unitWeaponIds: readonly string[];
 }
 
 /**
@@ -63,6 +65,8 @@ export interface EquipmentFilters {
   readonly hideOneShot: boolean;
   /** Hide unavailable equipment (filters by unit year and tech base) */
   readonly hideUnavailable: boolean;
+  /** Hide ammunition that doesn't have a matching weapon on the unit */
+  readonly hideAmmoWithoutWeapon: boolean;
   /** Maximum weight filter */
   readonly maxWeight: number | null;
   /** Maximum critical slots */
@@ -115,7 +119,7 @@ export interface EquipmentStoreState {
   setError: (error: string | null) => void;
   
   // Unit context actions
-  setUnitContext: (year: number | null, techBase: TechBase | null) => void;
+  setUnitContext: (year: number | null, techBase: TechBase | null, weaponIds?: readonly string[]) => void;
   
   // Filter actions
   setSearch: (search: string) => void;
@@ -129,6 +133,7 @@ export interface EquipmentStoreState {
   toggleHidePrototype: () => void;
   toggleHideOneShot: () => void;
   toggleHideUnavailable: () => void;
+  toggleHideAmmoWithoutWeapon: () => void;
   setMaxWeight: (weight: number | null) => void;
   setMaxCriticalSlots: (slots: number | null) => void;
   setMaxYear: (year: number | null) => void;
@@ -152,6 +157,7 @@ export interface EquipmentStoreState {
 const DEFAULT_UNIT_CONTEXT: UnitContext = {
   unitYear: null,
   unitTechBase: null,
+  unitWeaponIds: [],
 };
 
 /**
@@ -166,6 +172,7 @@ const DEFAULT_FILTERS: EquipmentFilters = {
   hidePrototype: false,
   hideOneShot: false,
   hideUnavailable: true, // Default to hiding unavailable
+  hideAmmoWithoutWeapon: false, // Default to showing all ammo
   maxWeight: null,
   maxCriticalSlots: null,
   maxYear: null,
@@ -212,8 +219,8 @@ export const useEquipmentStore = create<EquipmentStoreState>((set, get) => ({
   setError: (error) => set({ error }),
   
   // Unit context actions
-  setUnitContext: (year, techBase) => set((state) => ({
-    unitContext: { unitYear: year, unitTechBase: techBase },
+  setUnitContext: (year, techBase, weaponIds = []) => set((state) => ({
+    unitContext: { unitYear: year, unitTechBase: techBase, unitWeaponIds: weaponIds },
     pagination: { ...state.pagination, currentPage: 1 },
   })),
   
@@ -305,6 +312,11 @@ export const useEquipmentStore = create<EquipmentStoreState>((set, get) => ({
   
   toggleHideUnavailable: () => set((state) => ({
     filters: { ...state.filters, hideUnavailable: !state.filters.hideUnavailable },
+    pagination: { ...state.pagination, currentPage: 1 },
+  })),
+  
+  toggleHideAmmoWithoutWeapon: () => set((state) => ({
+    filters: { ...state.filters, hideAmmoWithoutWeapon: !state.filters.hideAmmoWithoutWeapon },
     pagination: { ...state.pagination, currentPage: 1 },
   })),
   
@@ -417,6 +429,33 @@ export const useEquipmentStore = create<EquipmentStoreState>((set, get) => ({
       if (unitContext.unitTechBase !== null) {
         filtered = filtered.filter(e => e.techBase === unitContext.unitTechBase);
       }
+    }
+    
+    // Hide ammunition without matching weapon on the unit
+    if (filters.hideAmmoWithoutWeapon && unitContext.unitWeaponIds.length > 0) {
+      filtered = filtered.filter(e => {
+        // Only filter ammunition
+        if (e.category !== EquipmentCategory.AMMUNITION) {
+          return true;
+        }
+        
+        // Check if any mounted weapon matches this ammo type
+        // Match by checking if the ammo name contains a weapon type that's mounted
+        const ammoName = e.name.toLowerCase();
+        
+        return unitContext.unitWeaponIds.some(weaponId => {
+          const weaponIdLower = weaponId.toLowerCase();
+          // Direct ID match (e.g., weapon "ac-10" matches ammo containing "ac/10" or "ac-10")
+          const normalizedWeaponId = weaponIdLower.replace(/-/g, '/');
+          const normalizedAmmoName = ammoName.replace(/-/g, '/');
+          
+          // Check common weapon type patterns in ammo names
+          // AC/10 Ammo -> ac/10, LRM 10 Ammo -> lrm, SRM 4 Ammo -> srm, etc.
+          return normalizedAmmoName.includes(normalizedWeaponId) ||
+                 // Handle variants like "armor-piercing ac/10 ammo"
+                 normalizedAmmoName.includes(normalizedWeaponId.replace('/', ''));
+        });
+      });
     }
     
     // Weight filter

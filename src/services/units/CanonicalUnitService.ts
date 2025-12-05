@@ -128,20 +128,16 @@ function isServerSide(): boolean {
 
 /**
  * Load JSON data from file system (server-side only)
+ * Uses dynamic import to avoid bundling Node.js modules in browser
  */
-function loadJsonFromFs<T>(relativePath: string): T | null {
+async function loadJsonFromFs<T>(relativePath: string): Promise<T | null> {
   try {
-    // Dynamic require to avoid bundling fs/path in browser
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const fs = require('fs') as typeof import('fs');
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const path = require('path') as typeof import('path');
+    // Dynamic import to avoid bundling fs/path in browser
+    const fs = await import('fs').then(m => m.promises);
+    const path = await import('path');
     
     const filePath = path.join(process.cwd(), 'public', relativePath);
-    if (!fs.existsSync(filePath)) {
-      return null;
-    }
-    const content = fs.readFileSync(filePath, 'utf-8');
+    const content = await fs.readFile(filePath, 'utf-8');
     return JSON.parse(content) as T;
   } catch {
     return null;
@@ -161,8 +157,8 @@ export class CanonicalUnitService implements ICanonicalUnitService {
    */
   private async loadJson<T>(relativePath: string): Promise<T | null> {
     if (isServerSide()) {
-      // Server-side: use Node.js fs module via dynamic require
-      return loadJsonFromFs<T>(relativePath);
+      // Server-side: use Node.js fs module via dynamic import
+      return await loadJsonFromFs<T>(relativePath);
     } else {
       // Client-side: use fetch
       try {

@@ -34,6 +34,15 @@ import { TechBase } from '@/types/enums/TechBase';
 import { EquipmentCategory } from '@/types/equipment';
 import { MechLocation } from '@/types/construction/CriticalSlotAllocation';
 
+// Mock EquipmentLoaderService - return not loaded so fallbacks are used
+jest.mock('@/services/equipment/EquipmentLoaderService', () => ({
+  getEquipmentLoader: jest.fn(() => ({
+    getIsLoaded: jest.fn(() => false),
+    getMiscEquipmentById: jest.fn(() => null),
+    getElectronicsById: jest.fn(() => null),
+  })),
+}));
+
 // Mock EquipmentCalculatorService
 interface MockEquipmentParams {
   tonnage?: number;
