@@ -4,16 +4,22 @@
 import { createMocks } from 'node-mocks-http';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import handler from '@/pages/api/equipment/catalog';
-import { equipmentLookupService } from '@/services/equipment/EquipmentLookupService';
+import { parseSuccessResponse, parseErrorResponse } from '../../helpers';
 
 // Mock the equipment lookup service
 jest.mock('@/services/equipment/EquipmentLookupService', () => ({
   equipmentLookupService: {
+    initialize: jest.fn().mockResolvedValue(undefined),
     getAllEquipment: jest.fn(),
     getAllWeapons: jest.fn(),
     getAllAmmunition: jest.fn(),
+    getDataSource: jest.fn().mockReturnValue('json'),
   },
 }));
+
+// Import after mocking to get mock references
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { equipmentLookupService } = require('@/services/equipment/EquipmentLookupService');
 
 const mockGetAllEquipment = equipmentLookupService.getAllEquipment as jest.Mock;
 const mockGetAllWeapons = equipmentLookupService.getAllWeapons as jest.Mock;
@@ -22,6 +28,8 @@ const mockGetAllAmmunition = equipmentLookupService.getAllAmmunition as jest.Moc
 describe('/api/equipment/catalog', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // Re-setup initialize mock after clearing
+    (equipmentLookupService.initialize as jest.Mock).mockResolvedValue(undefined);
   });
 
   describe('GET method validation', () => {
@@ -33,7 +41,7 @@ describe('/api/equipment/catalog', () => {
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(405);
-      const data = JSON.parse(res._getData());
+      const data = parseErrorResponse(res);
       expect(data.success).toBe(false);
       expect(data.error).toContain('Method not allowed');
     });
@@ -66,7 +74,7 @@ describe('/api/equipment/catalog', () => {
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(200);
-      const data = JSON.parse(res._getData());
+      const data = parseSuccessResponse(res);
       expect(data.success).toBe(true);
       expect(data.data).toEqual(mockEquipment);
       expect(data.count).toBe(3);
@@ -90,7 +98,7 @@ describe('/api/equipment/catalog', () => {
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(200);
-      const data = JSON.parse(res._getData());
+      const data = parseSuccessResponse(res);
       expect(data.success).toBe(true);
       expect(data.data).toEqual(mockWeapons);
       expect(data.count).toBe(2);
@@ -115,7 +123,7 @@ describe('/api/equipment/catalog', () => {
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(200);
-      const data = JSON.parse(res._getData());
+      const data = parseSuccessResponse(res);
       expect(data.success).toBe(true);
       expect(data.data).toEqual(mockAmmunition);
       expect(data.count).toBe(2);
@@ -141,7 +149,7 @@ describe('/api/equipment/catalog', () => {
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(200);
-      const data = JSON.parse(res._getData());
+      const data = parseSuccessResponse<Array<{ id: string; name: string }>>(res);
       expect(data.success).toBe(true);
       expect(data.data).toHaveLength(2);
       expect(data.data).toEqual([
@@ -166,9 +174,9 @@ describe('/api/equipment/catalog', () => {
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(200);
-      const data = JSON.parse(res._getData());
+      const data = parseSuccessResponse<Array<{ id: string; name: string }>>(res);
       expect(data.data).toHaveLength(1);
-      expect(data.data[0].name).toBe('Medium Laser');
+      expect(data.data?.[0].name).toBe('Medium Laser');
     });
 
     it('should return empty array when no matches found', async () => {
@@ -185,7 +193,7 @@ describe('/api/equipment/catalog', () => {
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(200);
-      const data = JSON.parse(res._getData());
+      const data = parseSuccessResponse(res);
       expect(data.data).toHaveLength(0);
       expect(data.count).toBe(0);
     });
@@ -206,7 +214,7 @@ describe('/api/equipment/catalog', () => {
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(200);
-      const data = JSON.parse(res._getData());
+      const data = parseSuccessResponse(res);
       expect(data.data).toHaveLength(2);
       expect(mockGetAllWeapons).toHaveBeenCalled();
     });
@@ -226,9 +234,9 @@ describe('/api/equipment/catalog', () => {
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(200);
-      const data = JSON.parse(res._getData());
+      const data = parseSuccessResponse<Array<{ id: string; name?: string }>>(res);
       expect(data.data).toHaveLength(1);
-      expect(data.data[0].id).toBe('medium-laser');
+      expect(data.data?.[0].id).toBe('medium-laser');
     });
   });
 
@@ -246,7 +254,7 @@ describe('/api/equipment/catalog', () => {
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(500);
-      const data = JSON.parse(res._getData());
+      const data = parseErrorResponse(res);
       expect(data.success).toBe(false);
       expect(data.error).toBe('Service unavailable');
     });
@@ -264,10 +272,9 @@ describe('/api/equipment/catalog', () => {
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(500);
-      const data = JSON.parse(res._getData());
+      const data = parseErrorResponse(res);
       expect(data.success).toBe(false);
       expect(data.error).toBe('Internal server error');
     });
   });
 });
-

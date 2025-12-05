@@ -4,13 +4,20 @@
  * Provides equipment browsing functionality with filtering,
  * sorting, and pagination.
  * 
+ * Automatically syncs with the active unit's year and tech base
+ * for availability filtering.
+ * 
+ * Uses JSON-based equipment loading with fallback to hardcoded constants.
+ * 
  * @spec openspec/specs/equipment-browser/spec.md
  */
 
-import { useEffect, useMemo, useCallback } from 'react';
+import { useEffect, useMemo, useCallback, useContext, useState } from 'react';
 import { useEquipmentStore, SortColumn } from '@/stores/useEquipmentStore';
+import { UnitStoreContext, type UnitStore } from '@/stores/useUnitStore';
 import { TechBase } from '@/types/enums/TechBase';
-import { EquipmentCategory, getAllEquipmentItems, IEquipmentItem } from '@/types/equipment';
+import { EquipmentCategory, IEquipmentItem } from '@/types/equipment';
+import { equipmentLookupService } from '@/services/equipment/EquipmentLookupService';
 
 /**
  * Equipment browser state and actions
@@ -23,6 +30,10 @@ export interface EquipmentBrowserState {
   readonly isLoading: boolean;
   readonly error: string | null;
   
+  // Unit context
+  readonly unitYear: number | null;
+  readonly unitTechBase: TechBase | null;
+  
   // Pagination
   readonly currentPage: number;
   readonly pageSize: number;
@@ -33,6 +44,12 @@ export interface EquipmentBrowserState {
   readonly search: string;
   readonly techBaseFilter: TechBase | null;
   readonly categoryFilter: EquipmentCategory | null;
+  readonly activeCategories: Set<EquipmentCategory>;
+  readonly showAllCategories: boolean;
+  readonly hidePrototype: boolean;
+  readonly hideOneShot: boolean;
+  readonly hideUnavailable: boolean;
+  readonly hideAmmoWithoutWeapon: boolean;
   
   // Sort
   readonly sortColumn: SortColumn;
@@ -42,6 +59,13 @@ export interface EquipmentBrowserState {
   readonly setSearch: (search: string) => void;
   readonly setTechBaseFilter: (techBase: TechBase | null) => void;
   readonly setCategoryFilter: (category: EquipmentCategory | null) => void;
+  /** Select category - exclusive by default, multi-select with Ctrl+click */
+  readonly selectCategory: (category: EquipmentCategory, isMultiSelect: boolean) => void;
+  readonly showAll: () => void;
+  readonly toggleHidePrototype: () => void;
+  readonly toggleHideOneShot: () => void;
+  readonly toggleHideUnavailable: () => void;
+  readonly toggleHideAmmoWithoutWeapon: () => void;
   readonly clearFilters: () => void;
   
   // Pagination actions
@@ -60,6 +84,54 @@ export interface EquipmentBrowserState {
 }
 
 /**
+ * Hook to safely get unit store values if within a unit context
+ * Uses subscription pattern to avoid conditional hook calls
+ */
+function useUnitContextValues(): { 
+  year: number | null; 
+  techBase: TechBase | null;
+  weaponIds: readonly string[];
+} {
+  const unitStore = useContext(UnitStoreContext);
+  const [values, setValues] = useState<{ 
+    year: number | null; 
+    techBase: TechBase | null;
+    weaponIds: readonly string[];
+  }>({
+    year: null,
+    techBase: null,
+    weaponIds: [],
+  });
+  
+  useEffect(() => {
+    if (!unitStore) {
+      setValues({ year: null, techBase: null, weaponIds: [] });
+      return;
+    }
+    
+    // Get initial values
+    const state = unitStore.getState();
+    // Extract weapon IDs from equipment (non-ammo items with weapon-like categories)
+    const weaponIds = state.equipment
+      .filter(eq => !eq.equipmentId.toLowerCase().includes('ammo'))
+      .map(eq => eq.equipmentId);
+    setValues({ year: state.year, techBase: state.techBase, weaponIds });
+    
+    // Subscribe to changes
+    const unsubscribe = unitStore.subscribe((state: UnitStore) => {
+      const weaponIds = state.equipment
+        .filter(eq => !eq.equipmentId.toLowerCase().includes('ammo'))
+        .map(eq => eq.equipmentId);
+      setValues({ year: state.year, techBase: state.techBase, weaponIds });
+    });
+    
+    return unsubscribe;
+  }, [unitStore]);
+  
+  return values;
+}
+
+/**
  * Hook for equipment browser functionality
  */
 export function useEquipmentBrowser(): EquipmentBrowserState {
@@ -73,9 +145,16 @@ export function useEquipmentBrowser(): EquipmentBrowserState {
     setEquipment,
     setLoading,
     setError,
+    setUnitContext,
     setSearch,
     setTechBaseFilter,
     setCategoryFilter,
+    selectCategory,
+    showAllCategories,
+    toggleHidePrototype,
+    toggleHideOneShot,
+    toggleHideUnavailable,
+    toggleHideAmmoWithoutWeapon,
     clearFilters,
     setPage,
     setPageSize,
@@ -83,6 +162,14 @@ export function useEquipmentBrowser(): EquipmentBrowserState {
     getFilteredEquipment,
     getPaginatedEquipment,
   } = useEquipmentStore();
+  
+  // Get unit year, tech base, and weapon IDs from unit store context (if available)
+  const { year: unitYear, techBase: unitTechBase, weaponIds: unitWeaponIds } = useUnitContextValues();
+  
+  // Sync unit context with equipment store when unit changes
+  useEffect(() => {
+    setUnitContext(unitYear, unitTechBase, unitWeaponIds);
+  }, [unitYear, unitTechBase, unitWeaponIds, setUnitContext]);
   
   // Load equipment on mount
   useEffect(() => {
@@ -92,12 +179,14 @@ export function useEquipmentBrowser(): EquipmentBrowserState {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
-  const loadEquipment = useCallback(() => {
+  const loadEquipment = useCallback(async () => {
     setLoading(true);
     setError(null);
     
     try {
-      const items = getAllEquipmentItems();
+      // Initialize the equipment service (loads from JSON with fallback)
+      await equipmentLookupService.initialize();
+      const items = equipmentLookupService.getAllEquipment();
       setEquipment(items);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load equipment');
@@ -107,8 +196,35 @@ export function useEquipmentBrowser(): EquipmentBrowserState {
   }, [setEquipment, setLoading, setError]);
   
   // Memoized filtered and paginated equipment
-  const filteredEquipment = useMemo(() => getFilteredEquipment(), [getFilteredEquipment]);
-  const paginatedEquipment = useMemo(() => getPaginatedEquipment(), [getPaginatedEquipment]);
+  // Include filter values in dependencies to trigger re-computation when filters change
+  const filteredEquipment = useMemo(
+    () => getFilteredEquipment(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      getFilteredEquipment,
+      equipment,
+      filters.search,
+      filters.techBase,
+      filters.category,
+      filters.activeCategories,
+      filters.showAllCategories,
+      filters.hidePrototype,
+      filters.hideOneShot,
+      filters.hideUnavailable,
+      filters.hideAmmoWithoutWeapon,
+      sort.column,
+      sort.direction,
+      // Unit context affects filtering when hideUnavailable or hideAmmoWithoutWeapon is true
+      unitYear,
+      unitTechBase,
+      unitWeaponIds,
+    ]
+  );
+  const paginatedEquipment = useMemo(
+    () => getPaginatedEquipment(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [getPaginatedEquipment, filteredEquipment, pagination.currentPage, pagination.pageSize]
+  );
   
   // Total pages calculation
   const totalPages = useMemo(
@@ -136,6 +252,10 @@ export function useEquipmentBrowser(): EquipmentBrowserState {
     isLoading,
     error,
     
+    // Unit context
+    unitYear,
+    unitTechBase,
+    
     // Pagination
     currentPage: pagination.currentPage,
     pageSize: pagination.pageSize,
@@ -146,6 +266,12 @@ export function useEquipmentBrowser(): EquipmentBrowserState {
     search: filters.search,
     techBaseFilter: filters.techBase,
     categoryFilter: filters.category,
+    activeCategories: filters.activeCategories,
+    showAllCategories: filters.showAllCategories,
+    hidePrototype: filters.hidePrototype,
+    hideOneShot: filters.hideOneShot,
+    hideUnavailable: filters.hideUnavailable,
+    hideAmmoWithoutWeapon: filters.hideAmmoWithoutWeapon,
     
     // Sort
     sortColumn: sort.column,
@@ -155,6 +281,12 @@ export function useEquipmentBrowser(): EquipmentBrowserState {
     setSearch,
     setTechBaseFilter,
     setCategoryFilter,
+    selectCategory,
+    showAll: showAllCategories,
+    toggleHidePrototype,
+    toggleHideOneShot,
+    toggleHideUnavailable,
+    toggleHideAmmoWithoutWeapon,
     clearFilters,
     
     // Pagination actions

@@ -9,6 +9,7 @@ import {
   IVariableFormulas, 
   ceilDivide, 
   floorDivide,
+  roundDivide,
   equalsWeight, 
   multiply, 
   fixed,
@@ -18,7 +19,7 @@ import {
 
 /**
  * Built-in test formulas for common equipment
- * Uses proper IFormula structure matching builtinFormulas.ts
+ * Uses proper IFormula structure matching variableEquipmentFormulas.ts
  */
 const TEST_FORMULAS: Map<string, IVariableFormulas> = new Map([
   ['targeting-computer-is', {
@@ -34,18 +35,22 @@ const TEST_FORMULAS: Map<string, IVariableFormulas> = new Map([
     requiredContext: ['directFireWeaponTonnage'],
   }],
   ['masc-is', {
-    weight: ceilDivide('engineRating', 20),
+    // MASC (IS): tonnage / 20, rounded to nearest whole ton
+    // Examples: 85t → 4 tons, 90t → 5 tons
+    weight: roundDivide('tonnage', 20),
     criticalSlots: equalsWeight(),
     cost: multiply('tonnage', 1000),
-    requiredContext: ['engineRating', 'tonnage'],
+    requiredContext: ['tonnage'],
   }],
   ['masc-clan', {
-    weight: ceilDivide('engineRating', 25),
+    // MASC (Clan): tonnage / 25, rounded to nearest whole ton
+    weight: roundDivide('tonnage', 25),
     criticalSlots: equalsWeight(),
     cost: multiply('tonnage', 1000),
-    requiredContext: ['engineRating', 'tonnage'],
+    requiredContext: ['tonnage'],
   }],
   ['supercharger', {
+    // Weight = engineWeight × 10%, rounded up to nearest 0.5 ton
     weight: multiplyRound('engineWeight', 0.1, 0.5),
     criticalSlots: fixed(1),
     cost: multiply('engineWeight', 10000),

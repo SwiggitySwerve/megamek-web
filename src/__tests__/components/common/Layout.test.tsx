@@ -81,8 +81,8 @@ describe('Layout', () => {
         </Layout>
       );
 
-      // When collapsed, should have ml-20 class
-      const contentArea = container.querySelector('.md\\:ml-20');
+      // When collapsed, should have ml-12 class
+      const contentArea = container.querySelector('.md\\:ml-12');
       expect(contentArea).toBeInTheDocument();
     });
 
@@ -96,8 +96,8 @@ describe('Layout', () => {
         </Layout>
       );
 
-      // When expanded, should have ml-64 class
-      const contentArea = container.querySelector('.md\\:ml-64');
+      // When expanded, should have ml-40 class
+      const contentArea = container.querySelector('.md\\:ml-40');
       expect(contentArea).toBeInTheDocument();
     });
 

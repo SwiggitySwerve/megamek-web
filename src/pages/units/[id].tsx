@@ -18,7 +18,7 @@ import {
   StatGrid,
 } from '@/components/ui';
 
-export default function UnitDetailPage() {
+export default function UnitDetailPage(): React.ReactElement {
   const router = useRouter();
   const { id } = router.query;
   
@@ -32,9 +32,9 @@ export default function UnitDetailPage() {
     async function fetchUnit() {
       try {
         const response = await fetch(`/api/units?id=${encodeURIComponent(id as string)}`);
-        const data = await response.json();
+        const data = await response.json() as { success: boolean; data?: IUnitDetails; error?: string };
         
-        if (data.success) {
+        if (data.success && data.data) {
           setUnit(data.data);
         } else {
           setError(data.error || 'Unit not found');

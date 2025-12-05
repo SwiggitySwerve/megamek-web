@@ -58,11 +58,11 @@ export function ControlledInput<T = string>({
   onKeyUp,
   onKeyPress,
   ...props
-}: ControlledInputProps<T>) {
+}: ControlledInputProps<T>): React.ReactElement {
   const [localValue, setLocalValue] = useState<T>(value)
   const [validationResult, setValidationResult] = useState<ValidationResult>({ isValid: true })
   const [isDirty, setIsDirty] = useState(false)
-  const [isFocused, setIsFocused] = useState(false)
+  const [, _setIsFocused] = useState(false)
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -108,7 +108,7 @@ export function ControlledInput<T = string>({
 
   // CRITICAL: Handle input blur
   const handleBlur = useCallback(() => {
-    setIsFocused(false)
+    _setIsFocused(false)
     
     // CRITICAL: Force validation on blur
     if (validation) {
@@ -132,7 +132,7 @@ export function ControlledInput<T = string>({
 
   // CRITICAL: Handle input focus
   const handleFocus = useCallback(() => {
-    setIsFocused(true)
+    _setIsFocused(true)
     if (onFocus) {
       onFocus()
     }
@@ -301,11 +301,22 @@ export function ControlledInput<T = string>({
 }
 
 // CRITICAL: Hook for controlled input state management
+interface UseControlledInputReturn<T> {
+  value: T;
+  validationResult: ValidationResult;
+  isDirty: boolean;
+  handleChange: (newValue: T) => void;
+  reset: () => void;
+  isValid: boolean;
+  error?: string;
+  warning?: string;
+}
+
 export function useControlledInput<T = string>(
   initialValue: T,
   validation?: (value: T) => ValidationResult,
-  debounceMs: number = 300
-) {
+  _debounceMs: number = 300
+): UseControlledInputReturn<T> {
   const [value, setValue] = useState<T>(initialValue)
   const [validationResult, setValidationResult] = useState<ValidationResult>({ isValid: true })
   const [isDirty, setIsDirty] = useState(false)
@@ -344,11 +355,11 @@ export function useControlledInput<T = string>(
 }
 
 // CRITICAL: Higher-order component for easy controlled input wrapping
-export function withControlledInput<P extends { value?: any }>(
+export function withControlledInput<P extends { value?: string | number }>(
   Component: React.ComponentType<P>,
-  validation?: (value: any) => ValidationResult
+  validation?: (value: string | number) => ValidationResult
 ) {
-  return function WithControlledInput(props: P) {
+  return function WithControlledInput(props: P): React.ReactElement {
     const controlledProps = useControlledInput(props.value || '', validation)
     
     return (

@@ -88,8 +88,8 @@ describe('eraUtils', () => {
       expect(getEraForYear(3160)).toBe(Era.IL_CLAN);
     });
 
-    it('should return undefined for year before all eras', () => {
-      expect(getEraForYear(1500)).toBeUndefined();
+    it('should return Early Spaceflight for year 1500', () => {
+      expect(getEraForYear(1500)).toBe(Era.EARLY_SPACEFLIGHT);
     });
   });
 
@@ -112,8 +112,10 @@ describe('eraUtils', () => {
       expect(def?.description).toBeDefined();
     });
 
-    it('should return undefined for year outside eras', () => {
-      expect(getEraDefinitionForYear(1000)).toBeUndefined();
+    it('should return Early Spaceflight for year 1000', () => {
+      const def = getEraDefinitionForYear(1000);
+      expect(def).toBeDefined();
+      expect(def?.era).toBe(Era.EARLY_SPACEFLIGHT);
     });
   });
 
@@ -290,10 +292,11 @@ describe('eraUtils', () => {
       expect(eras.length).toBe(ERA_DEFINITIONS.length);
     });
 
-    it('should return empty array for year before all eras', () => {
+    it('should return Early Spaceflight for year 1000', () => {
       const eras = getErasUntilYear(1000);
       
-      expect(eras).toHaveLength(0);
+      expect(eras).toHaveLength(1);
+      expect(eras).toContain(Era.EARLY_SPACEFLIGHT);
     });
   });
 

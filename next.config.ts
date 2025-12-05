@@ -1,4 +1,21 @@
 import type { NextConfig } from "next";
+import type { Configuration, WebpackPluginInstance } from "webpack";
+import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
+
+interface WebpackContext {
+  buildId: string;
+  dev: boolean;
+  isServer: boolean;
+  defaultLoaders: unknown;
+  webpack: {
+    ProgressPlugin: new (options: {
+      activeModules?: boolean;
+      entries?: boolean;
+      modules?: boolean;
+      dependencies?: boolean;
+    }) => WebpackPluginInstance;
+  };
+}
 
 const nextConfig: NextConfig = {
   // Enable React strict mode for better development experience
@@ -7,6 +24,10 @@ const nextConfig: NextConfig = {
   // Turbopack config (empty to silence Next.js 16 warning)
   turbopack: {},
   
+  // Enable standalone output for Docker and Electron deployment
+  // This creates a self-contained build with all dependencies
+  output: 'standalone',
+  
   // Optimize for production builds
   experimental: {
     // Enable modern output for better tree-shaking
@@ -14,11 +35,11 @@ const nextConfig: NextConfig = {
   },
 
   // Webpack configuration for bundle optimization
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+  webpack: (config: Configuration, { dev, isServer, webpack }: WebpackContext): Configuration => {
     // Enable tree-shaking for equipment data files
-    if (!dev) {
+    if (!dev && config.optimization && config.module?.rules) {
       config.optimization.sideEffects = false;
-      
+
       // Add specific tree-shaking rules for equipment files
       config.module.rules.push({
         test: /src\/data\/equipment.*\.ts$/,
@@ -27,8 +48,7 @@ const nextConfig: NextConfig = {
     }
 
     // Add bundle analyzer in development
-    if (dev && !isServer) {
-      const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+    if (dev && !isServer && config.plugins) {
       config.plugins.push(
         new BundleAnalyzerPlugin({
           analyzerMode: 'server',
@@ -39,11 +59,16 @@ const nextConfig: NextConfig = {
     }
 
     // Optimize chunk splitting for better caching
-    if (!dev && !isServer) {
+    if (!dev && !isServer && config.optimization) {
+      const existingSplitChunks = config.optimization.splitChunks;
+      const existingCacheGroups = existingSplitChunks && typeof existingSplitChunks === 'object'
+        ? existingSplitChunks.cacheGroups
+        : {};
+      
       config.optimization.splitChunks = {
-        ...config.optimization.splitChunks,
+        ...(existingSplitChunks && typeof existingSplitChunks === 'object' ? existingSplitChunks : {}),
         cacheGroups: {
-          ...config.optimization.splitChunks.cacheGroups,
+          ...(existingCacheGroups && typeof existingCacheGroups === 'object' ? existingCacheGroups : {}),
           
           // Separate chunk for equipment data
           equipment: {
@@ -81,7 +106,7 @@ const nextConfig: NextConfig = {
     }
 
     // Add progress plugin for build feedback
-    if (!dev) {
+    if (!dev && config.plugins) {
       config.plugins.push(
         new webpack.ProgressPlugin({
           activeModules: true,
@@ -93,14 +118,16 @@ const nextConfig: NextConfig = {
     }
 
     // Optimize module resolution for faster builds
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      '@/services': './src/services',
-      '@/utils': './src/utils',
-      '@/components': './src/components',
-      '@/data': './src/data',
-      '@/types': './src/types',
-    };
+    if (config.resolve) {
+      config.resolve.alias = {
+        ...(config.resolve.alias as Record<string, string>),
+        '@/services': './src/services',
+        '@/utils': './src/utils',
+        '@/components': './src/components',
+        '@/data': './src/data',
+        '@/types': './src/types',
+      };
+    }
 
     return config;
   },

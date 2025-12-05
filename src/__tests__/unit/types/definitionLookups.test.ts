@@ -71,7 +71,7 @@ describe('Definition Lookups', () => {
         const engines = getEnginesForTechBase(TechBase.INNER_SPHERE);
         expect(engines.length).toBeGreaterThan(0);
         engines.forEach(e => {
-          expect([TechBase.INNER_SPHERE, TechBase.BOTH]).toContain(e.techBase);
+          expect(e.techBase).toBe(TechBase.INNER_SPHERE);
         });
       });
 

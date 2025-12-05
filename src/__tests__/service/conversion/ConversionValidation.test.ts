@@ -10,7 +10,6 @@ import {
   validateConvertedUnit,
   validateBatch,
   ConversionValidationSeverity,
-  ConversionValidationResult,
 } from '@/services/conversion/ConversionValidation';
 import { ISerializedUnit } from '@/types/unit/UnitSerialization';
 import { TechBase } from '@/types/enums/TechBase';

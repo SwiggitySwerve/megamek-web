@@ -6,16 +6,474 @@
  * @spec openspec/specs/equipment-database/spec.md
  */
 
-import { EquipmentLookupService } from '@/services/equipment/EquipmentLookupService';
 import { TechBase } from '@/types/enums/TechBase';
 import { RulesLevel } from '@/types/enums/RulesLevel';
 import { EquipmentCategory } from '@/types/equipment';
+import { WeaponCategory } from '@/types/equipment/weapons/interfaces';
+import { AmmoCategory, AmmoVariant } from '@/types/equipment/AmmunitionTypes';
+import { ElectronicsCategory } from '@/types/equipment/ElectronicsTypes';
+import { MiscEquipmentCategory } from '@/types/equipment/MiscEquipmentTypes';
+
+// Mock data for testing - must be declared before jest.mock
+const getMockWeapons = () => [
+  {
+    id: 'medium-laser',
+    name: 'Medium Laser',
+    category: WeaponCategory.ENERGY,
+    subType: 'Laser',
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.INTRODUCTORY,
+    damage: 5,
+    heat: 3,
+    ranges: { minimum: 0, short: 3, medium: 6, long: 9 },
+    weight: 1,
+    criticalSlots: 1,
+    costCBills: 40000,
+    battleValue: 46,
+    introductionYear: 2300,
+  },
+  {
+    id: 'large-laser',
+    name: 'Large Laser',
+    category: WeaponCategory.ENERGY,
+    subType: 'Laser',
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.INTRODUCTORY,
+    damage: 8,
+    heat: 8,
+    ranges: { minimum: 0, short: 5, medium: 10, long: 15 },
+    weight: 5,
+    criticalSlots: 2,
+    costCBills: 100000,
+    battleValue: 124,
+    introductionYear: 2316,
+  },
+  {
+    id: 'er-large-laser',
+    name: 'ER Large Laser',
+    category: WeaponCategory.ENERGY,
+    subType: 'Laser',
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 8,
+    heat: 12,
+    ranges: { minimum: 0, short: 7, medium: 14, long: 19 },
+    weight: 5,
+    criticalSlots: 2,
+    costCBills: 200000,
+    battleValue: 163,
+    introductionYear: 3037,
+  },
+  {
+    id: 'clan-er-large-laser',
+    name: 'ER Large Laser (Clan)',
+    category: WeaponCategory.ENERGY,
+    subType: 'Laser',
+    techBase: TechBase.CLAN,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 10,
+    heat: 12,
+    ranges: { minimum: 0, short: 8, medium: 15, long: 25 },
+    weight: 4,
+    criticalSlots: 1,
+    costCBills: 200000,
+    battleValue: 248,
+    introductionYear: 2820,
+  },
+  {
+    id: 'medium-pulse-laser',
+    name: 'Medium Pulse Laser',
+    category: WeaponCategory.ENERGY,
+    subType: 'Pulse',
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    damage: 6,
+    heat: 4,
+    ranges: { minimum: 0, short: 2, medium: 4, long: 6 },
+    weight: 2,
+    criticalSlots: 1,
+    costCBills: 60000,
+    battleValue: 48,
+    introductionYear: 2609,
+  },
+  {
+    id: 'ac-10',
+    name: 'Autocannon/10',
+    category: WeaponCategory.BALLISTIC,
+    subType: 'Autocannon',
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.INTRODUCTORY,
+    damage: 10,
+    heat: 3,
+    ranges: { minimum: 0, short: 5, medium: 10, long: 15 },
+    weight: 12,
+    criticalSlots: 7,
+    costCBills: 200000,
+    battleValue: 123,
+    introductionYear: 2460,
+  },
+  {
+    id: 'lrm-10',
+    name: 'LRM 10',
+    category: WeaponCategory.MISSILE,
+    subType: 'LRM',
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.INTRODUCTORY,
+    damage: 1,
+    heat: 4,
+    ranges: { minimum: 6, short: 7, medium: 14, long: 21 },
+    weight: 5,
+    criticalSlots: 2,
+    costCBills: 100000,
+    battleValue: 90,
+    introductionYear: 2400,
+  },
+];
+
+const getMockAmmunition = () => [
+  {
+    id: 'ac-10-ammo',
+    name: 'Autocannon/10 Ammo',
+    category: AmmoCategory.AUTOCANNON,
+    variant: AmmoVariant.STANDARD,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.INTRODUCTORY,
+    compatibleWeaponIds: ['ac-10'],
+    shotsPerTon: 10,
+    weight: 1,
+    criticalSlots: 1,
+    costPerTon: 6000,
+    battleValue: 15,
+    isExplosive: true,
+    introductionYear: 2460,
+  },
+  {
+    id: 'lrm-10-ammo',
+    name: 'LRM 10 Ammo',
+    category: AmmoCategory.LRM,
+    variant: AmmoVariant.STANDARD,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.INTRODUCTORY,
+    compatibleWeaponIds: ['lrm-10'],
+    shotsPerTon: 12,
+    weight: 1,
+    criticalSlots: 1,
+    costPerTon: 30000,
+    battleValue: 11,
+    isExplosive: true,
+    introductionYear: 2400,
+  },
+];
+
+const getMockElectronics = () => [
+  {
+    id: 'guardian-ecm',
+    name: 'Guardian ECM',
+    category: ElectronicsCategory.ECM,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    weight: 1.5,
+    criticalSlots: 2,
+    costCBills: 200000,
+    battleValue: 61,
+    introductionYear: 3045,
+  },
+  {
+    id: 'beagle-active-probe',
+    name: 'Beagle Active Probe',
+    category: ElectronicsCategory.PROBE,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    weight: 1.5,
+    criticalSlots: 2,
+    costCBills: 200000,
+    battleValue: 10,
+    introductionYear: 3045,
+  },
+];
+
+const getMockMiscEquipment = () => [
+  {
+    id: 'masc',
+    name: 'MASC',
+    category: MiscEquipmentCategory.MOVEMENT,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    weight: 0,
+    criticalSlots: 0,
+    costCBills: 0,
+    battleValue: 0,
+    introductionYear: 2740,
+    variableEquipmentId: 'masc-is',
+  },
+  {
+    id: 'artemis-iv',
+    name: 'Artemis IV FCS',
+    category: MiscEquipmentCategory.DEFENSIVE,
+    techBase: TechBase.INNER_SPHERE,
+    rulesLevel: RulesLevel.STANDARD,
+    weight: 1,
+    criticalSlots: 1,
+    costCBills: 100000,
+    battleValue: 0,
+    introductionYear: 2598,
+  },
+];
+
+// Mock the EquipmentLoaderService
+jest.mock('@/services/equipment/EquipmentLoaderService', () => {
+  // Use correct enum string values for TechBase and RulesLevel
+  const TechBaseValues = {
+    INNER_SPHERE: 'Inner Sphere',
+    CLAN: 'Clan',
+  };
+  
+  const RulesLevelValues = {
+    INTRODUCTORY: 'Introductory',
+    STANDARD: 'Standard',
+    ADVANCED: 'Advanced',
+    EXPERIMENTAL: 'Experimental',
+  };
+  
+  // Must define mock data inside the factory function
+  const mockWeapons = [
+    {
+      id: 'medium-laser',
+      name: 'Medium Laser',
+      category: 'Energy',
+      subType: 'Laser',
+      techBase: TechBaseValues.INNER_SPHERE,
+      rulesLevel: RulesLevelValues.INTRODUCTORY,
+      damage: 5,
+      heat: 3,
+      ranges: { minimum: 0, short: 3, medium: 6, long: 9 },
+      weight: 1,
+      criticalSlots: 1,
+      costCBills: 40000,
+      battleValue: 46,
+      introductionYear: 2300,
+    },
+    {
+      id: 'large-laser',
+      name: 'Large Laser',
+      category: 'Energy',
+      subType: 'Laser',
+      techBase: TechBaseValues.INNER_SPHERE,
+      rulesLevel: RulesLevelValues.INTRODUCTORY,
+      damage: 8,
+      heat: 8,
+      ranges: { minimum: 0, short: 5, medium: 10, long: 15 },
+      weight: 5,
+      criticalSlots: 2,
+      costCBills: 100000,
+      battleValue: 124,
+      introductionYear: 2316,
+    },
+    {
+      id: 'er-large-laser',
+      name: 'ER Large Laser',
+      category: 'Energy',
+      subType: 'Laser',
+      techBase: TechBaseValues.INNER_SPHERE,
+      rulesLevel: RulesLevelValues.STANDARD,
+      damage: 8,
+      heat: 12,
+      ranges: { minimum: 0, short: 7, medium: 14, long: 19 },
+      weight: 5,
+      criticalSlots: 2,
+      costCBills: 200000,
+      battleValue: 163,
+      introductionYear: 3037,
+    },
+    {
+      id: 'clan-er-large-laser',
+      name: 'ER Large Laser (Clan)',
+      category: 'Energy',
+      subType: 'Laser',
+      techBase: TechBaseValues.CLAN,
+      rulesLevel: RulesLevelValues.STANDARD,
+      damage: 10,
+      heat: 12,
+      ranges: { minimum: 0, short: 8, medium: 15, long: 25 },
+      weight: 4,
+      criticalSlots: 1,
+      costCBills: 200000,
+      battleValue: 248,
+      introductionYear: 2820,
+    },
+    {
+      id: 'medium-pulse-laser',
+      name: 'Medium Pulse Laser',
+      category: 'Energy',
+      subType: 'Pulse',
+      techBase: TechBaseValues.INNER_SPHERE,
+      rulesLevel: RulesLevelValues.STANDARD,
+      damage: 6,
+      heat: 4,
+      ranges: { minimum: 0, short: 2, medium: 4, long: 6 },
+      weight: 2,
+      criticalSlots: 1,
+      costCBills: 60000,
+      battleValue: 48,
+      introductionYear: 2609,
+    },
+    {
+      id: 'ac-10',
+      name: 'Autocannon/10',
+      category: 'Ballistic',
+      subType: 'Autocannon',
+      techBase: TechBaseValues.INNER_SPHERE,
+      rulesLevel: RulesLevelValues.INTRODUCTORY,
+      damage: 10,
+      heat: 3,
+      ranges: { minimum: 0, short: 5, medium: 10, long: 15 },
+      weight: 12,
+      criticalSlots: 7,
+      costCBills: 200000,
+      battleValue: 123,
+      introductionYear: 2460,
+    },
+    {
+      id: 'lrm-10',
+      name: 'LRM 10',
+      category: 'Missile',
+      subType: 'LRM',
+      techBase: TechBaseValues.INNER_SPHERE,
+      rulesLevel: RulesLevelValues.INTRODUCTORY,
+      damage: 1,
+      heat: 4,
+      ranges: { minimum: 6, short: 7, medium: 14, long: 21 },
+      weight: 5,
+      criticalSlots: 2,
+      costCBills: 100000,
+      battleValue: 90,
+      introductionYear: 2400,
+    },
+  ];
+
+  const mockAmmunition = [
+    {
+      id: 'ac-10-ammo',
+      name: 'Autocannon/10 Ammo',
+      category: 'Autocannon',
+      variant: 'Standard',
+      techBase: TechBaseValues.INNER_SPHERE,
+      rulesLevel: RulesLevelValues.INTRODUCTORY,
+      compatibleWeaponIds: ['ac-10'],
+      shotsPerTon: 10,
+      weight: 1,
+      criticalSlots: 1,
+      costPerTon: 6000,
+      battleValue: 15,
+      isExplosive: true,
+      introductionYear: 2460,
+    },
+    {
+      id: 'lrm-10-ammo',
+      name: 'LRM 10 Ammo',
+      category: 'LRM',
+      variant: 'Standard',
+      techBase: TechBaseValues.INNER_SPHERE,
+      rulesLevel: RulesLevelValues.INTRODUCTORY,
+      compatibleWeaponIds: ['lrm-10'],
+      shotsPerTon: 12,
+      weight: 1,
+      criticalSlots: 1,
+      costPerTon: 30000,
+      battleValue: 11,
+      isExplosive: true,
+      introductionYear: 2400,
+    },
+  ];
+
+  const mockElectronics = [
+    {
+      id: 'guardian-ecm',
+      name: 'Guardian ECM',
+      category: 'ECM',
+      techBase: TechBaseValues.INNER_SPHERE,
+      rulesLevel: RulesLevelValues.STANDARD,
+      weight: 1.5,
+      criticalSlots: 2,
+      costCBills: 200000,
+      battleValue: 61,
+      introductionYear: 3045,
+    },
+    {
+      id: 'beagle-active-probe',
+      name: 'Beagle Active Probe',
+      category: 'Probe',
+      techBase: TechBaseValues.INNER_SPHERE,
+      rulesLevel: RulesLevelValues.STANDARD,
+      weight: 1.5,
+      criticalSlots: 2,
+      costCBills: 200000,
+      battleValue: 10,
+      introductionYear: 3045,
+    },
+  ];
+
+  const mockMiscEquipment = [
+    {
+      id: 'masc',
+      name: 'MASC',
+      category: 'Movement Enhancement',
+      techBase: TechBaseValues.INNER_SPHERE,
+      rulesLevel: RulesLevelValues.STANDARD,
+      weight: 0,
+      criticalSlots: 0,
+      costCBills: 0,
+      battleValue: 0,
+      introductionYear: 2740,
+      variableEquipmentId: 'masc-is',
+    },
+    {
+      id: 'artemis-iv',
+      name: 'Artemis IV FCS',
+      category: 'Defensive',
+      techBase: TechBaseValues.INNER_SPHERE,
+      rulesLevel: RulesLevelValues.STANDARD,
+      weight: 1,
+      criticalSlots: 1,
+      costCBills: 100000,
+      battleValue: 0,
+      introductionYear: 2598,
+    },
+  ];
+
+  const mockLoader = {
+    getIsLoaded: jest.fn(() => true),
+    getTotalCount: jest.fn(() => 150), // Must be >= 100 to trigger JSON source mode
+    getAllWeapons: jest.fn(() => mockWeapons),
+    getAllAmmunition: jest.fn(() => mockAmmunition),
+    getAllElectronics: jest.fn(() => mockElectronics),
+    getAllMiscEquipment: jest.fn(() => mockMiscEquipment),
+    loadOfficialEquipment: jest.fn(async () => ({
+      success: true,
+      itemsLoaded: 150, // Must be >= 100 to trigger JSON source mode
+      errors: [],
+      warnings: [],
+    })),
+  };
+
+  return {
+    getEquipmentLoader: jest.fn(() => mockLoader),
+    EquipmentLoaderService: {
+      getInstance: jest.fn(() => mockLoader),
+    },
+  };
+});
+
+// Import after mock is set up
+import { EquipmentLookupService } from '@/services/equipment/EquipmentLookupService';
 
 describe('EquipmentLookupService', () => {
   let service: EquipmentLookupService;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     service = new EquipmentLookupService();
+    // Initialize the service to load mock data
+    await service.initialize();
   });
 
   // ============================================================================
@@ -103,6 +561,12 @@ describe('EquipmentLookupService', () => {
     it('should return undefined for unknown ID', () => {
       expect(service.getById('non-existent-id-12345')).toBeUndefined();
     });
+
+    it('should find medium laser by ID', () => {
+      const medLaser = service.getById('medium-laser');
+      expect(medLaser).toBeDefined();
+      expect(medLaser?.name).toBe('Medium Laser');
+    });
   });
 
   // ============================================================================
@@ -121,6 +585,16 @@ describe('EquipmentLookupService', () => {
       // If all categories have items, this might not be testable
       const result = service.getByCategory('INVALID' as EquipmentCategory);
       expect(Array.isArray(result)).toBe(true);
+    });
+
+    it('should return energy weapons', () => {
+      const energyWeapons = service.getByCategory(EquipmentCategory.ENERGY_WEAPON);
+      expect(energyWeapons.length).toBeGreaterThan(0);
+    });
+
+    it('should return ballistic weapons', () => {
+      const ballisticWeapons = service.getByCategory(EquipmentCategory.BALLISTIC_WEAPON);
+      expect(ballisticWeapons.length).toBeGreaterThan(0);
     });
   });
 
@@ -279,6 +753,25 @@ describe('EquipmentLookupService', () => {
   });
 
   // ============================================================================
+  // Data Source
+  // ============================================================================
+  describe('Data Source', () => {
+    it('should report json as data source when loaded', () => {
+      expect(service.getDataSource()).toBe('json');
+    });
+
+    it('should be initialized', () => {
+      expect(service.isInitialized()).toBe(true);
+    });
+
+    it('should have load result', () => {
+      const result = service.getLoadResult();
+      expect(result).toBeDefined();
+      expect(result?.success).toBe(true);
+    });
+  });
+
+  // ============================================================================
   // Data Integrity
   // ============================================================================
   describe('Data Integrity', () => {
@@ -323,4 +816,3 @@ describe('EquipmentLookupService', () => {
     });
   });
 });
-

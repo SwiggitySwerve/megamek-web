@@ -3,7 +3,7 @@
  */
 import '@testing-library/jest-dom';
 import React from 'react';
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { ControlledInput, useControlledInput, ValidationResult } from '@/components/common/ControlledInput';
 
 // Mock timers for debounce testing
@@ -287,7 +287,6 @@ describe('useControlledInput hook', () => {
   }) => {
     const {
       value,
-      validationResult,
       isDirty,
       handleChange,
       reset,

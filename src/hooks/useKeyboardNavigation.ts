@@ -6,7 +6,7 @@
  * @spec openspec/specs/confirmation-dialogs/spec.md
  */
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 
 /**
  * Navigation direction
@@ -50,7 +50,11 @@ export function useKeyboardNavigation<T>({
   horizontal = false,
   columns,
   enabled = true,
-}: KeyboardNavOptions<T>) {
+}: KeyboardNavOptions<T>): {
+  navigate: (direction: NavDirection) => void;
+  handleKeyDown: (e: KeyboardEvent) => void;
+  currentIndex: number;
+} {
   // Find current index
   const currentIndex = selectedItem 
     ? items.findIndex(item => getKey(item) === getKey(selectedItem))
@@ -123,7 +127,7 @@ export function useKeyboardNavigation<T>({
     if (newIndex >= 0 && newIndex < items.length && newIndex !== currentIndex) {
       onSelect(items[newIndex]);
     }
-  }, [items, currentIndex, onSelect, wrap, horizontal, columns, enabled, getKey]);
+  }, [items, currentIndex, onSelect, wrap, horizontal, columns, enabled]);
 
   // Handle keyboard events
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -178,7 +182,7 @@ export function useTabKeyboardNavigation(
   tabs: readonly { id: string }[],
   activeTabId: string,
   onTabChange: (tabId: string) => void
-) {
+): (e: React.KeyboardEvent) => void {
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     const currentIndex = tabs.findIndex(t => t.id === activeTabId);
     if (currentIndex === -1) return;
@@ -218,7 +222,7 @@ export function useTabKeyboardNavigation(
 export function useFocusOnSelect(
   ref: React.RefObject<HTMLElement>,
   isSelected: boolean
-) {
+): void {
   useEffect(() => {
     if (isSelected && ref.current) {
       ref.current.focus();

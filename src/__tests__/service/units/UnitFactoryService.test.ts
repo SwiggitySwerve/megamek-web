@@ -29,12 +29,13 @@ describe('UnitFactoryService', () => {
     chassis: 'Atlas',
     model: 'AS7-D',
     variant: 'Standard',
+    unitType: UnitType.BATTLEMECH,
+    configuration: MechConfiguration.BIPED,
     tonnage: 100,
     techBase: 'INNER_SPHERE',
     rulesLevel: 'STANDARD',
     era: 'SUCCESSION_WARS',
     year: 2755,
-    configuration: 'Biped',
     engine: {
       type: 'STANDARD',
       rating: 300,
@@ -419,8 +420,10 @@ describe('UnitFactoryService', () => {
         });
         const result = factory.createFromSerialized(serialized);
 
-        expect(result.unit?.heatSinks.integrated).toBe(10);
-        expect(result.unit?.heatSinks.external).toBe(5);
+        // 300 / 25 = 12 integral heat sinks (no cap)
+        expect(result.unit?.heatSinks.integrated).toBe(12);
+        // 15 total - 12 integral = 3 external
+        expect(result.unit?.heatSinks.external).toBe(3);
       });
     });
 

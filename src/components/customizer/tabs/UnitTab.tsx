@@ -34,7 +34,7 @@ export function UnitTab({
   onSelect,
   onClose,
   onRename,
-}: UnitTabProps) {
+}: UnitTabProps): React.ReactElement {
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(tab.name);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -117,16 +117,14 @@ export function UnitTab({
         <span className="flex-shrink-0 w-2 h-2 rounded-full bg-orange-500" title="Unsaved changes" />
       )}
       
-      {/* Close button */}
+      {/* Close button - Chrome style */}
       {canClose && !isEditing && (
         <button
           onClick={handleCloseClick}
-          className="flex-shrink-0 w-4 h-4 flex items-center justify-center rounded opacity-0 group-hover:opacity-100 hover:bg-slate-600 transition-opacity"
-          title="Close"
+          className="flex-shrink-0 w-[18px] h-[18px] flex items-center justify-center rounded-full text-slate-400 hover:bg-slate-500 hover:text-white transition-all duration-100 text-xs leading-none"
+          title="Close (Ctrl+W)"
         >
-          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
+          ×
         </button>
       )}
     </div>

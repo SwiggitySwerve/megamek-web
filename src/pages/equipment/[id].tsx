@@ -67,7 +67,7 @@ const categoryLabels: Record<string, string> = {
   MISC_EQUIPMENT: 'Misc Equipment',
 };
 
-export default function EquipmentDetailPage() {
+export default function EquipmentDetailPage(): React.ReactElement {
   const router = useRouter();
   const { id } = router.query;
   
@@ -81,9 +81,9 @@ export default function EquipmentDetailPage() {
     async function fetchEquipment() {
       try {
         const response = await fetch(`/api/equipment?id=${encodeURIComponent(id as string)}`);
-        const data = await response.json();
+        const data = await response.json() as { success: boolean; data?: EquipmentData; error?: string };
         
-        if (data.success) {
+        if (data.success && data.data) {
           setEquipment(data.data);
         } else {
           setError(data.error || 'Equipment not found');

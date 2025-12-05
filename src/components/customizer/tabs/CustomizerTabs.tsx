@@ -6,7 +6,7 @@
  * @spec openspec/specs/customizer-tabs/spec.md
  */
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState } from 'react';
 import { useTabKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
 
 /**
@@ -38,15 +38,19 @@ interface CustomizerTabsProps {
 
 /**
  * Default customizer tabs
+ * 
+ * @spec openspec/specs/customizer-tabs/spec.md
+ * Note: Weapons tab merged into Equipment tab per unify-equipment-tab change
+ * Note: Preview tab added for record sheet generation per add-record-sheet-pdf-export change
  */
 export const DEFAULT_CUSTOMIZER_TABS: CustomizerTabConfig[] = [
   { id: 'overview', label: 'Overview' },
   { id: 'structure', label: 'Structure' },
   { id: 'armor', label: 'Armor' },
-  { id: 'weapons', label: 'Weapons' },
   { id: 'equipment', label: 'Equipment' },
   { id: 'criticals', label: 'Critical Slots' },
   { id: 'fluff', label: 'Fluff' },
+  { id: 'preview', label: 'Preview' },
 ];
 
 /**
@@ -58,7 +62,7 @@ export function CustomizerTabs({
   onTabChange,
   readOnly = false,
   className = '',
-}: CustomizerTabsProps) {
+}: CustomizerTabsProps): React.ReactElement {
   const handleKeyDown = useTabKeyboardNavigation(tabs, activeTab, onTabChange);
   
   return (
@@ -103,7 +107,12 @@ export function CustomizerTabs({
 export function useCustomizerTabs(
   initialTab: string = 'overview',
   tabs: CustomizerTabConfig[] = DEFAULT_CUSTOMIZER_TABS
-) {
+): {
+  tabs: CustomizerTabConfig[];
+  activeTab: string;
+  currentTab: CustomizerTabConfig;
+  setActiveTab: (tabId: string) => void;
+} {
   const [activeTab, setActiveTab] = useState(initialTab);
   
   const currentTab = tabs.find((t) => t.id === activeTab) || tabs[0];

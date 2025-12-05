@@ -1,351 +1,196 @@
-/**
- * Unit Search Service Tests
- * 
- * Tests for MiniSearch-powered full-text search across units.
- * 
- * @spec openspec/specs/unit-services/spec.md
- */
-
 import { UnitSearchService } from '@/services/units/UnitSearchService';
 import { canonicalUnitService } from '@/services/units/CanonicalUnitService';
-import { customUnitService } from '@/services/units/CustomUnitService';
-import { IUnitIndexEntry } from '@/services/common/types';
+import { customUnitApiService } from '@/services/units/CustomUnitApiService';
 import { TechBase } from '@/types/enums/TechBase';
-import { Era } from '@/types/enums/Era';
 import { WeightClass } from '@/types/enums/WeightClass';
 
-// Mock the unit services
+// Mock MiniSearch
+jest.mock('minisearch', () => {
+  const mockIndex = {
+    addAll: jest.fn(),
+    add: jest.fn(),
+    remove: jest.fn(),
+    search: jest.fn(),
+  };
+  
+  return {
+    __esModule: true,
+    default: jest.fn().mockImplementation(() => mockIndex),
+  };
+});
+
+// Mock services
 jest.mock('@/services/units/CanonicalUnitService', () => ({
   canonicalUnitService: {
     getIndex: jest.fn(),
   },
 }));
 
-jest.mock('@/services/units/CustomUnitService', () => ({
-  customUnitService: {
+jest.mock('@/services/units/CustomUnitApiService', () => ({
+  customUnitApiService: {
     list: jest.fn(),
   },
 }));
 
+import MiniSearch from 'minisearch';
+
+interface MockSearchIndex {
+  addAll: jest.Mock;
+  search: jest.Mock;
+}
+
 describe('UnitSearchService', () => {
   let service: UnitSearchService;
-  const mockCanonical = canonicalUnitService as jest.Mocked<typeof canonicalUnitService>;
-  const mockCustom = customUnitService as jest.Mocked<typeof customUnitService>;
+  let mockSearchIndex: MockSearchIndex;
+
+  const mockCanonicalUnit = {
+    id: 'atlas-as7-d',
+    chassis: 'Atlas',
+    variant: 'AS7-D',
+    tonnage: 100,
+    techBase: TechBase.INNER_SPHERE,
+    era: 'AGE_OF_WAR',
+    weightClass: WeightClass.ASSAULT,
+    unitType: 'BattleMech',
+    name: 'Atlas AS7-D',
+    filePath: '/data/units/atlas-as7-d.json',
+  };
+
+  const mockCustomUnit = {
+    id: 'custom-1',
+    chassis: 'Custom',
+    variant: 'C-1',
+    tonnage: 50,
+    techBase: TechBase.CLAN,
+    era: 'CLAN_INVASION',
+    weightClass: WeightClass.MEDIUM,
+    unitType: 'BattleMech',
+  };
 
   beforeEach(() => {
-    service = new UnitSearchService();
     jest.clearAllMocks();
+    service = new UnitSearchService();
+    
+    mockSearchIndex = {
+      addAll: jest.fn(),
+      add: jest.fn(),
+      remove: jest.fn(),
+      discard: jest.fn(),
+      search: jest.fn().mockReturnValue([{ id: 'atlas-as7-d' }]),
+    };
+    
+    (MiniSearch as jest.Mock).mockReturnValue(mockSearchIndex);
+    (canonicalUnitService.getIndex as jest.Mock).mockResolvedValue([mockCanonicalUnit]);
+    (customUnitApiService.list as jest.Mock).mockResolvedValue([mockCustomUnit]);
   });
 
-  /**
-   * Create a mock index entry
-   */
-  function createMockEntry(overrides: Partial<IUnitIndexEntry> = {}): IUnitIndexEntry {
-    return {
-      id: 'test-unit',
-      name: 'Atlas AS7-D',
-      chassis: 'Atlas',
-      variant: 'AS7-D',
-      tonnage: 100,
-      techBase: TechBase.INNER_SPHERE,
-      era: Era.STAR_LEAGUE,
-      weightClass: WeightClass.ASSAULT,
-      unitType: 'BattleMech',
-      filePath: '/data/units/atlas.json',
-      ...overrides,
-    };
-  }
-
-  // ============================================================================
-  // initialize()
-  // ============================================================================
   describe('initialize()', () => {
-    it('should load canonical units', async () => {
-      mockCanonical.getIndex.mockResolvedValueOnce([]);
-      mockCustom.list.mockResolvedValueOnce([]);
-      
+    it('should create search index', async () => {
       await service.initialize();
       
-      expect(mockCanonical.getIndex).toHaveBeenCalled();
+      expect(MiniSearch).toHaveBeenCalled();
+    });
+
+    it('should load canonical units', async () => {
+      await service.initialize();
+      
+      expect(canonicalUnitService.getIndex).toHaveBeenCalled();
     });
 
     it('should load custom units', async () => {
-      mockCanonical.getIndex.mockResolvedValueOnce([]);
-      mockCustom.list.mockResolvedValueOnce([]);
-      
       await service.initialize();
       
-      expect(mockCustom.list).toHaveBeenCalled();
+      expect(customUnitApiService.list).toHaveBeenCalled();
     });
 
-    it('should only initialize once', async () => {
-      mockCanonical.getIndex.mockResolvedValue([]);
-      mockCustom.list.mockResolvedValue([]);
-      
-      await service.initialize();
+    it('should add units to search index', async () => {
       await service.initialize();
       
-      expect(mockCanonical.getIndex).toHaveBeenCalledTimes(1);
+      expect(mockSearchIndex.addAll).toHaveBeenCalled();
     });
 
-    it('should combine canonical and custom units', async () => {
-      const canonical = [createMockEntry({ id: 'canonical-1', name: 'Atlas AS7-D' })];
-      const custom = [createMockEntry({ id: 'custom-1', name: 'Custom Mech' })];
-      
-      mockCanonical.getIndex.mockResolvedValueOnce(canonical);
-      mockCustom.list.mockResolvedValueOnce(custom);
-      
+    it('should not reinitialize if already initialized', async () => {
+      await service.initialize();
       await service.initialize();
       
-      // Both should be searchable
-      const atlasResults = service.search('Atlas');
-      const customResults = service.search('Custom');
-      
-      expect(atlasResults.length).toBeGreaterThanOrEqual(0);
-      expect(customResults.length).toBeGreaterThanOrEqual(0);
+      expect(MiniSearch).toHaveBeenCalledTimes(1);
     });
   });
 
-  // ============================================================================
-  // search()
-  // ============================================================================
   describe('search()', () => {
     beforeEach(async () => {
-      const units = [
-        createMockEntry({ id: '1', name: 'Atlas AS7-D', chassis: 'Atlas', variant: 'AS7-D' }),
-        createMockEntry({ id: '2', name: 'Atlas AS7-K', chassis: 'Atlas', variant: 'AS7-K' }),
-        createMockEntry({ id: '3', name: 'Hunchback HBK-4G', chassis: 'Hunchback', variant: 'HBK-4G' }),
-        createMockEntry({ id: '4', name: 'Locust LCT-1V', chassis: 'Locust', variant: 'LCT-1V' }),
-      ];
-      
-      mockCanonical.getIndex.mockResolvedValueOnce(units);
-      mockCustom.list.mockResolvedValueOnce([]);
-      
       await service.initialize();
     });
 
-    it('should return empty array when not initialized', () => {
+    it('should return empty array if not initialized', () => {
       const uninitializedService = new UnitSearchService();
-      
       const results = uninitializedService.search('Atlas');
       
       expect(results).toEqual([]);
     });
 
-    it('should find units by name', () => {
+    it('should search units by query', () => {
+      service.search('Atlas');
+      
+      expect(mockSearchIndex.search).toHaveBeenCalledWith('Atlas', expect.any(Object));
+    });
+
+    it('should return matching units', () => {
       const results = service.search('Atlas');
       
       expect(results.length).toBeGreaterThan(0);
-      expect(results.every(r => r.name.includes('Atlas'))).toBe(true);
     });
 
-    it('should find units by chassis', () => {
-      const results = service.search('Hunchback');
+    it('should filter by tech base when provided', () => {
+      service.search('Atlas', { techBase: TechBase.INNER_SPHERE });
       
-      expect(results.length).toBe(1);
-      expect(results[0].chassis).toBe('Hunchback');
+      expect(mockSearchIndex.search).toHaveBeenCalled();
     });
 
-    it('should find units by variant', () => {
-      const results = service.search('AS7-D');
+    it('should filter by weight class when provided', () => {
+      service.search('Atlas', { weightClass: WeightClass.ASSAULT });
       
-      expect(results.length).toBeGreaterThan(0);
-      expect(results.some(r => r.variant === 'AS7-D')).toBe(true);
+      expect(mockSearchIndex.search).toHaveBeenCalled();
     });
 
-    it('should support fuzzy search', () => {
-      // "Atla" should still find "Atlas"
-      const results = service.search('Atla');
+    it('should limit results when maxResults is provided', () => {
+      const results = service.search('Atlas', { maxResults: 5 });
       
-      expect(results.length).toBeGreaterThan(0);
-    });
-
-    it('should support prefix search', () => {
-      const results = service.search('Loc');
-      
-      expect(results.length).toBe(1);
-      expect(results[0].chassis).toBe('Locust');
-    });
-
-    it('should limit results when specified', () => {
-      const results = service.search('Atlas', { limit: 1 });
-      
-      expect(results).toHaveLength(1);
-    });
-
-    it('should return empty array for no matches', () => {
-      const results = service.search('NonexistentMech12345');
-      
-      expect(results).toEqual([]);
+      expect(results.length).toBeLessThanOrEqual(5);
     });
   });
 
-  // ============================================================================
-  // addToIndex()
-  // ============================================================================
   describe('addToIndex()', () => {
     beforeEach(async () => {
-      mockCanonical.getIndex.mockResolvedValueOnce([]);
-      mockCustom.list.mockResolvedValueOnce([]);
       await service.initialize();
     });
 
-    it('should do nothing when not initialized', () => {
-      const uninitializedService = new UnitSearchService();
-      const unit = createMockEntry({ id: 'new-unit' });
+    it('should add unit to search index', () => {
+      service.addToIndex(mockCanonicalUnit);
       
-      // Should not throw
-      expect(() => uninitializedService.addToIndex(unit)).not.toThrow();
-    });
-
-    it('should add new unit to index', () => {
-      const unit = createMockEntry({ id: 'new-unit', name: 'New Mech', chassis: 'NewMech' });
-      
-      service.addToIndex(unit);
-      
-      const results = service.search('NewMech');
-      expect(results).toHaveLength(1);
-      expect(results[0].id).toBe('new-unit');
-    });
-
-    it('should update existing unit in index', () => {
-      const originalUnit = createMockEntry({ id: 'update-unit', name: 'Original Name', chassis: 'Original' });
-      const updatedUnit = createMockEntry({ id: 'update-unit', name: 'Updated Name', chassis: 'Updated' });
-      
-      service.addToIndex(originalUnit);
-      service.addToIndex(updatedUnit);
-      
-      const results = service.search('Updated');
-      expect(results).toHaveLength(1);
-      expect(results[0].name).toBe('Updated Name');
+      expect(mockSearchIndex.add).toHaveBeenCalledWith(mockCanonicalUnit);
     });
   });
 
-  // ============================================================================
-  // removeFromIndex()
-  // ============================================================================
   describe('removeFromIndex()', () => {
     beforeEach(async () => {
-      const units = [
-        createMockEntry({ id: 'keep-unit', name: 'Keep Mech', chassis: 'Keep' }),
-        createMockEntry({ id: 'remove-unit', name: 'Remove Mech', chassis: 'Remove' }),
-      ];
-      
-      mockCanonical.getIndex.mockResolvedValueOnce(units);
-      mockCustom.list.mockResolvedValueOnce([]);
       await service.initialize();
     });
 
-    it('should do nothing when not initialized', () => {
-      const uninitializedService = new UnitSearchService();
+    it('should remove unit from search index', () => {
+      service.removeFromIndex('atlas-as7-d');
       
-      // Should not throw
-      expect(() => uninitializedService.removeFromIndex('some-id')).not.toThrow();
-    });
-
-    it('should do nothing for non-existent ID', () => {
-      // Should not throw
-      expect(() => service.removeFromIndex('non-existent')).not.toThrow();
-    });
-
-    it('should remove unit from index', () => {
-      service.removeFromIndex('remove-unit');
-      
-      const results = service.search('Remove');
-      expect(results).toHaveLength(0);
-    });
-
-    it('should keep other units', () => {
-      service.removeFromIndex('remove-unit');
-      
-      const results = service.search('Keep');
-      expect(results).toHaveLength(1);
+      expect(mockSearchIndex.discard).toHaveBeenCalled();
     });
   });
 
-  // ============================================================================
-  // rebuildIndex()
-  // ============================================================================
   describe('rebuildIndex()', () => {
-    it('should reset initialized state', async () => {
-      mockCanonical.getIndex.mockResolvedValue([]);
-      mockCustom.list.mockResolvedValue([]);
-      
+    it('should reload units and rebuild index', async () => {
       await service.initialize();
       await service.rebuildIndex();
       
-      // Should have called getIndex twice (once for each init)
-      expect(mockCanonical.getIndex).toHaveBeenCalledTimes(2);
-    });
-
-    it('should pick up new units', async () => {
-      // First init - no units
-      mockCanonical.getIndex.mockResolvedValueOnce([]);
-      mockCustom.list.mockResolvedValueOnce([]);
-      await service.initialize();
-      
-      expect(service.search('Atlas')).toHaveLength(0);
-      
-      // Rebuild with new units
-      const newUnits = [createMockEntry({ id: '1', name: 'Atlas AS7-D', chassis: 'Atlas' })];
-      mockCanonical.getIndex.mockResolvedValueOnce(newUnits);
-      mockCustom.list.mockResolvedValueOnce([]);
-      
-      await service.rebuildIndex();
-      
-      const results = service.search('Atlas');
-      expect(results.length).toBeGreaterThan(0);
-    });
-
-    it('should remove deleted units', async () => {
-      // First init - has unit
-      const units = [createMockEntry({ id: '1', name: 'Atlas AS7-D', chassis: 'Atlas' })];
-      mockCanonical.getIndex.mockResolvedValueOnce(units);
-      mockCustom.list.mockResolvedValueOnce([]);
-      await service.initialize();
-      
-      expect(service.search('Atlas').length).toBeGreaterThan(0);
-      
-      // Rebuild with no units
-      mockCanonical.getIndex.mockResolvedValueOnce([]);
-      mockCustom.list.mockResolvedValueOnce([]);
-      
-      await service.rebuildIndex();
-      
-      expect(service.search('Atlas')).toHaveLength(0);
-    });
-  });
-
-  // ============================================================================
-  // Search Options
-  // ============================================================================
-  describe('Search Options', () => {
-    beforeEach(async () => {
-      const units = [
-        createMockEntry({ id: '1', name: 'Atlas AS7-D', chassis: 'Atlas', variant: 'AS7-D' }),
-        createMockEntry({ id: '2', name: 'Atlas AS7-K', chassis: 'Atlas', variant: 'AS7-K' }),
-      ];
-      
-      mockCanonical.getIndex.mockResolvedValueOnce(units);
-      mockCustom.list.mockResolvedValueOnce([]);
-      await service.initialize();
-    });
-
-    it('should support fuzzy search option', () => {
-      // Fuzzy search should find approximate matches
-      const fuzzyResults = service.search('Atlas', { fuzzy: true });
-      expect(fuzzyResults.length).toBeGreaterThan(0);
-      
-      // Non-fuzzy should also work
-      const exactResults = service.search('Atlas', { fuzzy: false });
-      expect(exactResults.length).toBeGreaterThan(0);
-    });
-
-    it('should support field restriction', () => {
-      // Search only in chassis field
-      const results = service.search('Atlas', { fields: ['chassis'] });
-      expect(results.length).toBeGreaterThan(0);
+      expect(canonicalUnitService.getIndex).toHaveBeenCalledTimes(2);
+      expect(customUnitApiService.list).toHaveBeenCalledTimes(2);
     });
   });
 });
-

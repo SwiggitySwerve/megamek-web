@@ -8,32 +8,9 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import { TechBase } from '@/types/enums/TechBase';
-import { RulesLevel } from '@/types/enums/RulesLevel';
-import { Era } from '@/types/enums/Era';
-import { WeightClass, getWeightClass } from '@/types/enums/WeightClass';
-import { EngineType } from '@/types/construction/EngineType';
-import { InternalStructureType } from '@/types/construction/InternalStructureType';
-import { HeatSinkType } from '@/types/construction/HeatSinkType';
-import { ArmorTypeEnum } from '@/types/construction/ArmorType';
 import { GyroType } from '@/types/construction/GyroType';
 import { CockpitType } from '@/types/construction/CockpitType';
-import { MechLocation } from '@/types/construction/CriticalSlotAllocation';
-import { IArmorAllocation } from '@/types/construction/ComponentInterfaces';
-import {
-  UnitType,
-  MechConfiguration,
-  IUnitMetadata,
-  IEngineConfiguration,
-  IGyroConfiguration,
-  IStructureConfiguration,
-  IHeatSinkConfiguration,
-  IMovementConfiguration,
-  IMountedEquipment,
-  ICriticalSlotAssignment,
-  ICriticalSlot,
-  IBattleMech,
-  IOmniMech,
-} from '@/types/unit/BattleMechInterfaces';
+// IBattleMech import removed - using ISerializedUnit for conversion
 import {
   ISerializedUnit,
   ISerializedFluff,
@@ -48,7 +25,6 @@ import {
   mapStructureType,
   mapHeatSinkType,
   mapArmorType,
-  mapGyroType,
   mapMechConfiguration,
   isOmniMechConfig,
 } from './ValueMappings';
@@ -56,17 +32,13 @@ import {
 import {
   parseLocation,
   convertArmorLocations,
-  calculateTotalArmor,
   parseCriticalSlots,
   SourceArmorLocation,
   SourceCriticalEntry,
-  ParsedCriticalSlots,
-  BIPED_SLOT_COUNTS,
 } from './LocationMappings';
 
 import {
   equipmentNameResolver,
-  EquipmentResolution,
 } from './EquipmentNameResolver';
 
 // ============================================================================
@@ -303,9 +275,6 @@ export class UnitFormatConverter {
     // Convert gyro (defaults to standard - source doesn't always specify)
     const gyro = this.convertGyro(source, techBase);
     
-    // Convert cockpit (defaults to standard - source doesn't always specify)
-    const cockpit = this.convertCockpit(source);
-    
     // Convert structure
     const structure = this.convertStructure(source.structure, techBase);
     
@@ -341,7 +310,7 @@ export class UnitFormatConverter {
       tonnage: source.mass,
       engine,
       gyro,
-      cockpit: CockpitType.STANDARD, // Default - source doesn't usually specify
+      cockpit: this.convertCockpit(source), // Defaults to standard if not specified
       structure,
       armor,
       heatSinks,
@@ -389,7 +358,7 @@ export class UnitFormatConverter {
   /**
    * Convert gyro data
    */
-  private convertGyro(source: MegaMekLabUnit, _techBase: TechBase): { type: string } {
+  private convertGyro(_source: MegaMekLabUnit, _techBase: TechBase): { type: string } {
     // MegaMekLab doesn't usually include gyro type in exported JSON
     // We default to standard, but could infer from criticals
     return {
@@ -594,7 +563,7 @@ export class UnitFormatConverter {
   /**
    * Generate an equipment ID for unrecognized equipment
    */
-  private generateEquipmentId(itemType: string, itemName: string): string {
+  private generateEquipmentId(itemType: string, _itemName: string): string {
     return `unknown-${itemType.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
   }
   

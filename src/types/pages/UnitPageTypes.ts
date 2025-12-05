@@ -21,6 +21,16 @@ export interface IUnitEntry {
   era: Era;
   weightClass: WeightClass;
   unitType: string;
+  /** Introduction year */
+  year?: number;
+  /** Role (e.g., Juggernaut, Scout, Striker) */
+  role?: string;
+  /** Rules level (INTRODUCTORY, STANDARD, ADVANCED, EXPERIMENTAL) */
+  rulesLevel?: string;
+  /** C-Bill cost */
+  cost?: number;
+  /** Battle Value 2.0 */
+  bv?: number;
 }
 
 /**

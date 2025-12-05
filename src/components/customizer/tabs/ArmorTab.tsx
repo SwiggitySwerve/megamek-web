@@ -24,6 +24,7 @@ import {
 } from '@/utils/construction/armorCalculations';
 import { ceilToHalfTon } from '@/utils/physical/weightUtils';
 import { getTotalAllocatedArmor } from '@/stores/unitState';
+import { customizerStyles as cs } from '../styles';
 
 // =============================================================================
 // Types
@@ -48,7 +49,7 @@ interface ArmorTabProps {
 export function ArmorTab({
   readOnly = false,
   className = '',
-}: ArmorTabProps) {
+}: ArmorTabProps): React.ReactElement {
   // Get unit state from context
   const tonnage = useUnitStore((s) => s.tonnage);
   const componentTechBases = useUnitStore((s) => s.componentTechBases);
@@ -184,31 +185,31 @@ export function ArmorTab({
   }, [maximizeArmor]);
   
   return (
-    <div className={`space-y-4 p-4 ${className}`}>
+    <div className={`${cs.layout.tabContent} ${className}`}>
       {/* Compact Summary Bar */}
-      <div className="bg-slate-800/50 rounded-lg border border-slate-700 px-4 py-2">
+      <div className={cs.panel.summary}>
         <div className="flex items-center justify-between gap-6">
           <div className="flex items-center gap-6 text-sm">
-            <div className="flex items-center gap-2">
-              <span className="text-slate-400">Type:</span>
-              <span className="font-medium text-white">{armorDef?.name ?? 'Standard'}</span>
+            <div className={cs.layout.statRow}>
+              <span className={cs.text.label}>Type:</span>
+              <span className={cs.text.value}>{armorDef?.name ?? 'Standard'}</span>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-slate-400">Points/Ton:</span>
-              <span className="font-medium text-white">{pointsPerTon}</span>
+            <div className={cs.layout.statRow}>
+              <span className={cs.text.label}>Points/Ton:</span>
+              <span className={cs.text.value}>{pointsPerTon}</span>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-slate-400">Slots:</span>
-              <span className="font-medium text-white">{armorSlots}</span>
+            <div className={cs.layout.statRow}>
+              <span className={cs.text.label}>Slots:</span>
+              <span className={cs.text.value}>{armorSlots}</span>
             </div>
           </div>
-          <div className="flex items-center gap-4 pl-4 border-l border-slate-600">
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-slate-400">Tonnage:</span>
+          <div className={`flex items-center gap-4 ${cs.layout.dividerV}`}>
+            <div className={cs.layout.statRow}>
+              <span className={`text-sm ${cs.text.label}`}>Tonnage:</span>
               <span className="text-lg font-bold text-amber-400">{armorTonnage}t</span>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-slate-400">Points:</span>
+            <div className={cs.layout.statRow}>
+              <span className={`text-sm ${cs.text.label}`}>Points:</span>
               <span className={`text-lg font-bold ${unallocatedPoints < 0 ? 'text-red-400' : 'text-green-400'}`}>
                 {allocatedPoints} / {availablePoints}
               </span>
@@ -218,120 +219,11 @@ export function ArmorTab({
       </div>
 
       {/* Two-column layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className={cs.layout.twoColumn}>
         
-        {/* LEFT: Armor Configuration */}
-        <div className="bg-slate-800 rounded-lg border border-slate-700 p-4">
-          <h3 className="text-lg font-semibold text-white mb-4">Armor Configuration</h3>
-          
-          <div className="space-y-4">
-            {/* Armor Type */}
-            <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <label className="text-sm text-slate-400">Armor Type</label>
-                <span className="text-xs text-slate-500">{armorSlots} slots</span>
-              </div>
-              <select 
-                className="w-full px-2 py-1.5 bg-slate-700 border border-slate-600 rounded text-white text-sm"
-                disabled={readOnly}
-                value={armorType}
-                onChange={handleArmorTypeChange}
-              >
-                {filteredOptions.armors.map((armor) => (
-                  <option key={armor.type} value={armor.type}>
-                    {armor.name} ({armor.pointsPerTon} pts/ton)
-                  </option>
-                ))}
-              </select>
-            </div>
-            
-            {/* Armor Tonnage */}
-            <div className="space-y-1">
-              <label className="text-sm text-slate-400">Armor Tonnage</label>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => handleArmorTonnageChange(armorTonnage - 0.5)}
-                  disabled={readOnly || armorTonnage <= 0}
-                  className="px-2 py-1 bg-slate-700 hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed rounded border border-slate-600 text-white text-sm"
-                >
-                  −
-                </button>
-                <input
-                  type="number"
-                  value={armorTonnage}
-                  onChange={(e) => handleArmorTonnageChange(parseFloat(e.target.value) || 0)}
-                  disabled={readOnly}
-                  min={0}
-                  step={0.5}
-                  className="w-20 px-2 py-1 bg-slate-700 border border-slate-600 rounded text-white text-sm text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                />
-                <button
-                  onClick={() => handleArmorTonnageChange(armorTonnage + 0.5)}
-                  disabled={readOnly || armorTonnage >= maxUsefulTonnage}
-                  className="px-2 py-1 bg-slate-700 hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed rounded border border-slate-600 text-white text-sm"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-            
-            {/* Quick Actions */}
-            <div className="flex gap-2">
-              <button
-                onClick={handleMaximize}
-                disabled={readOnly || armorTonnage >= maxUsefulTonnage}
-                className="flex-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed rounded text-white text-sm font-medium transition-colors"
-              >
-                Maximize Tonnage
-              </button>
-            </div>
-            
-            {/* Summary Stats */}
-            <div className="pt-3 mt-1 border-t border-slate-700 space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-400">Unallocated Armor Points</span>
-                <span className={`font-medium ${unallocatedPoints < 0 ? 'text-red-400' : unallocatedPoints > 0 ? 'text-amber-400' : 'text-green-400'}`}>
-                  {unallocatedPoints}
-                </span>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-400">Allocated Armor Points</span>
-                <span className="font-medium text-white">{allocatedPoints}</span>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-400">Total Armor Points</span>
-                <span className="font-medium text-white">{availablePoints}</span>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-400">Maximum Possible Armor Points</span>
-                <span className="font-medium text-slate-300">{maxTotalArmor}</span>
-              </div>
-              {wastedPoints > 0 && (
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-400">Wasted Armor Points</span>
-                  <span className="font-medium text-amber-400">{wastedPoints}</span>
-                </div>
-              )}
-              <div className="flex items-center justify-between text-sm pt-2 border-t border-slate-600">
-                <span className="text-slate-400">Points Per Ton</span>
-                <span className="font-medium text-slate-300">{pointsPerTon.toFixed(2)}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* RIGHT: Armor Allocation */}
+        {/* LEFT: Location Editor (when selected) + Armor Configuration */}
         <div className="space-y-4">
-          {/* Armor Diagram */}
-          <ArmorDiagram
-            armorData={armorData}
-            selectedLocation={selectedLocation}
-            unallocatedPoints={pointsDelta}
-            onLocationClick={handleLocationClick}
-            onAutoAllocate={handleAutoAllocate}
-          />
-          
-          {/* Location Editor */}
+          {/* Location Editor - shown at top when a location is selected */}
           {selectedLocation && selectedLocationData && (
             <LocationArmorEditor
               location={selectedLocation}
@@ -342,6 +234,117 @@ export function ArmorTab({
               onClose={() => setSelectedLocation(null)}
             />
           )}
+          
+          {/* Armor Configuration */}
+          <div className={cs.panel.main}>
+            <h3 className={cs.text.sectionTitle}>Armor Configuration</h3>
+            
+            <div className="space-y-4">
+              {/* Armor Type */}
+              <div className={cs.layout.field}>
+                <div className={cs.layout.rowBetween}>
+                  <label className={cs.text.label}>Armor Type</label>
+                  <span className={cs.text.secondary}>{armorSlots} slots</span>
+                </div>
+                <select 
+                  className={cs.select.compact}
+                  disabled={readOnly}
+                  value={armorType}
+                  onChange={handleArmorTypeChange}
+                >
+                  {filteredOptions.armors.map((armor) => (
+                    <option key={armor.type} value={armor.type}>
+                      {armor.name} ({armor.pointsPerTon} pts/ton)
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              {/* Armor Tonnage */}
+              <div className={cs.layout.field}>
+                <label className={cs.text.label}>Armor Tonnage</label>
+                <div className={cs.layout.rowGap}>
+                  <button
+                    onClick={() => handleArmorTonnageChange(armorTonnage - 0.5)}
+                    disabled={readOnly || armorTonnage <= 0}
+                    className={cs.button.stepper}
+                  >
+                    −
+                  </button>
+                  <input
+                    type="number"
+                    value={armorTonnage}
+                    onChange={(e) => handleArmorTonnageChange(parseFloat(e.target.value) || 0)}
+                    disabled={readOnly}
+                    min={0}
+                    step={0.5}
+                    className={`w-20 ${cs.input.compact} text-center ${cs.input.noSpinners}`}
+                  />
+                  <button
+                    onClick={() => handleArmorTonnageChange(armorTonnage + 0.5)}
+                    disabled={readOnly || armorTonnage >= maxUsefulTonnage}
+                    className={cs.button.stepper}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+              
+              {/* Quick Actions */}
+              <div className="flex gap-2">
+                <button
+                  onClick={handleMaximize}
+                  disabled={readOnly || armorTonnage >= maxUsefulTonnage}
+                  className={cs.button.actionFull}
+                >
+                  Maximize Tonnage
+                </button>
+              </div>
+              
+              {/* Summary Stats */}
+              <div className={`${cs.layout.divider} space-y-2`}>
+                <div className={`${cs.layout.rowBetween} text-sm`}>
+                  <span className={cs.text.label}>Unallocated Armor Points</span>
+                  <span className={`font-medium ${unallocatedPoints < 0 ? 'text-red-400' : unallocatedPoints > 0 ? 'text-amber-400' : 'text-green-400'}`}>
+                    {unallocatedPoints}
+                  </span>
+                </div>
+                <div className={`${cs.layout.rowBetween} text-sm`}>
+                  <span className={cs.text.label}>Allocated Armor Points</span>
+                  <span className={cs.text.value}>{allocatedPoints}</span>
+                </div>
+                <div className={`${cs.layout.rowBetween} text-sm`}>
+                  <span className={cs.text.label}>Total Armor Points</span>
+                  <span className={cs.text.value}>{availablePoints}</span>
+                </div>
+                <div className={`${cs.layout.rowBetween} text-sm`}>
+                  <span className={cs.text.label}>Maximum Possible Armor Points</span>
+                  <span className="font-medium text-slate-300">{maxTotalArmor}</span>
+                </div>
+                {wastedPoints > 0 && (
+                  <div className={`${cs.layout.rowBetween} text-sm`}>
+                    <span className={cs.text.label}>Wasted Armor Points</span>
+                    <span className={cs.text.valueWarning}>{wastedPoints}</span>
+                  </div>
+                )}
+                <div className={`${cs.layout.rowBetween} text-sm pt-2 border-t border-slate-600`}>
+                  <span className={cs.text.label}>Points Per Ton</span>
+                  <span className="font-medium text-slate-300">{pointsPerTon.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* RIGHT: Armor Diagram */}
+        <div className="space-y-4">
+          <ArmorDiagram
+            armorData={armorData}
+            selectedLocation={selectedLocation}
+            unallocatedPoints={pointsDelta}
+            onLocationClick={handleLocationClick}
+            onAutoAllocate={handleAutoAllocate}
+          />
         </div>
       </div>
     </div>

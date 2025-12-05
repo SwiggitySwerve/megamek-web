@@ -8,9 +8,9 @@
  */
 
 import { EngineType, getEngineDefinition } from '../../types/construction/EngineType';
-import { GyroType, getGyroDefinition } from '../../types/construction/GyroType';
+import { GyroType } from '../../types/construction/GyroType';
 import { InternalStructureType, getInternalStructureDefinition } from '../../types/construction/InternalStructureType';
-import { HeatSinkType, getHeatSinkDefinition } from '../../types/construction/HeatSinkType';
+import { HeatSinkType } from '../../types/construction/HeatSinkType';
 import { ArmorTypeEnum, getArmorDefinition } from '../../types/construction/ArmorType';
 import { CockpitType, getCockpitDefinition } from '../../types/construction/CockpitType';
 import { calculateEngineWeight, calculateIntegralHeatSinks, validateEngineRating } from './engineCalculations';
@@ -247,7 +247,7 @@ export function calculateHeatSinks(
 export function calculateArmor(
   armorType: ArmorTypeEnum,
   totalArmorPoints: number,
-  tonnage: number
+  _tonnage: number
 ): ConstructionStepResult {
   const errors: string[] = [];
   const warnings: string[] = [];

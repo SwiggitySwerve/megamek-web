@@ -6,18 +6,14 @@
  * @spec openspec/specs/unit-store-architecture/spec.md
  */
 
-import { act } from '@testing-library/react';
-import { StoreApi } from 'zustand';
 import { createUnitStore, createNewUnitStore } from '@/stores/useUnitStore';
 import { 
-  UnitState, 
-  UnitStore, 
   createDefaultUnitState,
   generateUnitId,
   CreateUnitOptions,
 } from '@/stores/unitState';
 import { TechBase } from '@/types/enums/TechBase';
-import { TechBaseMode } from '@/types/construction/TechBaseConfiguration';
+import { TechBaseMode, TechBaseComponent } from '@/types/construction/TechBaseConfiguration';
 import { EngineType } from '@/types/construction/EngineType';
 import { GyroType } from '@/types/construction/GyroType';
 import { InternalStructureType } from '@/types/construction/InternalStructureType';
@@ -55,10 +51,11 @@ describe('Unit Store', () => {
       expect(id1).not.toBe(id2);
     });
     
-    it('should generate IDs with expected format', () => {
+    it('should generate IDs with expected UUID format', () => {
       const id = generateUnitId();
       
-      expect(id).toMatch(/^unit-\d+-[a-z0-9]+$/);
+      // UUIDs are 36 characters: 8-4-4-4-12 format
+      expect(id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
     });
   });
   
@@ -104,7 +101,8 @@ describe('Unit Store', () => {
       
       const state = createDefaultUnitState(options);
       
-      expect(state.id).toMatch(/^unit-\d+-[a-z0-9]+$/);
+      // UUIDs are 36 characters: 8-4-4-4-12 format (UUID v4)
+      expect(state.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
     });
     
     it('should set techBaseMode to inner_sphere for IS units', () => {
@@ -253,7 +251,8 @@ describe('Unit Store', () => {
       
       expect(state.name).toBe('New Unit');
       expect(state.tonnage).toBe(50);
-      expect(state.id).toMatch(/^unit-\d+-[a-z0-9]+$/);
+      // UUIDs are 36 characters: 8-4-4-4-12 format (UUID v4)
+      expect(state.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
     });
   });
   
@@ -280,7 +279,6 @@ describe('Unit Store', () => {
     
     it('should update lastModifiedAt', () => {
       const store = createTestStore();
-      const originalTime = store.getState().lastModifiedAt;
       
       // Wait a bit to ensure time difference
       const later = Date.now() + 1;
@@ -303,7 +301,7 @@ describe('Unit Store', () => {
       
       store.getState().setTechBaseMode(TechBaseMode.CLAN);
       
-      expectTechBaseMode(store, 'clan');
+      expectTechBaseMode(store, TechBaseMode.CLAN);
     });
     
     it('should reset componentTechBases to Clan when switching to clan mode', () => {
@@ -326,7 +324,7 @@ describe('Unit Store', () => {
       const store = createISTestStore();
       
       // Set a specific component to Clan
-      store.getState().setComponentTechBase('engine', TechBase.CLAN);
+      store.getState().setComponentTechBase(TechBaseComponent.ENGINE, TechBase.CLAN);
       
       // Switch to mixed mode
       store.getState().setTechBaseMode(TechBaseMode.MIXED);
@@ -354,7 +352,7 @@ describe('Unit Store', () => {
     it('should update individual component tech base', () => {
       const store = createISTestStore();
       
-      store.getState().setComponentTechBase('engine', TechBase.CLAN);
+      store.getState().setComponentTechBase(TechBaseComponent.ENGINE, TechBase.CLAN);
       
       expect(store.getState().componentTechBases.engine).toBe(TechBase.CLAN);
       // Other components remain unchanged
@@ -365,7 +363,7 @@ describe('Unit Store', () => {
       const store = createTestStore();
       store.getState().markModified(false);
       
-      store.getState().setComponentTechBase('armor', TechBase.CLAN);
+      store.getState().setComponentTechBase(TechBaseComponent.ARMOR, TechBase.CLAN);
       
       expect(store.getState().isModified).toBe(true);
     });
@@ -522,7 +520,6 @@ describe('Unit Store', () => {
     
     it('should update lastModifiedAt', () => {
       const store = createTestStore();
-      const originalTime = store.getState().lastModifiedAt;
       
       const later = Date.now() + 1000;
       jest.spyOn(Date, 'now').mockReturnValue(later);
@@ -543,14 +540,14 @@ describe('Unit Store', () => {
       const store = createISTestStore();
       
       // Verify initial IS state
-      expectTechBaseMode(store, 'inner_sphere');
+      expectTechBaseMode(store, TechBaseMode.INNER_SPHERE);
       expectAllComponentTechBases(store.getState().componentTechBases, TechBase.INNER_SPHERE);
       
       // Switch to Clan
       store.getState().setTechBaseMode(TechBaseMode.CLAN);
       
       // Verify Clan state
-      expectTechBaseMode(store, 'clan');
+      expectTechBaseMode(store, TechBaseMode.CLAN);
       expectAllComponentTechBases(store.getState().componentTechBases, TechBase.CLAN);
     });
     
@@ -558,14 +555,14 @@ describe('Unit Store', () => {
       const store = createClanTestStore();
       
       // Verify initial Clan state
-      expectTechBaseMode(store, 'clan');
+      expectTechBaseMode(store, TechBaseMode.CLAN);
       expectAllComponentTechBases(store.getState().componentTechBases, TechBase.CLAN);
       
       // Switch to IS
       store.getState().setTechBaseMode(TechBaseMode.INNER_SPHERE);
       
       // Verify IS state
-      expectTechBaseMode(store, 'inner_sphere');
+      expectTechBaseMode(store, TechBaseMode.INNER_SPHERE);
       expectAllComponentTechBases(store.getState().componentTechBases, TechBase.INNER_SPHERE);
     });
     
@@ -573,8 +570,8 @@ describe('Unit Store', () => {
       const store = createISTestStore();
       
       // Set specific components before switching to mixed
-      store.getState().setComponentTechBase('engine', TechBase.CLAN);
-      store.getState().setComponentTechBase('heatsink', TechBase.CLAN);
+      store.getState().setComponentTechBase(TechBaseComponent.ENGINE, TechBase.CLAN);
+      store.getState().setComponentTechBase(TechBaseComponent.HEATSINK, TechBase.CLAN);
       
       // Switch to mixed
       store.getState().setTechBaseMode(TechBaseMode.MIXED);
@@ -590,8 +587,8 @@ describe('Unit Store', () => {
       
       // Switch to mixed and set varied tech bases
       store.getState().setTechBaseMode(TechBaseMode.MIXED);
-      store.getState().setComponentTechBase('engine', TechBase.CLAN);
-      store.getState().setComponentTechBase('armor', TechBase.CLAN);
+      store.getState().setComponentTechBase(TechBaseComponent.ENGINE, TechBase.CLAN);
+      store.getState().setComponentTechBase(TechBaseComponent.ARMOR, TechBase.CLAN);
       
       // Switch to Clan (non-mixed)
       store.getState().setTechBaseMode(TechBaseMode.CLAN);

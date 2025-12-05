@@ -172,7 +172,7 @@ export function calculateJumpJetSlots(jumpMP: number, jumpJetType: JumpJetType):
  * Get maximum jump MP
  * 
  * Standard: max = walkMP
- * Improved: max = floor(walkMP × 1.5)
+ * Improved: max = runMP = ceil(walkMP × 1.5)
  * 
  * @param walkMP - Walk movement points
  * @param jumpJetType - Type of jump jets
@@ -180,7 +180,8 @@ export function calculateJumpJetSlots(jumpMP: number, jumpJetType: JumpJetType):
  */
 export function getMaxJumpMP(walkMP: number, jumpJetType: JumpJetType): number {
   if (jumpJetType === JumpJetType.IMPROVED) {
-    return Math.floor(walkMP * 1.5);
+    // Improved jets can reach up to run MP
+    return Math.ceil(walkMP * 1.5);
   }
   return walkMP;
 }
@@ -210,5 +211,46 @@ export function validateJumpConfiguration(
   }
   
   return { isValid: errors.length === 0, errors };
+}
+
+/**
+ * Calculate the maximum run/sprint MP when an enhancement is active
+ * 
+ * - MASC: Sprint = Walk × 2
+ * - Supercharger: Sprint = Walk × 2
+ * - TSM: Enhanced Run = Base Run + 1
+ *        (+2 Walk from TSM, -1 from heat penalty at 9+ heat = net +1 Run MP)
+ * - MASC + Supercharger: Sprint = Walk × 2.5
+ * 
+ * @param walkMP - Base walking movement points
+ * @param enhancement - Active movement enhancement name (or null)
+ * @param hasBoth - Whether both MASC and Supercharger are equipped
+ * @returns Maximum run MP when enhancement is active, or undefined if no enhancement
+ */
+export function calculateEnhancedMaxRunMP(
+  walkMP: number,
+  enhancement: string | null | undefined,
+  hasBoth: boolean = false
+): number | undefined {
+  if (!enhancement) return undefined;
+  
+  if (hasBoth) {
+    return calculateCombinedSprintMP(walkMP);
+  }
+  
+  // Normalize enhancement name for comparison
+  const enhancementLower = enhancement.toLowerCase();
+  
+  if (enhancementLower === 'masc' || enhancementLower === 'supercharger') {
+    return calculateSprintMP(walkMP);
+  }
+  
+  if (enhancementLower.includes('triple') || enhancementLower === 'tsm') {
+    // TSM: +2 Walk MP at 9+ heat, but -1 from heat penalty = net +1 Run MP
+    const baseRunMP = calculateRunMP(walkMP);
+    return baseRunMP + 1;
+  }
+  
+  return undefined;
 }
 

@@ -10,30 +10,18 @@
 
 import React, { useCallback, useMemo } from 'react';
 import { TechBase } from '@/types/enums/TechBase';
+import { RulesLevel, ALL_RULES_LEVELS } from '@/types/enums/RulesLevel';
 import { TechBaseConfiguration, IComponentValues } from '../shared/TechBaseConfiguration';
-import { TechBaseMode, TechBaseComponent, IComponentTechBases } from '@/types/construction/TechBaseConfiguration';
+import { TechBaseMode, TechBaseComponent } from '@/types/construction/TechBaseConfiguration';
 import { useUnitStore } from '@/stores/useUnitStore';
+import { useTabManagerStore } from '@/stores/useTabManagerStore';
 import { getEngineDefinition } from '@/types/construction/EngineType';
 import { getGyroDefinition } from '@/types/construction/GyroType';
 import { getInternalStructureDefinition } from '@/types/construction/InternalStructureType';
-import { getCockpitDefinition } from '@/types/construction/CockpitType';
 import { getHeatSinkDefinition } from '@/types/construction/HeatSinkType';
 import { getArmorDefinition } from '@/types/construction/ArmorType';
-import { MechConfiguration } from '@/types/unit/BattleMechInterfaces';
-
-// =============================================================================
-// Constants
-// =============================================================================
-
-const TONNAGE_RANGE = { min: 20, max: 100, step: 5 };
-
-const CONFIGURATION_OPTIONS: { value: MechConfiguration; label: string }[] = [
-  { value: MechConfiguration.BIPED, label: 'Biped' },
-  { value: MechConfiguration.QUAD, label: 'Quad' },
-  { value: MechConfiguration.TRIPOD, label: 'Tripod' },
-  { value: MechConfiguration.LAM, label: 'LAM' },
-  { value: MechConfiguration.QUADVEE, label: 'QuadVee' },
-];
+import { getMovementEnhancementDefinition, MovementEnhancementType } from '@/types/construction/MovementEnhancement';
+import { customizerStyles as cs } from '../styles';
 
 // =============================================================================
 // Types
@@ -59,43 +47,78 @@ interface OverviewTabProps {
 export function OverviewTab({
   readOnly = false,
   className = '',
-}: OverviewTabProps) {
+}: OverviewTabProps): React.ReactElement {
   // Get unit state from context (no tabId needed!)
-  const name = useUnitStore((s) => s.name);
-  const tonnage = useUnitStore((s) => s.tonnage);
-  const configuration = useUnitStore((s) => s.configuration);
+  const unitId = useUnitStore((s) => s.id);
+  const chassis = useUnitStore((s) => s.chassis);
+  const clanName = useUnitStore((s) => s.clanName);
+  const model = useUnitStore((s) => s.model);
+  const mulId = useUnitStore((s) => s.mulId);
+  const year = useUnitStore((s) => s.year);
+  const rulesLevel = useUnitStore((s) => s.rulesLevel);
   const techBaseMode = useUnitStore((s) => s.techBaseMode);
   const componentTechBases = useUnitStore((s) => s.componentTechBases);
   const engineType = useUnitStore((s) => s.engineType);
   const engineRating = useUnitStore((s) => s.engineRating);
   const gyroType = useUnitStore((s) => s.gyroType);
   const internalStructureType = useUnitStore((s) => s.internalStructureType);
-  const cockpitType = useUnitStore((s) => s.cockpitType);
   const heatSinkType = useUnitStore((s) => s.heatSinkType);
   const heatSinkCount = useUnitStore((s) => s.heatSinkCount);
   const armorType = useUnitStore((s) => s.armorType);
+  const enhancement = useUnitStore((s) => s.enhancement);
   
   // Get actions from context
-  const setName = useUnitStore((s) => s.setName);
-  const setTonnage = useUnitStore((s) => s.setTonnage);
-  const setConfiguration = useUnitStore((s) => s.setConfiguration);
+  const setChassis = useUnitStore((s) => s.setChassis);
+  const setClanName = useUnitStore((s) => s.setClanName);
+  const setModel = useUnitStore((s) => s.setModel);
+  const setMulId = useUnitStore((s) => s.setMulId);
+  const setYear = useUnitStore((s) => s.setYear);
+  const setRulesLevel = useUnitStore((s) => s.setRulesLevel);
   const setTechBaseMode = useUnitStore((s) => s.setTechBaseMode);
   const setComponentTechBase = useUnitStore((s) => s.setComponentTechBase);
   
-  // Handlers - Basic info
-  const handleNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
-  }, [setName]);
+  // Get tab manager action
+  const renameTab = useTabManagerStore((s) => s.renameTab);
   
-  const handleTonnageChange = useCallback((newTonnage: number) => {
-    const clamped = Math.max(TONNAGE_RANGE.min, Math.min(TONNAGE_RANGE.max, newTonnage));
-    const rounded = Math.round(clamped / TONNAGE_RANGE.step) * TONNAGE_RANGE.step;
-    setTonnage(rounded);
-  }, [setTonnage]);
+  // Helper to update tab name when chassis/model changes
+  const updateTabName = useCallback((newChassis: string, newModel: string) => {
+    const newName = `${newChassis}${newModel ? ' ' + newModel : ''}`;
+    renameTab(unitId, newName);
+  }, [unitId, renameTab]);
   
-  const handleConfigurationChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    setConfiguration(e.target.value as MechConfiguration);
-  }, [setConfiguration]);
+  // Handlers - Basic info (MegaMekLab format)
+  const handleChassisChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const newChassis = e.target.value;
+    setChassis(newChassis);
+    updateTabName(newChassis, model);
+  }, [setChassis, model, updateTabName]);
+  
+  const handleClanNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setClanName(e.target.value);
+  }, [setClanName]);
+  
+  const handleModelChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const newModel = e.target.value;
+    setModel(newModel);
+    updateTabName(chassis, newModel);
+  }, [setModel, chassis, updateTabName]);
+  
+  const handleMulIdChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    // Allow numbers and hyphens only, store as string (-1 for custom units)
+    const value = e.target.value.replace(/[^0-9-]/g, '');
+    setMulId(value === '' ? '-1' : value);
+  }, [setMulId]);
+  
+  const handleYearChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value, 10);
+    if (!isNaN(value) && value > 0) {
+      setYear(value);
+    }
+  }, [setYear]);
+  
+  const handleRulesLevelChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    setRulesLevel(e.target.value as RulesLevel);
+  }, [setRulesLevel]);
 
   // Handler for global mode change
   const handleModeChange = useCallback((newMode: TechBaseMode) => {
@@ -112,9 +135,24 @@ export function OverviewTab({
     const engineDef = getEngineDefinition(engineType);
     const gyroDef = getGyroDefinition(gyroType);
     const structureDef = getInternalStructureDefinition(internalStructureType);
-    const cockpitDef = getCockpitDefinition(cockpitType);
     const heatSinkDef = getHeatSinkDefinition(heatSinkType);
     const armorDef = getArmorDefinition(armorType);
+    
+    // Get myomer display name based on enhancement
+    let myomerName = 'Standard';
+    if (enhancement === MovementEnhancementType.TSM) {
+      myomerName = 'Triple-Strength Myomer';
+    } else if (enhancement) {
+      // For MASC/Supercharger, myomer is still standard but movement enhancement is active
+      myomerName = 'Standard';
+    }
+    
+    // Get movement enhancement display (MASC, Supercharger, Partial Wing)
+    let movementName = 'None';
+    if (enhancement && enhancement !== MovementEnhancementType.TSM) {
+      const enhancementDef = getMovementEnhancementDefinition(enhancement);
+      movementName = enhancementDef?.name ?? enhancement;
+    }
     
     return {
       chassis: structureDef?.name ?? 'Standard',
@@ -122,78 +160,106 @@ export function OverviewTab({
       engine: `${engineDef?.name ?? 'Standard Fusion'} ${engineRating}`,
       heatsink: `${heatSinkCount} ${heatSinkDef?.name ?? 'Single'}`,
       targeting: 'None',
-      myomer: 'Standard',
-      movement: 'None',
+      myomer: myomerName,
+      movement: movementName,
       armor: armorDef?.name ?? 'Standard',
     };
-  }, [engineType, engineRating, gyroType, internalStructureType, cockpitType, heatSinkType, heatSinkCount, armorType]);
+  }, [engineType, engineRating, gyroType, internalStructureType, heatSinkType, heatSinkCount, armorType, enhancement]);
 
   return (
     <div className={`space-y-6 p-4 ${className}`}>
       {/* Basic Info Panel */}
-      <div className="bg-slate-800 rounded-lg border border-slate-700 p-4">
-        <h3 className="text-lg font-semibold text-white mb-4">Basic Info</h3>
+      <div className={cs.panel.main}>
+        <h3 className={cs.text.sectionTitle}>Basic Information</h3>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Name */}
-          <div className="space-y-1">
-            <label className="text-sm text-slate-400">Name</label>
-            <input
-              type="text"
-              value={name}
-              onChange={handleNameChange}
-              disabled={readOnly}
-              className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
-              placeholder="Unit name..."
-            />
-          </div>
-          
-          {/* Tonnage */}
-          <div className="space-y-1">
-            <label className="text-sm text-slate-400">Tonnage</label>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => handleTonnageChange(tonnage - TONNAGE_RANGE.step)}
-                disabled={readOnly || tonnage <= TONNAGE_RANGE.min}
-                className="px-3 py-2 bg-slate-700 hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed rounded border border-slate-600 text-white text-sm"
-              >
-                −
-              </button>
+        <div className={cs.layout.formStack}>
+          {/* Chassis, Clan Name, Model - split row */}
+          <div className={cs.layout.threeColumn}>
+            {/* Chassis */}
+            <div className={cs.layout.field}>
+              <label className={cs.text.label}>Chassis</label>
               <input
-                type="number"
-                value={tonnage}
-                onChange={(e) => handleTonnageChange(parseInt(e.target.value, 10) || TONNAGE_RANGE.min)}
+                type="text"
+                value={chassis}
+                onChange={handleChassisChange}
                 disabled={readOnly}
-                min={TONNAGE_RANGE.min}
-                max={TONNAGE_RANGE.max}
-                step={TONNAGE_RANGE.step}
-                className="w-20 px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white text-sm text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                className={cs.input.full}
+                placeholder="New"
               />
-              <button
-                onClick={() => handleTonnageChange(tonnage + TONNAGE_RANGE.step)}
-                disabled={readOnly || tonnage >= TONNAGE_RANGE.max}
-                className="px-3 py-2 bg-slate-700 hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed rounded border border-slate-600 text-white text-sm"
-              >
-                +
-              </button>
+            </div>
+            
+            {/* Clan Name (optional) */}
+            <div className={cs.layout.field}>
+              <label className={cs.text.label}>Clan Name <span className={cs.text.secondary}>(opt)</span></label>
+              <input
+                type="text"
+                value={clanName}
+                onChange={handleClanNameChange}
+                disabled={readOnly}
+                className={cs.input.full}
+                placeholder=""
+              />
+            </div>
+            
+            {/* Model */}
+            <div className={cs.layout.field}>
+              <label className={cs.text.label}>Model</label>
+              <input
+                type="text"
+                value={model}
+                onChange={handleModelChange}
+                disabled={readOnly}
+                className={cs.input.full}
+                placeholder="Mek"
+              />
             </div>
           </div>
           
-          {/* Motive Type */}
-          <div className="space-y-1">
-            <label className="text-sm text-slate-400">Motive Type</label>
-            <select 
-              className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white text-sm"
-              disabled={readOnly}
-              value={configuration}
-              onChange={handleConfigurationChange}
-            >
-              {CONFIGURATION_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
+          {/* MUL ID, Year, Tech Level - split row */}
+          <div className={cs.layout.threeColumn}>
+            {/* MUL ID */}
+            <div className={cs.layout.field}>
+              <label className={cs.text.label}>MUL ID</label>
+              <input
+                type="text"
+                value={mulId}
+                onChange={handleMulIdChange}
+                disabled={readOnly}
+                className={cs.input.full}
+                placeholder="-1"
+              />
+            </div>
+            
+            {/* Year */}
+            <div className={cs.layout.field}>
+              <label className={cs.text.label}>Year</label>
+              <input
+                type="number"
+                value={year}
+                onChange={handleYearChange}
+                disabled={readOnly}
+                min={2000}
+                max={3200}
+                className={`${cs.input.full} ${cs.input.noSpinners}`}
+              />
+            </div>
+            
+            {/* Tech Level */}
+            <div className={cs.layout.field}>
+              <label className={cs.text.label}>Tech Level</label>
+              <select
+                value={rulesLevel}
+                onChange={handleRulesLevelChange}
+                disabled={readOnly}
+                className={cs.select.full}
+              >
+                {ALL_RULES_LEVELS.map((level) => (
+                  <option key={level} value={level}>
+                    {level}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
       </div>
@@ -209,16 +275,16 @@ export function OverviewTab({
       />
 
       {/* Equipment Summary */}
-      <div className="bg-slate-800 rounded-lg border border-slate-700 p-4">
-        <h3 className="text-lg font-semibold text-white mb-4">Equipment Summary</h3>
-        <div className="text-center py-8 text-slate-400">
+      <div className={cs.panel.main}>
+        <h3 className={cs.text.sectionTitle}>Equipment Summary</h3>
+        <div className={cs.panel.empty}>
           <p>No equipment mounted</p>
           <p className="text-sm mt-2">Add weapons and equipment from the Equipment tab</p>
         </div>
       </div>
 
       {readOnly && (
-        <div className="bg-blue-900/30 border border-blue-700 rounded-lg p-4 text-blue-300 text-sm">
+        <div className={cs.panel.notice}>
           This unit is in read-only mode. Changes cannot be made.
         </div>
       )}

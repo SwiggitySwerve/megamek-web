@@ -37,7 +37,7 @@ export function PageLayout({
   onBack,
   headerContent,
   gradient = false,
-}: PageLayoutProps) {
+}: PageLayoutProps): React.ReactElement {
   const bgClasses = gradient
     ? 'min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900'
     : 'min-h-screen bg-slate-900';
@@ -95,7 +95,7 @@ export function PageLayout({
 }
 
 // Loading state component
-export function PageLoading({ message = 'Loading...' }: { message?: string }) {
+export function PageLoading({ message = 'Loading...' }: { message?: string }): React.ReactElement {
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center">
       <div className="text-center">
@@ -119,7 +119,7 @@ export function PageError({
   message,
   backLink,
   backLabel = 'Go Back',
-}: PageErrorProps) {
+}: PageErrorProps): React.ReactElement {
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center p-8">
       <div className="bg-red-900/20 border border-red-600/30 rounded-xl p-8 max-w-md text-center">
@@ -146,7 +146,7 @@ interface EmptyStateProps {
   action?: React.ReactNode;
 }
 
-export function EmptyState({ icon, title, message, action }: EmptyStateProps) {
+export function EmptyState({ icon, title, message, action }: EmptyStateProps): React.ReactElement {
   return (
     <div className="bg-slate-700/30 rounded-lg p-8 text-center text-slate-400 border border-dashed border-slate-600">
       {icon && <div className="mb-3">{icon}</div>}

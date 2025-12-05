@@ -5,6 +5,14 @@ import { createMocks } from 'node-mocks-http';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import handler from '@/pages/api/catalog';
 import { canonicalUnitService } from '@/services/units/CanonicalUnitService';
+import type { IUnitMetadata } from '@/types/unit/BattleMechInterfaces';
+
+interface ApiResponse {
+  success: boolean;
+  data?: IUnitMetadata[];
+  error?: string;
+  count?: number;
+}
 
 // Mock the canonical unit service
 jest.mock('@/services/units/CanonicalUnitService', () => ({
@@ -29,7 +37,7 @@ describe('/api/catalog', () => {
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(405);
-      const data = JSON.parse(res._getData());
+      const data = JSON.parse(res._getData() as string) as { success: boolean; error: string };
       expect(data.success).toBe(false);
       expect(data.error).toContain('Method not allowed');
     });
@@ -61,7 +69,7 @@ describe('/api/catalog', () => {
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(200);
-      const data = JSON.parse(res._getData());
+      const data = JSON.parse(res._getData() as string) as { success: boolean; data: unknown[]; count: number };
       expect(data.success).toBe(true);
       expect(data.data).toEqual(mockIndex);
       expect(data.count).toBe(2);
@@ -85,9 +93,9 @@ describe('/api/catalog', () => {
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(200);
-      const data = JSON.parse(res._getData());
+      const data = JSON.parse(res._getData() as string) as ApiResponse;
       expect(data.count).toBe(1);
-      expect(data.data[0].chassis).toBe('Atlas');
+      expect(data.data?.[0].chassis).toBe('Atlas');
     });
 
     it('should be case-insensitive', async () => {
@@ -103,7 +111,7 @@ describe('/api/catalog', () => {
 
       await handler(req, res);
 
-      const data = JSON.parse(res._getData());
+      const data = JSON.parse(res._getData() as string) as ApiResponse;
       expect(data.count).toBe(1);
     });
 
@@ -122,7 +130,7 @@ describe('/api/catalog', () => {
 
       await handler(req, res);
 
-      const data = JSON.parse(res._getData());
+      const data = JSON.parse(res._getData() as string) as ApiResponse;
       expect(data.count).toBe(2);
     });
 
@@ -140,9 +148,9 @@ describe('/api/catalog', () => {
 
       await handler(req, res);
 
-      const data = JSON.parse(res._getData());
+      const data = JSON.parse(res._getData() as string) as ApiResponse;
       expect(data.count).toBe(1);
-      expect(data.data[0].variant).toBe('MAD-3R');
+      expect(data.data?.[0].variant).toBe('MAD-3R');
     });
 
     it('should return empty array when no matches', async () => {
@@ -158,7 +166,7 @@ describe('/api/catalog', () => {
 
       await handler(req, res);
 
-      const data = JSON.parse(res._getData());
+      const data = JSON.parse(res._getData() as string) as ApiResponse;
       expect(data.count).toBe(0);
       expect(data.data).toHaveLength(0);
     });
@@ -176,7 +184,7 @@ describe('/api/catalog', () => {
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(500);
-      const data = JSON.parse(res._getData());
+      const data = JSON.parse(res._getData() as string) as ApiResponse;
       expect(data.success).toBe(false);
       expect(data.error).toBe('Service unavailable');
     });
@@ -192,7 +200,7 @@ describe('/api/catalog', () => {
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(500);
-      const data = JSON.parse(res._getData());
+      const data = JSON.parse(res._getData() as string) as ApiResponse;
       expect(data.error).toBe('Internal server error');
     });
   });

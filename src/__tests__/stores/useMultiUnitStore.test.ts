@@ -14,7 +14,7 @@ import {
   createDefaultComponentSelections,
 } from '@/stores/useMultiUnitStore';
 import { TechBase } from '@/types/enums/TechBase';
-import { TechBaseMode } from '@/types/construction/TechBaseConfiguration';
+import { TechBaseMode, TechBaseComponent } from '@/types/construction/TechBaseConfiguration';
 import { EngineType } from '@/types/construction/EngineType';
 import { GyroType } from '@/types/construction/GyroType';
 import { InternalStructureType } from '@/types/construction/InternalStructureType';
@@ -118,7 +118,7 @@ describe('useMultiUnitStore', () => {
       expect(activeTabId).toBe(tabs[0].id);
     });
     
-    it('should set tab name from template', () => {
+    it('should set default tab name when no custom name provided', () => {
       const template = UNIT_TEMPLATES[0]; // Light
       
       act(() => {
@@ -127,7 +127,8 @@ describe('useMultiUnitStore', () => {
       
       const { tabs } = useMultiUnitStore.getState();
       
-      expect(tabs[0].name).toBe(`New ${template.name}`);
+      // Default name is 'Mek' when no custom name is provided
+      expect(tabs[0].name).toBe('Mek');
     });
     
     it('should use custom name if provided', () => {
@@ -227,7 +228,6 @@ describe('useMultiUnitStore', () => {
       });
       
       const { tabs } = useMultiUnitStore.getState();
-      const originalId = tabs[0].id;
       const copyId = tabs[1].id;
       
       // Modify copy
@@ -441,7 +441,7 @@ describe('useMultiUnitStore', () => {
       
       // Set a specific component to Clan
       act(() => {
-        useMultiUnitStore.getState().updateComponentTechBase(tabId, 'engine', TechBase.CLAN);
+        useMultiUnitStore.getState().updateComponentTechBase(tabId, TechBaseComponent.ENGINE, TechBase.CLAN);
       });
       
       // Switch to mixed
@@ -468,7 +468,7 @@ describe('useMultiUnitStore', () => {
       const tabId = useMultiUnitStore.getState().tabs[0].id;
       
       act(() => {
-        useMultiUnitStore.getState().updateComponentTechBase(tabId, 'engine', TechBase.CLAN);
+        useMultiUnitStore.getState().updateComponentTechBase(tabId, TechBaseComponent.ENGINE, TechBase.CLAN);
       });
       
       expect(useMultiUnitStore.getState().tabs[0].componentTechBases.engine).toBe(TechBase.CLAN);
@@ -482,7 +482,7 @@ describe('useMultiUnitStore', () => {
       const tabId = useMultiUnitStore.getState().tabs[0].id;
       
       act(() => {
-        useMultiUnitStore.getState().updateComponentTechBase(tabId, 'heatsink', TechBase.CLAN);
+        useMultiUnitStore.getState().updateComponentTechBase(tabId, TechBaseComponent.HEATSINK, TechBase.CLAN);
       });
       
       const { componentTechBases } = useMultiUnitStore.getState().tabs[0];

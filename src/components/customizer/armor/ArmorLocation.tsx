@@ -9,7 +9,6 @@
 import React from 'react';
 import { MechLocation } from '@/types/construction';
 import { LocationArmorData } from './ArmorDiagram';
-import { getArmorLocationColorClass } from '@/utils/colors/statusColors';
 
 interface ArmorLocationProps {
   /** Mech location */
@@ -92,7 +91,7 @@ export function ArmorLocation({
   onHover,
   locationType,
   showRear = false,
-}: ArmorLocationProps) {
+}: ArmorLocationProps): React.ReactElement {
   const label = getLocationLabel(location);
   const mainFill = getLocationFill(locationType, isSelected, isHovered);
   const rearFill = getLocationFill('rear', isSelected, isHovered);

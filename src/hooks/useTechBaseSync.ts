@@ -73,25 +73,6 @@ export interface TechBaseSyncResult {
 // Helper Functions
 // =============================================================================
 
-/**
- * Check if a component is compatible with a given tech base
- * Components are compatible if they match the tech base OR are available to both
- * (Standard fusion is available to both, XL IS is IS-only, etc.)
- */
-function isCompatibleWithTechBase(
-  componentTechBase: TechBase,
-  requiredTechBase: TechBase
-): boolean {
-  // Standard components (marked as IS) are available to both
-  // This is a simplification - in reality, some IS components are IS-only
-  if (componentTechBase === requiredTechBase) {
-    return true;
-  }
-  
-  // Standard/basic components are available to both tech bases
-  // (They're marked as IS in the definitions but Clan can use them)
-  return false;
-}
 
 /**
  * Filter engine options by tech base
@@ -119,7 +100,7 @@ function filterEngines(techBase: TechBase): EngineDefinition[] {
  * Filter gyro options by tech base
  * All gyros are currently IS-based but available to both
  */
-function filterGyros(techBase: TechBase): GyroDefinition[] {
+function filterGyros(_techBase: TechBase): GyroDefinition[] {
   // All gyro types are available to both tech bases
   return [...GYRO_DEFINITIONS];
 }
@@ -143,7 +124,7 @@ function filterStructures(techBase: TechBase): InternalStructureDefinition[] {
  * Filter cockpit options by tech base
  * All cockpits are currently IS-based but most are available to both
  */
-function filterCockpits(techBase: TechBase): CockpitDefinition[] {
+function filterCockpits(_techBase: TechBase): CockpitDefinition[] {
   // All cockpit types are available to both tech bases
   return [...COCKPIT_DEFINITIONS];
 }

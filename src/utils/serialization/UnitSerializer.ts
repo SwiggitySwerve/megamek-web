@@ -17,6 +17,21 @@ import {
 import { IBattleMech } from '../../types/unit/BattleMechInterfaces';
 
 /**
+ * Type for parsed JSON data from validateSerializedFormat
+ */
+interface IParsedSerializedData {
+  formatVersion?: unknown;
+  unit?: {
+    chassis?: unknown;
+    model?: unknown;
+    unitType?: unknown;
+    tonnage?: unknown;
+    engine?: unknown;
+    armor?: unknown;
+  };
+}
+
+/**
  * Application info for serialization envelope
  */
 const APPLICATION_NAME = 'BattleTech Editor';
@@ -126,7 +141,7 @@ export function validateSerializedFormat(data: string): { isValid: boolean; erro
   const errors: string[] = [];
 
   try {
-    const parsed = JSON.parse(data);
+    const parsed = JSON.parse(data) as IParsedSerializedData;
 
     if (!parsed.formatVersion) {
       errors.push('Missing formatVersion field');
@@ -136,7 +151,7 @@ export function validateSerializedFormat(data: string): { isValid: boolean; erro
       errors.push('Missing unit field');
     } else {
       const unit = parsed.unit;
-      
+
       if (!unit.chassis) errors.push('Missing unit.chassis');
       if (!unit.model) errors.push('Missing unit.model');
       if (!unit.unitType) errors.push('Missing unit.unitType');
@@ -159,8 +174,8 @@ export function validateSerializedFormat(data: string): { isValid: boolean; erro
  */
 export function getSerializedFormatVersion(data: string): string | null {
   try {
-    const parsed = JSON.parse(data);
-    return parsed.formatVersion ?? null;
+    const parsed = JSON.parse(data) as IParsedSerializedData;
+    return typeof parsed.formatVersion === 'string' ? parsed.formatVersion : null;
   } catch {
     return null;
   }

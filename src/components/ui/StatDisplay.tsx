@@ -28,7 +28,7 @@ export function StatRow({
   highlight = false,
   mono = true,
   valueColor = 'white',
-}: StatRowProps) {
+}: StatRowProps): React.ReactElement {
   const valueClasses = highlight
     ? `${valueColorClasses[valueColor === 'white' ? 'emerald' : valueColor]} ${mono ? 'font-mono' : ''}`
     : `${valueColorClasses[valueColor]} ${mono ? 'font-mono' : ''}`;
@@ -47,7 +47,7 @@ interface StatListProps {
   className?: string;
 }
 
-export function StatList({ children, className = '' }: StatListProps) {
+export function StatList({ children, className = '' }: StatListProps): React.ReactElement {
   return (
     <div className={`space-y-2 ${className}`}>
       {children}
@@ -78,7 +78,7 @@ export function StatCard({
   variant = 'amber',
   children,
   className = '',
-}: StatCardProps) {
+}: StatCardProps): React.ReactElement {
   return (
     <div className={`bg-slate-800/30 border border-slate-700 rounded-xl p-6 ${className}`}>
       <h3 className={`text-lg font-semibold mb-4 flex items-center gap-2 ${titleVariantColors[variant]}`}>
@@ -97,7 +97,7 @@ interface StatGridProps {
   className?: string;
 }
 
-export function StatGrid({ children, cols = 2, className = '' }: StatGridProps) {
+export function StatGrid({ children, cols = 2, className = '' }: StatGridProps): React.ReactElement {
   const colClasses: Record<number, string> = {
     2: 'grid-cols-1 md:grid-cols-2',
     3: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
@@ -131,7 +131,7 @@ export function SimpleStatCard({
   label,
   loading = false,
   valueColor = 'amber',
-}: SimpleStatCardProps) {
+}: SimpleStatCardProps): React.ReactElement {
   return (
     <div className="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-xl p-6 text-center">
       <div className={`text-3xl font-bold mb-1 ${simpleCardValueColors[valueColor]}`}>

@@ -79,7 +79,7 @@ const navigationCards: NavigationCard[] = [
   },
 ];
 
-export default function HomePage() {
+export default function HomePage(): React.ReactElement {
   const [stats, setStats] = useState<SystemStats>({
     unitCount: 0,
     equipmentCount: 0,
@@ -95,8 +95,8 @@ export default function HomePage() {
           fetch('/api/equipment/catalog'),
         ]);
 
-        const unitsData = await unitsRes.json();
-        const equipmentData = await equipmentRes.json();
+        const unitsData = await unitsRes.json() as { count?: number };
+        const equipmentData = await equipmentRes.json() as { count?: number };
 
         setStats({
           unitCount: unitsData.count || 0,
@@ -104,7 +104,7 @@ export default function HomePage() {
           loading: false,
           error: null,
         });
-      } catch (err) {
+      } catch {
         setStats(prev => ({
           ...prev,
           loading: false,

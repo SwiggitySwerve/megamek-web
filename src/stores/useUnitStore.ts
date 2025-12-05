@@ -36,22 +36,21 @@ import { TechBase } from '@/types/enums/TechBase';
 import {
   TechBaseMode,
   TechBaseComponent,
-  IComponentTechBases,
   createDefaultComponentTechBases,
 } from '@/types/construction/TechBaseConfiguration';
 import {
   UnitState,
-  UnitActions,
   UnitStore,
   CreateUnitOptions,
   createDefaultUnitState,
   ISelectionMemory,
-  ITechBaseMemory,
-  createEmptySelectionMemory,
   IArmorAllocation,
   createEmptyArmorAllocation,
-  getTotalAllocatedArmor,
+  createMountedEquipment,
+  IMountedEquipmentInstance,
 } from './unitState';
+import { IEquipmentItem } from '@/types/equipment';
+import { generateUnitId } from '@/utils/uuid';
 import { MechLocation } from '@/types/construction/CriticalSlotAllocation';
 import {
   calculateArmorPoints,
@@ -59,17 +58,83 @@ import {
   getMaxTotalArmor,
   calculateOptimalArmorAllocation,
 } from '@/utils/construction/armorCalculations';
-import { ArmorTypeEnum, getArmorDefinition } from '@/types/construction/ArmorType';
+import { getArmorDefinition } from '@/types/construction/ArmorType';
 import { ceilToHalfTon } from '@/utils/physical/weightUtils';
 import {
-  getValidatedSelectionUpdates,
   getFullyValidatedSelections,
   getSelectionWithMemory,
   ComponentSelections,
 } from '@/utils/techBaseValidation';
+import { getMaxJumpMP } from '@/utils/construction/movementCalculations';
+import { calculateIntegralHeatSinks, calculateEngineWeight } from '@/utils/construction/engineCalculations';
+import {
+  getEquipmentDisplacedByEngineChange,
+  getEquipmentDisplacedByGyroChange,
+  applyDisplacement,
+} from '@/utils/construction/displacementUtils';
+import {
+  createJumpJetEquipmentList,
+  filterOutJumpJets,
+  createInternalStructureEquipmentList,
+  filterOutInternalStructure,
+  createArmorEquipmentList,
+  filterOutArmorSlots,
+  createHeatSinkEquipmentList,
+  filterOutHeatSinks,
+  createEnhancementEquipmentList,
+  filterOutEnhancementEquipment,
+  calculateTargetingComputerWeight,
+  calculateTargetingComputerSlots,
+} from '@/utils/equipment/equipmentListUtils';
+import { calculateDirectFireWeaponTonnage } from '@/types/equipment/weapons/utilities';
+import { equipmentCalculatorService, VARIABLE_EQUIPMENT } from '@/services/equipment/EquipmentCalculatorService';
 
 // Re-export UnitStore type for convenience
 export type { UnitStore } from './unitState';
+
+// =============================================================================
+// Equipment List Helpers - Imported from utils/equipment/equipmentListUtils.ts
+// =============================================================================
+// The following functions are imported from the utilities file:
+// - createJumpJetEquipmentList, filterOutJumpJets
+// - createInternalStructureEquipmentList, filterOutInternalStructure
+// - createArmorEquipmentList, filterOutArmorSlots
+// - createHeatSinkEquipmentList, filterOutHeatSinks
+// - createEnhancementEquipmentList, filterOutEnhancementEquipment
+// - calculateEnhancementWeight, calculateEnhancementSlots
+// - calculateTargetingComputerWeight, calculateTargetingComputerSlots
+// =============================================================================
+
+// =============================================================================
+// Targeting Computer IDs
+// =============================================================================
+const TARGETING_COMPUTER_IDS = ['targeting-computer', 'clan-targeting-computer'];
+
+/**
+ * Recalculate targeting computer weight/slots based on current equipment
+ * Called when weapons are added or removed
+ */
+function recalculateTargetingComputers(
+  equipment: IMountedEquipmentInstance[]
+): IMountedEquipmentInstance[] {
+  // Calculate direct fire weapon tonnage from all equipment
+  const weaponIds = equipment.map(e => e.equipmentId);
+  const directFireTonnage = calculateDirectFireWeaponTonnage(weaponIds);
+  
+  // Update any targeting computers with recalculated weight/slots
+  return equipment.map(item => {
+    if (TARGETING_COMPUTER_IDS.includes(item.equipmentId)) {
+      const weight = calculateTargetingComputerWeight(directFireTonnage, item.techBase);
+      const slots = calculateTargetingComputerSlots(directFireTonnage, item.techBase);
+      return {
+        ...item,
+        weight,
+        criticalSlots: slots,
+      };
+    }
+    return item;
+  });
+}
 
 // =============================================================================
 // Store Factory
@@ -86,16 +151,56 @@ export type { UnitStore } from './unitState';
 export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
   return create<UnitStore>()(
     persist(
-      (set) => ({
+      (set, get) => ({
         // Spread initial state
         ...initialState,
         
         // =================================================================
-        // Name Actions
+        // Identity Actions
         // =================================================================
         
         setName: (name) => set({
           name,
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        }),
+        
+        setChassis: (chassis) => set((state) => ({
+          chassis,
+          // Update derived name
+          name: `${chassis}${state.model ? ' ' + state.model : ''}`,
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        })),
+        
+        setClanName: (clanName) => set({
+          clanName,
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        }),
+        
+        setModel: (model) => set((state) => ({
+          model,
+          // Update derived name
+          name: `${state.chassis}${model ? ' ' + model : ''}`,
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        })),
+        
+        setMulId: (mulId) => set({
+          mulId,
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        }),
+        
+        setYear: (year) => set({
+          year,
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        }),
+        
+        setRulesLevel: (rulesLevel) => set({
+          rulesLevel,
           isModified: true,
           lastModifiedAt: Date.now(),
         }),
@@ -109,10 +214,34 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
           const walkMP = Math.floor(state.engineRating / state.tonnage);
           const newEngineRating = tonnage * walkMP;
           // Clamp engine rating to valid range
-          const clampedRating = Math.max(10, Math.min(500, newEngineRating));
+          const clampedRating = Math.max(10, Math.min(400, newEngineRating));
+          
+          // Re-sync enhancement equipment since MASC depends on tonnage, Supercharger on engine
+          const engineWeight = calculateEngineWeight(clampedRating, state.engineType);
+          
+          // Filter out equipment that needs to be recalculated based on tonnage
+          let updatedEquipment = filterOutEnhancementEquipment(state.equipment);
+          updatedEquipment = filterOutJumpJets(updatedEquipment);
+          
+          // Recreate enhancement equipment with new tonnage
+          const enhancementEquipment = createEnhancementEquipmentList(
+            state.enhancement,
+            tonnage,
+            state.techBase,
+            engineWeight
+          );
+          
+          // Recreate jump jet equipment with new tonnage (weight varies by tonnage class)
+          const jumpJetEquipment = createJumpJetEquipmentList(
+            tonnage,
+            state.jumpMP,
+            state.jumpJetType
+          );
+          
           return {
             tonnage,
             engineRating: clampedRating,
+            equipment: [...updatedEquipment, ...enhancementEquipment, ...jumpJetEquipment],
             isModified: true,
             lastModifiedAt: Date.now(),
           };
@@ -135,8 +264,11 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
         // =================================================================
         
         setTechBaseMode: (mode) => set((state) => {
-          // When switching to non-mixed mode, reset all components to match
-          const newTechBase = mode === TechBaseMode.CLAN ? TechBase.CLAN : TechBase.INNER_SPHERE;
+          // When switching to MIXED mode, preserve current techBase
+          // When switching to non-mixed mode, reset all components to match the new tech base
+          const newTechBase = mode === TechBaseMode.MIXED 
+            ? state.techBase  // Preserve current techBase in MIXED mode
+            : (mode === TechBaseMode.CLAN ? TechBase.CLAN : TechBase.INNER_SPHERE);
           const newComponentTechBases = mode === TechBaseMode.MIXED
             ? state.componentTechBases
             : createDefaultComponentTechBases(newTechBase);
@@ -176,11 +308,23 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
             memoryTechBase
           );
           
+          // Re-sync enhancement equipment since MASC calculation differs by tech base
+          const engineWeight = calculateEngineWeight(state.engineRating, validatedSelections.engineType ?? state.engineType);
+          const nonEnhancementEquipment = filterOutEnhancementEquipment(state.equipment);
+          const enhancementEquipment = createEnhancementEquipmentList(
+            state.enhancement,
+            state.tonnage,
+            newTechBase,
+            engineWeight
+          );
+          
           return {
             techBaseMode: mode,
+            techBase: newTechBase,
             componentTechBases: newComponentTechBases,
             selectionMemory: updatedMemory,
             ...validatedSelections,
+            equipment: [...nonEnhancementEquipment, ...enhancementEquipment],
             isModified: true,
             lastModifiedAt: Date.now(),
           };
@@ -225,6 +369,31 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
             updatedMemory
           );
           
+          // Sync equipment if heat sink type changed
+          let updatedEquipment = state.equipment;
+          if (selectionUpdates.heatSinkType && selectionUpdates.heatSinkType !== state.heatSinkType) {
+            const integralHeatSinks = calculateIntegralHeatSinks(state.engineRating, state.engineType);
+            const externalHeatSinks = Math.max(0, state.heatSinkCount - integralHeatSinks);
+            const nonHeatSinkEquipment = filterOutHeatSinks(updatedEquipment);
+            const heatSinkEquipment = createHeatSinkEquipmentList(selectionUpdates.heatSinkType, externalHeatSinks);
+            updatedEquipment = [...nonHeatSinkEquipment, ...heatSinkEquipment];
+          }
+          
+          // Sync enhancement equipment if MYOMER or MOVEMENT tech base changed
+          // This ensures MASC uses correct IS/Clan variant based on tech base
+          if ((component === TechBaseComponent.MYOMER || component === TechBaseComponent.MOVEMENT) && 
+              state.enhancement && oldTechBase !== techBase) {
+            const engineWeight = calculateEngineWeight(state.engineRating, state.engineType);
+            const nonEnhancementEquipment = filterOutEnhancementEquipment(updatedEquipment);
+            const enhancementEquipment = createEnhancementEquipmentList(
+              state.enhancement,
+              state.tonnage,
+              techBase,
+              engineWeight
+            );
+            updatedEquipment = [...nonEnhancementEquipment, ...enhancementEquipment];
+          }
+          
           return {
             componentTechBases: {
               ...state.componentTechBases,
@@ -232,6 +401,7 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
             },
             selectionMemory: updatedMemory,
             ...selectionUpdates,
+            equipment: updatedEquipment,
             isModified: true,
             lastModifiedAt: Date.now(),
           };
@@ -247,28 +417,106 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
         // Component Actions
         // =================================================================
         
-        setEngineType: (type) => set({
-          engineType: type,
-          isModified: true,
-          lastModifiedAt: Date.now(),
+        setEngineType: (type) => set((state) => {
+          // Find equipment displaced by new engine's slot requirements
+          const displaced = getEquipmentDisplacedByEngineChange(
+            state.equipment,
+            state.engineType,
+            type,
+            state.gyroType
+          );
+          
+          // Unallocate displaced equipment
+          let updatedEquipment = applyDisplacement(
+            state.equipment,
+            displaced.displacedEquipmentIds
+          );
+          
+          // Re-sync heat sink equipment since integral capacity may have changed
+          const integralHeatSinks = calculateIntegralHeatSinks(state.engineRating, type);
+          const externalHeatSinks = Math.max(0, state.heatSinkCount - integralHeatSinks);
+          const nonHeatSinkEquipment = filterOutHeatSinks(updatedEquipment);
+          const heatSinkEquipment = createHeatSinkEquipmentList(state.heatSinkType, externalHeatSinks);
+          updatedEquipment = [...nonHeatSinkEquipment, ...heatSinkEquipment];
+          
+          // Re-sync enhancement equipment since Supercharger depends on engine weight
+          const engineWeight = calculateEngineWeight(state.engineRating, type);
+          const nonEnhancementEquipment = filterOutEnhancementEquipment(updatedEquipment);
+          const enhancementEquipment = createEnhancementEquipmentList(
+            state.enhancement,
+            state.tonnage,
+            state.techBase,
+            engineWeight
+          );
+          updatedEquipment = [...nonEnhancementEquipment, ...enhancementEquipment];
+          
+          return {
+            engineType: type,
+            equipment: updatedEquipment,
+            isModified: true,
+            lastModifiedAt: Date.now(),
+          };
         }),
         
-        setEngineRating: (rating) => set({
-          engineRating: rating,
-          isModified: true,
-          lastModifiedAt: Date.now(),
+        setEngineRating: (rating) => set((state) => {
+          // Re-sync heat sink equipment since integral capacity changes with rating
+          const integralHeatSinks = calculateIntegralHeatSinks(rating, state.engineType);
+          const externalHeatSinks = Math.max(0, state.heatSinkCount - integralHeatSinks);
+          const nonHeatSinkEquipment = filterOutHeatSinks(state.equipment);
+          const heatSinkEquipment = createHeatSinkEquipmentList(state.heatSinkType, externalHeatSinks);
+          
+          // Re-sync enhancement equipment since Supercharger depends on engine weight
+          const engineWeight = calculateEngineWeight(rating, state.engineType);
+          const nonEnhancementEquipment = filterOutEnhancementEquipment([...nonHeatSinkEquipment, ...heatSinkEquipment]);
+          const enhancementEquipment = createEnhancementEquipmentList(
+            state.enhancement,
+            state.tonnage,
+            state.techBase,
+            engineWeight
+          );
+          
+          return {
+            engineRating: rating,
+            equipment: [...nonEnhancementEquipment, ...enhancementEquipment],
+            isModified: true,
+            lastModifiedAt: Date.now(),
+          };
         }),
         
-        setGyroType: (type) => set({
-          gyroType: type,
-          isModified: true,
-          lastModifiedAt: Date.now(),
+        setGyroType: (type) => set((state) => {
+          // Find equipment displaced by new gyro's slot requirements
+          const displaced = getEquipmentDisplacedByGyroChange(
+            state.equipment,
+            state.engineType,
+            state.gyroType,
+            type
+          );
+          
+          // Unallocate displaced equipment
+          const updatedEquipment = applyDisplacement(
+            state.equipment,
+            displaced.displacedEquipmentIds
+          );
+          
+          return {
+            gyroType: type,
+            equipment: updatedEquipment,
+            isModified: true,
+            lastModifiedAt: Date.now(),
+          };
         }),
         
-        setInternalStructureType: (type) => set({
-          internalStructureType: type,
-          isModified: true,
-          lastModifiedAt: Date.now(),
+        setInternalStructureType: (type) => set((state) => {
+          // Sync equipment - remove old structure equipment, add new ones
+          const nonStructureEquipment = filterOutInternalStructure(state.equipment);
+          const structureEquipment = createInternalStructureEquipmentList(type);
+          
+          return {
+            internalStructureType: type,
+            equipment: [...nonStructureEquipment, ...structureEquipment],
+            isModified: true,
+            lastModifiedAt: Date.now(),
+          };
         }),
         
         setCockpitType: (type) => set({
@@ -277,28 +525,109 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
           lastModifiedAt: Date.now(),
         }),
         
-        setHeatSinkType: (type) => set({
-          heatSinkType: type,
-          isModified: true,
-          lastModifiedAt: Date.now(),
+        setHeatSinkType: (type) => set((state) => {
+          // Calculate external heat sinks based on engine capacity
+          const integralHeatSinks = calculateIntegralHeatSinks(state.engineRating, state.engineType);
+          const externalHeatSinks = Math.max(0, state.heatSinkCount - integralHeatSinks);
+          
+          // Sync equipment - remove old heat sinks, add new ones with new type
+          const nonHeatSinkEquipment = filterOutHeatSinks(state.equipment);
+          const heatSinkEquipment = createHeatSinkEquipmentList(type, externalHeatSinks);
+          
+          return {
+            heatSinkType: type,
+            equipment: [...nonHeatSinkEquipment, ...heatSinkEquipment],
+            isModified: true,
+            lastModifiedAt: Date.now(),
+          };
         }),
         
-        setHeatSinkCount: (count) => set({
-          heatSinkCount: count,
-          isModified: true,
-          lastModifiedAt: Date.now(),
+        setHeatSinkCount: (count) => set((state) => {
+          // Calculate external heat sinks based on engine capacity
+          const integralHeatSinks = calculateIntegralHeatSinks(state.engineRating, state.engineType);
+          const externalHeatSinks = Math.max(0, count - integralHeatSinks);
+          
+          // Sync equipment - remove old heat sinks, add new ones with updated count
+          const nonHeatSinkEquipment = filterOutHeatSinks(state.equipment);
+          const heatSinkEquipment = createHeatSinkEquipmentList(state.heatSinkType, externalHeatSinks);
+          
+          return {
+            heatSinkCount: count,
+            equipment: [...nonHeatSinkEquipment, ...heatSinkEquipment],
+            isModified: true,
+            lastModifiedAt: Date.now(),
+          };
         }),
         
-        setArmorType: (type) => set({
-          armorType: type,
-          isModified: true,
-          lastModifiedAt: Date.now(),
+        setArmorType: (type) => set((state) => {
+          // Sync equipment - remove old armor slot equipment, add new ones
+          const nonArmorEquipment = filterOutArmorSlots(state.equipment);
+          const armorEquipment = createArmorEquipmentList(type);
+          
+          return {
+            armorType: type,
+            equipment: [...nonArmorEquipment, ...armorEquipment],
+            isModified: true,
+            lastModifiedAt: Date.now(),
+          };
         }),
         
-        setEnhancement: (enhancement) => set({
-          enhancement,
-          isModified: true,
-          lastModifiedAt: Date.now(),
+        setEnhancement: (enhancement) => set((state) => {
+          // Sync equipment - remove old enhancement equipment, add new ones
+          const nonEnhancementEquipment = filterOutEnhancementEquipment(state.equipment);
+          const engineWeight = calculateEngineWeight(state.engineRating, state.engineType);
+          const enhancementEquipment = createEnhancementEquipmentList(
+            enhancement,
+            state.tonnage,
+            state.techBase,
+            engineWeight
+          );
+          
+          return {
+            enhancement,
+            equipment: [...nonEnhancementEquipment, ...enhancementEquipment],
+            isModified: true,
+            lastModifiedAt: Date.now(),
+          };
+        }),
+        
+        setJumpMP: (jumpMP) => set((state) => {
+          // Calculate walk MP for validation
+          const walkMP = Math.floor(state.engineRating / state.tonnage);
+          const maxJump = getMaxJumpMP(walkMP, state.jumpJetType);
+          const clampedJumpMP = Math.max(0, Math.min(jumpMP, maxJump));
+          
+          // Sync equipment - remove old jump jets, add new ones
+          const nonJumpEquipment = filterOutJumpJets(state.equipment);
+          const jumpJetEquipment = createJumpJetEquipmentList(state.tonnage, clampedJumpMP, state.jumpJetType);
+          
+          return {
+            jumpMP: clampedJumpMP,
+            equipment: [...nonJumpEquipment, ...jumpJetEquipment],
+            isModified: true,
+            lastModifiedAt: Date.now(),
+          };
+        }),
+        
+        setJumpJetType: (jumpJetType) => set((state) => {
+          // Calculate walk MP for validation
+          const walkMP = Math.floor(state.engineRating / state.tonnage);
+          const maxJump = getMaxJumpMP(walkMP, jumpJetType);
+          
+          // Clamp current jump MP to new max if needed
+          const clampedJumpMP = Math.min(state.jumpMP, maxJump);
+          
+          // Sync equipment with new jet type
+          const nonJumpEquipment = filterOutJumpJets(state.equipment);
+          const jumpJetEquipment = createJumpJetEquipmentList(state.tonnage, clampedJumpMP, jumpJetType);
+          
+          return {
+            jumpJetType,
+            jumpMP: clampedJumpMP,
+            equipment: [...nonJumpEquipment, ...jumpJetEquipment],
+            isModified: true,
+            lastModifiedAt: Date.now(),
+          };
         }),
         
         // =================================================================
@@ -396,6 +725,146 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
         }),
         
         // =================================================================
+        // Equipment Actions
+        // =================================================================
+        
+        addEquipment: (item: IEquipmentItem) => {
+          const instanceId = generateUnitId();
+          let mountedEquipment = createMountedEquipment(item, instanceId);
+          
+          // Handle variable equipment (targeting computers, physical weapons, etc.)
+          if (item.variableEquipmentId) {
+            const state = get();
+            
+            // Targeting computers: weight based on direct fire weapon tonnage
+            if (item.variableEquipmentId === VARIABLE_EQUIPMENT.TARGETING_COMPUTER_IS ||
+                item.variableEquipmentId === VARIABLE_EQUIPMENT.TARGETING_COMPUTER_CLAN) {
+              // Calculate direct fire weapon tonnage from current equipment
+              const weaponIds = state.equipment.map(e => e.equipmentId);
+              const directFireTonnage = calculateDirectFireWeaponTonnage(weaponIds);
+              
+              // Calculate targeting computer weight/slots
+              const weight = calculateTargetingComputerWeight(directFireTonnage, item.techBase);
+              const slots = calculateTargetingComputerSlots(directFireTonnage, item.techBase);
+              
+              mountedEquipment = {
+                ...mountedEquipment,
+                weight,
+                criticalSlots: slots,
+              };
+            }
+            // Physical weapons and other variable equipment: weight based on mech tonnage
+            else {
+              try {
+                const result = equipmentCalculatorService.calculateProperties(
+                  item.variableEquipmentId,
+                  { tonnage: state.tonnage }
+                );
+                mountedEquipment = {
+                  ...mountedEquipment,
+                  weight: result.weight,
+                  criticalSlots: result.criticalSlots,
+                };
+              } catch {
+                // Formula not found or calculation failed - use defaults
+                console.warn(`Variable equipment calculation failed for ${item.variableEquipmentId}`);
+              }
+            }
+          }
+          
+          set((state) => {
+            // Add the new equipment
+            const newEquipment = [...state.equipment, mountedEquipment];
+            // Recalculate targeting computers if a weapon was added
+            const updatedEquipment = recalculateTargetingComputers(newEquipment);
+            return {
+              equipment: updatedEquipment,
+              isModified: true,
+              lastModifiedAt: Date.now(),
+            };
+          });
+          
+          return instanceId;
+        },
+        
+        removeEquipment: (instanceId: string) => set((state) => {
+          // Remove the equipment
+          const filteredEquipment = state.equipment.filter(e => e.instanceId !== instanceId);
+          // Recalculate targeting computers if a weapon was removed
+          const updatedEquipment = recalculateTargetingComputers(filteredEquipment);
+          return {
+            equipment: updatedEquipment,
+            isModified: true,
+            lastModifiedAt: Date.now(),
+          };
+        }),
+        
+        updateEquipmentLocation: (instanceId: string, location: MechLocation, slots: readonly number[]) => 
+          set((state) => ({
+            equipment: state.equipment.map(e => 
+              e.instanceId === instanceId
+                ? { ...e, location, slots }
+                : e
+            ),
+            isModified: true,
+            lastModifiedAt: Date.now(),
+          })),
+        
+        bulkUpdateEquipmentLocations: (updates: ReadonlyArray<{ instanceId: string; location: MechLocation; slots: readonly number[] }>) =>
+          set((state) => {
+            // Create a map for O(1) lookup
+            const updateMap = new Map(updates.map(u => [u.instanceId, u]));
+            return {
+              equipment: state.equipment.map(e => {
+                const update = updateMap.get(e.instanceId);
+                return update
+                  ? { ...e, location: update.location, slots: update.slots }
+                  : e;
+              }),
+              isModified: true,
+              lastModifiedAt: Date.now(),
+            };
+          }),
+        
+        clearEquipmentLocation: (instanceId: string) => set((state) => ({
+          equipment: state.equipment.map(e => 
+            e.instanceId === instanceId
+              ? { ...e, location: undefined, slots: undefined }
+              : e
+          ),
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        })),
+        
+        setEquipmentRearMounted: (instanceId: string, isRearMounted: boolean) => set((state) => ({
+          equipment: state.equipment.map(e => 
+            e.instanceId === instanceId
+              ? { ...e, isRearMounted }
+              : e
+          ),
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        })),
+        
+        linkAmmo: (weaponInstanceId: string, ammoInstanceId: string | undefined) => set((state) => ({
+          equipment: state.equipment.map(e => 
+            e.instanceId === weaponInstanceId
+              ? { ...e, linkedAmmoId: ammoInstanceId }
+              : e
+          ),
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        })),
+        
+        clearAllEquipment: () => set((state) => ({
+          // Only remove equipment that is removable (from equipment catalog)
+          // Keep configuration equipment (heat sinks, structure, etc.)
+          equipment: state.equipment.filter(e => !e.isRemovable),
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        })),
+        
+        // =================================================================
         // Metadata Actions
         // =================================================================
         
@@ -412,6 +881,12 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
         partialize: (state) => ({
           id: state.id,
           name: state.name,
+          chassis: state.chassis,
+          clanName: state.clanName,
+          model: state.model,
+          mulId: state.mulId,
+          year: state.year,
+          rulesLevel: state.rulesLevel,
           tonnage: state.tonnage,
           techBase: state.techBase,
           unitType: state.unitType,
@@ -431,6 +906,9 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
           armorTonnage: state.armorTonnage,
           armorAllocation: state.armorAllocation,
           enhancement: state.enhancement,
+          jumpMP: state.jumpMP,
+          jumpJetType: state.jumpJetType,
+          equipment: state.equipment,
           isModified: state.isModified,
           createdAt: state.createdAt,
           lastModifiedAt: state.lastModifiedAt,

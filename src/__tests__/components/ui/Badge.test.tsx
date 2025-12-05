@@ -128,9 +128,10 @@ describe('Badge', () => {
       expect(badge).toHaveClass('bg-emerald-600/20');
     });
 
-    it('should render Inner Sphere with blue variant', () => {
+    it('should render Inner Sphere (IS) with blue variant', () => {
       render(<TechBaseBadge techBase={TechBase.INNER_SPHERE} />);
-      const badge = screen.getByText('Inner Sphere');
+      // Component renders abbreviated "IS" for Inner Sphere
+      const badge = screen.getByText('IS');
       expect(badge).toHaveClass('bg-blue-600/20');
     });
   });

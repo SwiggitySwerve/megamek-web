@@ -7,7 +7,7 @@
  * @spec openspec/specs/unit-store-architecture/spec.md
  */
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { StoreApi } from 'zustand';
 import { UnitStoreContext } from './useUnitStore';
 import type { UnitStore } from './useUnitStore';
@@ -50,7 +50,7 @@ export function UnitStoreProvider({
   children,
   activeTab,
   fallback,
-}: UnitStoreProviderProps) {
+}: UnitStoreProviderProps): React.ReactElement {
   // Create/get store based on activeTab
   // useMemo ensures we don't recreate on every render
   const currentStore = useMemo<StoreApi<UnitStore> | null>(() => {
@@ -75,6 +75,7 @@ export function UnitStoreProvider({
       console.error('Error creating unit store:', e);
       return null;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- only recreate store when specific tab properties change, not on every activeTab reference change
   }, [activeTab?.id, activeTab?.name, activeTab?.tonnage, activeTab?.techBase]);
   
   // No active tab selected - show fallback

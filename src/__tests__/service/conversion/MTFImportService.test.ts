@@ -6,7 +6,7 @@
  * @spec openspec/specs/data-loading-architecture/spec.md
  */
 
-import { MTFImportService, getMTFImportService, IMTFImportResult } from '@/services/conversion/MTFImportService';
+import { MTFImportService, getMTFImportService } from '@/services/conversion/MTFImportService';
 import { ISerializedUnit } from '@/types/unit/UnitSerialization';
 import { TechBase } from '@/types/enums/TechBase';
 

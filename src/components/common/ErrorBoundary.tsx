@@ -72,12 +72,6 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   private static isRecoverableError(error: Error): boolean {
     // CRITICAL: Determine if error is recoverable based on error type
-    const recoverableErrors = [
-      'TypeError',
-      'ReferenceError',
-      'RangeError'
-    ]
-    
     const nonRecoverableErrors = [
       'SyntaxError',
       'URIError'
@@ -125,7 +119,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       console.error('[ErrorBoundary] Error log:', errorLog)
       
       // CRITICAL: Store in localStorage for debugging
-      const errorLogs = JSON.parse(localStorage.getItem('errorLogs') || '[]')
+      const errorLogs = JSON.parse(localStorage.getItem('errorLogs') || '[]') as Array<typeof errorLog>
       errorLogs.push(errorLog)
       
       // CRITICAL: Keep only last 10 errors
@@ -279,7 +273,7 @@ export function withErrorBoundary<P extends object>(
   Component: React.ComponentType<P>,
   errorBoundaryProps?: Omit<ErrorBoundaryProps, 'children'>
 ) {
-  return function WithErrorBoundary(props: P) {
+  return function WithErrorBoundary(props: P): React.ReactElement {
     return (
       <ErrorBoundary
         componentName={Component.displayName || Component.name}
@@ -292,7 +286,12 @@ export function withErrorBoundary<P extends object>(
 }
 
 // CRITICAL: Hook for error boundary context
-export function useErrorBoundary() {
+export function useErrorBoundary(): {
+  error: Error | null;
+  handleError: (error: Error, errorInfo: ErrorInfo) => void;
+  clearError: () => void;
+  hasError: boolean;
+} {
   const [error, setError] = React.useState<Error | null>(null)
   
   const handleError = React.useCallback((error: Error, errorInfo: ErrorInfo) => {

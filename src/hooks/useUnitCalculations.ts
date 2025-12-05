@@ -15,7 +15,9 @@ import { getInternalStructureDefinition } from '@/types/construction/InternalStr
 import { getCockpitDefinition } from '@/types/construction/CockpitType';
 import { getHeatSinkDefinition } from '@/types/construction/HeatSinkType';
 import { getEngineDefinition } from '@/types/construction/EngineType';
+import { getArmorCriticalSlots } from '@/utils/construction/armorCalculations';
 import { ceilToHalfTon } from '@/utils/physical/weightUtils';
+import { JumpJetType, calculateJumpJetWeight, calculateJumpJetSlots } from '@/utils/construction/movementCalculations';
 
 // =============================================================================
 // Types
@@ -28,6 +30,8 @@ export interface UnitCalculations {
   structureWeight: number;
   cockpitWeight: number;
   heatSinkWeight: number;
+  armorWeight: number;
+  jumpJetWeight: number;
   totalStructuralWeight: number;
   
   // Critical Slots
@@ -36,6 +40,8 @@ export interface UnitCalculations {
   structureSlots: number;
   cockpitSlots: number;
   heatSinkSlots: number;
+  armorSlots: number;
+  jumpJetSlots: number;
   totalSystemSlots: number;
   
   // Heat
@@ -46,6 +52,7 @@ export interface UnitCalculations {
   // Movement
   walkMP: number;
   runMP: number;
+  jumpMP: number;
 }
 
 // =============================================================================
@@ -57,10 +64,12 @@ export interface UnitCalculations {
  * 
  * @param tonnage - Unit tonnage
  * @param selections - Current component selections
+ * @param armorTonnage - Armor tonnage set by user (weight is based on this, not allocated points)
  */
 export function useUnitCalculations(
   tonnage: number,
-  selections: IComponentSelections
+  selections: IComponentSelections,
+  armorTonnage: number = 0
 ): UnitCalculations {
   return useMemo(() => {
     // Get component definitions
@@ -94,8 +103,18 @@ export function useUnitCalculations(
       ? externalHeatSinks * heatSinkDef.weight
       : externalHeatSinks * 1.0;
     
-    // Total structural weight
-    const totalStructuralWeight = engineWeight + gyroWeight + structureWeight + cockpitWeight + heatSinkWeight;
+    // Armor weight - use armorTonnage directly (not calculated from allocated points)
+    // The user sets armor tonnage in the Armor tab, and weight should reflect that setting
+    const armorWeight = armorTonnage;
+    
+    // Jump jet calculations
+    const jumpMP = selections.jumpMP ?? 0;
+    const jumpJetType = selections.jumpJetType ?? JumpJetType.STANDARD;
+    const jumpJetWeight = calculateJumpJetWeight(tonnage, jumpMP, jumpJetType);
+    const jumpJetSlots = calculateJumpJetSlots(jumpMP, jumpJetType);
+    
+    // Total structural weight (includes armor and jump jets)
+    const totalStructuralWeight = engineWeight + gyroWeight + structureWeight + cockpitWeight + heatSinkWeight + armorWeight + jumpJetWeight;
     
     // =========================================================================
     // Critical Slot Calculations
@@ -118,13 +137,25 @@ export function useUnitCalculations(
       : 5;
     
     // Heat sink slots (only external heat sinks need slots)
+    // Note: heatSinkSlots is tracked for reference but NOT included in totalSystemSlots
+    // because heat sinks are now in the equipment array (like Jump Jets, Endo Steel, Ferro-Fibrous)
     const heatSinkSlots = heatSinkDef 
       ? externalHeatSinks * heatSinkDef.criticalSlots
       : externalHeatSinks;
     
-    // Total system slots (not including actuators, which are fixed at ~16)
-    const actuatorSlots = 16; // 4 per arm, 4 per leg (hip, upper, lower, foot/hand)
-    const totalSystemSlots = engineSlots + gyroSlots + structureSlots + cockpitSlots + heatSinkSlots + actuatorSlots;
+    // Armor slots (Ferro-Fibrous requires slots)
+    const armorSlots = getArmorCriticalSlots(selections.armorType);
+    
+    // Total system slots 
+    // Note: structureSlots, armorSlots, jumpJetSlots, and heatSinkSlots are NOT included here
+    // because they are tracked in the equipment array and counted in equipmentCalcs.totalSlots.
+    // Only include fixed system components not in equipment array:
+    // - Engine (CT + side torso)
+    // - Gyro
+    // - Cockpit (life support, sensors, cockpit itself)
+    // - Actuators (fixed at 16: 4 per arm, 4 per leg)
+    const actuatorSlots = 16; // Shoulder, upper arm, lower arm, hand × 2; Hip, upper leg, lower leg, foot × 2
+    const totalSystemSlots = engineSlots + gyroSlots + cockpitSlots + actuatorSlots;
     
     // =========================================================================
     // Heat Calculations
@@ -147,6 +178,8 @@ export function useUnitCalculations(
       structureWeight,
       cockpitWeight,
       heatSinkWeight,
+      armorWeight,
+      jumpJetWeight,
       totalStructuralWeight,
       
       // Critical Slots
@@ -155,6 +188,8 @@ export function useUnitCalculations(
       structureSlots,
       cockpitSlots,
       heatSinkSlots,
+      armorSlots,
+      jumpJetSlots,
       totalSystemSlots,
       
       // Heat
@@ -165,7 +200,8 @@ export function useUnitCalculations(
       // Movement
       walkMP,
       runMP,
+      jumpMP,
     };
-  }, [tonnage, selections]);
+  }, [tonnage, selections, armorTonnage]);
 }
 

@@ -6,7 +6,7 @@
  * @spec openspec/specs/armor-system/spec.md
  */
 
-import { ArmorTypeEnum, ArmorDefinition, getArmorDefinition } from '../../types/construction/ArmorType';
+import { ArmorTypeEnum, getArmorDefinition } from '../../types/construction/ArmorType';
 import { getStructurePoints } from '../../types/construction/InternalStructureType';
 import { ceilToHalfTon } from '../physical/weightUtils';
 
@@ -264,22 +264,22 @@ export function calculateOptimalArmorAllocation(
   }
   
   // ===========================================================================
-  // PHASE 3: Apply front/rear splits to torsos
+  // PHASE 3: Apply front/rear splits to torsos (75% front / 25% rear)
   // ===========================================================================
   
-  // CT: rear = ceil(total / 4.5)
-  const ctRear = Math.ceil(ct / 4.5);
+  // Standard BattleTech balanced split: 75% front, 25% rear
+  const REAR_RATIO = 0.25;
+  
+  // CT: 25% rear
+  const ctRear = Math.round(ct * REAR_RATIO);
   const ctFront = ct - ctRear;
   
-  // Side torsos: 25% rear at MAX TOTAL ARMOR, 22% otherwise, 0% if < 40% capacity
-  const atMaxTotalArmor = points >= maxTotalArmor;
-  
+  // Side torsos: 25% rear if > 40% capacity, otherwise all front
   let ltRear = 0, ltFront = lt;
   let rtRear = 0, rtFront = rt;
   
   if (lt > maxLT * 0.4) {
-    const rearRatio = atMaxTotalArmor ? 0.25 : 0.22;
-    ltRear = Math.round(lt * rearRatio);
+    ltRear = Math.round(lt * REAR_RATIO);
     ltFront = lt - ltRear;
     rtRear = ltRear;
     rtFront = rt - rtRear;

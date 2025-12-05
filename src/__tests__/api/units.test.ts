@@ -8,6 +8,7 @@ import { canonicalUnitService } from '@/services/units/CanonicalUnitService';
 import { TechBase } from '@/types/enums/TechBase';
 import { Era } from '@/types/enums/Era';
 import { WeightClass } from '@/types/enums/WeightClass';
+import { parseSuccessResponse, parseErrorResponse } from '../helpers';
 
 // Mock the canonical unit service
 jest.mock('@/services/units/CanonicalUnitService', () => ({
@@ -34,7 +35,7 @@ describe('/api/units', () => {
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(405);
-      const data = JSON.parse(res._getData());
+      const data = parseErrorResponse(res);
       expect(data.success).toBe(false);
       expect(data.error).toContain('Method not allowed');
     });
@@ -78,7 +79,7 @@ describe('/api/units', () => {
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(200);
-      const data = JSON.parse(res._getData());
+      const data = parseSuccessResponse(res);
       expect(data.success).toBe(true);
       expect(data.data).toEqual(mockUnit);
     });
@@ -94,7 +95,7 @@ describe('/api/units', () => {
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(404);
-      const data = JSON.parse(res._getData());
+      const data = parseErrorResponse(res);
       expect(data.success).toBe(false);
       expect(data.error).toContain('Unit not found');
     });
@@ -116,7 +117,7 @@ describe('/api/units', () => {
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(200);
-      const data = JSON.parse(res._getData());
+      const data = parseSuccessResponse(res);
       expect(data.success).toBe(true);
       expect(data.data).toEqual(mockUnits);
       expect(data.count).toBe(2);
@@ -145,7 +146,7 @@ describe('/api/units', () => {
 
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'GET',
-        query: { era: Era.SUCCESSION_WARS },
+        query: { era: Era.LATE_SUCCESSION_WARS },
       });
 
       await handler(req, res);
@@ -153,7 +154,7 @@ describe('/api/units', () => {
       expect(res._getStatusCode()).toBe(200);
       expect(mockQuery).toHaveBeenCalledWith(
         expect.objectContaining({
-          era: Era.SUCCESSION_WARS,
+          era: Era.LATE_SUCCESSION_WARS,
         })
       );
     });
@@ -339,7 +340,7 @@ describe('/api/units', () => {
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(500);
-      const data = JSON.parse(res._getData());
+      const data = parseErrorResponse(res);
       expect(data.success).toBe(false);
       expect(data.error).toBe('Database connection failed');
     });
@@ -355,7 +356,7 @@ describe('/api/units', () => {
       await handler(req, res);
 
       expect(res._getStatusCode()).toBe(500);
-      const data = JSON.parse(res._getData());
+      const data = parseErrorResponse(res);
       expect(data.success).toBe(false);
       expect(data.error).toBe('Internal server error');
     });

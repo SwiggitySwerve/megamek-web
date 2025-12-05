@@ -6,6 +6,7 @@
 
 export * from './useUnit';
 export * from './useEquipmentBrowser';
+export * from './useEquipmentCalculations';
 export * from './useKeyboardNavigation';
 export * from './useTechBaseSync';
 export * from './useTechBaseSyncEffect';

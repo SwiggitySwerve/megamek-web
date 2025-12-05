@@ -53,7 +53,7 @@ describe('Type Guards', () => {
         [{ name: 'test' }, 'missing id'],
         [{ id: 123, name: 'test' }, 'numeric id'],
         [{ id: 'test', name: 123 }, 'numeric name'],
-      ])('should reject %s (%s)', (value) => {
+      ])('should reject %s (%s)', (value, _label) => {
         expect(isEntity(value)).toBe(false);
       });
     });
@@ -70,7 +70,7 @@ describe('Type Guards', () => {
         [{ weight: 0.5 }, 'half ton'],
         [{ weight: 100 }, 'assault weight'],
         [{ weight: 0.25 }, 'quarter ton'],
-      ])('should accept %o (%s)', (value) => {
+      ])('should accept %o (%s)', (value, _label) => {
         expect(isWeightedComponent(value)).toBe(true);
       });
     });
@@ -83,7 +83,7 @@ describe('Type Guards', () => {
         [{ weight: Infinity }, 'Infinity weight'],
         [{ weight: 'heavy' }, 'string weight'],
         [{}, 'missing weight'],
-      ])('should reject %o (%s)', (value) => {
+      ])('should reject %o (%s)', (value, _label) => {
         expect(isWeightedComponent(value)).toBe(false);
       });
     });
@@ -99,7 +99,7 @@ describe('Type Guards', () => {
         [{ criticalSlots: 1 }, 'one slot'],
         [{ criticalSlots: 6 }, 'head capacity'],
         [{ criticalSlots: 12 }, 'torso capacity'],
-      ])('should accept %o (%s)', (value) => {
+      ])('should accept %o (%s)', (value, _label) => {
         expect(isSlottedComponent(value)).toBe(true);
       });
     });
@@ -111,7 +111,7 @@ describe('Type Guards', () => {
         [{ criticalSlots: 1.5 }, 'fractional slots'],
         [{ criticalSlots: NaN }, 'NaN slots'],
         [{}, 'missing criticalSlots'],
-      ])('should reject %o (%s)', (value) => {
+      ])('should reject %o (%s)', (value, _label) => {
         expect(isSlottedComponent(value)).toBe(false);
       });
     });

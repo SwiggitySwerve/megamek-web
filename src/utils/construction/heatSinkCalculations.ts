@@ -6,7 +6,7 @@
  * @spec openspec/specs/heat-sink-system/spec.md
  */
 
-import { HeatSinkType, HeatSinkDefinition, getHeatSinkDefinition } from '../../types/construction/HeatSinkType';
+import { HeatSinkType, getHeatSinkDefinition } from '../../types/construction/HeatSinkType';
 import { calculateIntegralHeatSinks } from './engineCalculations';
 import { EngineType } from '../../types/construction/EngineType';
 

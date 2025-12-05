@@ -7,7 +7,7 @@
  */
 
 import { IEntity, ITechBaseEntity, ITemporalEntity, IValuedComponent } from '../core';
-import { TechBase, RulesLevel, Era, WeightClass } from '../enums';
+import { RulesLevel, Era, WeightClass } from '../enums';
 import { 
   EngineType, 
   GyroType, 

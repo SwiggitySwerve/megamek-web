@@ -1,7 +1,8 @@
 # equipment-database Specification
 
 ## Purpose
-TBD - created by archiving change implement-phase3-equipment. Update Purpose after archive.
+Maintains a complete equipment database for BattleTech BattleMechs including weapons, ammunition, electronics, and miscellaneous equipment.
+
 ## Requirements
 ### Requirement: Equipment Catalog
 The system SHALL maintain a complete equipment database.
@@ -27,6 +28,41 @@ All equipment SHALL have complete data.
 - **THEN** it MUST have id, name, weight, criticalSlots
 - **AND** it MUST have techBase and rulesLevel
 - **AND** it MUST have cost and battleValue
+
+### Requirement: Multi-Category Equipment
+The system SHALL support equipment belonging to multiple filter categories.
+
+#### Scenario: Additional categories field
+- **WHEN** equipment is defined
+- **THEN** it MAY have additionalCategories array
+- **AND** additionalCategories lists secondary categories for filtering
+
+#### Scenario: Dual-purpose equipment
+- **WHEN** equipment serves multiple roles (e.g., AMS is both weapon and defensive)
+- **THEN** primary category reflects main classification
+- **AND** additionalCategories includes secondary classifications
+- **AND** equipment appears in filter results for all assigned categories
+
+#### Scenario: AMS equipment categorization
+- **WHEN** Anti-Missile System equipment is defined
+- **THEN** Standard AMS has primary category BALLISTIC_WEAPON
+- **AND** Laser AMS has primary category ENERGY_WEAPON
+- **AND** both have additionalCategories containing MISC_EQUIPMENT
+
+### Requirement: Equipment Retrieval Functions
+The system SHALL provide separate functions for browsing vs lookup.
+
+#### Scenario: Browser equipment list
+- **WHEN** getAllEquipmentItems() is called
+- **THEN** Jump Jets are excluded (configured via Structure tab)
+- **AND** Heat Sinks are excluded (configured via Structure tab)
+- **AND** all other equipment is included
+
+#### Scenario: Lookup equipment list
+- **WHEN** getAllEquipmentItemsForLookup() is called
+- **THEN** ALL equipment is included
+- **AND** Jump Jets and Heat Sinks are included
+- **AND** function is used for unit conversion and equipment resolution
 
 ### Requirement: Variable Equipment Interface
 Equipment with variable properties SHALL be identifiable and calculable.

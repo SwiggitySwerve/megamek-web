@@ -3,12 +3,93 @@
  * 
  * Provides read-only access to bundled canonical unit data.
  * Uses lazy loading for full unit data.
+ * Supports both server-side (Node.js) and client-side (browser) loading.
  * 
  * @spec openspec/specs/unit-services/spec.md
  */
 
 import { IUnitIndexEntry, IUnitQueryCriteria } from '../common/types';
-import { NotFoundError } from '../common/errors';
+import { TechBase } from '@/types/enums/TechBase';
+import { Era } from '@/types/enums/Era';
+import { WeightClass } from '@/types/enums/WeightClass';
+
+/**
+ * Raw unit index entry from index.json
+ */
+interface RawUnitIndexEntry {
+  id: string;
+  chassis: string;
+  model: string; // This is 'variant' in our system
+  tonnage: number;
+  techBase: string;
+  year: number;
+  role?: string;
+  rulesLevel?: string;
+  cost?: number;
+  bv?: number;
+  path: string;
+}
+
+/**
+ * Map raw index data to IUnitIndexEntry format
+ */
+function mapRawToIndexEntry(raw: RawUnitIndexEntry): IUnitIndexEntry {
+  // Map techBase string to TechBase enum
+  let techBase: TechBase = TechBase.INNER_SPHERE;
+  if (raw.techBase === 'CLAN') {
+    techBase = TechBase.CLAN;
+  } else if (raw.techBase === 'MIXED') {
+    techBase = TechBase.INNER_SPHERE; // Default mixed to IS
+  }
+  
+  // Determine weight class from tonnage
+  let weightClass: WeightClass;
+  if (raw.tonnage <= 35) {
+    weightClass = WeightClass.LIGHT;
+  } else if (raw.tonnage <= 55) {
+    weightClass = WeightClass.MEDIUM;
+  } else if (raw.tonnage <= 75) {
+    weightClass = WeightClass.HEAVY;
+  } else {
+    weightClass = WeightClass.ASSAULT;
+  }
+  
+  // Map era from file path (e.g., "2-star-league/standard/...")
+  let era: Era = Era.LATE_SUCCESSION_WARS;
+  if (raw.path.includes('1-age-of-war')) {
+    era = Era.AGE_OF_WAR;
+  } else if (raw.path.includes('2-star-league')) {
+    era = Era.STAR_LEAGUE;
+  } else if (raw.path.includes('3-succession-wars')) {
+    era = Era.LATE_SUCCESSION_WARS;
+  } else if (raw.path.includes('4-clan-invasion')) {
+    era = Era.CLAN_INVASION;
+  } else if (raw.path.includes('5-civil-war')) {
+    era = Era.CIVIL_WAR;
+  } else if (raw.path.includes('6-dark-age')) {
+    era = Era.DARK_AGE;
+  } else if (raw.path.includes('7-ilclan')) {
+    era = Era.IL_CLAN;
+  }
+  
+  return {
+    id: raw.id,
+    name: `${raw.chassis} ${raw.model}`,
+    chassis: raw.chassis,
+    variant: raw.model,
+    tonnage: raw.tonnage,
+    techBase,
+    era,
+    weightClass,
+    unitType: 'BattleMech',
+    filePath: `/data/units/battlemechs/${raw.path}`,
+    year: raw.year,
+    role: raw.role,
+    rulesLevel: raw.rulesLevel,
+    cost: raw.cost,
+    bv: raw.bv,
+  };
+}
 
 /**
  * Full unit data structure (placeholder - will be defined in types)
@@ -39,12 +120,46 @@ export interface ICanonicalUnitService {
 }
 
 /**
+ * Get the base URL for fetching data
+ * On server-side, we need an absolute URL
+ * On client-side, relative URLs work fine
+ */
+function getBaseUrl(): string {
+  if (typeof window !== 'undefined') {
+    // Client-side: use relative URL
+    return '';
+  }
+  // Server-side: construct absolute URL
+  // Use NEXT_PUBLIC_BASE_URL if set, otherwise default to localhost
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 
+    `http://localhost:${process.env.PORT || 3000}`;
+  return baseUrl;
+}
+
+/**
  * Canonical Unit Service implementation
  */
 export class CanonicalUnitService implements ICanonicalUnitService {
   private indexCache: IUnitIndexEntry[] | null = null;
   private unitCache: Map<string, IFullUnit> = new Map();
-  private indexPath = '/data/units/index.json';
+  private indexPath = '/data/units/battlemechs/index.json';
+
+  /**
+   * Load JSON data - works on both server and client side using fetch
+   */
+  private async loadJson<T>(relativePath: string): Promise<T | null> {
+    try {
+      const baseUrl = getBaseUrl();
+      const url = `${baseUrl}${relativePath}`;
+      const response = await fetch(url);
+      if (!response.ok) {
+        return null;
+      }
+      return await response.json() as T;
+    } catch {
+      return null;
+    }
+  }
 
   /**
    * Load the lightweight unit index
@@ -55,15 +170,16 @@ export class CanonicalUnitService implements ICanonicalUnitService {
     }
 
     try {
-      const response = await fetch(this.indexPath);
-      if (!response.ok) {
-        // Index doesn't exist yet - return empty array
+      const data = await this.loadJson<{ units?: RawUnitIndexEntry[] }>(this.indexPath);
+      
+      if (!data) {
         this.indexCache = [];
         return this.indexCache;
       }
       
-      this.indexCache = await response.json();
-      return this.indexCache || [];
+      // Map raw index data to IUnitIndexEntry format
+      this.indexCache = (data.units || []).map(mapRawToIndexEntry);
+      return this.indexCache;
     } catch {
       // Index not available - return empty array
       this.indexCache = [];
@@ -89,12 +205,10 @@ export class CanonicalUnitService implements ICanonicalUnitService {
     }
 
     try {
-      const response = await fetch(entry.filePath);
-      if (!response.ok) {
+      const unit = await this.loadJson<IFullUnit>(entry.filePath);
+      if (!unit) {
         return null;
       }
-      
-      const unit: IFullUnit = await response.json();
       this.unitCache.set(id, unit);
       return unit;
     } catch {

@@ -126,6 +126,16 @@ export interface IUnitIndexEntry {
   readonly weightClass: WeightClass;
   readonly unitType: UnitType;
   readonly filePath: string;
+  /** Introduction year */
+  readonly year?: number;
+  /** Role (e.g., Juggernaut, Scout, Striker) */
+  readonly role?: string;
+  /** Rules level (INTRODUCTORY, STANDARD, ADVANCED, EXPERIMENTAL) */
+  readonly rulesLevel?: string;
+  /** C-Bill cost */
+  readonly cost?: number;
+  /** Battle Value 2.0 */
+  readonly bv?: number;
 }
 
 /**

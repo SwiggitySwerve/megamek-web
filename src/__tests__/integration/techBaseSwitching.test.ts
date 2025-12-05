@@ -23,7 +23,7 @@ import {
 import { useTechBaseSync } from '@/hooks/useTechBaseSync';
 import { useUnitCalculations } from '@/hooks/useUnitCalculations';
 import { TechBase } from '@/types/enums/TechBase';
-import { TechBaseMode } from '@/types/construction/TechBaseConfiguration';
+import { TechBaseMode, TechBaseComponent } from '@/types/construction/TechBaseConfiguration';
 import { EngineType } from '@/types/construction/EngineType';
 import { GyroType } from '@/types/construction/GyroType';
 import { InternalStructureType } from '@/types/construction/InternalStructureType';
@@ -34,8 +34,6 @@ import { IComponentSelections } from '@/stores/useMultiUnitStore';
 import {
   setupMockLocalStorage,
   expectAllComponentTechBases,
-  createISComponentTechBases,
-  createClanComponentTechBases,
 } from '../helpers/storeTestHelpers';
 
 describe('Tech Base Switching Integration', () => {
@@ -233,8 +231,8 @@ describe('Tech Base Switching Integration', () => {
       
       // Set engine to Clan, armor to IS
       act(() => {
-        store.getState().setComponentTechBase('engine', TechBase.CLAN);
-        store.getState().setComponentTechBase('armor', TechBase.INNER_SPHERE);
+        store.getState().setComponentTechBase(TechBaseComponent.ENGINE, TechBase.CLAN);
+        store.getState().setComponentTechBase(TechBaseComponent.ARMOR, TechBase.INNER_SPHERE);
       });
       
       expect(store.getState().componentTechBases.engine).toBe(TechBase.CLAN);
@@ -251,7 +249,7 @@ describe('Tech Base Switching Integration', () => {
       
       act(() => {
         store.getState().setTechBaseMode(TechBaseMode.MIXED);
-        store.getState().setComponentTechBase('engine', TechBase.CLAN);
+        store.getState().setComponentTechBase(TechBaseComponent.ENGINE, TechBase.CLAN);
       });
       
       const { result } = renderHook(() => 
@@ -272,7 +270,7 @@ describe('Tech Base Switching Integration', () => {
       
       act(() => {
         store.getState().setTechBaseMode(TechBaseMode.MIXED);
-        store.getState().setComponentTechBase('heatsink', TechBase.CLAN);
+        store.getState().setComponentTechBase(TechBaseComponent.HEATSINK, TechBase.CLAN);
       });
       
       const { result } = renderHook(() => 
@@ -293,8 +291,8 @@ describe('Tech Base Switching Integration', () => {
       
       // Set specific components before switching to mixed
       act(() => {
-        store.getState().setComponentTechBase('engine', TechBase.CLAN);
-        store.getState().setComponentTechBase('heatsink', TechBase.CLAN);
+        store.getState().setComponentTechBase(TechBaseComponent.ENGINE, TechBase.CLAN);
+        store.getState().setComponentTechBase(TechBaseComponent.HEATSINK, TechBase.CLAN);
       });
       
       act(() => {
@@ -398,7 +396,7 @@ describe('Tech Base Switching Integration', () => {
       // Configure original
       act(() => {
         original.getState().setTechBaseMode(TechBaseMode.MIXED);
-        original.getState().setComponentTechBase('armor', TechBase.INNER_SPHERE);
+      original.getState().setComponentTechBase(TechBaseComponent.ARMOR, TechBase.INNER_SPHERE);
         original.getState().setEngineType(EngineType.XL_CLAN);
         original.getState().setHeatSinkType(HeatSinkType.DOUBLE_CLAN);
       });
@@ -629,7 +627,7 @@ describe('Tech Base Switching Integration', () => {
       // Step 4: Switch to mixed mode
       act(() => {
         store.getState().setTechBaseMode(TechBaseMode.MIXED);
-        store.getState().setComponentTechBase('heatsink', TechBase.INNER_SPHERE);
+        store.getState().setComponentTechBase(TechBaseComponent.HEATSINK, TechBase.INNER_SPHERE);
       });
       
       const { result: mixedCheck } = renderHook(() => 

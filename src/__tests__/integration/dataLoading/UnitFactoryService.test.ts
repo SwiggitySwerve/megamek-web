@@ -11,7 +11,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { UnitFactoryService } from '@/services/units/UnitFactoryService';
 import { ISerializedUnit } from '@/types/unit/UnitSerialization';
-import { MechLocation } from '@/types/construction';
 import { TechBase } from '@/types/enums/TechBase';
 import { RulesLevel } from '@/types/enums/RulesLevel';
 import { Era } from '@/types/enums/Era';

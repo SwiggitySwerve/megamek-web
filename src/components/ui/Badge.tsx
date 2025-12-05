@@ -65,8 +65,8 @@ export function Badge({
   size = 'md',
   pill = false,
   className = '',
-}: BadgeProps) {
-  const baseClasses = 'font-medium border inline-flex items-center';
+}: BadgeProps): React.ReactElement {
+  const baseClasses = 'font-medium border inline-flex items-center whitespace-nowrap';
   const shapeClasses = pill ? 'rounded-full' : 'rounded';
 
   return (
@@ -79,9 +79,9 @@ export function Badge({
 }
 
 // Convenience exports for common badge types
-export function TechBaseBadge({ techBase }: { techBase: TechBase }) {
+export function TechBaseBadge({ techBase }: { techBase: TechBase }): React.ReactElement {
   const variant: BadgeVariant = techBase === TechBase.CLAN ? 'emerald' : 'blue';
-  const label = techBase === TechBase.CLAN ? 'Clan' : 'Inner Sphere';
+  const label = techBase === TechBase.CLAN ? 'Clan' : 'IS';
 
   return (
     <Badge variant={variant} size="sm">
@@ -90,7 +90,7 @@ export function TechBaseBadge({ techBase }: { techBase: TechBase }) {
   );
 }
 
-export function WeightClassBadge({ weightClass }: { weightClass: WeightClass }) {
+export function WeightClassBadge({ weightClass }: { weightClass: WeightClass }): React.ReactElement {
   const getVariant = (): BadgeVariant => {
     switch (weightClass) {
       case WeightClass.LIGHT: return 'emerald';

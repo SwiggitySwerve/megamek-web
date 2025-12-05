@@ -10,7 +10,7 @@
 import React from 'react';
 import { TechBaseBadge } from './TechBaseBadge';
 import { ValidationBadge } from './ValidationBadge';
-import { TechBase } from '@/types/enums/TechBase';
+import { TechBaseMode } from '@/types/construction/TechBaseConfiguration';
 import { ValidationStatus } from '@/utils/colors/statusColors';
 
 // =============================================================================
@@ -22,14 +22,18 @@ export interface UnitStats {
   name: string;
   /** Tonnage (max weight) */
   tonnage: number;
-  /** Tech base */
-  techBase: TechBase;
+  /** Tech base mode (IS/Clan/Mixed) */
+  techBaseMode: TechBaseMode;
+  /** Engine rating */
+  engineRating: number;
   /** Walk MP */
   walkMP: number;
   /** Run MP */
   runMP: number;
   /** Jump MP */
   jumpMP: number;
+  /** Max Run MP with enhancement active (MASC/TSM/Supercharger) */
+  maxRunMP?: number;
   /** Current weight used */
   weightUsed: number;
   /** Remaining weight (calculated: tonnage - weightUsed) */
@@ -78,6 +82,8 @@ const styles = {
     warning: 'text-amber-400',
     error: 'text-red-400',
     success: 'text-green-400',
+    engine: 'text-orange-500', // Matches engine color from slotColors
+    bv: 'text-cyan-400', // Battle Value - distinctive cyan
   },
   muted: 'text-slate-500',
 } as const;
@@ -119,7 +125,7 @@ function CapacityStat({ label, current, max, unit = '', status = 'normal' }: Cap
 interface SimpleStatProps {
   label: string;
   value: number | string;
-  status?: 'normal' | 'warning' | 'error' | 'success';
+  status?: 'normal' | 'warning' | 'error' | 'success' | 'engine' | 'bv';
 }
 
 /**
@@ -136,6 +142,37 @@ function SimpleStat({ label, value, status = 'normal' }: SimpleStatProps) {
   );
 }
 
+interface MovementStatProps {
+  walkMP: number;
+  runMP: number;
+  jumpMP: number;
+  maxRunMP?: number;
+}
+
+/**
+ * Displays movement in compact format: 5 / 8 [10] / 5
+ * Shows Walk / Run [MaxRun] / Jump
+ */
+function MovementStat({ walkMP, runMP, jumpMP, maxRunMP }: MovementStatProps) {
+  const hasEnhancement = maxRunMP && maxRunMP > runMP;
+  
+  return (
+    <div className="flex flex-col items-center gap-0.5">
+      <span className={styles.label}>WALK / RUN / JUMP</span>
+      <div className="flex items-baseline gap-1">
+        <span className="text-lg font-bold text-white">{walkMP}</span>
+        <span className={styles.muted}>/</span>
+        <span className="text-lg font-bold text-white">{runMP}</span>
+        {hasEnhancement && (
+          <span className="text-lg font-bold text-white">[{maxRunMP}]</span>
+        )}
+        <span className={styles.muted}>/</span>
+        <span className="text-lg font-bold text-white">{jumpMP}</span>
+      </div>
+    </div>
+  );
+}
+
 // =============================================================================
 // Main Component
 // =============================================================================
@@ -148,7 +185,7 @@ export function UnitInfoBanner({
   onReset,
   onDebug,
   className = '',
-}: UnitInfoBannerProps) {
+}: UnitInfoBannerProps): React.ReactElement {
   // Calculate status colors
   const weightStatus: 'normal' | 'warning' | 'error' = 
     stats.weightUsed > stats.tonnage ? 'error' :
@@ -163,29 +200,48 @@ export function UnitInfoBanner({
   
   return (
     <div className={`bg-slate-800 border border-slate-700 rounded-lg ${className}`}>
-      <div className="flex items-stretch divide-x divide-slate-700">
-        {/* Section 1: Identity */}
-        <div className="px-4 py-2">
+      {/* Responsive container using flex-wrap for adaptive layout */}
+      <div className="flex flex-wrap items-stretch">
+        {/* Section 1: Identity + Validation - takes minimum space needed */}
+        <div className="px-4 py-2 border-b sm:border-b-0 sm:border-r border-slate-700 min-w-fit">
           <div className="flex items-center gap-3">
             <div>
-              <h2 className="text-lg font-bold text-white">{stats.name}</h2>
+              <h2 className="text-lg font-bold text-white whitespace-nowrap">{stats.name}</h2>
               <div className="flex items-center gap-2 mt-0.5">
                 <span className="text-sm text-slate-400">{stats.tonnage} tons</span>
-                <TechBaseBadge techBase={stats.techBase} />
+                <TechBaseBadge techBaseMode={stats.techBaseMode} />
+                <ValidationBadge 
+                  status={stats.validationStatus}
+                  label={stats.validationStatus === 'valid' ? 'Valid' : 
+                        `${stats.errorCount} errors, ${stats.warningCount} warnings`}
+                />
               </div>
             </div>
           </div>
         </div>
         
         {/* Section 2: Movement Stats */}
-        <div className="px-4 py-2 flex items-center gap-4">
-          <SimpleStat label="WALK" value={stats.walkMP} />
-          <SimpleStat label="RUN" value={stats.runMP} />
-          <SimpleStat label="JUMP" value={stats.jumpMP} />
+        <div className="px-4 py-2 flex items-center justify-center gap-4 border-b sm:border-b-0 sm:border-r border-slate-700 min-w-fit">
+          <MovementStat 
+            walkMP={stats.walkMP} 
+            runMP={stats.runMP} 
+            jumpMP={stats.jumpMP}
+            maxRunMP={stats.maxRunMP}
+          />
         </div>
         
-        {/* Section 3: Capacity Stats (current / max format) */}
-        <div className="flex-1 px-4 py-2 flex items-center justify-around">
+        {/* Section 3: Capacity Stats - grows to fill available space */}
+        <div className="flex-1 px-4 py-2 flex items-center justify-around gap-2 border-b sm:border-b-0 sm:border-r border-slate-700 min-w-[380px]">
+          <SimpleStat 
+            label="BV"
+            value={stats.battleValue?.toLocaleString() ?? '-'}
+            status="bv"
+          />
+          <SimpleStat 
+            label="ENGINE"
+            value={stats.engineRating}
+            status="engine"
+          />
           <CapacityStat
             label="WEIGHT"
             current={stats.weightUsed.toFixed(1)}
@@ -213,31 +269,27 @@ export function UnitInfoBanner({
           />
         </div>
         
-        {/* Section 4: Validation & Actions */}
-        <div className="px-4 py-2 flex items-center gap-3">
-          <ValidationBadge 
-            status={stats.validationStatus}
-            label={stats.validationStatus === 'valid' ? 'Valid' : 
-                  `${stats.errorCount} errors, ${stats.warningCount} warnings`}
-          />
-          
-          {onReset && (
-            <button
-              onClick={onReset}
-              className="px-3 py-1.5 text-sm bg-slate-700 hover:bg-slate-600 text-slate-300 rounded transition-colors"
-            >
-              Reset
-            </button>
-          )}
-          {onDebug && (
-            <button
-              onClick={onDebug}
-              className="px-3 py-1.5 text-sm bg-slate-700 hover:bg-slate-600 text-slate-300 rounded transition-colors"
-            >
-              Debug
-            </button>
-          )}
-        </div>
+        {/* Section 4: Optional Actions (only render if actions exist) */}
+        {(onReset || onDebug) && (
+          <div className="px-4 py-2 flex items-center justify-center gap-3 min-w-fit">
+            {onReset && (
+              <button
+                onClick={onReset}
+                className="px-3 py-1.5 text-sm bg-slate-700 hover:bg-slate-600 text-slate-300 rounded transition-colors"
+              >
+                Reset
+              </button>
+            )}
+            {onDebug && (
+              <button
+                onClick={onDebug}
+                className="px-3 py-1.5 text-sm bg-slate-700 hover:bg-slate-600 text-slate-300 rounded transition-colors"
+              >
+                Debug
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

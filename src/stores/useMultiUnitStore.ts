@@ -27,6 +27,7 @@ import { InternalStructureType } from '@/types/construction/InternalStructureTyp
 import { CockpitType } from '@/types/construction/CockpitType';
 import { HeatSinkType } from '@/types/construction/HeatSinkType';
 import { ArmorTypeEnum } from '@/types/construction/ArmorType';
+import { JumpJetType } from '@/utils/construction/movementCalculations';
 
 // =============================================================================
 // Component Selections Interface
@@ -55,6 +56,10 @@ export interface IComponentSelections {
   
   // Armor
   armorType: ArmorTypeEnum;
+  
+  // Jump Jets
+  jumpMP?: number;
+  jumpJetType?: JumpJetType;
 }
 
 /**
@@ -63,7 +68,7 @@ export interface IComponentSelections {
 export function createDefaultComponentSelections(
   tonnage: number,
   walkMP: number = 4,
-  techBase: TechBase = TechBase.INNER_SPHERE
+  _techBase: TechBase = TechBase.INNER_SPHERE
 ): IComponentSelections {
   const engineRating = tonnage * walkMP;
   
@@ -225,7 +230,7 @@ export const useMultiUnitStore = create<MultiUnitState>()(
       createTab: (template, customName) => {
         const id = generateTabId();
         const now = Date.now();
-        const name = customName || `New ${template.name}`;
+        const name = customName || 'Mek';
         
         // Determine initial tech base mode based on template
         const initialMode: TechBaseMode = template.techBase === TechBase.CLAN ? TechBaseMode.CLAN : TechBaseMode.INNER_SPHERE;

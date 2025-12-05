@@ -25,25 +25,30 @@ The system SHALL support 8 jump jet types.
 - **AND** weight varies by tonnage class
 
 ### Requirement: Movement Enhancements
-The system SHALL support MASC, TSM, Supercharger, and Partial Wing with accurate variable calculations.
+
+The system SHALL support MASC, TSM, Supercharger, and Partial Wing with accurate variable calculations using the `EquipmentCalculatorService`.
 
 #### Scenario: MASC weight calculation (IS)
 - **WHEN** calculating Inner Sphere MASC weight
-- **THEN** weight = ceil(engineRating / 20)
-- **AND** criticalSlots = ceil(engineRating / 20)
-- **AND** cost = mechTonnage × 1000 C-Bills
+- **THEN** weight = round(tonnage / 20) to nearest whole ton
+- **AND** criticalSlots = weight
+- **AND** cost = tonnage × 1000 C-Bills
+- **AND** example: 85t mech = 4 tons (4.25 rounds to 4), 90t mech = 5 tons (4.5 rounds to 5)
+- **AND** calculation SHALL use `EquipmentCalculatorService.calculateProperties('masc-is', context)`
 
 #### Scenario: MASC weight calculation (Clan)
 - **WHEN** calculating Clan MASC weight
-- **THEN** weight = ceil(engineRating / 25)
-- **AND** criticalSlots = ceil(engineRating / 25)
-- **AND** cost = mechTonnage × 1000 C-Bills
+- **THEN** weight = round(tonnage / 25) to nearest whole ton
+- **AND** criticalSlots = weight
+- **AND** cost = tonnage × 1000 C-Bills
+- **AND** calculation SHALL use `EquipmentCalculatorService.calculateProperties('masc-clan', context)`
 
 #### Scenario: Supercharger weight calculation
 - **WHEN** calculating Supercharger weight
 - **THEN** weight = ceil(engineWeight / 10) rounded to 0.5 tons
-- **AND** criticalSlots = 1
+- **AND** criticalSlots = 1 (fixed, does not vary)
 - **AND** cost = engineWeight × 10000 C-Bills
+- **AND** calculation SHALL use `EquipmentCalculatorService.calculateProperties('supercharger', context)`
 
 #### Scenario: Supercharger placement restrictions
 - **WHEN** placing Supercharger on mech
@@ -61,6 +66,12 @@ The system SHALL support MASC, TSM, Supercharger, and Partial Wing with accurate
 - **THEN** cost = mechTonnage × 16000 C-Bills
 - **AND** weight = 0 (replaces standard myomer)
 - **AND** criticalSlots = 6 distributed across torso/legs
+
+#### Scenario: Enhancement recalculation on engine change
+- **WHEN** engine rating or engine type changes
+- **AND** MASC or Supercharger is equipped
+- **THEN** enhancement weight and slots SHALL be recalculated
+- **AND** equipment instances SHALL be updated with new values
 
 ### Requirement: Variable Equipment Context
 The system SHALL provide calculation context for variable equipment.

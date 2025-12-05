@@ -6,7 +6,7 @@
  * @spec openspec/specs/construction-services/spec.md
  */
 
-import { CalculationService, IMechTotals } from '@/services/construction/CalculationService';
+import { CalculationService } from '@/services/construction/CalculationService';
 import { MechBuilderService, IEditableMech } from '@/services/construction/MechBuilderService';
 import { TechBase } from '@/types/enums/TechBase';
 
@@ -194,7 +194,7 @@ describe('CalculationService', () => {
     });
 
     it('Single heat sinks should dissipate 1 each', () => {
-      let mech = builderService.createEmpty(50, TechBase.INNER_SPHERE);
+      const mech = builderService.createEmpty(50, TechBase.INNER_SPHERE);
       // Default is 10 single heat sinks
       
       const heat = calculationService.calculateHeatProfile(mech);
@@ -203,7 +203,7 @@ describe('CalculationService', () => {
     });
 
     it('Double heat sinks should dissipate 2 each', () => {
-      let mech = builderService.createEmpty(50, TechBase.CLAN);
+      const mech = builderService.createEmpty(50, TechBase.CLAN);
       // Clan defaults to double heat sinks
       
       const heat = calculationService.calculateHeatProfile(mech);
@@ -275,7 +275,7 @@ describe('CalculationService', () => {
 
     it('external heat sinks should add weight', () => {
       // 10 heat sinks included in engine, more add weight
-      let mech = createTestMech(50);
+      const mech = createTestMech(50);
       // Default has 10 heat sinks, none external
       const totals = calculationService.calculateTotals(mech);
       

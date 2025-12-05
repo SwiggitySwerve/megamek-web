@@ -9,15 +9,9 @@
 
 import {
   ISerializedUnit,
-  ISerializedEngine,
-  ISerializedGyro,
-  ISerializedStructure,
   ISerializedArmor,
-  ISerializedHeatSinks,
-  ISerializedMovement,
   ISerializedEquipment,
   ISerializedCriticalSlots,
-  ISerializedFluff,
   IDeserializationResult,
   IMTFImporter,
 } from '@/types/unit/UnitSerialization';
@@ -79,7 +73,7 @@ export class MTFImportService implements IMTFImporter {
   /**
    * Import unit from MTF content (not implemented - use importFromJSON)
    */
-  import(mtfContent: string): IDeserializationResult {
+  import(_mtfContent: string): IDeserializationResult {
     // This interface method is for raw MTF text parsing
     // For JSON import, use importFromJSON
     return {
@@ -93,7 +87,7 @@ export class MTFImportService implements IMTFImporter {
   /**
    * Validate MTF content (not implemented - use validateJSON)
    */
-  validate(mtfContent: string): { isValid: boolean; errors: string[] } {
+  validate(_mtfContent: string): { isValid: boolean; errors: string[] } {
     return {
       isValid: false,
       errors: ['Direct MTF validation not implemented. Use validateJSON for JSON data.'],
@@ -245,7 +239,7 @@ export class MTFImportService implements IMTFImporter {
     // Calculate total armor points
     let totalArmor = 0;
     
-    for (const [location, value] of Object.entries(armor.allocation)) {
+    for (const [, value] of Object.entries(armor.allocation)) {
       if (typeof value === 'number') {
         totalArmor += value;
       } else if (typeof value === 'object' && value !== null) {
@@ -328,7 +322,7 @@ export class MTFImportService implements IMTFImporter {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
       
-      const data: ISerializedUnit = await response.json();
+      const data = await response.json() as ISerializedUnit;
       return this.importFromJSON(data, options);
     } catch (e) {
       return {

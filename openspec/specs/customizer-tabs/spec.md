@@ -4,7 +4,8 @@
 TBD - created by archiving change add-customizer-ui-components. Update Purpose after archive.
 ## Requirements
 ### Requirement: Tab Navigation
-The customizer SHALL provide a tabbed navigation interface with six tabs: Overview, Structure, Armor, Equipment, Criticals, and Fluff.
+
+The customizer SHALL provide a tabbed navigation interface with seven tabs: Overview, Structure, Armor, Equipment, Criticals, Fluff, and Preview.
 
 #### Scenario: User navigates between tabs
 - **WHEN** user clicks on a tab label
@@ -15,6 +16,8 @@ The customizer SHALL provide a tabbed navigation interface with six tabs: Overvi
 #### Scenario: Tab state persistence
 - **WHEN** user selects a tab and refreshes the page
 - **THEN** the previously selected tab is restored from localStorage
+
+---
 
 ### Requirement: Tab Component Props
 Each tab component SHALL accept a readOnly prop to disable editing capabilities.
@@ -92,17 +95,24 @@ The Armor tab SHALL manage armor type selection and location-based armor allocat
 - **AND** location maximums are respected
 
 ### Requirement: Equipment Tab
-The Equipment tab SHALL provide an equipment browser for selecting and adding equipment.
+The Equipment tab SHALL provide a unified equipment browser for selecting, adding, and managing all equipment types including weapons, ammunition, electronics, and miscellaneous equipment.
+
+#### Scenario: Unified equipment management
+- **WHEN** user navigates to Equipment tab
+- **THEN** a compact loadout sidebar shows all mounted equipment
+- **AND** an equipment browser allows searching and filtering all equipment types
+- **AND** a status bar displays weight, slots, and heat summary
 
 #### Scenario: Add equipment to unit
-- **WHEN** user clicks Add button on equipment item
-- **THEN** equipment is added to unallocated equipment list
-- **AND** equipment appears in Equipment Tray
+- **WHEN** user clicks Add button on equipment item in browser
+- **THEN** equipment is added to the mounted equipment list
+- **AND** loadout sidebar updates immediately
+- **AND** status bar reflects updated totals
 
 #### Scenario: Equipment filtering
-- **WHEN** user applies filters (tech base, category, search)
-- **THEN** equipment list shows only matching items
-- **AND** pagination is reset to first page
+- **WHEN** user applies filters via category toggles or text search
+- **THEN** equipment browser shows only matching items
+- **AND** multiple category toggles can be active simultaneously
 
 ### Requirement: Criticals Tab
 The Criticals tab SHALL manage critical slot allocation and equipment placement.
@@ -125,4 +135,34 @@ The Fluff tab SHALL display unit background and description information.
 - **WHEN** user navigates to Fluff tab
 - **THEN** a Coming Soon message is displayed
 - **AND** feature preview cards show planned functionality
+
+### Requirement: Preview Tab
+
+The Preview tab SHALL display a live record sheet preview with export options.
+
+**Rationale**: Users need to see their record sheet before printing or exporting for tabletop play.
+
+**Priority**: High
+
+#### Scenario: Preview tab display
+- **WHEN** user navigates to Preview tab
+- **THEN** a toolbar with Download PDF and Print buttons is displayed
+- **AND** a record sheet preview canvas is displayed below
+- **AND** preview shows current unit configuration
+
+#### Scenario: Preview updates on unit change
+- **GIVEN** user is viewing Preview tab
+- **WHEN** user switches to another tab and modifies unit
+- **AND** user returns to Preview tab
+- **THEN** preview reflects the updated configuration
+
+#### Scenario: Download PDF action
+- **WHEN** user clicks Download PDF button in Preview tab
+- **THEN** a PDF file is generated and downloaded
+- **AND** filename follows pattern "{chassis}-{model}.pdf"
+
+#### Scenario: Print action
+- **WHEN** user clicks Print button in Preview tab
+- **THEN** browser print dialog opens
+- **AND** print content matches preview display
 

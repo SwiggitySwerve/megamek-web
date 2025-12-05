@@ -2,6 +2,7 @@
  * Era Definitions with Year Boundaries
  * 
  * Defines all canonical BattleTech eras with their historical year ranges.
+ * This is the SINGLE SOURCE OF TRUTH for Era definitions.
  * 
  * @spec openspec/specs/era-temporal-system/spec.md
  */
@@ -13,15 +14,37 @@
  * Each era has distinct technological and political characteristics.
  */
 export enum Era {
+  /** Early Spaceflight (pre-2005) - Before the Age of War */
+  EARLY_SPACEFLIGHT = 'Early Spaceflight',
+  
+  /** Age of War (2005-2570) */
   AGE_OF_WAR = 'Age of War',
+  
+  /** Star League (2571-2780) - Golden age of technology */
   STAR_LEAGUE = 'Star League',
+  
+  /** Early Succession Wars (2781-2900) - Devastating wars following Star League fall */
   EARLY_SUCCESSION_WARS = 'Early Succession Wars',
+  
+  /** Late Succession Wars (2901-3019) - Period of technological decline */
   LATE_SUCCESSION_WARS = 'Late Succession Wars',
+  
+  /** Renaissance (3020-3049) - Recovery marked by Helm Memory Core discovery */
   RENAISSANCE = 'Renaissance',
+  
+  /** Clan Invasion (3050-3061) - Return of the Clans */
   CLAN_INVASION = 'Clan Invasion',
+  
+  /** Civil War (3062-3067) - FedCom Civil War */
   CIVIL_WAR = 'Civil War',
+  
+  /** Jihad (3068-3081) - Word of Blake Jihad */
   JIHAD = 'Jihad',
+  
+  /** Dark Age (3082-3150) - Collapse of HPG network */
   DARK_AGE = 'Dark Age',
+  
+  /** ilClan (3151+) - Era following ilClan Trial on Terra */
   IL_CLAN = 'ilClan',
 }
 
@@ -37,12 +60,28 @@ export interface EraDefinition {
 }
 
 /**
+ * Era date range definition (simplified)
+ */
+export interface EraRange {
+  readonly era: Era;
+  readonly startYear: number;
+  readonly endYear: number;
+}
+
+/**
  * Canonical era definitions with year boundaries
  * 
  * Year ranges are inclusive: a component introduced in 2439 is available
- * in the Age of War era (which ends in 2439).
+ * in the Age of War era (which ends in 2570).
  */
 export const ERA_DEFINITIONS: readonly EraDefinition[] = [
+  {
+    era: Era.EARLY_SPACEFLIGHT,
+    name: 'Early Spaceflight',
+    startYear: -Infinity,
+    endYear: 2004,
+    description: 'The period before widespread interstellar travel and the Age of War.',
+  },
   {
     era: Era.AGE_OF_WAR,
     name: 'Age of War',
@@ -116,6 +155,22 @@ export const ERA_DEFINITIONS: readonly EraDefinition[] = [
 ] as const;
 
 /**
+ * Era ranges derived from definitions
+ */
+export const ERA_RANGES: readonly EraRange[] = ERA_DEFINITIONS.map(def => ({
+  era: def.era,
+  startYear: def.startYear,
+  endYear: def.endYear,
+}));
+
+/**
+ * Array of all Era values
+ */
+export const ALL_ERAS: readonly Era[] = Object.freeze(
+  ERA_DEFINITIONS.map(def => def.era)
+);
+
+/**
  * Map for quick era lookup by enum value
  */
 export const ERA_MAP: ReadonlyMap<Era, EraDefinition> = new Map(
@@ -136,3 +191,33 @@ export function getAllEraDefinitions(): readonly EraDefinition[] {
   return ERA_DEFINITIONS;
 }
 
+/**
+ * Determine the era for a given year
+ */
+export function getEraForYear(year: number): Era {
+  for (const def of ERA_DEFINITIONS) {
+    if (year >= def.startYear && year <= def.endYear) {
+      return def.era;
+    }
+  }
+  // Default to ilClan for future years
+  return Era.IL_CLAN;
+}
+
+/**
+ * Get the date range for an era
+ */
+export function getEraRange(era: Era): EraRange | undefined {
+  const def = ERA_MAP.get(era);
+  if (!def) return undefined;
+  return { era: def.era, startYear: def.startYear, endYear: def.endYear };
+}
+
+/**
+ * Check if a year falls within an era
+ */
+export function isYearInEra(year: number, era: Era): boolean {
+  const range = getEraRange(era);
+  if (!range) return false;
+  return year >= range.startYear && year <= range.endYear;
+}

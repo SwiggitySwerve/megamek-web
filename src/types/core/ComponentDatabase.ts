@@ -4,7 +4,6 @@
  * TODO: Replace with spec-driven implementation
  */
 
-import { TechBase, RulesLevel } from '../enums';
 import { IArmorDef, IStructureDef, IEngineDef, IGyroDef, ICockpitDef, IHeatSinkDef } from './ComponentInterfaces';
 
 export interface IComponentDatabase {

@@ -59,7 +59,8 @@ describe('EquipmentCalculatorService', () => {
     it('should return required context for MASC', () => {
       const context = service.getRequiredContext('masc-is');
       expect(context).toContain('tonnage');
-      expect(context).toContain('engineRating');
+      // MASC now uses tonnage-based formula, not engine rating
+      expect(context).not.toContain('engineRating');
     });
 
     it('should return required context for physical weapons', () => {
@@ -141,40 +142,84 @@ describe('EquipmentCalculatorService', () => {
   // ============================================================================
   describe('calculateProperties - MASC', () => {
     describe('IS MASC', () => {
-      // Weight = ceil(tonnage × engineRating / 100 / 20)
-      // Simplified as: ceil(engineRating / 20) in the mock
+      // Weight = tonnage / 20, rounded to nearest whole ton
+      // Slots = weight
 
       it.each([
-        [50, 200, 10],   // ceil(200/20) = 10
-        [75, 300, 15],   // ceil(300/20) = 15
-        [100, 300, 15],  // ceil(300/20) = 15
-        [75, 375, 19],   // ceil(375/20) = 19
-      ])('%d ton mech, rating %d: %d ton MASC', 
-        (tonnage, engineRating, expectedWeight) => {
+        [20, 1],    // 20 / 20 = 1.0 → 1 ton
+        [50, 3],    // 50 / 20 = 2.5 → 3 tons (rounds up at .5)
+        [75, 4],    // 75 / 20 = 3.75 → 4 tons
+        [85, 4],    // 85 / 20 = 4.25 → 4 tons (rounds down)
+        [90, 5],    // 90 / 20 = 4.5 → 5 tons (rounds up at .5)
+        [100, 5],   // 100 / 20 = 5.0 → 5 tons
+      ])('%d ton mech: %d ton MASC', 
+        (tonnage, expectedWeight) => {
           const result = service.calculateProperties('masc-is', {
             tonnage,
-            engineRating,
           });
           expect(result.weight).toBe(expectedWeight);
+          expect(result.criticalSlots).toBe(expectedWeight); // Slots = weight
         }
       );
     });
 
     describe('Clan MASC', () => {
-      // Weight = ceil(tonnage × engineRating / 100 / 25)
-      it('should weigh less than IS MASC', () => {
+      // Weight = tonnage / 25, rounded to nearest whole ton
+      it.each([
+        [25, 1],   // 25 / 25 = 1.0 → 1 ton
+        [50, 2],   // 50 / 25 = 2.0 → 2 tons
+        [75, 3],   // 75 / 25 = 3.0 → 3 tons
+        [100, 4],  // 100 / 25 = 4.0 → 4 tons
+      ])('%d ton mech: %d ton Clan MASC',
+        (tonnage, expectedWeight) => {
+          const result = service.calculateProperties('masc-clan', {
+            tonnage,
+          });
+          expect(result.weight).toBe(expectedWeight);
+        }
+      );
+
+      it('should weigh less than IS MASC for same tonnage', () => {
         const isResult = service.calculateProperties('masc-is', {
           tonnage: 75,
-          engineRating: 300,
         });
         const clanResult = service.calculateProperties('masc-clan', {
           tonnage: 75,
-          engineRating: 300,
         });
         
         expect(clanResult.weight).toBeLessThan(isResult.weight);
       });
     });
+  });
+
+  // ============================================================================
+  // calculateProperties - Supercharger
+  // ============================================================================
+  describe('calculateProperties - Supercharger', () => {
+    // Weight = engineWeight × 10%, rounded up to nearest 0.5 ton
+    // Slots = 1 (fixed)
+
+    it.each([
+      [3, 0.5],     // 3 ton engine: 0.3 → ceil to 0.5
+      [5, 0.5],     // 5 ton engine: 0.5 → 0.5
+      [8, 1],       // 8 ton engine: 0.8 → ceil to 1
+      [10, 1],      // 10 ton engine: 1.0 → 1
+      [12, 1.5],    // 12 ton engine: 1.2 → ceil to 1.5
+      [15, 1.5],    // 15 ton engine: 1.5 → 1.5
+      [19, 2],      // 19 ton engine: 1.9 → ceil to 2
+      [25, 2.5],    // 25 ton engine: 2.5 → 2.5
+      [35, 3.5],    // 35 ton engine: 3.5 → 3.5
+      [45, 4.5],    // 45 ton engine: 4.5 → 4.5
+      [52, 5.5],    // 52 ton engine: 5.2 → ceil to 5.5
+    ])('%d ton engine: %s ton Supercharger', 
+      (engineWeight, expectedWeight) => {
+        const result = service.calculateProperties('supercharger', {
+          engineWeight,
+        });
+        expect(result.weight).toBe(expectedWeight);
+        expect(result.criticalSlots).toBe(1); // Always 1 slot
+      }
+    );
   });
 
   // ============================================================================
@@ -262,10 +307,18 @@ describe('EquipmentCalculatorService', () => {
       ).toThrow('Missing required context');
     });
 
-    it('should throw for partial context', () => {
+    it('should throw for partial context (targeting computer)', () => {
+      // Targeting computer requires directFireWeaponTonnage
+      expect(() => 
+        service.calculateProperties('targeting-computer-is', { tonnage: 75 })
+      ).toThrow('Missing required context');
+    });
+
+    it('should not throw for MASC with only tonnage', () => {
+      // MASC now only requires tonnage (not engine rating)
       expect(() => 
         service.calculateProperties('masc-is', { tonnage: 75 })
-      ).toThrow('Missing required context');
+      ).not.toThrow();
     });
   });
 
