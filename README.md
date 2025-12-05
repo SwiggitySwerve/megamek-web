@@ -4,7 +4,8 @@ A modern, spec-driven web application for constructing and customizing BattleTec
 
 <div align="center">
 
-![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)
+![Code License](https://img.shields.io/badge/code-Apache%202.0-blue.svg)
+![Data License](https://img.shields.io/badge/data-CC--BY--NC--SA--4.0-green.svg)
 ![Next.js](https://img.shields.io/badge/Next.js-16-black)
 ![React](https://img.shields.io/badge/React-19-61dafb)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue)
@@ -109,7 +110,7 @@ megamek-web/
 │   └── utils/              # Calculation utilities
 │       ├── construction/   # Engine, armor, movement calc
 │       └── equipment/      # Equipment property calc
-├── public/data/            # JSON data files
+├── public/data/            # JSON data files (CC-BY-NC-SA-4.0)
 │   ├── units/              # 4200+ unit files
 │   └── equipment/          # Equipment catalogs
 └── docs/                   # Development documentation
@@ -244,11 +245,12 @@ npm run test:coverage
 
 ## Data
 
-The project includes comprehensive BattleTech data:
+The project includes comprehensive BattleTech data derived from the MegaMek project:
 
-- **4,200+ Unit Files** — Converted from MegaMekLab format
+- **4,200+ Unit Files** — Converted from MegaMek MTF format
 - **Equipment Catalogs** — Weapons, ammo, electronics, misc equipment
 - **Era Data** — Age of War through Dark Age availability
+- **Record Sheet Assets** — SVG templates and pip graphics
 
 ### Converting Units
 
@@ -270,6 +272,10 @@ npm run extract:equipment
 4. Follow code standards (no `as any`, use types)
 5. Add tests for new functionality
 6. Submit a pull request
+
+By contributing, you agree that:
+- Code contributions will be licensed under Apache 2.0
+- Data/asset contributions derived from MegaMek will be licensed under CC-BY-NC-SA-4.0
 
 See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for detailed guidelines.
 
@@ -302,7 +308,25 @@ See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for detailed guidelines.
 
 ## License
 
-This project is licensed under the Apache License 2.0 — see [LICENSE](LICENSE) for details.
+This project uses a **dual-license** approach:
+
+| Component | License | File |
+|-----------|---------|------|
+| **Source Code** | Apache License 2.0 | [LICENSE.code](LICENSE.code) |
+| **Game Data & Assets** | CC-BY-NC-SA-4.0 | [LICENSE.assets](LICENSE.assets) |
+
+See [LICENSE](LICENSE) for complete details.
+
+### Attribution
+
+Unit data and record sheet assets are derived from the **MegaMek** project:
+- Website: https://megamek.org
+- Repository: https://github.com/MegaMek
+- License: CC-BY-NC-SA-4.0 (data/assets), GPLv3 (code)
+
+### Non-Commercial Use
+
+Due to the CC-BY-NC-SA-4.0 license on derived game data, this project **cannot be used for commercial purposes** when incorporating those materials. Content creators may monetize videos/streams about the application per MegaMek's content creator policy.
 
 ---
 
@@ -310,6 +334,10 @@ This project is licensed under the Apache License 2.0 — see [LICENSE](LICENSE)
 
 **BattleTech is a registered trademark of The Topps Company, Inc.**
 
-*This project is a fan-made tool and is not affiliated with or endorsed by Catalyst Game Labs or The Topps Company.*
+MechWarrior, BattleMech, 'Mech, and AeroTech are registered trademarks of The Topps Company, Inc.
+
+This project was created under Microsoft's "Game Content Usage Rules" and is not endorsed by or affiliated with Microsoft, The Topps Company, Inc., or Catalyst Game Labs.
+
+*This is an unofficial, fan-created tool.*
 
 </div>
