@@ -213,6 +213,7 @@ export class SVGRecordSheetRenderer {
 
   /**
    * Fix the copyright text: replace year placeholder, set font, and adjust spacing
+   * Matches MegaMekLab's style: Eurostile bold font, centered at bottom
    */
   private fixCopyrightYear(): void {
     if (!this.svgDoc) return;
@@ -220,23 +221,23 @@ export class SVGRecordSheetRenderer {
     // Get the footer parent element to adjust font and position
     const footerElement = this.svgDoc.getElementById('footer');
     if (footerElement) {
-      // Change font to Aptos and adjust size for better fit
-      footerElement.setAttribute('font-family', 'Aptos, Calibri, Arial, sans-serif');
-      footerElement.setAttribute('font-size', '5.2px');
-      footerElement.setAttribute('font-weight', 'normal');
-      // Move up to create more space at bottom (was 756.0, now 750.0)
-      footerElement.setAttribute('transform', 'translate(288.0 750.0)');
+      // Use Eurostile (MegaMekLab's font) with web-safe fallbacks
+      footerElement.setAttribute('font-family', 'Eurostile, "Century Gothic", "Trebuchet MS", Arial, sans-serif');
+      footerElement.setAttribute('font-size', '5.7px');
+      footerElement.setAttribute('font-weight', 'bold');
+      // Move up to create more space at bottom (was 756.0, now 746.0)
+      footerElement.setAttribute('transform', 'translate(288.0 746.0)');
     }
     
     const copyrightElement = this.svgDoc.getElementById('tspanCopyright');
     if (copyrightElement && copyrightElement.textContent) {
       const currentYear = new Date().getFullYear();
       copyrightElement.textContent = copyrightElement.textContent.replace('%d', String(currentYear));
-      // Remove textLength and lengthAdjust to prevent text stretching
+      // Remove textLength and lengthAdjust to prevent text stretching/distortion
       copyrightElement.removeAttribute('textLength');
       copyrightElement.removeAttribute('lengthAdjust');
-      // Adjust line spacing
-      copyrightElement.setAttribute('y', '-6.0');
+      // Position first line above second line
+      copyrightElement.setAttribute('y', '-7.0');
     }
     
     // Also fix the second line of copyright (Catalyst Game Labs)
@@ -244,7 +245,7 @@ export class SVGRecordSheetRenderer {
     if (catalystElement) {
       catalystElement.removeAttribute('textLength');
       catalystElement.removeAttribute('lengthAdjust');
-      // Adjust line spacing
+      // Second line at baseline
       catalystElement.setAttribute('y', '0');
     }
   }
