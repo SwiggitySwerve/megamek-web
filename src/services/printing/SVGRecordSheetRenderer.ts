@@ -824,44 +824,75 @@ export class SVGRecordSheetRenderer {
 
     // Calculate slot dimensions based on number of slots
     const slotCount = location.slots.length;
-    const slotHeight = height / slotCount;
+    const labelHeight = 8; // Height reserved for location label
+    const gapHeight = slotCount > 6 ? 4 : 0; // Gap between slots 6 and 7 for 12-slot locations
+    const availableHeight = height - gapHeight - labelHeight;
+    const slotHeight = availableHeight / slotCount;
     const fontSize = slotCount <= 6 ? 7 : 6; // Larger font for 6-slot locations
     const numberWidth = 12; // Width for slot number column
+    const barWidth = 2; // Width of multi-slot indicator bar
+    const barMargin = 1; // Margin between bar and slot number
+    
+    // Draw location label at the top
+    const labelEl = this.svgDoc.createElementNS(SVG_NS, 'text');
+    labelEl.setAttribute('x', String(x + width / 2));
+    labelEl.setAttribute('y', String(y + labelHeight - 1));
+    labelEl.setAttribute('font-size', '7px');
+    labelEl.setAttribute('font-family', 'Times New Roman, Times, serif');
+    labelEl.setAttribute('font-weight', 'bold');
+    labelEl.setAttribute('fill', '#000000');
+    labelEl.setAttribute('text-anchor', 'middle');
+    labelEl.textContent = location.location;
+    group.appendChild(labelEl);
+    
+    // Adjust Y offset to account for label
+    const slotsStartY = y + labelHeight;
+    
+    // First pass: identify multi-slot equipment groups
+    const multiSlotGroups = this.identifyMultiSlotGroups(location.slots);
     
     location.slots.forEach((slot, index) => {
-      const slotY = y + (index + 0.7) * slotHeight; // 0.7 offset for text baseline
+      // Calculate Y position with gap after slot 6
+      let slotY: number;
+      if (slotCount > 6 && index >= 6) {
+        slotY = slotsStartY + (index + 0.7) * slotHeight + gapHeight;
+      } else {
+        slotY = slotsStartY + (index + 0.7) * slotHeight;
+      }
       
-      // Slot number (1-6 for each column, or 1-12 for full)
+      // Slot number (1-6 for each column)
       const displayNum = (index % 6) + 1;
       const numEl = this.svgDoc!.createElementNS(SVG_NS, 'text');
-      numEl.setAttribute('x', String(x + 3));
+      numEl.setAttribute('x', String(x + barWidth + barMargin + 2));
       numEl.setAttribute('y', String(slotY));
       numEl.setAttribute('font-size', `${fontSize}px`);
-      numEl.setAttribute('font-family', 'Eurostile, Arial, sans-serif');
+      numEl.setAttribute('font-family', 'Times New Roman, Times, serif');
       numEl.setAttribute('fill', '#000000');
       numEl.textContent = `${displayNum}.`;
       group.appendChild(numEl);
 
       // Slot content
       const contentEl = this.svgDoc!.createElementNS(SVG_NS, 'text');
-      contentEl.setAttribute('x', String(x + numberWidth));
+      contentEl.setAttribute('x', String(x + barWidth + barMargin + numberWidth));
       contentEl.setAttribute('y', String(slotY));
       contentEl.setAttribute('font-size', `${fontSize}px`);
-      contentEl.setAttribute('font-family', 'Eurostile, Arial, sans-serif');
+      contentEl.setAttribute('font-family', 'Times New Roman, Times, serif');
       
-      // Determine content and styling
+      // Determine content and styling (MegaMekLab style)
       let content: string;
       let fillColor = '#000000';
       let fontWeight = 'normal';
       
       if (slot.content && slot.content.trim() !== '') {
         content = slot.content;
-        if (slot.isSystem) {
+        // Bold all hittable equipment (weapons, system components, etc.)
+        // Unhittables (Endo Steel, Ferro-Fibrous, TSM) are NOT bolded
+        if (slot.isHittable) {
           fontWeight = 'bold';
         }
       } else if (slot.isRollAgain) {
         content = 'Roll Again';
-        fillColor = '#666666';
+        // Roll Again uses black text, not bold
         fontWeight = 'normal';
       } else {
         content = '-Empty-';
@@ -869,7 +900,7 @@ export class SVGRecordSheetRenderer {
       }
       
       // Truncate long names to fit
-      const maxChars = Math.floor((width - numberWidth - 4) / (fontSize * 0.5));
+      const maxChars = Math.floor((width - numberWidth - barWidth - barMargin - 6) / (fontSize * 0.5));
       if (content.length > maxChars) {
         content = content.substring(0, maxChars - 2) + '..';
       }
@@ -880,12 +911,160 @@ export class SVGRecordSheetRenderer {
       
       group.appendChild(contentEl);
     });
+    
+    // Draw multi-slot indicator bars
+    multiSlotGroups.forEach(groupInfo => {
+      this.drawMultiSlotBar(group, x, slotsStartY, slotHeight, gapHeight, slotCount, groupInfo, barWidth);
+    });
 
     // Insert after the rect element
     const parent = critArea.parentNode;
     if (parent) {
       parent.insertBefore(group, critArea.nextSibling);
     }
+  }
+  
+  /**
+   * Identify groups of consecutive slots that belong to the same multi-slot equipment
+   * Only brackets USER equipment (weapons, ammo) - NOT system components (engine, gyro, actuators)
+   */
+  private identifyMultiSlotGroups(
+    slots: readonly IRecordSheetCriticalSlot[]
+  ): Array<{ startIndex: number; endIndex: number; content: string }> {
+    interface SlotGroup {
+      startIndex: number;
+      content: string;
+      equipmentId?: string;
+    }
+    
+    const groups: Array<{ startIndex: number; endIndex: number; content: string }> = [];
+    let currentGroup: SlotGroup | null = null;
+    
+    for (let index = 0; index < slots.length; index++) {
+      const slot = slots[index];
+      // Only consider user equipment (not system components) for bracketing
+      const isUserEquipment = slot.content && slot.content.trim() !== '' && 
+                              !slot.isRollAgain && !slot.isSystem;
+      const contentKey = isUserEquipment ? (slot.equipmentId || slot.content) : null;
+      
+      if (isUserEquipment && currentGroup !== null && contentKey === (currentGroup.equipmentId || currentGroup.content)) {
+        // Continue current group - same equipment
+        continue;
+      }
+      
+      // End current group if it spans multiple slots
+      if (currentGroup !== null && index - currentGroup.startIndex > 1) {
+        groups.push({
+          startIndex: currentGroup.startIndex,
+          endIndex: index - 1,
+          content: currentGroup.content,
+        });
+      }
+      
+      // Start new group if slot has user equipment
+      if (isUserEquipment) {
+        currentGroup = {
+          startIndex: index,
+          content: slot.content,
+          equipmentId: slot.equipmentId,
+        };
+      } else {
+        currentGroup = null;
+      }
+    }
+    
+    // Handle final group
+    if (currentGroup !== null && slots.length - currentGroup.startIndex > 1) {
+      groups.push({
+        startIndex: currentGroup.startIndex,
+        endIndex: slots.length - 1,
+        content: currentGroup.content,
+      });
+    }
+    
+    return groups;
+  }
+  
+  /**
+   * Draw a bracket indicating multi-slot equipment (MegaMekLab style)
+   * Draws an "L" shaped bracket: horizontal top, vertical bar, horizontal bottom
+   */
+  private drawMultiSlotBar(
+    group: Element,
+    x: number,
+    y: number,
+    slotHeight: number,
+    gapHeight: number,
+    slotCount: number,
+    groupInfo: { startIndex: number; endIndex: number },
+    barWidth: number
+  ): void {
+    if (!this.svgDoc) return;
+    
+    const startSlot = groupInfo.startIndex;
+    const endSlot = groupInfo.endIndex;
+    const bracketWidth = 3; // Width of horizontal bracket parts
+    const strokeWidth = 0.72;
+    
+    // Calculate Y positions accounting for the gap
+    let barStartY: number;
+    let barEndY: number;
+    
+    if (slotCount > 6 && startSlot >= 6) {
+      barStartY = y + startSlot * slotHeight + gapHeight + 3;
+    } else {
+      barStartY = y + startSlot * slotHeight + 3;
+    }
+    
+    if (slotCount > 6 && endSlot >= 6) {
+      barEndY = y + (endSlot + 1) * slotHeight + gapHeight - 1;
+    } else {
+      barEndY = y + (endSlot + 1) * slotHeight - 1;
+    }
+    
+    const bracketX = x + barWidth;
+    
+    // If bar spans the gap (from <= 5 to >= 6), we need to draw two brackets
+    if (slotCount > 6 && startSlot < 6 && endSlot >= 6) {
+      // Draw first bracket (slots 0-5)
+      const firstBarEndY = y + 6 * slotHeight - 1;
+      this.drawBracketPath(group, bracketX, barStartY, bracketWidth, firstBarEndY - barStartY, strokeWidth);
+      
+      // Draw second bracket (slots 6+)
+      const secondBarStartY = y + 6 * slotHeight + gapHeight + 3;
+      this.drawBracketPath(group, bracketX, secondBarStartY, bracketWidth, barEndY - secondBarStartY, strokeWidth);
+    } else {
+      // Single continuous bracket
+      this.drawBracketPath(group, bracketX, barStartY, bracketWidth, barEndY - barStartY, strokeWidth);
+    }
+  }
+  
+  /**
+   * Draw an L-shaped bracket path (MegaMekLab style)
+   * Path: Move to top, horizontal left, vertical down, horizontal right
+   */
+  private drawBracketPath(
+    group: Element,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    strokeWidth: number
+  ): void {
+    if (!this.svgDoc) return;
+    
+    const path = this.svgDoc.createElementNS(SVG_NS, 'path');
+    // Draw bracket: top horizontal, vertical bar, bottom horizontal
+    path.setAttribute('d', 
+      `M ${x} ${y} ` +
+      `h ${-width} ` +
+      `v ${height} ` +
+      `h ${width}`
+    );
+    path.setAttribute('stroke', '#000000');
+    path.setAttribute('stroke-width', String(strokeWidth));
+    path.setAttribute('fill', 'none');
+    group.appendChild(path);
   }
 }
 

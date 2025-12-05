@@ -771,6 +771,7 @@ export class RecordSheetService {
     // Calculate engine slot requirements
     const engineSlots = this.getEngineSlots(unit.engine.type, unit.engine.rating);
     const gyroSlots = this.getGyroSlots(unit.gyro.type);
+    const engineName = this.formatEngineName(unit.engine.type);
 
     return locations.map((loc) => {
       const slotCount = LOCATION_SLOT_COUNTS[loc];
@@ -782,7 +783,11 @@ export class RecordSheetService {
       // Fill slots with fixed equipment first, then user equipment
       for (let i = 0; i < slotCount; i++) {
         // Check for fixed equipment at this slot
-        const fixedContent = this.getFixedSlotContent(loc, i, engineSlots, gyroSlots);
+        let fixedContent = this.getFixedSlotContent(loc, i, engineSlots, gyroSlots);
+        // Replace engine placeholder with actual engine name
+        if (fixedContent === 'ENGINE_PLACEHOLDER') {
+          fixedContent = engineName;
+        }
         const userSlot = userSlots[i];
         
         if (fixedContent) {
@@ -794,11 +799,13 @@ export class RecordSheetService {
             isRollAgain: false,
           });
         } else if (userSlot?.content) {
+          // Determine if this equipment is unhittable (Endo Steel, Ferro-Fibrous, TSM, etc.)
+          const isUnhittable = this.isUnhittableEquipmentName(userSlot.content);
           slots.push({
             slotNumber: i + 1,
             content: userSlot.content,
             isSystem: userSlot.isSystem || false,
-            isHittable: true,
+            isHittable: !isUnhittable,
             isRollAgain: false,
             equipmentId: userSlot.equipmentId,
           });
@@ -843,25 +850,28 @@ export class RecordSheetService {
       }
     }
 
-    // Center Torso - Engine and Gyro
+    // Center Torso - Engine and Gyro (MegaMekLab style interleaved layout)
+    // Standard layout: Engine (3), Gyro (4), Engine (3) = 10 slots
+    // Compact engine: Engine (3), Gyro (varies), Engine (remaining)
     if (location === MechLocation.CENTER_TORSO) {
-      if (slotIndex < engineSlots.ct) {
-        return 'Engine';
+      // First 3 slots: Engine (first half)
+      if (slotIndex < 3) {
+        return 'ENGINE_PLACEHOLDER';
       }
-      if (slotIndex < engineSlots.ct + gyroSlots) {
+      // Next 4 slots (3-6): Gyro
+      if (slotIndex < 3 + gyroSlots) {
         return 'Gyro';
       }
-      // Remaining CT slots after engine/gyro
-      if (slotIndex < engineSlots.ct + gyroSlots + engineSlots.ct) {
-        // Second half of engine (if applicable for compact engines)
-        return null;
+      // Next 3 slots: Engine (second half)
+      if (slotIndex < 3 + gyroSlots + 3) {
+        return 'ENGINE_PLACEHOLDER';
       }
     }
 
     // Side Torsos - Engine slots for XL/Light/XXL engines
     if ((location === MechLocation.LEFT_TORSO || location === MechLocation.RIGHT_TORSO)) {
       if (slotIndex < engineSlots.sideTorso) {
-        return 'Engine';
+        return 'ENGINE_PLACEHOLDER';
       }
     }
 
@@ -933,6 +943,24 @@ export class RecordSheetService {
   }
 
   /**
+   * Format engine name for display (e.g., "Fusion Engine", "XL Engine")
+   */
+  private formatEngineName(engineType: string): string {
+    const type = engineType.toLowerCase();
+    
+    if (type.includes('xl')) return 'XL Engine';
+    if (type.includes('xxl')) return 'XXL Engine';
+    if (type.includes('light')) return 'Light Engine';
+    if (type.includes('compact')) return 'Compact Engine';
+    if (type.includes('ice')) return 'ICE';
+    if (type.includes('fuel cell')) return 'Fuel Cell';
+    if (type.includes('fission')) return 'Fission Engine';
+    
+    // Default: Fusion Engine
+    return 'Fusion Engine';
+  }
+
+  /**
    * Get mech type from configuration
    */
   private getMechType(configuration: string): 'biped' | 'quad' | 'tripod' | 'lam' | 'quadvee' {
@@ -942,6 +970,47 @@ export class RecordSheetService {
     if (config.includes('lam')) return 'lam';
     if (config.includes('quadvee')) return 'quadvee';
     return 'biped';
+  }
+
+  /**
+   * Check if equipment name represents an unhittable slot
+   * Unhittables include: Endo Steel, Ferro-Fibrous, TSM, and other non-damageable slots
+   */
+  private isUnhittableEquipmentName(name: string): boolean {
+    const lowerName = name.toLowerCase();
+    
+    // Endo Steel variants (internal structure)
+    if (lowerName.includes('endo steel') || lowerName.includes('endo-steel')) {
+      return true;
+    }
+    
+    // Ferro-Fibrous variants (armor)
+    if (lowerName.includes('ferro') || lowerName.includes('ferro-fibrous')) {
+      return true;
+    }
+    
+    // Triple Strength Myomer
+    if (lowerName.includes('triple strength') || lowerName.includes('tsm') || 
+        (lowerName.includes('myomer') && !lowerName.includes('standard'))) {
+      return true;
+    }
+    
+    // Stealth armor
+    if (lowerName.includes('stealth')) {
+      return true;
+    }
+    
+    // Reactive/Reflective armor
+    if (lowerName.includes('reactive') || lowerName.includes('reflective')) {
+      return true;
+    }
+    
+    // Blue Shield
+    if (lowerName.includes('blue shield')) {
+      return true;
+    }
+    
+    return false;
   }
 }
 
