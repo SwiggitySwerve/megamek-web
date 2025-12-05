@@ -71,6 +71,18 @@ The system SHALL render a live preview of the record sheet in the browser.
 - **THEN** preview scales to fit container while maintaining aspect ratio
 - **AND** preview remains readable at reduced sizes
 
+#### Scenario: Preview DPI and quality
+- **WHEN** preview canvas renders
+- **THEN** use high DPI multiplier (10x) for crisp text at all zoom levels
+- **AND** support zoom range from 30% to 300%
+- **AND** provide "Fit Width" button to auto-scale to container width
+- **AND** provide zoom in/out buttons with 10% increments
+
+#### Scenario: PDF DPI and quality  
+- **WHEN** PDF is generated
+- **THEN** use 3x DPI multiplier (216 DPI) for print quality
+- **AND** ensure sharp text and lines at print resolution
+
 ---
 
 ### Requirement: Print Functionality
@@ -117,6 +129,18 @@ The system SHALL render a visual armor diagram showing armor values per location
 - **WHEN** armor diagram renders
 - **THEN** display quad silhouette with four leg locations instead of arms/legs
 
+#### Scenario: Armor value display
+- **WHEN** armor diagram renders
+- **THEN** display armor point values around the mech silhouette in parentheses format: "( value )"
+- **AND** display rear armor values separately for CT, LT, RT locations
+- **AND** use SVG text elements with IDs matching template (textArmor_HD, textArmor_CT, textArmor_CTR, etc.)
+
+#### Scenario: Armor pip visualization
+- **WHEN** armor diagram renders
+- **THEN** display filled circles (pips) representing current armor points
+- **AND** load pip SVG assets from template directory
+- **AND** position pips according to location-specific layouts
+
 ---
 
 ### Requirement: Equipment Table Rendering
@@ -142,7 +166,7 @@ The system SHALL render a weapons and equipment table with combat statistics.
 
 ### Requirement: Critical Slots Rendering
 
-The system SHALL render critical hit tables for each location.
+The system SHALL render critical hit tables for each location matching MegaMekLab style.
 
 **Rationale**: Critical slots track equipment placement and damage during gameplay.
 
@@ -154,6 +178,49 @@ The system SHALL render critical hit tables for each location.
 - **AND** display 2 columns for LL, RL below
 - **AND** each slot shows equipment name or "Roll Again"
 - **AND** multi-slot equipment spans consecutive slots with bracket
+
+#### Scenario: Critical slot font styling
+- **WHEN** critical slot text renders
+- **THEN** use Times New Roman serif font (matching MegaMekLab)
+- **AND** bold hittable equipment (weapons, system components)
+- **AND** use normal weight for unhittable equipment (Endo Steel, Ferro-Fibrous, TSM, Stealth, Reactive, Reflective, Blue Shield)
+- **AND** use normal weight black text for "Roll Again" entries
+- **AND** use gray text for empty slots ("-Empty-")
+
+#### Scenario: Critical slot section layout
+- **WHEN** 12-slot locations (CT, LT, RT, LA, RA) render
+- **THEN** display location name label at top of column (e.g., "Center Torso")
+- **AND** display "1-3" marker for slots 1-6 (dice roll result 1-3)
+- **AND** display "4-6" marker for slots 7-12 (dice roll result 4-6)
+- **AND** add visible gap between slot 6 and slot 7
+- **AND** slot numbers restart at 1 for each section (1-6 in both sections)
+
+#### Scenario: Multi-slot equipment brackets
+- **WHEN** equipment occupies multiple consecutive slots
+- **THEN** draw L-shaped bracket on left side of slots
+- **AND** bracket only applies to user-added equipment, NOT system components (Engine, Gyro, Actuators)
+- **AND** bracket bridges continuously across the 6/7 gap when equipment spans both sections
+
+#### Scenario: Center Torso slot allocation
+- **GIVEN** a standard fusion engine and standard gyro
+- **WHEN** CT critical slots are filled
+- **THEN** allocate slots in MegaMekLab interleaved pattern:
+  - Slots 1-3: Engine (first half)
+  - Slots 4-7: Gyro (4 slots for standard gyro)
+  - Slots 8-10: Engine (second half)
+  - Slots 11-12: Available for user equipment
+
+#### Scenario: Engine naming
+- **WHEN** engine slots display in critical table
+- **THEN** show full engine type name:
+  - "Fusion Engine" for standard fusion
+  - "XL Engine" for extra-light
+  - "Light Engine" for light fusion
+  - "XXL Engine" for extra-extra-light
+  - "Compact Engine" for compact
+  - "ICE" for internal combustion
+  - "Fuel Cell" for fuel cell
+  - "Fission Engine" for fission
 
 ---
 
@@ -170,4 +237,33 @@ The system SHALL render a heat scale from 0 to 30.
 - **THEN** display numbered scale from 0 to 30
 - **AND** show movement penalty thresholds
 - **AND** show heat sink count and capacity
+
+---
+
+### Requirement: SVG Template Rendering
+
+The system SHALL use SVG templates from MegaMek/MegaMekLab for record sheet generation.
+
+**Rationale**: SVG templates provide authentic MegaMekLab-style record sheets and leverage existing official assets.
+
+**Priority**: High
+
+#### Scenario: SVG template loading
+- **WHEN** record sheet renders
+- **THEN** load base SVG template from `/public/record-sheets/` directory
+- **AND** parse SVG DOM for element manipulation
+- **AND** locate elements by ID for data injection (e.g., tspanName, tspanTonnage)
+
+#### Scenario: SVG data injection
+- **WHEN** template is loaded with unit data
+- **THEN** populate text elements via setTextContent() helper
+- **AND** populate armor/structure pips via SVG element cloning
+- **AND** render critical slots dynamically into designated areas
+
+#### Scenario: SVG to canvas conversion
+- **WHEN** preview or PDF export is requested
+- **THEN** serialize modified SVG to string
+- **AND** convert to base64 data URL
+- **AND** load as Image for canvas drawing
+- **AND** apply appropriate DPI scaling for output quality
 
