@@ -187,9 +187,25 @@ export class SVGRecordSheetRenderer {
     this.setTextContent(ELEMENT_IDS.GUNNERY_SKILL, '');
     this.setTextContent(ELEMENT_IDS.PILOTING_SKILL, '');
 
+    // === Copyright Year ===
+    this.fixCopyrightYear();
+
     // === Render dynamic content ===
     this.renderEquipmentTable(data.equipment);
     this.renderCriticalSlots(data.criticals);
+  }
+
+  /**
+   * Fix the copyright year placeholder (%d) with the current year
+   */
+  private fixCopyrightYear(): void {
+    if (!this.svgDoc) return;
+    
+    const copyrightElement = this.svgDoc.getElementById('tspanCopyright');
+    if (copyrightElement && copyrightElement.textContent) {
+      const currentYear = new Date().getFullYear();
+      copyrightElement.textContent = copyrightElement.textContent.replace('%d', String(currentYear));
+    }
   }
 
   /**
