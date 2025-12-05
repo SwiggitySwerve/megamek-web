@@ -52,15 +52,16 @@ describe('ArmorDiagram', () => {
   it('should render armor locations', () => {
     render(<ArmorDiagram {...defaultProps} />);
     
-    expect(screen.getByTestId('armor-location-HEAD')).toBeInTheDocument();
-    expect(screen.getByTestId('armor-location-CENTER_TORSO')).toBeInTheDocument();
+    // MechLocation enum values are like "Head", "Center Torso" etc.
+    expect(screen.getByTestId(`armor-location-${MechLocation.HEAD}`)).toBeInTheDocument();
+    expect(screen.getByTestId(`armor-location-${MechLocation.CENTER_TORSO}`)).toBeInTheDocument();
   });
 
   it('should call onLocationClick when location is clicked', async () => {
     const user = userEvent.setup();
     render(<ArmorDiagram {...defaultProps} />);
     
-    const headLocation = screen.getByTestId('armor-location-HEAD');
+    const headLocation = screen.getByTestId(`armor-location-${MechLocation.HEAD}`);
     await user.click(headLocation);
     
     expect(defaultProps.onLocationClick).toHaveBeenCalledWith(MechLocation.HEAD);

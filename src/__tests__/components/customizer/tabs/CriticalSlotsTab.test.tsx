@@ -29,6 +29,14 @@ describe('CriticalSlotsTab', () => {
   const mockCustomizerStore = {
     selectedEquipmentId: null,
     setSelectedEquipmentId: jest.fn(),
+    autoModeSettings: {
+      autoFillUnhittables: false,
+      autoCompact: false,
+      autoSort: false,
+    },
+    toggleAutoFillUnhittables: jest.fn(),
+    toggleAutoCompact: jest.fn(),
+    toggleAutoSort: jest.fn(),
   };
 
   beforeEach(() => {

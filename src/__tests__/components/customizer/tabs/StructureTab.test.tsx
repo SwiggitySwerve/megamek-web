@@ -11,12 +11,28 @@ jest.mock('@/stores/useUnitStore', () => ({
 jest.mock('@/hooks/useTechBaseSync', () => ({
   useTechBaseSync: jest.fn(() => ({
     filteredOptions: {
-      engine: [],
-      gyro: [],
-      structure: [],
-      cockpit: [],
-      heatSink: [],
+      engines: [],
+      gyros: [],
+      structures: [],
+      cockpits: [],
+      heatSinks: [],
+      armors: [],
     },
+    defaults: {
+      engineType: 'Standard Fusion',
+      gyroType: 'Standard',
+      structureType: 'Standard',
+      cockpitType: 'Standard',
+      heatSinkType: 'Single',
+      armorType: 'Standard',
+    },
+    isEngineValid: () => true,
+    isGyroValid: () => true,
+    isStructureValid: () => true,
+    isCockpitValid: () => true,
+    isHeatSinkValid: () => true,
+    isArmorValid: () => true,
+    getValidatedSelections: (s: unknown) => s,
   })),
 }));
 
@@ -84,10 +100,12 @@ describe('StructureTab', () => {
     expect(screen.getByDisplayValue('5')).toBeInTheDocument();
   });
 
-  it('should display read-only message when in read-only mode', () => {
+  it('should disable inputs in read-only mode', () => {
     render(<StructureTab readOnly={true} />);
     
-    expect(screen.getByText(/read-only mode/i)).toBeInTheDocument();
+    // In read-only mode, inputs should be disabled
+    const tonnageInput = screen.getByDisplayValue('50');
+    expect(tonnageInput).toBeDisabled();
   });
 
   it('should apply custom className', () => {

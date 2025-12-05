@@ -45,17 +45,15 @@ describe('ImportUnitDialog', () => {
     expect(screen.queryByTestId('modal-overlay')).not.toBeInTheDocument();
   });
 
-  it('should call onClose when close button is clicked', async () => {
+  it('should call onClose when cancel button is clicked', async () => {
     const user = userEvent.setup();
     render(<ImportUnitDialog {...defaultProps} />);
     
-    await waitFor(() => {
-      const closeButton = screen.getByLabelText(/Close/i);
-      expect(closeButton).toBeInTheDocument();
-    });
+    // Use the Cancel button which has clear text
+    const cancelButton = await screen.findByRole('button', { name: /cancel/i });
+    expect(cancelButton).toBeInTheDocument();
     
-    const closeButton = screen.getByLabelText(/Close/i);
-    await user.click(closeButton);
+    await user.click(cancelButton);
     
     expect(defaultProps.onClose).toHaveBeenCalledTimes(1);
   });

@@ -61,7 +61,8 @@ describe('heatSinkCalculations', () => {
 
     it('should calculate slots for double heat sinks', () => {
       const slots = calculateExternalHeatSinkSlots(5, HeatSinkType.DOUBLE_IS);
-      expect(slots).toBe(5); // 5 * 1 = 5
+      // IS Double Heat Sinks take 3 critical slots each per BattleTech rules
+      expect(slots).toBe(15); // 5 * 3 = 15
     });
   });
 

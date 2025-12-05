@@ -255,11 +255,15 @@ describe('CanonicalUnitService', () => {
         ],
       };
 
+      // Pre-load the index first to avoid race conditions with parallel getById calls
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockIndex,
+      });
+      await service.getIndex();
+      
+      // Now set up mocks for individual unit fetches
       (global.fetch as jest.Mock)
-        .mockResolvedValueOnce({
-          ok: true,
-          json: async () => mockIndex,
-        })
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({ id: 'unit-1', chassis: 'Unit1' }),
@@ -291,20 +295,20 @@ describe('CanonicalUnitService', () => {
         ],
       };
 
-      (global.fetch as jest.Mock)
-        .mockResolvedValueOnce({
-          ok: true,
-          json: async () => mockIndex,
-        })
-        .mockResolvedValueOnce({
-          ok: true,
-          json: async () => ({ id: 'unit-1', chassis: 'Unit1' }),
-        })
-        .mockResolvedValueOnce({
-          ok: false,
-          status: 404,
-        });
+      // Pre-load the index first to avoid race conditions
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockIndex,
+      });
+      await service.getIndex();
 
+      // Now set up mocks for individual unit fetches
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ id: 'unit-1', chassis: 'Unit1' }),
+      });
+
+      // 'non-existent' will return null because it's not in the index
       const units = await service.getByIds(['unit-1', 'non-existent']);
 
       expect(units.length).toBe(1);

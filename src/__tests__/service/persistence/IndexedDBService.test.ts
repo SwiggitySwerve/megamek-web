@@ -145,16 +145,17 @@ class MockDatabase {
 const mockDatabases = new Map<string, MockDatabase>();
 
 const mockIndexedDBWithTransactions = {
-  open(name: string, version?: number): IDBOpenDBRequest {
+  open(name: string, version?: number): unknown {
     const dbVersion = version ?? 1;
     const request = {
       result: null as MockDatabase | null,
-      error: null as Error | null,
+      error: null as DOMException | null,
       onsuccess: null as ((event: Event) => void) | null,
       onerror: null as ((event: Event) => void) | null,
-      onupgradeneeded: null as ((event: Event) => void) | null,
+      onupgradeneeded: null as ((event: IDBVersionChangeEvent) => void) | null,
     };
 
+    // Use setTimeout to ensure callbacks are set before we call them
     setTimeout(() => {
       try {
         let db = mockDatabases.get(name);
@@ -170,7 +171,8 @@ const mockIndexedDBWithTransactions = {
           db.createObjectStore(STORES.CUSTOM_FORMULAS);
           
           if (request.onupgradeneeded) {
-            request.onupgradeneeded(new Event('upgradeneeded'));
+            const upgradeEvent = new Event('upgradeneeded') as IDBVersionChangeEvent;
+            request.onupgradeneeded(upgradeEvent);
           }
         }
         
@@ -179,7 +181,7 @@ const mockIndexedDBWithTransactions = {
           request.onsuccess(new Event('success'));
         }
       } catch (error) {
-        request.error = error as Error;
+        request.error = new DOMException(String(error));
         if (request.onerror) {
           request.onerror(new Event('error'));
         }

@@ -89,12 +89,13 @@ describe('VersionHistoryDialog', () => {
     const user = userEvent.setup();
     render(<VersionHistoryDialog {...defaultProps} />);
     
+    // Wait for loading to complete then click Close button
     await waitFor(() => {
-      const closeButton = screen.getByLabelText(/Close/i);
-      expect(closeButton).toBeInTheDocument();
+      expect(customUnitApiService.getVersionHistory).toHaveBeenCalled();
     });
     
-    const closeButton = screen.getByLabelText(/Close/i);
+    // Find and click the Close button by text
+    const closeButton = await screen.findByRole('button', { name: /close/i });
     await user.click(closeButton);
     
     expect(defaultProps.onClose).toHaveBeenCalledTimes(1);

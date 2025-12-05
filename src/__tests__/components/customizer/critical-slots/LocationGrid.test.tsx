@@ -6,9 +6,9 @@ import { MechLocation } from '@/types/construction';
 
 // Mock SlotRow
 jest.mock('@/components/customizer/critical-slots/SlotRow', () => ({
-  SlotRow: ({ slot, onClick }: { slot: { index: number; type: string; name?: string }; onClick: () => void }) => (
+  SlotRow: ({ slot, onClick }: { slot: { index: number; type: string; name?: string; equipmentName?: string }; onClick: () => void }) => (
     <div data-testid={`slot-${slot.index}`} onClick={onClick}>
-      {slot.type === 'empty' ? 'Empty' : slot.name || 'Unknown'}
+      {slot.type === 'empty' ? 'Empty' : slot.equipmentName || slot.name || 'Unknown'}
     </div>
   ),
 }));

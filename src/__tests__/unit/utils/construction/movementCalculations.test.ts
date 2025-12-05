@@ -47,33 +47,52 @@ describe('movementCalculations', () => {
   });
 
   describe('getMaxJumpMP()', () => {
-    it('should return max jump MP for tonnage', () => {
-      const maxJump = getMaxJumpMP(50);
-      expect(maxJump).toBeGreaterThan(0);
+    it('should return max jump MP equal to walk MP for standard jets', () => {
+      const maxJump = getMaxJumpMP(5, JumpJetType.STANDARD);
+      expect(maxJump).toBe(5);
     });
 
-    it('should scale with tonnage', () => {
-      const lightMax = getMaxJumpMP(20);
-      const heavyMax = getMaxJumpMP(100);
-      
-      expect(heavyMax).toBeGreaterThan(lightMax);
+    it('should return run MP for improved jets', () => {
+      // Improved jets can reach runMP = ceil(walkMP * 1.5)
+      const maxJump = getMaxJumpMP(5, JumpJetType.IMPROVED);
+      expect(maxJump).toBe(8); // ceil(5 * 1.5) = 8
+    });
+
+    it('should handle different walk MP values', () => {
+      expect(getMaxJumpMP(4, JumpJetType.STANDARD)).toBe(4);
+      expect(getMaxJumpMP(6, JumpJetType.STANDARD)).toBe(6);
+      expect(getMaxJumpMP(4, JumpJetType.IMPROVED)).toBe(6); // ceil(4 * 1.5) = 6
     });
   });
 
   describe('calculateEnhancedMaxRunMP()', () => {
     it('should calculate enhanced max run MP with MASC', () => {
-      const enhanced = calculateEnhancedMaxRunMP(5, true, false);
-      expect(enhanced).toBeGreaterThan(5);
+      // MASC allows sprint = walkMP * 2
+      const enhanced = calculateEnhancedMaxRunMP(5, 'MASC', false);
+      expect(enhanced).toBe(10); // floor(5 * 2) = 10
     });
 
     it('should calculate enhanced max run MP with Supercharger', () => {
-      const enhanced = calculateEnhancedMaxRunMP(5, false, true);
-      expect(enhanced).toBeGreaterThan(5);
+      // Supercharger also allows sprint = walkMP * 2
+      const enhanced = calculateEnhancedMaxRunMP(5, 'Supercharger', false);
+      expect(enhanced).toBe(10); // floor(5 * 2) = 10
     });
 
-    it('should calculate enhanced max run MP with both', () => {
-      const enhanced = calculateEnhancedMaxRunMP(5, true, true);
-      expect(enhanced).toBeGreaterThan(5);
+    it('should calculate enhanced max run MP with both MASC and Supercharger', () => {
+      // Combined allows sprint = walkMP * 2.5
+      const enhanced = calculateEnhancedMaxRunMP(5, 'MASC', true);
+      expect(enhanced).toBe(12); // floor(5 * 2.5) = 12
+    });
+
+    it('should calculate enhanced run MP with TSM', () => {
+      // TSM adds +1 to run MP
+      const enhanced = calculateEnhancedMaxRunMP(5, 'TSM', false);
+      expect(enhanced).toBe(9); // runMP(5) + 1 = 8 + 1 = 9
+    });
+
+    it('should return undefined for no enhancement', () => {
+      expect(calculateEnhancedMaxRunMP(5, null, false)).toBeUndefined();
+      expect(calculateEnhancedMaxRunMP(5, undefined, false)).toBeUndefined();
     });
   });
 

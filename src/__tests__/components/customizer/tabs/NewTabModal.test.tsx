@@ -44,12 +44,13 @@ describe('NewTabModal', () => {
     expect(defaultProps.onCreateUnit).toHaveBeenCalled();
   });
 
-  it('should call onClose when close button is clicked', async () => {
+  it('should call onClose when cancel button is clicked', async () => {
     const user = userEvent.setup();
     render(<NewTabModal {...defaultProps} />);
     
-    const closeButton = screen.getByLabelText(/Close/i);
-    await user.click(closeButton);
+    // Use Cancel button which has visible text
+    const cancelButton = screen.getByRole('button', { name: /cancel/i });
+    await user.click(cancelButton);
     
     expect(defaultProps.onClose).toHaveBeenCalledTimes(1);
   });

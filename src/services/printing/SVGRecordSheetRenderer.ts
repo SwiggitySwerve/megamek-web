@@ -515,8 +515,8 @@ export class SVGRecordSheetRenderer {
     
     if (!translateMatch) return;
 
-    let baseX = parseFloat(translateMatch[1]);
-    let baseY = parseFloat(translateMatch[2]);
+    const baseX = parseFloat(translateMatch[1]);
+    const baseY = parseFloat(translateMatch[2]);
 
     // Pip radius (based on template pips)
     const radius = 1.75;

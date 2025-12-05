@@ -9,6 +9,8 @@ import { MechLocation } from '@/types/construction';
 import { EngineType } from '@/types/construction/EngineType';
 import { GyroType } from '@/types/construction/GyroType';
 import { IMountedEquipmentInstance } from '@/stores/unitState';
+import { EquipmentCategory } from '@/types/equipment';
+import { TechBase } from '@/types/enums/TechBase';
 
 describe('slotOperations', () => {
   describe('getFixedSlotIndices()', () => {
@@ -31,11 +33,15 @@ describe('slotOperations', () => {
       expect(fixed.size).toBeGreaterThan(0);
     });
 
-    it('should return empty set for arms', () => {
+    it('should return fixed slots for arms (actuators)', () => {
       const fixed = getFixedSlotIndices(MechLocation.LEFT_ARM, EngineType.STANDARD, GyroType.STANDARD);
       
-      // Arms have no fixed slots (actuators are handled separately)
-      expect(fixed.size).toBe(0);
+      // Arms have 4 fixed actuator slots: Shoulder (0), Upper Arm (1), Lower Arm (2), Hand (3)
+      expect(fixed.size).toBe(4);
+      expect(fixed.has(0)).toBe(true); // Shoulder
+      expect(fixed.has(1)).toBe(true); // Upper Arm
+      expect(fixed.has(2)).toBe(true); // Lower Arm
+      expect(fixed.has(3)).toBe(true); // Hand
     });
   });
 
@@ -59,8 +65,13 @@ describe('slotOperations', () => {
         {
           instanceId: 'equip-1',
           equipmentId: 'medium-laser',
+          name: 'Medium Laser',
+          category: EquipmentCategory.ENERGY_WEAPON,
+          weight: 1,
+          criticalSlots: 1,
+          techBase: TechBase.INNER_SPHERE,
           location: MechLocation.LEFT_ARM,
-          slots: [5, 6],
+          slots: [8, 9], // Place at higher slots so there's room to compact
         },
       ];
       
@@ -80,14 +91,24 @@ describe('slotOperations', () => {
         {
           instanceId: 'equip-1',
           equipmentId: 'medium-laser',
+          name: 'Medium Laser',
+          category: EquipmentCategory.ENERGY_WEAPON,
+          weight: 1,
+          criticalSlots: 1,
+          techBase: TechBase.INNER_SPHERE,
           location: MechLocation.LEFT_ARM,
-          slots: [0, 1],
+          slots: [4, 5],
         },
         {
           instanceId: 'equip-2',
           equipmentId: 'large-laser',
+          name: 'Large Laser',
+          category: EquipmentCategory.ENERGY_WEAPON,
+          weight: 5,
+          criticalSlots: 2,
+          techBase: TechBase.INNER_SPHERE,
           location: MechLocation.LEFT_ARM,
-          slots: [2, 3, 4],
+          slots: [6, 7, 8],
         },
       ];
       
@@ -98,7 +119,7 @@ describe('slotOperations', () => {
       );
       
       expect(result).toBeDefined();
-      // Larger equipment should come first
+      // Larger equipment (more critical slots) should come first
       expect(result.assignments[0].instanceId).toBe('equip-2');
     });
   });
