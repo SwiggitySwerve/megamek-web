@@ -40,6 +40,10 @@ jobs:
       - name: Build Next.js application
         run: npm run build
 
+      - name: Build Electron TypeScript
+        working-directory: desktop
+        run: npm run build
+
       - name: Build Electron application (Linux)
         if: matrix.platform == 'linux'
         working-directory: desktop
