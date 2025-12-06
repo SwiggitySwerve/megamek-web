@@ -57,6 +57,8 @@
     "electron:dist:mac": "npm run electron:build && cd desktop && npm run dist:mac",
     "electron:dist:linux": "npm run electron:build && cd desktop && npm run dist:linux",
     "electron:dist:all": "npm run electron:build && cd desktop && npm run dist:all",
+    "electron:test:build": "cd desktop && npm run test:build",
+    "electron:test:build:win": "cd desktop && npm run test:build:win",
     "electron:icons": "cd desktop && node scripts/generate-icons.js",
     "package:docker": "npm run docker:build",
     "package:desktop": "npm run electron:dist:all"
