@@ -1,6 +1,28 @@
 import { renderHook, act } from '@testing-library/react';
 import { useKeyboardNavigation, useTabKeyboardNavigation, useFocusOnSelect } from '@/hooks/useKeyboardNavigation';
 
+/**
+ * Create a mock KeyboardEvent for testing
+ */
+function createMockKeyboardEvent(key: string, options?: { preventDefault?: jest.Mock }): KeyboardEvent {
+  const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true });
+  if (options?.preventDefault) {
+    jest.spyOn(event, 'preventDefault').mockImplementation(options.preventDefault);
+  }
+  return event;
+}
+
+/**
+ * Create a mock React.KeyboardEvent for testing
+ */
+function createMockReactKeyboardEvent(key: string, options?: { preventDefault?: jest.Mock }): React.KeyboardEvent {
+  const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }) as unknown as React.KeyboardEvent;
+  if (options?.preventDefault) {
+    jest.spyOn(event, 'preventDefault').mockImplementation(options.preventDefault);
+  }
+  return event;
+}
+
 describe('useKeyboardNavigation', () => {
   const items = ['item1', 'item2', 'item3', 'item4'];
   const getKey = (item: string) => item;
@@ -209,13 +231,14 @@ describe('useKeyboardNavigation', () => {
       })
     );
 
-    const event = { key: 'ArrowDown', preventDefault: jest.fn() } as unknown as KeyboardEvent;
+    const preventDefault = jest.fn();
+    const event = createMockKeyboardEvent('ArrowDown', { preventDefault });
     act(() => {
       result.current.handleKeyDown(event);
     });
 
     expect(onSelect).toHaveBeenCalledWith('item3');
-    expect(event.preventDefault).toHaveBeenCalled();
+    expect(preventDefault).toHaveBeenCalled();
   });
 
   it('should activate item on Enter', () => {
@@ -231,13 +254,14 @@ describe('useKeyboardNavigation', () => {
       })
     );
 
-    const event = { key: 'Enter', preventDefault: jest.fn() } as unknown as KeyboardEvent;
+    const preventDefault = jest.fn();
+    const event = createMockKeyboardEvent('Enter', { preventDefault });
     act(() => {
       result.current.handleKeyDown(event);
     });
 
     expect(onActivate).toHaveBeenCalledWith('item2');
-    expect(event.preventDefault).toHaveBeenCalled();
+    expect(preventDefault).toHaveBeenCalled();
   });
 
   it('should activate item on Space', () => {
@@ -253,13 +277,14 @@ describe('useKeyboardNavigation', () => {
       })
     );
 
-    const event = { key: ' ', preventDefault: jest.fn() } as unknown as KeyboardEvent;
+    const preventDefault = jest.fn();
+    const event = createMockKeyboardEvent(' ', { preventDefault });
     act(() => {
       result.current.handleKeyDown(event);
     });
 
     expect(onActivate).toHaveBeenCalledWith('item2');
-    expect(event.preventDefault).toHaveBeenCalled();
+    expect(preventDefault).toHaveBeenCalled();
   });
 });
 
@@ -276,13 +301,14 @@ describe('useTabKeyboardNavigation', () => {
       useTabKeyboardNavigation(tabs, 'tab2', onTabChange)
     );
 
-    const event = { key: 'ArrowLeft', preventDefault: jest.fn() } as unknown as React.KeyboardEvent;
+    const preventDefault = jest.fn();
+    const event = createMockReactKeyboardEvent('ArrowLeft', { preventDefault });
     act(() => {
       result.current(event);
     });
 
     expect(onTabChange).toHaveBeenCalledWith('tab1');
-    expect(event.preventDefault).toHaveBeenCalled();
+    expect(preventDefault).toHaveBeenCalled();
   });
 
   it('should navigate right', () => {
@@ -290,7 +316,8 @@ describe('useTabKeyboardNavigation', () => {
       useTabKeyboardNavigation(tabs, 'tab2', onTabChange)
     );
 
-    const event = { key: 'ArrowRight', preventDefault: jest.fn() } as unknown as React.KeyboardEvent;
+    const preventDefault = jest.fn();
+    const event = createMockReactKeyboardEvent('ArrowRight', { preventDefault });
     act(() => {
       result.current(event);
     });
@@ -303,7 +330,8 @@ describe('useTabKeyboardNavigation', () => {
       useTabKeyboardNavigation(tabs, 'tab1', onTabChange)
     );
 
-    const event = { key: 'ArrowLeft', preventDefault: jest.fn() } as unknown as React.KeyboardEvent;
+    const preventDefault = jest.fn();
+    const event = createMockReactKeyboardEvent('ArrowLeft', { preventDefault });
     act(() => {
       result.current(event);
     });
@@ -316,7 +344,8 @@ describe('useTabKeyboardNavigation', () => {
       useTabKeyboardNavigation(tabs, 'tab3', onTabChange)
     );
 
-    const event = { key: 'ArrowRight', preventDefault: jest.fn() } as unknown as React.KeyboardEvent;
+    const preventDefault = jest.fn();
+    const event = createMockReactKeyboardEvent('ArrowRight', { preventDefault });
     act(() => {
       result.current(event);
     });
@@ -329,7 +358,8 @@ describe('useTabKeyboardNavigation', () => {
       useTabKeyboardNavigation(tabs, 'tab2', onTabChange)
     );
 
-    const event = { key: 'Home', preventDefault: jest.fn() } as unknown as React.KeyboardEvent;
+    const preventDefault = jest.fn();
+    const event = createMockReactKeyboardEvent('Home', { preventDefault });
     act(() => {
       result.current(event);
     });
@@ -342,7 +372,8 @@ describe('useTabKeyboardNavigation', () => {
       useTabKeyboardNavigation(tabs, 'tab2', onTabChange)
     );
 
-    const event = { key: 'End', preventDefault: jest.fn() } as unknown as React.KeyboardEvent;
+    const preventDefault = jest.fn();
+    const event = createMockReactKeyboardEvent('End', { preventDefault });
     act(() => {
       result.current(event);
     });
@@ -355,7 +386,8 @@ describe('useTabKeyboardNavigation', () => {
       useTabKeyboardNavigation(tabs, 'nonexistent', onTabChange)
     );
 
-    const event = { key: 'ArrowRight', preventDefault: jest.fn() } as unknown as React.KeyboardEvent;
+    const preventDefault = jest.fn();
+    const event = createMockReactKeyboardEvent('ArrowRight', { preventDefault });
     act(() => {
       result.current(event);
     });

@@ -244,7 +244,7 @@ export class RecordSheetService {
   print(canvas: HTMLCanvasElement): void {
     const dataUrl = canvas.toDataURL('image/png');
     
-    const printWindow = window.open('', '_blank') as unknown as Window | null;
+    const printWindow = window.open('', '_blank');
     if (!printWindow) {
       throw new Error('Could not open print window. Check popup blocker settings.');
     }
