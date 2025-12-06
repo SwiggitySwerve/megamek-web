@@ -28,6 +28,7 @@ export default [
       '**/jest.setup.js',
       '**/desktop/**',
       '**/scripts/**',
+      '**/.github/**',
     ],
   },
   
