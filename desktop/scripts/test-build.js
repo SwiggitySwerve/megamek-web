@@ -101,18 +101,26 @@ for (const platform of PLATFORMS) {
     
     // Clear problematic cache before building to avoid symlink issues
     if (platform === 'win') {
-      const winCodeSignCache = path.join(desktopDir, '.electron-cache', 'winCodeSign');
-      if (fs.existsSync(winCodeSignCache)) {
-        console.log('Clearing winCodeSign cache to avoid symlink issues...');
+      const electronCache = path.join(desktopDir, '.electron-cache');
+      if (fs.existsSync(electronCache)) {
+        console.log('Clearing electron-builder cache to avoid symlink issues...');
         try {
-          fs.rmSync(winCodeSignCache, { recursive: true, force: true });
+          // Clear the entire cache, not just winCodeSign
+          fs.rmSync(electronCache, { recursive: true, force: true });
         } catch (e) {
-          // Ignore errors, cache might be in use
+          console.warn('Warning: Could not clear cache (may be in use):', e.message);
         }
       }
     }
     
-    execSync('npm run pack', { 
+    // Use electron-builder directly with --dir flag and skip signing
+    const packCommand = platform === 'win' 
+      ? 'npx electron-builder --win --dir --config.win.sign=false --config.win.signDlls=false'
+      : platform === 'mac'
+      ? 'npx electron-builder --mac --dir --config.mac.sign=false'
+      : 'npx electron-builder --linux --dir';
+    
+    execSync(packCommand, { 
       cwd: desktopDir, 
       stdio: 'inherit',
       env: { 
@@ -121,6 +129,8 @@ for (const platform of PLATFORMS) {
         CI: 'false',
         // Disable signing to avoid downloading signing tools
         CSC_IDENTITY_AUTO_DISCOVERY: 'false',
+        // Skip code signing completely
+        SKIP_NOTARIZATION: 'true',
         // Override platform for testing
         ...(platform === 'win' && { npm_config_target_arch: 'x64' }),
         ELECTRON_BUILDER_CACHE: path.join(desktopDir, '.electron-cache')
