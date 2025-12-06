@@ -249,7 +249,12 @@ export class RecordSheetService {
       throw new Error('Could not open print window. Check popup blocker settings.');
     }
 
-    printWindow.document.write(`
+    // After null check, printWindow is definitely a Window object with document
+    // TypeScript needs help here because Window.document might not be available in all contexts
+    // but in browser context after window.open, it's always available
+    const windowDoc = printWindow.document as Document;
+
+    windowDoc.write(`
       <!DOCTYPE html>
       <html>
         <head>
@@ -269,7 +274,7 @@ export class RecordSheetService {
         </body>
       </html>
     `);
-    printWindow.document.close();
+    windowDoc.close();
   }
 
   /**
