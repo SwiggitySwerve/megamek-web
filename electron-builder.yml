@@ -88,6 +88,11 @@ win:
   verifyUpdateCodeSignature: false
   sign: false
   signingHashAlgorithms: []
+  # Disable signing tools download to avoid symlink issues on Windows
+  signtoolOptions:
+    sign: false
+  # Prevent downloading signing tools
+  signDlls: false
 
 nsis:
   oneClick: false

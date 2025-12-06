@@ -99,6 +99,19 @@ for (const platform of PLATFORMS) {
     // Use pack mode for faster testing (doesn't create installer, just unpacks)
     console.log(`Running: npm run pack (testing ${platform} configuration)\n`);
     
+    // Clear problematic cache before building to avoid symlink issues
+    if (platform === 'win') {
+      const winCodeSignCache = path.join(desktopDir, '.electron-cache', 'winCodeSign');
+      if (fs.existsSync(winCodeSignCache)) {
+        console.log('Clearing winCodeSign cache to avoid symlink issues...');
+        try {
+          fs.rmSync(winCodeSignCache, { recursive: true, force: true });
+        } catch (e) {
+          // Ignore errors, cache might be in use
+        }
+      }
+    }
+    
     execSync('npm run pack', { 
       cwd: desktopDir, 
       stdio: 'inherit',
@@ -106,6 +119,8 @@ for (const platform of PLATFORMS) {
         ...process.env,
         // Prevent publishing during test
         CI: 'false',
+        // Disable signing to avoid downloading signing tools
+        CSC_IDENTITY_AUTO_DISCOVERY: 'false',
         // Override platform for testing
         ...(platform === 'win' && { npm_config_target_arch: 'x64' }),
         ELECTRON_BUILDER_CACHE: path.join(desktopDir, '.electron-cache')
