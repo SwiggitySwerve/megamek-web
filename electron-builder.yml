@@ -6,27 +6,29 @@ productName: BattleTech Editor
 copyright: Copyright © 2025 SwerveLabs
 
 # Directories
+# Paths are relative to the desktop directory when running from desktop/
 directories:
-  output: desktop/release
-  buildResources: desktop/assets
+  output: release
+  buildResources: assets
 
 # Files to include in the application
+# Paths are relative to the desktop directory when running from desktop/
 files:
-  - "desktop/dist/**/*"
-  - "desktop/assets/**/*"
-  - "!desktop/node_modules/**/*"
-  # Include the Next.js standalone build
-  - ".next/standalone/**/*"
-  - ".next/static/**/*"
-  - "public/**/*"
+  - "dist/**/*"
+  - "assets/**/*"
+  - "!node_modules/**/*"
+  # Include the Next.js standalone build (relative to project root)
+  - "../.next/standalone/**/*"
+  - "../.next/static/**/*"
+  - "../public/**/*"
 
 # Extra resources to include (outside of app.asar)
 extraResources:
-  - from: "desktop/assets"
+  - from: "assets"
     to: "assets"
-  - from: "public/data"
+  - from: "../public/data"
     to: "data"
-  - from: "public/record-sheets"
+  - from: "../public/record-sheets"
     to: "record-sheets"
 
 # ASAR archive configuration
@@ -40,12 +42,12 @@ asarUnpack:
 # =============================================================================
 mac:
   category: public.app-category.games
-  icon: desktop/assets/icons/icon.icns
+  icon: assets/icons/icon.icns
   darkModeSupport: true
   hardenedRuntime: true
   gatekeeperAssess: false
-  entitlements: desktop/assets/entitlements.mac.plist
-  entitlementsInherit: desktop/assets/entitlements.mac.plist
+  entitlements: assets/entitlements.mac.plist
+  entitlementsInherit: assets/entitlements.mac.plist
   target:
     - target: dmg
       arch:
@@ -73,7 +75,7 @@ dmg:
 # Windows Configuration
 # =============================================================================
 win:
-  icon: desktop/assets/icons/icon.ico
+  icon: assets/icons/icon.ico
   target:
     - target: nsis
       arch:
@@ -84,6 +86,8 @@ win:
         - x64
   publisherName: SwerveLabs
   verifyUpdateCodeSignature: false
+  sign: false
+  signingHashAlgorithms: []
 
 nsis:
   oneClick: false
@@ -92,9 +96,9 @@ nsis:
   allowToChangeInstallationDirectory: true
   createDesktopShortcut: true
   createStartMenuShortcut: true
-  installerIcon: desktop/assets/icons/icon.ico
-  uninstallerIcon: desktop/assets/icons/icon.ico
-  installerHeaderIcon: desktop/assets/icons/icon.ico
+  installerIcon: assets/icons/icon.ico
+  uninstallerIcon: assets/icons/icon.ico
+  installerHeaderIcon: assets/icons/icon.ico
   deleteAppDataOnUninstall: false
   runAfterFinish: true
   shortcutName: BattleTech Editor
@@ -135,8 +139,8 @@ deb:
     - libappindicator1
     - libxtst6
     - libnss3
-  afterInstall: desktop/scripts/linux/after-install.sh
-  afterRemove: desktop/scripts/linux/after-remove.sh
+  afterInstall: scripts/linux/after-install.sh
+  afterRemove: scripts/linux/after-remove.sh
 
 rpm:
   depends:
