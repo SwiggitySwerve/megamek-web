@@ -55,8 +55,8 @@ interface IDesktopAppConfig {
  * Main application class
  */
 class BattleTechEditorApp {
-  private mainWindow: typeof BrowserWindow | null = null;
-  private tray: typeof Tray | null = null;
+  private mainWindow: BrowserWindow | null = null;
+  private tray: Tray | null = null;
   private localStorage: LocalStorageService | null = null;
   private backupService: BackupService | null = null;
   
@@ -300,7 +300,6 @@ class BattleTechEditorApp {
       webPreferences: {
         nodeIntegration: false,
         contextIsolation: true,
-        enableRemoteModule: false,
         preload: path.join(__dirname, 'preload.js'),
         webSecurity: !this.config.developmentMode
       },
@@ -343,13 +342,15 @@ class BattleTechEditorApp {
 
     // Show window when ready
     this.mainWindow.once('ready-to-show', () => {
-      this.mainWindow?.show();
-      
-      // Focus window
-      if (process.platform === 'darwin') {
-        app.dock.show();
+      if (this.mainWindow) {
+        this.mainWindow.show();
+        
+        // Focus window
+        if (process.platform === 'darwin') {
+          app.dock.show();
+        }
+        this.mainWindow.focus();
       }
-      this.mainWindow?.focus();
     });
 
     // Handle window events
@@ -360,13 +361,16 @@ class BattleTechEditorApp {
     this.mainWindow.on('close', async (event) => {
       // Save window bounds
       if (this.mainWindow) {
-        await this.saveWindowBounds(this.mainWindow.getBounds());
+        const bounds = this.mainWindow.getBounds();
+        await this.saveWindowBounds(bounds);
       }
 
       // Hide to tray instead of closing (except on macOS)
       if (this.config.enableSystemTray && process.platform !== 'darwin') {
         event.preventDefault();
-        this.mainWindow?.hide();
+        if (this.mainWindow) {
+          this.mainWindow.hide();
+        }
       }
     });
 
@@ -465,7 +469,8 @@ class BattleTechEditorApp {
 
     // File operations
     ipcMain.handle('save-file', async (event, defaultPath: string, filters: any[]) => {
-      const result = await dialog.showSaveDialog(this.mainWindow!, {
+      if (!this.mainWindow) return { canceled: true };
+      const result = await dialog.showSaveDialog(this.mainWindow, {
         defaultPath,
         filters
       });
@@ -473,7 +478,8 @@ class BattleTechEditorApp {
     });
 
     ipcMain.handle('open-file', async (event, filters: any[]) => {
-      const result = await dialog.showOpenDialog(this.mainWindow!, {
+      if (!this.mainWindow) return { canceled: true, filePaths: [] };
+      const result = await dialog.showOpenDialog(this.mainWindow, {
         filters,
         properties: ['openFile']
       });
@@ -514,19 +520,25 @@ class BattleTechEditorApp {
 
     // Window operations
     ipcMain.handle('minimize-window', () => {
-      this.mainWindow?.minimize();
+      if (this.mainWindow) {
+        this.mainWindow.minimize();
+      }
     });
 
     ipcMain.handle('maximize-window', () => {
-      if (this.mainWindow?.isMaximized()) {
-        this.mainWindow.unmaximize();
-      } else {
-        this.mainWindow?.maximize();
+      if (this.mainWindow) {
+        if (this.mainWindow.isMaximized()) {
+          this.mainWindow.unmaximize();
+        } else {
+          this.mainWindow.maximize();
+        }
       }
     });
 
     ipcMain.handle('close-window', () => {
-      this.mainWindow?.close();
+      if (this.mainWindow) {
+        this.mainWindow.close();
+      }
     });
 
     // Backup operations
@@ -640,8 +652,10 @@ class BattleTechEditorApp {
   private async loadWindowBounds(): Promise<Partial<Electron.Rectangle>> {
     try {
       if (this.localStorage) {
-        const bounds = await this.localStorage.get('window-bounds');
-        return bounds || {};
+        const result = await this.localStorage.get<Partial<Electron.Rectangle>>('window-bounds');
+        if (result.success && result.data) {
+          return result.data;
+        }
       }
     } catch (error) {
       console.error('Failed to load window bounds:', error);
@@ -667,7 +681,8 @@ class BattleTechEditorApp {
    */
   private async importUnitFile(): Promise<void> {
     try {
-      const result = await dialog.showOpenDialog(this.mainWindow!, {
+      if (!this.mainWindow) return;
+      const result = await dialog.showOpenDialog(this.mainWindow, {
         filters: [
           { name: 'MegaMek Files', extensions: ['mtf'] },
           { name: 'BattleTech Editor Files', extensions: ['bte', 'json'] },
@@ -676,7 +691,7 @@ class BattleTechEditorApp {
         properties: ['openFile']
       });
 
-      if (!result.canceled && result.filePaths.length > 0) {
+      if (!result.canceled && result.filePaths && result.filePaths.length > 0) {
         await this.sendToRenderer('import-unit-file', result.filePaths[0]);
       }
     } catch (error) {
@@ -733,10 +748,7 @@ class BattleTechEditorApp {
         console.log('✅ Backup restored:', backupPath);
         
         // Restart services to pick up restored data
-        if (this.serviceOrchestrator) {
-          await this.serviceOrchestrator.cleanup();
-          await this.serviceOrchestrator.initialize();
-        }
+        // Service orchestrator not implemented yet
         
         return true;
       }
@@ -751,7 +763,8 @@ class BattleTechEditorApp {
    * Notify about available update
    */
   private async notifyUpdateAvailable(info: any): Promise<void> {
-    const choice = await dialog.showMessageBox(this.mainWindow!, {
+    if (!this.mainWindow) return;
+    const choice = await dialog.showMessageBox(this.mainWindow, {
       type: 'info',
       title: 'Update Available',
       message: `A new version (${info.version}) is available. Would you like to download it now?`,
@@ -768,7 +781,7 @@ class BattleTechEditorApp {
    * Update download progress
    */
   private updateDownloadProgress(percent: number): void {
-    if (this.mainWindow) {
+    if (this.mainWindow && !this.mainWindow.isDestroyed()) {
       this.mainWindow.setProgressBar(percent / 100);
     }
   }
@@ -777,7 +790,8 @@ class BattleTechEditorApp {
    * Notify about ready update
    */
   private async notifyUpdateReady(): Promise<void> {
-    const choice = await dialog.showMessageBox(this.mainWindow!, {
+    if (!this.mainWindow) return;
+    const choice = await dialog.showMessageBox(this.mainWindow, {
       type: 'info',
       title: 'Update Ready',
       message: 'Update downloaded. The application will restart to apply the update.',
@@ -806,9 +820,7 @@ class BattleTechEditorApp {
       await this.sendToRenderer('save-all-data');
 
       // Cleanup services
-      if (this.serviceOrchestrator) {
-        await this.serviceOrchestrator.cleanup();
-      }
+      // Service orchestrator not implemented yet
 
       if (this.localStorage) {
         await this.localStorage.cleanup();
