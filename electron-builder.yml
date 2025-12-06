@@ -88,11 +88,11 @@ win:
   verifyUpdateCodeSignature: false
   sign: false
   signingHashAlgorithms: []
-  # Disable signing tools download to avoid symlink issues on Windows
+  # Prevent downloading signing tools entirely
+  signAndEditExecutable: false
+  signDlls: false
   signtoolOptions:
     sign: false
-  # Prevent downloading signing tools
-  signDlls: false
 
 nsis:
   oneClick: false
@@ -177,3 +177,7 @@ compression: maximum
 
 # Build metadata
 buildVersion: "1"
+
+# Skip downloading signing tools when signing is disabled
+# This prevents symlink extraction errors on Windows
+beforeBuild: null

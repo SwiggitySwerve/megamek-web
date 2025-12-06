@@ -106,7 +106,12 @@ for (const platform of PLATFORMS) {
         console.log('Clearing electron-builder cache to avoid symlink issues...');
         try {
           // Clear the entire cache, not just winCodeSign
-          fs.rmSync(electronCache, { recursive: true, force: true });
+          const { execSync: execSyncCache } = require('child_process');
+          if (process.platform === 'win32') {
+            execSyncCache(`rmdir /s /q "${electronCache}"`, { stdio: 'ignore' });
+          } else {
+            execSyncCache(`rm -rf "${electronCache}"`, { stdio: 'ignore' });
+          }
         } catch (e) {
           console.warn('Warning: Could not clear cache (may be in use):', e.message);
         }
@@ -114,8 +119,9 @@ for (const platform of PLATFORMS) {
     }
     
     // Use electron-builder directly with --dir flag and skip signing
+    // signAndEditExecutable: false should prevent winCodeSign download
     const packCommand = platform === 'win' 
-      ? 'npx electron-builder --win --dir --config.win.sign=false --config.win.signDlls=false'
+      ? 'npx electron-builder --win --dir --config.win.sign=false --config.win.signAndEditExecutable=false'
       : platform === 'mac'
       ? 'npx electron-builder --mac --dir --config.mac.sign=false'
       : 'npx electron-builder --linux --dir';
