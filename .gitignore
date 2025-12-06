@@ -81,7 +81,11 @@ data/
 desktop/dist/
 desktop/build/
 desktop/release/
+desktop/desktop/  # Nested build output (if electron-builder creates it)
+**/desktop/release/
+**/desktop/dist/
 .electron-cache/
+desktop/.electron-cache/
 
 # Environment files
 .env
