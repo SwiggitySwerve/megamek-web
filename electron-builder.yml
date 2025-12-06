@@ -102,7 +102,7 @@ nsis:
   deleteAppDataOnUninstall: false
   runAfterFinish: true
   shortcutName: BattleTech Editor
-  license: LICENSE
+  license: ../LICENSE
 
 portable:
   artifactName: "${productName}-${version}-portable.exe"
