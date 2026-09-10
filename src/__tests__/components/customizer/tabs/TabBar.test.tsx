@@ -41,7 +41,6 @@ describe('TabBar', () => {
     onSelectTab: jest.fn(),
     onCloseTab: jest.fn(),
     onRenameTab: jest.fn(),
-    onNewTab: jest.fn(),
     onLoadUnit: jest.fn(),
   };
 
@@ -112,21 +111,28 @@ describe('TabBar', () => {
     expect(defaultProps.onRenameTab).toHaveBeenCalledWith('tab-1', 'Renamed');
   });
 
-  it('should call onNewTab when new tab button is clicked', async () => {
+  it('keeps unit creation out of the actions menu', async () => {
     const user = userEvent.setup();
-    render(<TabBar {...defaultProps} />);
-
-    const newTabButton = screen.getByTitle(/Create New Unit/i);
-    await user.click(newTabButton);
-
-    expect(defaultProps.onNewTab).toHaveBeenCalledTimes(1);
+    render(
+      <TabBar {...defaultProps} onImport={jest.fn()} onExport={jest.fn()} />,
+    );
+    await user.click(screen.getByRole('button', { name: 'Unit actions' }));
+    expect(
+      screen.queryByRole('button', { name: 'New unit' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Import from bundle' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Export active unit' }),
+    ).toBeInTheDocument();
   });
 
   it('should call onLoadUnit when load unit button is clicked', async () => {
     const user = userEvent.setup();
     render(<TabBar {...defaultProps} />);
 
-    const loadButton = screen.getByTitle(/Load Unit/i);
+    const loadButton = screen.getByTitle(/Add unit/i);
     await user.click(loadButton);
 
     expect(defaultProps.onLoadUnit).toHaveBeenCalledTimes(1);
@@ -145,6 +151,8 @@ describe('TabBar', () => {
     render(<TabBar {...defaultProps} tabs={[]} />);
 
     expect(screen.queryByTestId(/tab-/)).not.toBeInTheDocument();
-    expect(screen.getByTitle(/Create New Unit/i)).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Unit actions' }),
+    ).toBeInTheDocument();
   });
 });

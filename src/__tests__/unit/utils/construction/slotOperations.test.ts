@@ -8,7 +8,11 @@ import {
 import { EngineType } from '@/types/construction/EngineType';
 import { GyroType } from '@/types/construction/GyroType';
 import { InternalStructureType } from '@/types/construction/InternalStructureType';
-import { BIPED_LOCATIONS } from '@/types/construction/MechConfigurationSystem';
+import {
+  BIPED_LOCATIONS,
+  MechConfiguration,
+  QUAD_LOCATIONS,
+} from '@/types/construction/MechConfigurationSystem';
 import { TechBase } from '@/types/enums/TechBase';
 import { EquipmentCategory } from '@/types/equipment';
 import {
@@ -313,6 +317,32 @@ describe('slotOperations', () => {
 
       expect(result.unassigned).toHaveLength(3);
     });
+
+    it('should fill only locations present on a quad', () => {
+      const unhittables = Array.from({ length: 25 }, (_, index) =>
+        createUnhittable(index),
+      );
+
+      const result = fillUnhittableSlots(
+        unhittables,
+        EngineType.STANDARD,
+        GyroType.STANDARD,
+        MechConfiguration.QUAD,
+      );
+
+      expect(result.unassigned).toEqual([]);
+      expect(
+        result.assignments.every((assignment) =>
+          QUAD_LOCATIONS.includes(assignment.location),
+        ),
+      ).toBe(true);
+      expect(
+        result.assignments.map((assignment) => assignment.location),
+      ).toContain(MechLocation.FRONT_LEFT_LEG);
+      expect(
+        result.assignments.map((assignment) => assignment.location),
+      ).not.toContain(MechLocation.LEFT_ARM);
+    });
   });
 
   describe('compactEquipmentSlots()', () => {
@@ -355,6 +385,52 @@ describe('slotOperations', () => {
         },
         { instanceId: 'equip-2', location: MechLocation.LEFT_ARM, slots: [6] },
       ]);
+    });
+
+    it('should leave an over-capacity location unchanged as one atomic batch', () => {
+      const equipment = [
+        createEquipment({
+          instanceId: 'large-item',
+          criticalSlots: 5,
+          location: MechLocation.LEFT_ARM,
+          slots: [4, 5, 6, 7, 8],
+        }),
+        createEquipment({
+          instanceId: 'second-item',
+          criticalSlots: 4,
+          location: MechLocation.LEFT_ARM,
+          slots: [8, 9, 10, 11],
+        }),
+      ];
+
+      const result = compactEquipmentSlots(
+        equipment,
+        EngineType.STANDARD,
+        GyroType.STANDARD,
+      );
+
+      expect(result.assignments).toEqual([]);
+      expect(result.unassigned).toEqual(['large-item', 'second-item']);
+    });
+
+    it('should report an item that cannot occupy contiguous free slots', () => {
+      const equipment = [
+        createEquipment({
+          instanceId: 'head-item',
+          criticalSlots: 2,
+          location: MechLocation.HEAD,
+          slots: [3, 4],
+        }),
+      ];
+
+      const result = compactEquipmentSlots(
+        equipment,
+        EngineType.STANDARD,
+        GyroType.STANDARD,
+      );
+
+      expect(result.assignments).toEqual([]);
+      expect(result.unassigned).toEqual(['head-item']);
     });
   });
 
@@ -407,6 +483,34 @@ describe('slotOperations', () => {
       expect(assignments[0].slots).toEqual([4, 5]);
       expect(assignments[1].slots).toEqual([6, 7]);
       expect(assignments[2].slots).toEqual([8]);
+    });
+
+    it('should not publish a partial sorted layout when the location cannot fit', () => {
+      const equipment = [
+        createEquipment({
+          instanceId: 'largest-item',
+          name: 'Largest Item',
+          criticalSlots: 5,
+          location: MechLocation.LEFT_ARM,
+          slots: [4, 5, 6, 7, 8],
+        }),
+        createEquipment({
+          instanceId: 'smaller-item',
+          name: 'Smaller Item',
+          criticalSlots: 4,
+          location: MechLocation.LEFT_ARM,
+          slots: [8, 9, 10, 11],
+        }),
+      ];
+
+      const result = sortEquipmentBySize(
+        equipment,
+        EngineType.STANDARD,
+        GyroType.STANDARD,
+      );
+
+      expect(result.assignments).toEqual([]);
+      expect(result.unassigned).toEqual(['largest-item', 'smaller-item']);
     });
   });
 });

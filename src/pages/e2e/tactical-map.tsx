@@ -41,7 +41,7 @@ export default function TacticalMapE2EPage(): React.JSX.Element {
   if (!Harness) {
     return (
       <main
-        className="min-h-screen bg-slate-950 p-4 text-slate-100"
+        className="bg-surface-deep text-text-theme-primary min-h-screen p-4"
         data-testid="tactical-map-e2e-loading"
       >
         Loading tactical map harness...

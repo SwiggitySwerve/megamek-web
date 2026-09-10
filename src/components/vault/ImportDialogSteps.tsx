@@ -6,6 +6,8 @@ import type {
 } from '@/hooks/useVaultImport';
 import type { IImportConflict, IImportResult } from '@/types/vault';
 
+import { AppIcon } from '@/components/ui/AppIcon';
+
 type ImportStep = UseVaultImportState['step'];
 
 interface ImportDialogStepsProps {
@@ -97,7 +99,7 @@ function FileSelectionStep({
 
   return (
     <div
-      className="cursor-pointer rounded-lg border-2 border-dashed border-gray-600 p-8 text-center transition-colors hover:border-gray-500"
+      className="border-border-theme-strong hover:border-border-theme-strong cursor-pointer rounded-lg border-2 border-dashed p-8 text-center transition-colors"
       onClick={() => fileInputRef.current?.click()}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
@@ -109,8 +111,13 @@ function FileSelectionStep({
         onChange={handleFileSelect}
         className="hidden"
       />
-      <div className="text-gray-400">
-        <div className="mb-2 text-4xl">📦</div>
+      <div className="text-text-theme-secondary">
+        <AppIcon
+          name="upload"
+          size="hero"
+          className="mb-2"
+          aria-hidden="true"
+        />
         <p>Drop a .mekbundle file here</p>
         <p className="mt-1 text-sm">or click to select</p>
       </div>
@@ -135,10 +142,10 @@ function PreviewStep({
     return (
       <div className="py-4 text-center">
         <div className="mb-2 text-red-400">Invalid Bundle</div>
-        <p className="text-sm text-gray-400">{preview.error}</p>
+        <p className="text-text-theme-secondary text-sm">{preview.error}</p>
         <button
           onClick={onClearFile}
-          className="mt-4 rounded bg-gray-600 px-4 py-2 text-white hover:bg-gray-500"
+          className="bg-surface-raised text-text-theme-primary hover:bg-surface-raised mt-4 rounded px-4 py-2"
         >
           Try Another File
         </button>
@@ -148,31 +155,35 @@ function PreviewStep({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-lg bg-gray-700 p-4">
-        <h3 className="mb-2 font-medium text-white">Bundle Preview</h3>
+      <div className="bg-surface-raised rounded-lg p-4">
+        <h3 className="text-text-theme-primary mb-2 font-medium">
+          Bundle Preview
+        </h3>
         <dl className="space-y-1 text-sm">
           <div className="flex justify-between">
-            <dt className="text-gray-400">Content Type:</dt>
-            <dd className="text-white capitalize">{preview.contentType}</dd>
+            <dt className="text-text-theme-secondary">Content Type:</dt>
+            <dd className="text-text-theme-primary capitalize">
+              {preview.contentType}
+            </dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-gray-400">Items:</dt>
-            <dd className="text-white">{preview.itemCount}</dd>
+            <dt className="text-text-theme-secondary">Items:</dt>
+            <dd className="text-text-theme-primary">{preview.itemCount}</dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-gray-400">Author:</dt>
-            <dd className="text-white">{preview.authorName}</dd>
+            <dt className="text-text-theme-secondary">Author:</dt>
+            <dd className="text-text-theme-primary">{preview.authorName}</dd>
           </div>
           {preview.description && (
             <div className="flex justify-between">
-              <dt className="text-gray-400">Description:</dt>
-              <dd className="text-white">{preview.description}</dd>
+              <dt className="text-text-theme-secondary">Description:</dt>
+              <dd className="text-text-theme-primary">{preview.description}</dd>
             </div>
           )}
           {preview.createdAt && (
             <div className="flex justify-between">
-              <dt className="text-gray-400">Created:</dt>
-              <dd className="text-white">
+              <dt className="text-text-theme-secondary">Created:</dt>
+              <dd className="text-text-theme-primary">
                 {new Date(preview.createdAt).toLocaleDateString()}
               </dd>
             </div>
@@ -183,14 +194,14 @@ function PreviewStep({
       <div className="flex gap-3">
         <button
           onClick={onClearFile}
-          className="flex-1 rounded bg-gray-600 px-4 py-2 text-white hover:bg-gray-500"
+          className="bg-surface-raised text-text-theme-primary hover:bg-surface-raised flex-1 rounded px-4 py-2"
         >
           Select Different File
         </button>
         <button
           onClick={onImport}
           disabled={importing}
-          className="flex-1 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-500 disabled:opacity-50"
+          className="bg-accent text-on-accent hover:bg-accent-hover flex-1 rounded px-4 py-2 disabled:opacity-50"
         >
           {importing ? 'Importing...' : 'Import'}
         </button>
@@ -202,8 +213,13 @@ function PreviewStep({
 function ImportingStep(): React.ReactElement {
   return (
     <div className="py-8 text-center">
-      <div className="mb-4 animate-spin text-4xl">⏳</div>
-      <p className="text-gray-300">Importing...</p>
+      <AppIcon
+        name="loader"
+        size="hero"
+        className="mb-4 animate-spin"
+        aria-hidden="true"
+      />
+      <p className="text-text-theme-secondary">Importing...</p>
     </div>
   );
 }
@@ -219,9 +235,16 @@ function CompleteStep({
 }: CompleteStepProps): React.ReactElement {
   return (
     <div className="py-4 text-center">
-      <div className="mb-4 text-4xl text-green-400">✓</div>
-      <h3 className="mb-2 font-medium text-white">Import Complete</h3>
-      <div className="space-y-1 text-gray-300">
+      <AppIcon
+        name="check"
+        size="hero"
+        className="mb-4 text-green-400"
+        aria-hidden="true"
+      />
+      <h3 className="text-text-theme-primary mb-2 font-medium">
+        Import Complete
+      </h3>
+      <div className="text-text-theme-secondary space-y-1">
         <p>Imported: {result.success ? result.data.importedCount : 0}</p>
         {result.success && result.data.skippedCount > 0 && (
           <p>Skipped: {result.data.skippedCount}</p>
@@ -232,7 +255,7 @@ function CompleteStep({
       </div>
       <button
         onClick={onClose}
-        className="mt-4 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-500"
+        className="bg-accent text-on-accent hover:bg-accent-hover mt-4 rounded px-4 py-2"
       >
         Done
       </button>
@@ -268,7 +291,7 @@ function ConflictResolver({
 
   return (
     <div className="space-y-4">
-      <p className="text-gray-300">
+      <p className="text-text-theme-secondary">
         {conflicts.length} conflict{conflicts.length > 1 ? 's' : ''} found.
         Choose how to handle each:
       </p>
@@ -277,12 +300,12 @@ function ConflictResolver({
         {resolutions.map((conflict, index) => (
           <div
             key={conflict.bundleItemId}
-            className="rounded-lg bg-gray-700 p-3"
+            className="bg-surface-raised rounded-lg p-3"
           >
-            <div className="mb-2 font-medium text-white">
+            <div className="text-text-theme-primary mb-2 font-medium">
               {conflict.bundleItemName}
             </div>
-            <div className="mb-2 text-sm text-gray-400">
+            <div className="text-text-theme-secondary mb-2 text-sm">
               Conflicts with: {conflict.existingItemName}
             </div>
             <select
@@ -293,7 +316,7 @@ function ConflictResolver({
                   event.target.value as IImportConflict['resolution'],
                 )
               }
-              className="w-full rounded border border-gray-500 bg-gray-600 px-3 py-2 text-white"
+              className="border-border-theme-strong bg-surface-raised text-text-theme-primary w-full rounded border px-3 py-2"
             >
               <option value="skip">Skip (keep existing)</option>
               <option value="replace">Replace existing</option>
@@ -307,13 +330,13 @@ function ConflictResolver({
       <div className="flex gap-3">
         <button
           onClick={onCancel}
-          className="flex-1 rounded bg-gray-600 px-4 py-2 text-white hover:bg-gray-500"
+          className="bg-surface-raised text-text-theme-primary hover:bg-surface-raised flex-1 rounded px-4 py-2"
         >
           Cancel
         </button>
         <button
           onClick={handleApply}
-          className="flex-1 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-500"
+          className="bg-accent text-on-accent hover:bg-accent-hover flex-1 rounded px-4 py-2"
         >
           Apply & Import
         </button>

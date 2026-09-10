@@ -522,9 +522,11 @@ describe('Simulation Viewer Integration Tests', () => {
 
       // Click to toggle to descending
       await user.click(durationSortBtn);
-      expect(screen.getByTestId('sort-direction-indicator')).toHaveTextContent(
-        '↓',
-      );
+      const indicator = screen.getByTestId('sort-direction-indicator');
+      expect(indicator).toHaveAccessibleName('Descending');
+      expect(
+        indicator.querySelector('[data-icon-name="arrow-down"]'),
+      ).toBeInTheDocument();
 
       // Switch to sort by kills
       const killsSortBtn = screen.getByTestId('sort-button-kills');

@@ -1,4 +1,10 @@
-import React from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+
+import { AppIcon } from '@/components/ui/AppIcon';
+import { SvgIcon } from '@/components/ui/SvgIcon';
+
+import { CustomizerTools } from '../CustomizerToolbarContext';
 
 export interface CriticalSlotsToolbarProps {
   readonly autoFillUnhittables: boolean;
@@ -12,6 +18,9 @@ export interface CriticalSlotsToolbarProps {
   readonly onSort: () => void;
   readonly onReset: () => void;
   readonly readOnly: boolean;
+  readonly placementIssues?: readonly { instanceId: string; message: string }[];
+  readonly onSelectIssue?: (id: string) => void;
+  readonly notice?: string;
 }
 
 export function CriticalSlotsToolbar({
@@ -21,61 +30,162 @@ export function CriticalSlotsToolbar({
   onAutoFillToggle,
   onAutoCompactToggle,
   onAutoSortToggle,
-  onFill: _onFill,
-  onCompact: _onCompact,
-  onSort: _onSort,
   onReset,
   readOnly,
+  placementIssues = [],
+  onSelectIssue,
+  notice,
 }: CriticalSlotsToolbarProps): React.ReactElement {
-  const toggleBtnClass = (active: boolean) => `
-    px-2 py-1 text-[10px] sm:text-sm font-medium rounded border transition-colors
-    ${
-      active
-        ? 'bg-teal-600 border-teal-500 text-white'
-        : 'bg-surface-raised border-border-theme text-slate-300 hover:bg-surface-base'
-    }
-    ${readOnly ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-  `;
-
-  const actionBtnClass = `
-    px-2 sm:px-4 py-1 text-[10px] sm:text-sm font-medium rounded border transition-colors
-    bg-surface-base border-border-theme-subtle text-white hover:bg-surface-raised
-    ${readOnly ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-  `;
-
+  const [open, setOpen] = useState(false);
+  const [position, setPosition] = useState({ top: 0, left: 0 });
+  const trigger = useRef<HTMLButtonElement>(null),
+    panel = useRef<HTMLDivElement>(null);
+  const id = useId();
+  useEffect(() => {
+    if (!open) return;
+    const move = (): void => {
+      const rect = trigger.current?.getBoundingClientRect();
+      if (rect)
+        setPosition({
+          left: Math.max(
+            8,
+            Math.min(rect.right - 264, window.innerWidth - 272),
+          ),
+          top: rect.bottom + 4,
+        });
+    };
+    move();
+    panel.current
+      ?.querySelector<HTMLButtonElement>('button')
+      ?.focus({ preventScroll: true });
+    const outside = (event: PointerEvent): void => {
+      if (
+        !panel.current?.contains(event.target as Node) &&
+        !trigger.current?.contains(event.target as Node)
+      )
+        setOpen(false);
+    };
+    const key = (event: KeyboardEvent): void => {
+      if (event.key === 'Escape') {
+        setOpen(false);
+        trigger.current?.focus();
+      }
+    };
+    document.addEventListener('pointerdown', outside);
+    document.addEventListener('keydown', key);
+    window.addEventListener('resize', move);
+    return () => {
+      document.removeEventListener('pointerdown', outside);
+      document.removeEventListener('keydown', key);
+      window.removeEventListener('resize', move);
+    };
+  }, [open]);
+  const toggles = [
+    {
+      label: 'Automatically fill slots',
+      active: autoFillUnhittables,
+      toggle: onAutoFillToggle,
+    },
+    {
+      label: 'Automatically compact slots',
+      active: autoCompact,
+      toggle: onAutoCompactToggle,
+    },
+    {
+      label: 'Automatically sort equipment',
+      active: autoSort,
+      toggle: onAutoSortToggle,
+    },
+  ];
   return (
-    <div className="bg-surface-base border-border-theme-subtle flex items-center gap-1 overflow-x-auto border-b p-1 sm:p-2">
+    <CustomizerTools>
       <button
-        onClick={onAutoFillToggle}
-        disabled={readOnly}
-        className={toggleBtnClass(autoFillUnhittables)}
+        ref={trigger}
+        type="button"
+        aria-label="Critical slot tools"
+        aria-expanded={open}
+        aria-controls={id}
+        onClick={() => setOpen((value) => !value)}
+        className="border-border-theme bg-surface-base text-text-theme-primary hover:bg-surface-raised focus-visible:outline-accent min-h-11 shrink-0 rounded border px-2 text-xs focus-visible:outline-2 focus-visible:outline-offset-[-2px]"
       >
-        Fill
+        Tools <AppIcon name="chevron-down" size="inline" aria-hidden="true" />
       </button>
-      <button
-        onClick={onAutoCompactToggle}
-        disabled={readOnly}
-        className={toggleBtnClass(autoCompact)}
-      >
-        Compact
-      </button>
-      <button
-        onClick={onAutoSortToggle}
-        disabled={readOnly}
-        className={toggleBtnClass(autoSort)}
-      >
-        Sort
-      </button>
-
-      <div className="flex-1" />
-
-      <button
-        onClick={onReset}
-        disabled={readOnly}
-        className={`${actionBtnClass} hover:bg-red-600`}
-      >
-        Reset
-      </button>
-    </div>
+      {open &&
+        createPortal(
+          <div
+            ref={panel}
+            id={id}
+            role="group"
+            aria-label="Critical slot tools"
+            className="bg-surface-base border-border-theme fixed z-[70] max-h-[60dvh] w-[264px] max-w-[calc(100vw-1rem)] overflow-auto rounded-lg border p-1 shadow-xl"
+            style={{
+              ...position,
+              maxHeight: `calc(100dvh - ${position.top + 8}px)`,
+            }}
+          >
+            {toggles.map(({ label, active, toggle }) => (
+              <button
+                key={label}
+                type="button"
+                disabled={readOnly}
+                aria-pressed={active}
+                onClick={toggle}
+                className="text-text-theme-primary hover:bg-surface-raised focus-visible:outline-accent flex min-h-11 w-full items-center justify-between gap-2 rounded px-3 text-left text-xs focus-visible:outline-2 disabled:opacity-40"
+              >
+                {label}
+                <span
+                  aria-hidden="true"
+                  className={active ? 'text-accent' : 'text-text-theme-muted'}
+                >
+                  {active ? (
+                    <AppIcon name="check" size="inline" aria-hidden="true" />
+                  ) : (
+                    <SvgIcon size="inline" aria-hidden="true">
+                      <circle cx="12" cy="12" r="8" />
+                    </SvgIcon>
+                  )}
+                </span>
+              </button>
+            ))}
+            <button
+              type="button"
+              disabled={readOnly}
+              onClick={() => {
+                onReset();
+                setOpen(false);
+              }}
+              className="hover:bg-surface-raised focus-visible:outline-accent min-h-11 w-full rounded px-3 text-left text-xs text-red-400 focus-visible:outline-2 disabled:opacity-40"
+            >
+              Reset slot assignments
+            </button>
+            {placementIssues.length > 0 && (
+              <details className="border-border-theme border-t px-2">
+                <summary className="flex min-h-11 cursor-pointer items-center text-xs text-yellow-400">
+                  {placementIssues.length} placement issues
+                </summary>
+                {placementIssues.map((issue, index) => (
+                  <button
+                    key={`${issue.instanceId}-${index}`}
+                    type="button"
+                    onClick={() => {
+                      onSelectIssue?.(issue.instanceId);
+                      setOpen(false);
+                    }}
+                    className="text-text-theme-secondary hover:bg-surface-raised focus-visible:outline-accent min-h-11 w-full rounded px-1 py-2 text-left text-xs focus-visible:outline-2"
+                  >
+                    {issue.message}
+                  </button>
+                ))}
+              </details>
+            )}
+            {notice && (
+              <p className="text-text-theme-secondary border-border-theme border-t px-3 py-2 text-xs">
+                {notice}
+              </p>
+            )}
+          </div>,
+          document.body,
+        )}
+    </CustomizerTools>
   );
 }

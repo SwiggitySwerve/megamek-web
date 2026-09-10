@@ -1,21 +1,31 @@
-import React, { useCallback, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
-import { useEquipmentFiltering } from '@/hooks/useEquipmentFiltering';
+import { AppIcon } from '@/components/ui/AppIcon';
 import { MechLocation } from '@/types/construction';
-import { EquipmentCategory } from '@/types/equipment';
 
+import type {
+  EquipmentDisplayGroup,
+  GroupingMode,
+} from './GlobalLoadoutTray.helpers';
 import type {
   AvailableLocation,
   GlobalLoadoutTrayProps,
   LoadoutEquipmentItem,
 } from './GlobalLoadoutTray.types';
 
-import { CategoryFilterBar } from './CategoryFilterBar';
-import { CATEGORY_ORDER } from './equipmentConstants';
+import { groupEquipment, isFixedSystem } from './GlobalLoadoutTray.helpers';
 import { trayStyles } from './GlobalLoadoutTray.styles';
 import { GlobalLoadoutTrayAllocationSection } from './GlobalLoadoutTrayAllocationSection';
 import { GlobalLoadoutTrayCategoryGroup } from './GlobalLoadoutTrayCategoryGroup';
 import { GlobalLoadoutTrayContextMenu } from './GlobalLoadoutTrayContextMenu';
+import { GlobalLoadoutTrayHeader } from './GlobalLoadoutTrayHeader';
+import { LoadoutPlacementControls } from './LoadoutPlacementControls';
 
 interface ContextMenuState {
   x: number;
@@ -41,23 +51,84 @@ export function GlobalLoadoutTray({
   onUnassignEquipment,
   onQuickAssign,
   availableLocations = [],
+  getAvailableLocationsForEquipment,
   isOmni = false,
   className = '',
 }: GlobalLoadoutTrayProps): React.ReactElement {
-  const [unallocatedExpanded, setUnallocatedExpanded] = useState(true);
-  const [allocatedExpanded, setAllocatedExpanded] = useState(true);
-  const [activeCategory, setActiveCategory] = useState<
-    EquipmentCategory | 'ALL'
-  >('ALL');
+  const [unassignedExpanded, setUnassignedExpanded] = useState(true);
+  const [mountedExpanded, setMountedExpanded] = useState(true);
+  const [fixedExpanded, setFixedExpanded] = useState(false);
+  const [grouping, setGrouping] = useState<GroupingMode>('category');
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
+  const [isActionsOpen, setIsActionsOpen] = useState(false);
+  const actionsRef = useRef<HTMLDivElement>(null);
 
-  const {
-    filteredEquipment,
-    unallocated,
-    allocated,
-    unallocatedByCategory,
-    allocatedByCategory,
-  } = useEquipmentFiltering(equipment, activeCategory);
+  const { unassigned, mounted, fixedSystems } = useMemo(() => {
+    const nextUnassigned: LoadoutEquipmentItem[] = [];
+    const nextMounted: LoadoutEquipmentItem[] = [];
+    const nextFixedSystems: LoadoutEquipmentItem[] = [];
+
+    for (const item of equipment) {
+      if (isFixedSystem(item, isOmni)) {
+        nextFixedSystems.push(item);
+      } else if (item.isAllocated) {
+        nextMounted.push(item);
+      } else {
+        nextUnassigned.push(item);
+      }
+    }
+
+    return {
+      unassigned: nextUnassigned,
+      mounted: nextMounted,
+      fixedSystems: nextFixedSystems,
+    };
+  }, [equipment, isOmni]);
+
+  const groupedUnassigned = useMemo(
+    () => groupEquipment(unassigned, grouping),
+    [grouping, unassigned],
+  );
+  const groupedMounted = useMemo(
+    () => groupEquipment(mounted, grouping),
+    [grouping, mounted],
+  );
+  const groupedFixedSystems = useMemo(
+    () => groupEquipment(fixedSystems, grouping),
+    [grouping, fixedSystems],
+  );
+  const contextMenuAvailableLocations = useMemo(() => {
+    if (!contextMenu || !getAvailableLocationsForEquipment) {
+      return availableLocations;
+    }
+    return getAvailableLocationsForEquipment(contextMenu.item.instanceId);
+  }, [availableLocations, contextMenu, getAvailableLocationsForEquipment]);
+
+  useEffect(() => {
+    if (!isActionsOpen) {
+      return;
+    }
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!actionsRef.current?.contains(event.target as Node)) {
+        setIsActionsOpen(false);
+        actionsRef.current?.querySelector<HTMLButtonElement>('button')?.focus();
+      }
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsActionsOpen(false);
+        actionsRef.current?.querySelector<HTMLButtonElement>('button')?.focus();
+      }
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isActionsOpen]);
 
   const handleSelect = useCallback(
     (id: string | null) => {
@@ -67,10 +138,10 @@ export function GlobalLoadoutTray({
   );
 
   const handleContextMenu = useCallback(
-    (e: React.MouseEvent, item: LoadoutEquipmentItem) => {
-      e.preventDefault();
+    (event: React.MouseEvent, item: LoadoutEquipmentItem) => {
+      event.preventDefault();
       onSelectEquipment?.(item.instanceId);
-      setContextMenu({ x: e.clientX, y: e.clientY, item });
+      setContextMenu({ x: event.clientX, y: event.clientY, item });
     },
     [onSelectEquipment],
   );
@@ -86,14 +157,7 @@ export function GlobalLoadoutTray({
     [contextMenu, onQuickAssign, onSelectEquipment],
   );
 
-  const handleUnassign = useCallback(
-    (instanceId: string) => {
-      onUnassignEquipment?.(instanceId);
-    },
-    [onUnassignEquipment],
-  );
-
-  const handleDropToUnallocated = useCallback(
+  const handleDropToUnassigned = useCallback(
     (equipmentId: string) => {
       const item = equipment.find(
         (candidate) => candidate.instanceId === equipmentId,
@@ -115,41 +179,46 @@ export function GlobalLoadoutTray({
     ) {
       onRemoveAllEquipment();
       onSelectEquipment?.(null);
+      setIsActionsOpen(false);
     }
   }, [removableCount, onRemoveAllEquipment, onSelectEquipment]);
+
+  const renderGroups = (
+    groups: EquipmentDisplayGroup[],
+    groupType: 'category' | 'location' | 'fixed' = grouping,
+  ) =>
+    groups.map((group) => (
+      <GlobalLoadoutTrayCategoryGroup
+        key={group.id}
+        title={group.title}
+        items={group.items}
+        grouping={groupType}
+        selectedId={selectedEquipmentId}
+        isOmni={isOmni}
+        onSelect={handleSelect}
+        onRemove={onRemoveEquipment}
+        onContextMenu={handleContextMenu}
+      />
+    ));
 
   if (!isExpanded) {
     return (
       <div
-        className={`bg-surface-base border-border-theme-subtle flex w-10 flex-shrink-0 flex-col items-center border-l py-2 ${className}`}
+        className={`bg-surface-base border-border-theme-subtle flex w-11 shrink-0 flex-col items-center border-l py-2 ${className}`}
       >
         <button
+          type="button"
           onClick={onToggleExpand}
-          className="text-text-theme-secondary flex flex-col items-center gap-1 p-2 transition-colors hover:text-white"
+          aria-label={`Expand loadout with ${equipmentCount} items`}
+          className="text-text-theme-secondary focus-visible:ring-accent hover:text-text-theme-primary flex min-h-11 w-11 flex-col items-center gap-1 !px-0 transition-colors focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset"
           title="Expand loadout"
         >
-          <svg
-            className="h-5 w-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
-            />
-          </svg>
-
-          {equipmentCount > 0 && (
-            <span className="bg-accent min-w-[20px] rounded-full px-1.5 py-0.5 text-center text-xs text-white">
-              {equipmentCount}
-            </span>
-          )}
-
-          <span className="mt-2 rotate-180 text-xs [writing-mode:vertical-rl]">
-            Loadout
+          <AppIcon name="chevrons-left" size="toolbar" />
+          <span className="bg-surface-raised text-text-theme-secondary min-w-6 rounded-full px-1.5 py-0.5 text-center text-[10px] tabular-nums">
+            {equipmentCount}
+          </span>
+          <span className="mt-1 rotate-180 text-[10px] tracking-[0.18em] [writing-mode:vertical-rl]">
+            LOADOUT
           </span>
         </button>
       </div>
@@ -158,179 +227,115 @@ export function GlobalLoadoutTray({
 
   return (
     <>
-      <div
-        className={`bg-surface-base border-border-theme-subtle flex w-[180px] flex-shrink-0 flex-col border-l lg:w-[240px] ${className}`}
+      <aside
+        aria-label="Unit loadout"
+        className={`bg-surface-base border-border-theme-subtle flex w-[240px] shrink-0 flex-col border-l ${className}`}
       >
-        <div className="border-border-theme flex-shrink-0 border-b">
-          <div
-            className={`flex items-center justify-between ${trayStyles.padding.header} py-2`}
-          >
-            <div className={`flex items-center ${trayStyles.gap}`}>
-              <h3
-                className={`font-semibold text-white ${trayStyles.text.primary}`}
-              >
-                Loadout
-              </h3>
-              <span
-                className={`bg-surface-raised text-text-theme-secondary ${trayStyles.text.secondary} rounded-full px-1.5 py-0.5`}
-              >
-                {equipmentCount}
-              </span>
-            </div>
-            <button
-              onClick={onToggleExpand}
-              className="text-text-theme-secondary p-1 transition-colors hover:text-white"
-              title="Collapse"
-            >
-              <svg
-                className="h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 5l7 7-7 7M5 5l7 7-7 7"
-                />
-              </svg>
-            </button>
-          </div>
+        <GlobalLoadoutTrayHeader
+          equipmentCount={equipmentCount}
+          grouping={grouping}
+          removableCount={removableCount}
+          isActionsOpen={isActionsOpen}
+          actionsRef={actionsRef}
+          onGroupingChange={(value) => {
+            setGrouping(value);
+            setIsActionsOpen(false);
+            actionsRef.current
+              ?.querySelector<HTMLButtonElement>('button')
+              ?.focus();
+          }}
+          onToggleActions={() => setIsActionsOpen((current) => !current)}
+          onRemoveAll={handleRemoveAll}
+          onToggleExpand={onToggleExpand}
+        />
 
-          <CategoryFilterBar
-            activeCategory={activeCategory}
-            onSelectCategory={setActiveCategory}
-            compact
-          />
-
-          {removableCount > 0 && (
-            <div className={`${trayStyles.padding.header} pb-2`}>
-              <button
-                onClick={handleRemoveAll}
-                className={`w-full rounded bg-red-900/40 px-2 py-1 ${trayStyles.text.primary} text-red-300 transition-colors hover:bg-red-900/60`}
-              >
-                Remove All ({removableCount})
-              </button>
-            </div>
+        {selectedEquipmentId &&
+          equipment.find((item) => item.instanceId === selectedEquipmentId) && (
+            <LoadoutPlacementControls
+              item={
+                equipment.find(
+                  (item) => item.instanceId === selectedEquipmentId,
+                )!
+              }
+              locations={availableLocations}
+              isOmni={isOmni}
+              onAssign={onQuickAssign}
+              onUnassign={onUnassignEquipment}
+              onCancel={() => onSelectEquipment?.(null)}
+            />
           )}
-        </div>
-
-        <div className="flex-1 overflow-y-auto">
-          {filteredEquipment.length === 0 ? (
-            <div className="p-4 text-center text-slate-500">
-              <div className="mb-2 text-2xl">⚙️</div>
-              <div className={trayStyles.text.primary}>
-                {equipment.length === 0 ? 'No equipment' : 'No items in filter'}
-              </div>
-              <div className={`${trayStyles.text.secondary} mt-1`}>
-                {equipment.length === 0
-                  ? 'Add from Equipment tab'
-                  : 'Try another category'}
-              </div>
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          {equipment.length === 0 ? (
+            <div className="px-4 py-8 text-center">
+              <AppIcon
+                name="list"
+                size="feature"
+                className="text-text-theme-secondary/50 mx-auto mb-2"
+              />
+              <p className="text-text-theme-primary text-xs">No equipment</p>
+              <p className="text-text-theme-secondary mt-1 text-[10px]">
+                Add equipment from the Equipment tab.
+              </p>
             </div>
           ) : (
             <>
               <GlobalLoadoutTrayAllocationSection
-                title="Unallocated"
-                count={unallocated.length}
-                isExpanded={unallocatedExpanded}
-                onToggle={() => setUnallocatedExpanded(!unallocatedExpanded)}
+                title="Unassigned"
+                count={unassigned.length}
+                isExpanded={unassignedExpanded}
+                onToggle={() => setUnassignedExpanded((current) => !current)}
                 titleColor="text-accent"
-                isDropZone={true}
-                onDrop={handleDropToUnallocated}
+                isDropZone
+                onDrop={handleDropToUnassigned}
               >
-                {unallocated.length === 0 ? (
+                {unassigned.length === 0 ? (
                   <div
-                    className={`${trayStyles.padding.row} py-1 text-center text-slate-500 ${trayStyles.text.tertiary}`}
+                    className={`${trayStyles.padding.row} text-text-theme-secondary flex min-h-9 items-center py-1 ${trayStyles.text.secondary}`}
                   >
-                    Drag here to unassign
+                    Drop equipment here to unassign
                   </div>
                 ) : (
-                  CATEGORY_ORDER.map((category) => {
-                    const items = unallocatedByCategory.get(category);
-                    if (!items || items.length === 0) {
-                      return null;
-                    }
-                    return (
-                      <GlobalLoadoutTrayCategoryGroup
-                        key={category}
-                        category={category}
-                        items={items}
-                        selectedId={selectedEquipmentId}
-                        isOmni={isOmni}
-                        onSelect={handleSelect}
-                        onRemove={onRemoveEquipment}
-                        onContextMenu={handleContextMenu}
-                      />
-                    );
-                  })
+                  renderGroups(groupedUnassigned)
                 )}
               </GlobalLoadoutTrayAllocationSection>
 
-              {allocated.length > 0 && (
+              {mounted.length > 0 && (
                 <GlobalLoadoutTrayAllocationSection
-                  title="Allocated"
-                  count={allocated.length}
-                  isExpanded={allocatedExpanded}
-                  onToggle={() => setAllocatedExpanded(!allocatedExpanded)}
-                  titleColor="text-green-400"
+                  title="Mounted"
+                  count={mounted.length}
+                  isExpanded={mountedExpanded}
+                  onToggle={() => setMountedExpanded((current) => !current)}
+                  titleColor="text-text-theme-primary"
                 >
-                  {CATEGORY_ORDER.map((category) => {
-                    const items = allocatedByCategory.get(category);
-                    if (!items || items.length === 0) {
-                      return null;
-                    }
-                    return (
-                      <GlobalLoadoutTrayCategoryGroup
-                        key={category}
-                        category={category}
-                        items={items}
-                        selectedId={selectedEquipmentId}
-                        isOmni={isOmni}
-                        onSelect={handleSelect}
-                        onRemove={onRemoveEquipment}
-                        onContextMenu={handleContextMenu}
-                      />
-                    );
-                  })}
+                  {renderGroups(groupedMounted)}
+                </GlobalLoadoutTrayAllocationSection>
+              )}
+
+              {fixedSystems.length > 0 && (
+                <GlobalLoadoutTrayAllocationSection
+                  title="Fixed systems"
+                  count={fixedSystems.length}
+                  isExpanded={fixedExpanded}
+                  onToggle={() => setFixedExpanded((current) => !current)}
+                  titleColor="text-text-theme-secondary"
+                >
+                  {renderGroups(groupedFixedSystems, 'fixed')}
                 </GlobalLoadoutTrayAllocationSection>
               )}
             </>
           )}
         </div>
-
-        {selectedEquipmentId && (
-          <div
-            className={`flex-shrink-0 ${trayStyles.padding.header} border-border-theme bg-surface-raised/50 border-t py-2`}
-          >
-            <div
-              className={`${trayStyles.text.secondary} text-text-theme-secondary`}
-            >
-              Selected for placement
-            </div>
-            <div
-              className={`${trayStyles.text.primary} text-accent truncate font-medium`}
-            >
-              {
-                equipment.find(
-                  (item) => item.instanceId === selectedEquipmentId,
-                )?.name
-              }
-            </div>
-          </div>
-        )}
-      </div>
+      </aside>
 
       {contextMenu && (
         <GlobalLoadoutTrayContextMenu
           x={contextMenu.x}
           y={contextMenu.y}
           item={contextMenu.item}
-          availableLocations={availableLocations}
+          availableLocations={contextMenuAvailableLocations}
           onQuickAssign={handleQuickAssign}
           onUnassign={() => {
-            handleUnassign(contextMenu.item.instanceId);
+            onUnassignEquipment?.(contextMenu.item.instanceId);
             setContextMenu(null);
           }}
           onClose={() => setContextMenu(null)}

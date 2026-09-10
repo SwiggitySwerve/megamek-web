@@ -15,8 +15,10 @@ export function SaveUnitDialogPreview({
 
   return (
     <div className={cs.dialog.infoPanel}>
-      <div className="mb-1 text-xs text-slate-400">Full Unit Name:</div>
-      <div className="font-medium text-white">
+      <div className="text-text-theme-secondary mb-1 text-xs">
+        Full Unit Name:
+      </div>
+      <div className="text-text-theme-primary font-medium">
         {unitNameValidator.buildFullName(chassis.trim(), variant.trim())}
       </div>
     </div>

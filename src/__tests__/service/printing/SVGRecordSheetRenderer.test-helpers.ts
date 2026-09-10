@@ -108,6 +108,8 @@ const createMockTemplate = (config: 'biped' | 'quad' | 'tripod') => {
       <text id="textMovementRun"></text>
       <text id="textMovementJump"></text>
       <text id="textEngineType"></text>
+      <text id="role"></text>
+      <text id="engineType"></text>
       <text id="textHeatSinkCount"></text>
       ${groups}
     </svg>
@@ -407,7 +409,8 @@ describe('SVGRecordSheetRenderer', () => {
           techBase: 'Inner Sphere',
           rulesLevel: 'Standard',
           era: '3025',
-          role: 'Juggernaut',
+          role: 'Brawler',
+          engineDescription: '300 Standard Fusion',
           battleValue: 1897,
           cost: 9626000,
         },
@@ -445,6 +448,11 @@ describe('SVGRecordSheetRenderer', () => {
 
       const svgString = renderer.getSVGString();
       expect(svgString).toBeDefined();
+      const doc = new DOMParser().parseFromString(svgString, 'image/svg+xml');
+      expect(doc.getElementById('role')?.textContent).toBe('Brawler');
+      expect(doc.getElementById('engineType')?.textContent).toBe(
+        '300 Standard Fusion',
+      );
     });
 
     it('should throw if template not loaded', () => {

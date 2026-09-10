@@ -20,6 +20,11 @@ import { MechLocation } from '@/types/construction/CriticalSlotAllocation';
 import { IEquipmentItem } from '@/types/equipment';
 import { createMountedEquipment } from '@/types/equipment/MountedEquipment';
 import {
+  canChangeEquipmentMount,
+  hasFixedOmniMountConflict,
+  isFixedOmniEquipment,
+} from '@/utils/construction/equipmentMutationPolicy';
+import {
   calculateTargetingComputerWeight,
   calculateTargetingComputerSlots,
 } from '@/utils/equipment/equipmentListUtils';
@@ -170,6 +175,8 @@ export function createEquipmentSlice(
 
     removeEquipment: (instanceId: string) =>
       set((state) => {
+        const item = state.equipment.find((e) => e.instanceId === instanceId);
+        if (!item || isFixedOmniEquipment(state.isOmni, item)) return state;
         const filteredEquipment = state.equipment.filter(
           (e) => e.instanceId !== instanceId,
         );
@@ -187,14 +194,26 @@ export function createEquipmentSlice(
       location: MechLocation,
       slots: readonly number[],
     ) =>
-      set((state) =>
-        updateMountedEquipment(
+      set((state) => {
+        const item = state.equipment.find((e) => e.instanceId === instanceId);
+        if (
+          !item ||
+          !canChangeEquipmentMount(state.isOmni, item) ||
+          hasFixedOmniMountConflict(
+            state.isOmni,
+            state.equipment,
+            location,
+            slots,
+          )
+        )
+          return state;
+        return updateMountedEquipment(
           state,
           instanceId,
           (e) => e.instanceId,
           (e) => ({ ...e, location, slots }),
-        ),
-      ),
+        );
+      }),
 
     bulkUpdateEquipmentLocations: (
       updates: ReadonlyArray<{
@@ -205,27 +224,48 @@ export function createEquipmentSlice(
     ) =>
       set((state) => {
         const updateMap = new Map(updates.map((u) => [u.instanceId, u]));
+        if (
+          state.equipment.some((item) => {
+            const update = updateMap.get(item.instanceId);
+            return (
+              update &&
+              canChangeEquipmentMount(state.isOmni, item) &&
+              hasFixedOmniMountConflict(
+                state.isOmni,
+                state.equipment,
+                update.location,
+                update.slots,
+              )
+            );
+          })
+        )
+          return state;
+        let changed = false;
+        const equipment = state.equipment.map((e) => {
+          const update = updateMap.get(e.instanceId);
+          if (!update || !canChangeEquipmentMount(state.isOmni, e)) return e;
+          changed = true;
+          return { ...e, location: update.location, slots: update.slots };
+        });
+        if (!changed) return state;
         return {
-          equipment: state.equipment.map((e) => {
-            const update = updateMap.get(e.instanceId);
-            return update
-              ? { ...e, location: update.location, slots: update.slots }
-              : e;
-          }),
+          equipment,
           isModified: true,
           lastModifiedAt: Date.now(),
         };
       }),
 
     clearEquipmentLocation: (instanceId: string) =>
-      set((state) =>
-        updateMountedEquipment(
+      set((state) => {
+        const item = state.equipment.find((e) => e.instanceId === instanceId);
+        if (!item || !canChangeEquipmentMount(state.isOmni, item)) return state;
+        return updateMountedEquipment(
           state,
           instanceId,
           (e) => e.instanceId,
           (e) => ({ ...e, location: undefined, slots: undefined }),
-        ),
-      ),
+        );
+      }),
 
     setEquipmentRearMounted: (instanceId: string, isRearMounted: boolean) =>
       set((state) =>
@@ -248,8 +288,13 @@ export function createEquipmentSlice(
       ),
 
     clearAllEquipment: () =>
-      set((state) =>
-        clearMountedEquipment(state.equipment.filter((e) => !e.isRemovable)),
-      ),
+      set((state) => {
+        const equipment = state.equipment.filter(
+          (e) => !e.isRemovable || isFixedOmniEquipment(state.isOmni, e),
+        );
+        return equipment.length === state.equipment.length
+          ? state
+          : clearMountedEquipment(equipment);
+      }),
   };
 }

@@ -1,57 +1,14 @@
 import React from 'react';
 
+import { Button } from '@/components/ui/Button';
+import { SvgIcon } from '@/components/ui/SvgIcon';
+
 interface RecordSheetPreviewZoomControlsProps {
   readonly zoom: number;
   readonly onZoomIn: () => void;
   readonly onZoomOut: () => void;
   readonly onFitToWidth: () => void;
-  readonly onFitToHeight: () => void;
-}
-
-interface ZoomControlButtonProps {
-  readonly title: string;
-  readonly icon: string;
-  readonly onClick: () => void;
-  readonly fontSize: string;
-  readonly fontWeight?: 'bold';
-}
-
-function ZoomControlButton({
-  title,
-  icon,
-  onClick,
-  fontSize,
-  fontWeight,
-}: ZoomControlButtonProps): React.ReactElement {
-  return (
-    <button
-      onClick={onClick}
-      title={title}
-      style={{
-        width: '36px',
-        height: '36px',
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-        color: '#fff',
-        border: 'none',
-        borderRadius: '6px',
-        cursor: 'pointer',
-        fontSize,
-        fontWeight,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        transition: 'background-color 0.15s',
-      }}
-      onMouseEnter={(e) =>
-        (e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)')
-      }
-      onMouseLeave={(e) =>
-        (e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)')
-      }
-    >
-      {icon}
-    </button>
-  );
+  readonly onFitToPage: () => void;
 }
 
 export function RecordSheetPreviewZoomControls({
@@ -59,73 +16,69 @@ export function RecordSheetPreviewZoomControls({
   onZoomIn,
   onZoomOut,
   onFitToWidth,
-  onFitToHeight,
+  onFitToPage,
 }: RecordSheetPreviewZoomControlsProps): React.ReactElement {
   return (
     <div
-      style={{
-        position: 'absolute',
-        bottom: '20px',
-        right: '20px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '4px',
-        backgroundColor: 'rgba(30, 30, 45, 0.95)',
-        borderRadius: '8px',
-        padding: '8px',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-      }}
+      className="border-border-theme-subtle bg-surface-base flex shrink-0 flex-wrap items-center justify-center gap-1 border-t p-1.5 sm:justify-end"
+      role="group"
+      aria-label="Record sheet zoom controls"
     >
-      <ZoomControlButton
-        onClick={onZoomIn}
-        title="Zoom In"
-        icon="+"
-        fontSize="18px"
-        fontWeight="bold"
-      />
-
-      <div
-        style={{
-          color: '#fff',
-          fontSize: '11px',
-          textAlign: 'center',
-          padding: '4px 0',
-          fontFamily: 'monospace',
-        }}
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        onClick={onZoomOut}
+        aria-label="Zoom out"
+        className="min-w-11 px-2 text-lg leading-none"
+      >
+        <SvgIcon size="inline" aria-hidden="true">
+          <circle cx="10" cy="10" r="7" />
+          <path d="m15 15 7 7M7 10h6" />
+        </SvgIcon>
+      </Button>
+      <output
+        className="text-text-theme-primary min-w-14 px-1 text-center text-xs font-medium tabular-nums"
+        aria-live="polite"
+        aria-label="Current zoom"
       >
         {Math.round(zoom * 100)}%
-      </div>
-
-      <ZoomControlButton
-        onClick={onZoomOut}
-        title="Zoom Out"
-        icon="−"
-        fontSize="18px"
-        fontWeight="bold"
-      />
-
+      </output>
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        onClick={onZoomIn}
+        aria-label="Zoom in"
+        className="min-w-11 px-2 text-lg leading-none"
+      >
+        <SvgIcon size="inline" aria-hidden="true">
+          <circle cx="10" cy="10" r="7" />
+          <path d="m15 15 7 7M7 10h6M10 7v6" />
+        </SvgIcon>
+      </Button>
       <div
-        style={{
-          height: '1px',
-          backgroundColor: 'rgba(255, 255, 255, 0.15)',
-          margin: '4px 0',
-        }}
+        aria-hidden="true"
+        className="border-border-theme mx-1 h-6 border-l"
       />
-
-      <ZoomControlButton
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
         onClick={onFitToWidth}
-        title="Fit to Width"
-        icon="↔"
-        fontSize="14px"
-      />
-
-      <ZoomControlButton
-        onClick={onFitToHeight}
-        title="Fit to Height"
-        icon="↕"
-        fontSize="14px"
-      />
+        className="px-3 text-xs"
+      >
+        Fit Width
+      </Button>
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        onClick={onFitToPage}
+        className="px-3 text-xs"
+      >
+        Fit Page
+      </Button>
     </div>
   );
 }

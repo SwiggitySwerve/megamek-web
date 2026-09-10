@@ -202,7 +202,7 @@ export function PhysicalAttackTypePicker(
           return (
             <li
               key={row.type}
-              className={`bg-surface-base rounded border border-gray-200 p-2 ${
+              className={`bg-surface-base border-border-theme-subtle rounded border p-2 ${
                 row.enabled ? '' : 'opacity-60'
               }`}
               data-testid={`physical-attack-row-${row.type}`}
@@ -218,7 +218,7 @@ export function PhysicalAttackTypePicker(
                 className={`flex w-full items-center justify-between rounded px-2 py-1 text-left ${
                   isSelected
                     ? 'bg-blue-100 text-blue-900'
-                    : 'text-text-theme-primary hover:bg-gray-50'
+                    : 'text-text-theme-primary hover:bg-surface-base'
                 } ${row.enabled ? 'cursor-pointer' : 'cursor-not-allowed'}`}
                 data-testid={`physical-attack-button-${row.type}`}
               >

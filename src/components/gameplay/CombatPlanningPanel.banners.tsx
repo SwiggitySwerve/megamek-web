@@ -14,7 +14,7 @@ export function WaitingForOpponentBanner(): React.ReactElement {
 export function AttackerLockedBanner(): React.ReactElement {
   return (
     <div
-      className="rounded border border-gray-300 bg-gray-100 p-2 text-center text-sm font-semibold text-gray-700"
+      className="border-border-theme-subtle bg-surface-base text-text-theme-primary rounded border p-2 text-center text-sm font-semibold"
       data-testid="attacker-locked-banner"
     >
       Attacks locked. Awaiting phase resolution.

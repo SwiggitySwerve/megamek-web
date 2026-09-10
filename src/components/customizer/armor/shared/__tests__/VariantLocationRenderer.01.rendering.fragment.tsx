@@ -190,3 +190,35 @@ describe('VariantLocationRenderer', () => {
     );
   });
 });
+
+describe('active variant capacity fills', () => {
+  it.each([
+    'clean-tech',
+    'neon-operator',
+    'tactical-hud',
+    'premium-material',
+  ] as const)('%s exposes a real half-capacity fill element', (variant) => {
+    const { container } = renderInSvg(
+      makeProps({
+        variant,
+        showRear: false,
+        data: { current: 5, maximum: 10 },
+      }),
+    );
+    const fill = container.querySelector('[data-armor-fill]');
+    expect(fill).not.toBeNull();
+    expect(fill!.getAttribute('data-armor-fill-ratio')).toBe('0.5');
+
+    const clipReference = fill!.getAttribute('clip-path');
+    if (clipReference) {
+      const clip = container.querySelector(
+        '[id="' + clipReference.slice(5, -1) + '"]',
+      );
+      expect(clip).not.toBeNull();
+      expect(clip!.querySelector('rect')).not.toBeNull();
+    } else {
+      expect(fill!.getAttribute('y')).not.toBeNull();
+      expect(fill!.getAttribute('height')).not.toBeNull();
+    }
+  });
+});

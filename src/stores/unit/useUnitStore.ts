@@ -24,6 +24,7 @@ import {
 } from '../unitState';
 import { createArmorSlice } from './useUnitArmorStore';
 import { createEquipmentSlice } from './useUnitEquipmentStore';
+import { createFluffSlice } from './useUnitFluffStore';
 import { createStructureSlice } from './useUnitStructureStore';
 import { createTechBaseSlice } from './useUnitTechBaseStore';
 
@@ -32,6 +33,9 @@ export type { UnitStore } from '../unitState';
 function pickPersistedUnitState(state: UnitStore) {
   return {
     ...pickPersistedUnitIdentityWithClanName(state),
+    sourceDefinition: state.sourceDefinition,
+    role: state.role,
+    fluff: state.fluff,
     tonnage: state.tonnage,
     techBase: state.techBase,
     unitType: state.unitType,
@@ -91,6 +95,7 @@ export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
         // Compose action slices
         ...createArmorSlice(set, get),
         ...createEquipmentSlice(set, get),
+        ...createFluffSlice(set),
         ...createStructureSlice(set, get),
         ...createTechBaseSlice(set, get),
       }),

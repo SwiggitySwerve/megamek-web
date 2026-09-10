@@ -1,6 +1,8 @@
 import React from 'react';
 
 import { Badge } from '@/components/ui';
+import { AppIcon } from '@/components/ui/AppIcon';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { IRepairJob, RepairJobStatus } from '@/types/repair';
 
 // =============================================================================
@@ -120,19 +122,7 @@ export function QueueItem({
               className={`hover:bg-surface-deep rounded p-1 transition-colors ${isFirst ? 'text-text-theme-muted/30 cursor-not-allowed' : 'text-text-theme-secondary hover:text-accent'} `}
               aria-label="Move up"
             >
-              <svg
-                className="h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 15l7-7 7 7"
-                />
-              </svg>
+              <AppIcon name="arrow-up" size="inline" />
             </button>
             <button
               data-testid={`repair-queue-down-${job.id}`}
@@ -144,19 +134,7 @@ export function QueueItem({
               className={`hover:bg-surface-deep rounded p-1 transition-colors ${isLast ? 'text-text-theme-muted/30 cursor-not-allowed' : 'text-text-theme-secondary hover:text-accent'} `}
               aria-label="Move down"
             >
-              <svg
-                className="h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
+              <AppIcon name="arrow-down" size="inline" />
             </button>
           </div>
         )}
@@ -200,37 +178,15 @@ export function QueueItem({
 
         <div className="flex items-center gap-4 text-xs">
           <div className="text-text-theme-secondary flex items-center gap-1.5">
-            <svg
-              className="h-3.5 w-3.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
+            <AppIcon name="clock" size="inline" />
             <span className="tabular-nums">
               {formatTime(isPending ? totalTime : timeRemaining)}
             </span>
           </div>
           <div className="text-text-theme-secondary flex items-center gap-1.5">
-            <svg
-              className="h-3.5 w-3.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
+            <SvgIcon size="inline">
+              <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </SvgIcon>
             <span className="font-medium tabular-nums">
               {job.totalCost.toLocaleString()}
             </span>
@@ -248,19 +204,7 @@ export function QueueItem({
           className="text-text-theme-muted self-start rounded-lg p-2 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-900/20 hover:text-red-400"
           aria-label="Cancel repair"
         >
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          <AppIcon name="close" size="inline" />
         </button>
       )}
 

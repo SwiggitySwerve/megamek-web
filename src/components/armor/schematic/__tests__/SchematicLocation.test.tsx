@@ -73,3 +73,34 @@ describe('SchematicLocation', () => {
     expect(button).toHaveAttribute('aria-pressed', 'false');
   });
 });
+
+it.each([
+  ['empty', 0, 10, 1],
+  ['half', 5, 10, 0.5],
+  ['full', 10, 10, 0],
+  ['over capacity', 15, 10, 0],
+  ['zero maximum', 5, 0, 1],
+])(
+  'renders a $s proportional bottom-up gradient',
+  (_state, current, maximum, boundary) => {
+    const { container } = render(
+      <SchematicLocation
+        location={MechLocation.HEAD}
+        current={current}
+        maximum={maximum}
+        isSelected={false}
+        onClick={jest.fn()}
+        rear={undefined}
+      />,
+    );
+    const fill = container.querySelector('[data-armor-fill="Head-front"]');
+    expect(fill).toHaveAttribute('data-armor-fill-ratio', String(1 - boundary));
+    const reference = fill!.getAttribute('fill')!;
+    const gradient = container.querySelector(
+      '[id="' + reference.slice(5, -1) + '"]',
+    );
+    const stops = gradient!.querySelectorAll('stop');
+    expect(stops[1]).toHaveAttribute('offset', String(boundary));
+    expect(stops[2]).toHaveAttribute('offset', String(boundary));
+  },
+);

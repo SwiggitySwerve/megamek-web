@@ -131,7 +131,7 @@ export default function ManageShareLinksPage(): React.ReactElement {
         {links.length === 0 ? (
           <EmptyState
             icon={
-              <LinkIcon className="text-text-theme-muted mx-auto h-12 w-12" />
+              <LinkIcon size="hero" className="text-text-theme-muted mx-auto" />
             }
             title="No share links yet"
             message="Share links you create will appear here. Use the Share button on any vault item to get started."
@@ -263,9 +263,9 @@ export default function ManageShareLinksPage(): React.ReactElement {
                                   }
                                 >
                                   {copiedId === link.id ? (
-                                    <CheckIcon className="h-4 w-4" />
+                                    <CheckIcon size="inline" />
                                   ) : (
-                                    <CopyIcon className="h-4 w-4" />
+                                    <CopyIcon size="inline" />
                                   )}
                                 </Button>
 
@@ -289,7 +289,7 @@ export default function ManageShareLinksPage(): React.ReactElement {
                                       : 'text-text-theme-muted'
                                   }
                                 >
-                                  <ToggleOnIcon className="h-4 w-4" />
+                                  <ToggleOnIcon size="inline" />
                                 </Button>
 
                                 <Button
@@ -300,7 +300,7 @@ export default function ManageShareLinksPage(): React.ReactElement {
                                   title="Delete link"
                                   className="text-red-400/70 hover:text-red-400"
                                 >
-                                  <TrashIcon className="h-4 w-4" />
+                                  <TrashIcon size="inline" />
                                 </Button>
                               </>
                             )}

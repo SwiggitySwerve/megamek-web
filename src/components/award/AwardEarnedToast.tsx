@@ -7,6 +7,7 @@
  */
 import React, { useEffect, useState } from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
 import {
   IAward,
   AwardRarity,
@@ -136,19 +137,7 @@ export function AwardEarnedToast({
               onClick={handleDismiss}
               className="text-text-theme-muted hover:text-text-theme-primary hover:bg-surface-raised flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full transition-colors"
             >
-              <svg
-                className="h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
+              <AppIcon name="close" size="inline" />
             </button>
           </div>
 

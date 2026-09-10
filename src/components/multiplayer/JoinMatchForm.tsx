@@ -41,7 +41,7 @@ export function JoinMatchForm(props: IJoinMatchFormProps): React.ReactElement {
       <div>
         <label
           htmlFor="jm-roomCode"
-          className="block text-xs font-medium tracking-wide text-slate-300 uppercase"
+          className="text-text-theme-secondary block text-xs font-medium tracking-wide uppercase"
         >
           Room code
         </label>
@@ -53,7 +53,7 @@ export function JoinMatchForm(props: IJoinMatchFormProps): React.ReactElement {
           maxLength={12}
           autoComplete="off"
           placeholder="e.g. KR4P7M"
-          className="mt-1 w-full rounded border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 uppercase focus:border-cyan-500 focus:outline-none"
+          className="border-border-theme bg-surface-deep text-text-theme-primary focus:border-accent mt-1 w-full rounded border px-3 py-2 text-sm uppercase focus:outline-none"
           required
         />
       </div>
@@ -65,10 +65,10 @@ export function JoinMatchForm(props: IJoinMatchFormProps): React.ReactElement {
       <button
         type="submit"
         disabled={props.busy}
-        className={`w-full rounded px-4 py-2 text-sm font-medium text-white ${
+        className={`w-full rounded px-4 py-2 text-sm font-medium ${
           props.busy
-            ? 'cursor-not-allowed bg-slate-700'
-            : 'bg-cyan-600 hover:bg-cyan-500'
+            ? 'bg-surface-raised text-text-theme-secondary cursor-not-allowed'
+            : 'bg-accent text-on-accent hover:bg-accent-hover'
         }`}
       >
         {props.busy ? 'Joining…' : 'Join match'}

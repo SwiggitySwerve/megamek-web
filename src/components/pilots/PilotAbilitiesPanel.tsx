@@ -35,6 +35,7 @@ import {
 } from '@/components/spa/SPAPicker';
 import { SPAPickerModal } from '@/components/spa/SPAPickerModal';
 import { Badge, Button, Card, CardSection } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { getSPADefinition } from '@/lib/spa';
 import { usePilotSelector } from '@/stores/usePilotStore';
 
@@ -305,7 +306,8 @@ export function PilotAbilitiesPanel({
             onClick={() => setModalOpen(true)}
             data-testid="add-ability-btn"
             leftIcon={
-              <svg
+              <SvgIcon
+                size="inline"
                 className="h-4 w-4"
                 fill="none"
                 stroke="currentColor"
@@ -317,7 +319,7 @@ export function PilotAbilitiesPanel({
                   strokeWidth={2}
                   d="M12 4v16m8-8H4"
                 />
-              </svg>
+              </SvgIcon>
             }
           >
             Add Ability

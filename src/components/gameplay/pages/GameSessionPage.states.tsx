@@ -5,6 +5,7 @@ import { useCallback } from 'react';
 import type { IUnitGameState } from '@/types/gameplay/GameSessionInterfaces';
 
 import { Button } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import {
   useCampaignRosterStore,
   type IUnitDamageState,
@@ -203,7 +204,8 @@ export function GameError({
     >
       <div className="max-w-md text-center">
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-900/20">
-          <svg
+          <SvgIcon
+            size="feature"
             className="h-8 w-8 text-red-500"
             fill="none"
             stroke="currentColor"
@@ -215,7 +217,7 @@ export function GameError({
               strokeWidth={2}
               d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
             />
-          </svg>
+          </SvgIcon>
         </div>
         <h2 className="text-text-theme-primary mb-2 text-xl font-bold">
           Failed to Load Game

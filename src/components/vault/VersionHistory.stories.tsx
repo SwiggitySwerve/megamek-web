@@ -200,7 +200,7 @@ export const PreviewModal: Story = {
     layout: 'fullscreen',
   },
   render: () => (
-    <div className="min-h-[640px] bg-gray-950">
+    <div className="bg-surface-deep min-h-[640px]">
       <VersionPreview
         isOpen
         onClose={fn()}
@@ -216,7 +216,7 @@ export const RollbackDialog: Story = {
     layout: 'fullscreen',
   },
   render: () => (
-    <div className="min-h-[540px] bg-gray-950">
+    <div className="bg-surface-deep min-h-[540px]">
       <VersionRollbackDialog
         isOpen
         onClose={fn()}

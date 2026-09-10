@@ -24,6 +24,7 @@ export function EquipmentTab({
   readOnly = false,
   className = '',
 }: EquipmentTabProps): React.ReactElement {
+  const unitId = useUnitStore((s) => s.id);
   const addEquipment = useUnitStore((s) => s.addEquipment);
 
   const handleAddEquipment = useCallback(
@@ -35,8 +36,11 @@ export function EquipmentTab({
   );
 
   return (
-    <div className={`flex h-full flex-col gap-2 p-3 ${className}`}>
+    <div className={`flex h-full min-h-0 flex-col ${className}`}>
       <EquipmentBrowser
+        key={unitId}
+        readOnly={readOnly}
+        addHint="Added unassigned. Choose a location in Critical Slots."
         onAddEquipment={handleAddEquipment}
         className="min-h-0 flex-1"
       />

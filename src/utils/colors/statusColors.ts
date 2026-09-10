@@ -92,19 +92,19 @@ export const INTERACTIVE_COLORS: Record<
   { bg: string; border: string; ring?: string; cursor: string }
 > = {
   default: {
-    bg: 'bg-slate-800',
-    border: 'border-slate-700',
+    bg: 'bg-surface-base',
+    border: 'border-border-theme-subtle',
     cursor: 'cursor-pointer',
   },
   hover: {
-    bg: 'bg-slate-700',
-    border: 'border-slate-600',
+    bg: 'bg-surface-raised',
+    border: 'border-border-theme',
     cursor: 'cursor-pointer',
   },
   selected: {
-    bg: 'bg-blue-900/50',
-    border: 'border-blue-500',
-    ring: 'ring-2 ring-yellow-400 ring-offset-1 ring-offset-slate-900',
+    bg: 'bg-accent-muted',
+    border: 'border-accent',
+    ring: 'ring-2 ring-accent ring-offset-1 ring-offset-surface-deep',
     cursor: 'cursor-pointer',
   },
   dropValid: {
@@ -120,8 +120,8 @@ export const INTERACTIVE_COLORS: Record<
     cursor: 'cursor-not-allowed',
   },
   disabled: {
-    bg: 'bg-slate-900',
-    border: 'border-slate-800',
+    bg: 'bg-surface-deep',
+    border: 'border-border-theme-subtle',
     cursor: 'cursor-not-allowed',
   },
 };

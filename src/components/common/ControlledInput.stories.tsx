@@ -283,7 +283,7 @@ export const InteractiveDemo: Story = {
         />
         <button
           onClick={() => setSubmitted(value)}
-          className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
+          className="bg-accent text-on-accent hover:bg-accent-hover rounded px-4 py-2 disabled:opacity-50"
           disabled={!validation(value).isValid}
         >
           Submit
@@ -333,8 +333,8 @@ export const FormIntegration: Story = {
           value={notes}
           onChange={setNotes}
         />
-        <div className="border-t border-gray-200 pt-2">
-          <p className="text-sm text-gray-500">
+        <div className="border-border-theme border-t pt-2">
+          <p className="text-text-theme-muted text-sm">
             Mech: {name || '—'} | Tonnage: {tonnage}t | Notes: {notes || '—'}
           </p>
         </div>

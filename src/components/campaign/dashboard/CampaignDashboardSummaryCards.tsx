@@ -23,7 +23,7 @@ export function ForceSnapshotCard({
       title="Force Snapshot"
       testid="dashboard-card-force-snapshot"
     >
-      <ul className="space-y-2 text-sm text-slate-200">
+      <ul className="text-text-theme-primary space-y-2 text-sm">
         <li>
           <Link
             data-testid="force-snapshot-mech-count"
@@ -82,7 +82,7 @@ export function ActiveContractCard({
         title="Active Contract"
         testid="dashboard-card-active-contract"
       >
-        <div className="text-sm text-slate-400">
+        <div className="text-text-theme-secondary text-sm">
           <p data-testid="active-contract-empty">No active contract.</p>
           <Link
             data-testid="active-contract-cta-browse"
@@ -115,19 +115,23 @@ export function ActiveContractCard({
         </Link>
       }
     >
-      <p className="text-base font-semibold text-slate-100">{contract.name}</p>
-      <p className="text-xs text-slate-400">Employer: {contract.employer}</p>
+      <p className="text-text-theme-primary text-base font-semibold">
+        {contract.name}
+      </p>
+      <p className="text-text-theme-secondary text-xs">
+        Employer: {contract.employer}
+      </p>
       <p
         data-testid="active-contract-days-remaining"
-        className="mt-2 text-sm text-slate-300"
+        className="text-text-theme-secondary mt-2 text-sm"
       >
         {contract.daysRemaining} days remaining
       </p>
-      <div className="mt-2 text-xs text-slate-400">
+      <div className="text-text-theme-secondary mt-2 text-xs">
         <span data-testid="active-contract-objectives-progress">
           {contract.objectivesCompleted} / {contract.objectivesTotal} objectives
         </span>
-        <div className="mt-1 h-1.5 w-full rounded bg-slate-800">
+        <div className="bg-surface-base mt-1 h-1.5 w-full rounded">
           <div
             className="h-1.5 rounded bg-sky-500"
             style={{ width: `${completionPct}%` }}
@@ -162,43 +166,45 @@ export function FinancesCard({
     >
       <p
         data-testid="finances-balance"
-        className="text-base font-semibold text-slate-100"
+        className="text-text-theme-primary text-base font-semibold"
       >
         {summary.balanceFormatted}
       </p>
       <dl className="mt-3 grid grid-cols-2 gap-y-1 text-xs">
-        <dt className="text-slate-400">Salaries</dt>
+        <dt className="text-text-theme-secondary">Salaries</dt>
         <dd
           data-testid="finances-daily-salaries"
-          className="text-right font-mono text-slate-200"
+          className="text-text-theme-primary text-right font-mono"
         >
           {summary.dailySalariesAmount.toLocaleString()}/day
         </dd>
-        <dt className="text-slate-400">Maintenance</dt>
+        <dt className="text-text-theme-secondary">Maintenance</dt>
         <dd
           data-testid="finances-daily-maintenance"
-          className="text-right font-mono text-slate-200"
+          className="text-text-theme-primary text-right font-mono"
         >
           {summary.dailyMaintenanceAmount.toLocaleString()}/day
         </dd>
-        <dt className="text-slate-400">Loan repay</dt>
+        <dt className="text-text-theme-secondary">Loan repay</dt>
         <dd
           data-testid="finances-daily-loan-repayment"
-          className="text-right font-mono text-slate-200"
+          className="text-text-theme-primary text-right font-mono"
         >
           {summary.dailyLoanRepaymentAmount.toLocaleString()}/day
         </dd>
-        <dt className="border-t border-slate-700 pt-1 text-slate-300">Total</dt>
+        <dt className="border-border-theme text-text-theme-secondary border-t pt-1">
+          Total
+        </dt>
         <dd
           data-testid="finances-daily-total"
-          className="border-t border-slate-700 pt-1 text-right font-mono text-slate-200"
+          className="border-border-theme text-text-theme-primary border-t pt-1 text-right font-mono"
         >
           {summary.dailyTotalAmount.toLocaleString()}/day
         </dd>
       </dl>
       <p
         data-testid="finances-runway-days"
-        className="mt-2 text-xs text-slate-300"
+        className="text-text-theme-secondary mt-2 text-xs"
       >
         Runway:{' '}
         {summary.runwayDays === Number.POSITIVE_INFINITY

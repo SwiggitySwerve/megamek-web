@@ -8,6 +8,7 @@ import { useState, useCallback } from 'react';
 
 import { PilotCreationWizard } from '@/components/pilots';
 import { PageLayout, Card, Button } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 
 // =============================================================================
 // Main Page Component
@@ -55,7 +56,8 @@ export default function CreatePilotPage(): React.ReactElement {
       {!isWizardOpen && (
         <Card variant="dark" className="py-12 text-center">
           <div className="bg-accent/10 mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl">
-            <svg
+            <SvgIcon
+              size="feature"
               className="text-accent h-10 w-10"
               fill="none"
               stroke="currentColor"
@@ -67,7 +69,7 @@ export default function CreatePilotPage(): React.ReactElement {
                 strokeWidth={1.5}
                 d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
               />
-            </svg>
+            </SvgIcon>
           </div>
 
           <h2 className="text-text-theme-primary mb-2 text-xl font-bold">

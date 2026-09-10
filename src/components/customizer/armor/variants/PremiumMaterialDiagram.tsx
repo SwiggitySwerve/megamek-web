@@ -14,13 +14,24 @@ import {
   renderArmorLocationStates,
   useArmorVariantLayout,
 } from '../shared/ArmorVariantRenderHelpers';
+import { BipedArmorDiagram } from './BipedArmorDiagram';
 import { PremiumLocation } from './PremiumMaterialDiagram.parts';
 
 export interface PremiumMaterialDiagramProps extends ConfigurableArmorDiagramProps {
   mechConfigType?: MechConfigType;
 }
 
-export function PremiumMaterialDiagram({
+export function PremiumMaterialDiagram(
+  props: PremiumMaterialDiagramProps,
+): React.ReactElement {
+  return (props.mechConfigType ?? 'biped') === 'biped' ? (
+    <BipedArmorDiagram {...props} variant="premium-material" />
+  ) : (
+    <ConfiguredPremiumMaterialDiagram {...props} />
+  );
+}
+
+function ConfiguredPremiumMaterialDiagram({
   armorData,
   selectedLocation,
   onLocationClick,

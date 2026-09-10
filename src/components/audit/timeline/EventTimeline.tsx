@@ -7,6 +7,7 @@
 
 import React, { useRef, useCallback, useEffect } from 'react';
 
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { IBaseEvent } from '@/types/events';
 
 import { EventTimelineItem } from './EventTimelineItem';
@@ -41,7 +42,8 @@ export interface EventTimelineProps {
 function LoadingSpinner(): React.ReactElement {
   return (
     <div className="flex items-center justify-center gap-3 py-6">
-      <svg
+      <SvgIcon
+        size="control"
         className="text-accent h-5 w-5 animate-spin"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -60,7 +62,7 @@ function LoadingSpinner(): React.ReactElement {
           fill="currentColor"
           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
         />
-      </svg>
+      </SvgIcon>
       <span className="text-text-theme-secondary text-sm">
         Loading more events...
       </span>
@@ -76,11 +78,11 @@ function EmptyState(): React.ReactElement {
   return (
     <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
       <div className="bg-surface-raised/50 mb-4 flex h-16 w-16 items-center justify-center rounded-2xl">
-        <svg
+        <SvgIcon
+          size="feature"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
-          strokeWidth={1.5}
           stroke="currentColor"
           className="text-text-theme-muted h-8 w-8"
         >
@@ -89,7 +91,7 @@ function EmptyState(): React.ReactElement {
             strokeLinejoin="round"
             d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
           />
-        </svg>
+        </SvgIcon>
       </div>
       <h3 className="text-text-theme-primary mb-1 text-lg font-medium">
         No events found

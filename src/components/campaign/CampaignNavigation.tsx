@@ -286,7 +286,7 @@ export function CampaignNavigation({
          */}
         {coopSession ? (
           <span
-            className="border-accent text-accent ml-auto rounded border bg-slate-900/60 px-3 py-1 text-xs font-semibold tracking-wider uppercase"
+            className="border-accent text-accent bg-surface-deep/60 ml-auto rounded border px-3 py-1 text-xs font-semibold tracking-wider uppercase"
             data-testid="coop-session-badge"
             aria-label={`Co-op session: ${
               coopSession.mode === 'host' ? 'Host' : 'Guest'

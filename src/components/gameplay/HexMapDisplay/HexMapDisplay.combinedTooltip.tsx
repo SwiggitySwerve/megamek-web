@@ -85,7 +85,7 @@ export function CombinedTacticalHoverTooltip({
 
   return (
     <div
-      className="pointer-events-none absolute top-2 left-1/2 max-w-[340px] -translate-x-1/2 rounded bg-slate-950/90 px-3 py-2 text-xs text-slate-100 shadow"
+      className="bg-surface-deep/90 text-text-theme-primary pointer-events-none absolute top-2 left-1/2 max-w-[340px] -translate-x-1/2 rounded px-3 py-2 text-xs shadow"
       data-testid="hex-tactical-tooltip"
       data-tactical-tooltip-status={projection.status}
       data-tactical-tooltip-intent={projection.intent}
@@ -107,7 +107,7 @@ export function CombinedTacticalHoverTooltip({
         {formatProjectionStatusLabel(projection.status)} - {projection.intent}
       </div>
       <div
-        className="text-[11px] text-slate-200"
+        className="text-text-theme-primary text-[11px]"
         data-testid="hex-tactical-tooltip-channel-status"
       >
         Movement channel: {projection.movementStatus}; combat channel:{' '}
@@ -123,7 +123,7 @@ export function CombinedTacticalHoverTooltip({
         testIdPrefix="hex-tactical-tooltip"
       />
       <div
-        className="mt-1 border-t border-slate-700/70 pt-1"
+        className="border-border-theme/70 mt-1 border-t pt-1"
         data-testid="hex-tactical-tooltip-movement"
       >
         Movement: {movementInfo.reachable ? 'reachable' : 'blocked'} -{' '}
@@ -152,7 +152,7 @@ export function CombinedTacticalHoverTooltip({
         testId="hex-tactical-tooltip-movement-reason"
       />
       <div
-        className="mt-1 border-t border-slate-700/70 pt-1"
+        className="border-border-theme/70 mt-1 border-t pt-1"
         data-testid="hex-tactical-tooltip-combat"
       >
         Combat: {combatStatus}
@@ -240,7 +240,7 @@ export function CombinedTacticalHoverTooltip({
       />
       {projection.blockedReasons.length > 0 && (
         <div
-          className="mt-1 border-t border-slate-700/70 pt-1 text-[11px] text-slate-200"
+          className="border-border-theme/70 text-text-theme-primary mt-1 border-t pt-1 text-[11px]"
           data-testid="hex-tactical-tooltip-projection-reasons"
         >
           Projection: {projection.blockedReasons.join('; ')}
@@ -248,7 +248,7 @@ export function CombinedTacticalHoverTooltip({
       )}
       {projection.explanation && (
         <div
-          className="mt-1 border-t border-slate-700/70 pt-1 text-[11px] text-slate-200"
+          className="border-border-theme/70 text-text-theme-primary mt-1 border-t pt-1 text-[11px]"
           data-testid="hex-tactical-tooltip-projection-explanation"
         >
           Projection detail: {projection.explanation}
@@ -256,7 +256,7 @@ export function CombinedTacticalHoverTooltip({
       )}
       {projection.sourceReferences.length > 0 && (
         <div
-          className="mt-1 border-t border-slate-700/70 pt-1 text-[11px] text-slate-200"
+          className="border-border-theme/70 text-text-theme-primary mt-1 border-t pt-1 text-[11px]"
           data-testid="hex-tactical-tooltip-projection-sources"
         >
           Sources:{' '}

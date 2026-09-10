@@ -107,7 +107,7 @@ export function IsometricOccluderContextRows({
 
   return (
     <div
-      className="mt-1 border-t border-slate-700/70 pt-1 text-[11px] text-slate-200"
+      className="border-border-theme/70 text-text-theme-primary mt-1 border-t pt-1 text-[11px]"
       data-testid={`${testIdPrefix}-isometric-occluder`}
       data-isometric-occludes-units={info.occludedUnitIds.join(',')}
       data-isometric-occluder-elevation={info.occluderElevation}
@@ -162,7 +162,7 @@ export function TerrainHoverTooltip({
 
   return (
     <div
-      className="pointer-events-none absolute top-2 left-1/2 max-w-[300px] -translate-x-1/2 rounded bg-slate-950/90 px-3 py-2 text-xs text-slate-100 shadow"
+      className="bg-surface-deep/90 text-text-theme-primary pointer-events-none absolute top-2 left-1/2 max-w-[300px] -translate-x-1/2 rounded px-3 py-2 text-xs shadow"
       data-testid="hex-terrain-tooltip"
       role="tooltip"
     >
@@ -209,7 +209,7 @@ export function TerrainHoverTooltip({
       )}
       {specialRules && (
         <div
-          className="mt-1 text-[11px] text-slate-200"
+          className="text-text-theme-primary mt-1 text-[11px]"
           data-testid="hex-terrain-tooltip-rules"
         >
           {specialRules}
@@ -249,7 +249,7 @@ export function TerrainContextRows({
   );
 
   return (
-    <div className="mt-1 border-t border-slate-700/70 pt-1 text-[11px] text-slate-200">
+    <div className="border-border-theme/70 text-text-theme-primary mt-1 border-t pt-1 text-[11px]">
       <div
         data-testid={`${testIdPrefix}-terrain-context`}
         {...sourceAttributes}

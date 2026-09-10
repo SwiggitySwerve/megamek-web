@@ -4,6 +4,7 @@ import { AwardGrid } from '@/components/award';
 import { PilotProgressionPanel } from '@/components/pilots/PilotProgressionPanel';
 import { SPAList, type ISPAListEntry } from '@/components/spa';
 import { Card, CardSection, Badge, StatRow, StatList } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import {
   IPilot,
   PilotStatus,
@@ -45,7 +46,8 @@ function IdentityCard({
     <Card variant="accent-left" accentColor="amber" className="p-5">
       <div className="flex items-start gap-4">
         <div className="bg-surface-raised border-border-theme-subtle flex h-20 w-20 flex-shrink-0 items-center justify-center rounded-xl border">
-          <svg
+          <SvgIcon
+            size="feature"
             className="text-text-theme-secondary h-10 w-10"
             fill="none"
             stroke="currentColor"
@@ -57,7 +59,7 @@ function IdentityCard({
               strokeWidth={1.5}
               d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
             />
-          </svg>
+          </SvgIcon>
         </div>
 
         <div className="min-w-0 flex-1">
@@ -146,7 +148,8 @@ function WoundsCard({
               }`}
             >
               {i < wounds && (
-                <svg
+                <SvgIcon
+                  size="inline"
                   className="h-3 w-3 text-white"
                   fill="currentColor"
                   viewBox="0 0 20 20"
@@ -156,7 +159,7 @@ function WoundsCard({
                     d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
                     clipRule="evenodd"
                   />
-                </svg>
+                </SvgIcon>
               )}
             </div>
           ))}
@@ -225,7 +228,8 @@ function ProgressionUnavailableCard({
   return (
     <Card variant="dark" className="p-8 text-center">
       <div className="bg-surface-raised/50 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
-        <svg
+        <SvgIcon
+          size="feature"
           className="text-text-theme-muted h-8 w-8"
           fill="none"
           stroke="currentColor"
@@ -237,7 +241,7 @@ function ProgressionUnavailableCard({
             strokeWidth={1.5}
             d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
           />
-        </svg>
+        </SvgIcon>
       </div>
       <h3 className="text-text-theme-primary mb-2 text-lg font-semibold">
         Progression Unavailable

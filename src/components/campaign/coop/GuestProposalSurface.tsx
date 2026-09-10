@@ -128,9 +128,9 @@ export function GuestProposalSurface({
   return (
     <section
       data-testid="guest-proposal-surface"
-      className={`rounded-xl border border-slate-700 bg-slate-900/60 p-4 ${className}`}
+      className={`border-border-theme bg-surface-deep/60 rounded-xl border p-4 ${className}`}
     >
-      <h3 className="mb-3 text-sm font-semibold tracking-wide text-slate-400 uppercase">
+      <h3 className="text-text-theme-secondary mb-3 text-sm font-semibold tracking-wide uppercase">
         Campaign Actions (Guest)
       </h3>
 
@@ -165,7 +165,7 @@ export function GuestProposalSurface({
           the server answers again - which is what makes it safe to offer
           to an actor whose last command was refused. */}
       {syncPosture?.recovery && (
-        <div className="mb-3 rounded-lg border border-slate-700 bg-slate-950/60 p-3 text-xs text-slate-300">
+        <div className="border-border-theme bg-surface-deep/60 text-text-theme-secondary mb-3 rounded-lg border p-3 text-xs">
           <p data-testid="guest-lifecycle-recovery-description">
             {syncPosture.recovery.description}
           </p>
@@ -176,7 +176,7 @@ export function GuestProposalSurface({
             <p
               data-testid="guest-lifecycle-recovery-server-action"
               data-server-action={syncPosture.recovery.serverAction}
-              className="mt-1 text-slate-400"
+              className="text-text-theme-secondary mt-1"
             >
               Server instruction: {syncPosture.recovery.serverAction}
             </p>
@@ -199,7 +199,7 @@ export function GuestProposalSurface({
             <p
               data-testid="guest-lifecycle-recovery-wait"
               data-recovery-code={syncPosture.recovery.code}
-              className="mt-2 text-sm font-medium text-slate-200"
+              className="text-text-theme-primary mt-2 text-sm font-medium"
             >
               {syncPosture.recovery.label}
             </p>
@@ -220,7 +220,7 @@ export function GuestProposalSurface({
           </span>
           <span
             data-testid="guest-command-authority-path"
-            className="rounded border border-slate-700 bg-slate-950/60 px-2 py-1 text-slate-300"
+            className="border-border-theme bg-surface-deep/60 text-text-theme-secondary rounded border px-2 py-1"
           >
             {authorityProjection.commandPath}
           </span>
@@ -270,7 +270,7 @@ export function GuestProposalSurface({
               }}
               className={
                 unavailable
-                  ? 'cursor-not-allowed rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 text-sm font-medium text-slate-500'
+                  ? 'border-border-theme bg-surface-base text-text-theme-muted cursor-not-allowed rounded-lg border px-3 py-2 text-sm font-medium'
                   : 'rounded-lg border border-sky-500/50 bg-sky-600/20 px-3 py-2 text-sm font-medium text-sky-200 hover:bg-sky-600/30'
               }
             >

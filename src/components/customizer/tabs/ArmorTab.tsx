@@ -9,10 +9,17 @@
  * @spec openspec/specs/armor-diagram/spec.md
  */
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import type { LocationArmorData } from '@/types/construction/LocationArmorData';
 
+import { AppIcon } from '@/components/ui/AppIcon';
 import { useTechBaseSync } from '@/hooks/useTechBaseSync';
 import { getTotalAllocatedArmor } from '@/stores/unitState';
 import { useCustomizerSettingsStore } from '@/stores/useCustomizerSettingsStore';
@@ -22,6 +29,7 @@ import {
   getArmorDefinition,
 } from '@/types/construction/ArmorType';
 import { MechLocation } from '@/types/construction/CriticalSlotAllocation';
+import { MechConfiguration } from '@/types/construction/MechConfigurationSystem';
 import {
   calculateArmorPoints,
   getMaxTotalArmor,
@@ -88,6 +96,18 @@ export function ArmorTab({
   const [selectedLocation, setSelectedLocation] = useState<MechLocation | null>(
     null,
   );
+
+  const locationEditorRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (
+      selectedLocation &&
+      configuration === MechConfiguration.BIPED &&
+      armorDiagramMode === 'silhouette' &&
+      window.matchMedia?.('(max-width: 767px)').matches
+    ) {
+      locationEditorRef.current?.scrollIntoView({ block: 'nearest' });
+    }
+  }, [selectedLocation, configuration, armorDiagramMode, armorDiagramVariant]);
 
   // Calculate derived values
   const armorDef = useMemo(() => getArmorDefinition(armorType), [armorType]);
@@ -195,14 +215,14 @@ export function ArmorTab({
           <div className="border-border-theme-subtle flex items-center gap-4 border-t pt-2 sm:border-t-0 sm:border-l sm:pt-0 sm:pl-4">
             <div className={cs.layout.statRow}>
               <span className={`text-sm ${cs.text.label}`}>Tonnage:</span>
-              <span className="text-accent text-lg font-bold">
+              <span className="text-text-theme-primary text-lg font-bold tabular-nums">
                 {armorTonnage}t
               </span>
             </div>
             <div className={cs.layout.statRow}>
               <span className={`text-sm ${cs.text.label}`}>Points:</span>
               <span
-                className={`text-lg font-bold ${allocatedPoints > maxTotalArmor ? 'text-red-400' : 'text-green-400'}`}
+                className={`text-lg font-bold tabular-nums ${allocatedPoints > maxTotalArmor ? 'text-red-400' : 'text-text-theme-primary'}`}
               >
                 {allocatedPoints} / {maxTotalArmor}
               </span>
@@ -211,25 +231,48 @@ export function ArmorTab({
         </div>
       </div>
 
-      {/* Two-column layout */}
-      <div className={cs.layout.twoColumn}>
-        {/* LEFT: Location Editor (when selected) + Armor Configuration */}
-        <div className="space-y-4">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1.45fr)_minmax(19rem,0.85fr)]">
+        <section
+          className="order-1 min-w-0 xl:sticky xl:top-4 xl:self-start"
+          aria-label="Armor diagram"
+        >
+          <ArmorDiagramPanel
+            configuration={configuration}
+            armorDiagramMode={armorDiagramMode}
+            armorDiagramVariant={armorDiagramVariant}
+            armorData={armorData}
+            selectedLocation={selectedLocation}
+            pointsDelta={pointsDelta}
+            onLocationClick={handleLocationClick}
+          />
+        </section>
+
+        {/* Compact inspector follows the diagram on smaller viewports. */}
+        <aside className="order-2 space-y-4">
           {/* Location Editor - shown at top when a location is selected */}
           {selectedLocation && selectedLocationData && (
-            <LocationArmorEditor
-              location={selectedLocation}
-              data={selectedLocationData}
-              tonnage={tonnage}
-              readOnly={readOnly}
-              onChange={handleLocationArmorChange}
-              onClose={() => setSelectedLocation(null)}
-            />
+            <div ref={locationEditorRef}>
+              <LocationArmorEditor
+                location={selectedLocation}
+                data={selectedLocationData}
+                tonnage={tonnage}
+                readOnly={readOnly}
+                onChange={handleLocationArmorChange}
+                onClose={() => setSelectedLocation(null)}
+              />
+            </div>
           )}
 
           {/* Armor Configuration */}
           <div className={cs.panel.main}>
-            <h3 className={cs.text.sectionTitle}>Armor Configuration</h3>
+            <div className="mb-4 flex items-baseline justify-between gap-3">
+              <h3 className="text-text-theme-primary text-base font-semibold tracking-wide uppercase">
+                Armor inspector
+              </h3>
+              <span className="text-text-theme-secondary text-xs tabular-nums">
+                {availablePoints} points available
+              </span>
+            </div>
 
             <div className="space-y-4">
               {/* Armor Type */}
@@ -239,7 +282,8 @@ export function ArmorTab({
                   <span className={cs.text.secondary}>{armorSlots} slots</span>
                 </div>
                 <select
-                  className={cs.select.compact}
+                  className={`${cs.select.compact} min-h-11`}
+                  aria-label="Armor type"
                   disabled={readOnly}
                   value={armorType}
                   onChange={handleArmorTypeChange}
@@ -261,10 +305,12 @@ export function ArmorTab({
                     disabled={readOnly || armorTonnage <= 0}
                     className={cs.button.stepper}
                   >
-                    −
+                    {' '}
+                    <AppIcon name="remove" size="inline" aria-hidden="true" />
                   </button>
                   <input
                     type="number"
+                    aria-label="Armor tonnage"
                     value={armorTonnage}
                     onChange={(e) =>
                       handleArmorTonnageChange(parseFloat(e.target.value) || 0)
@@ -272,99 +318,105 @@ export function ArmorTab({
                     disabled={readOnly}
                     min={0}
                     step={0.5}
-                    className={`w-20 ${cs.input.compact} text-center ${cs.input.noSpinners}`}
+                    className={`min-h-11 w-20 ${cs.input.compact} text-center tabular-nums ${cs.input.noSpinners}`}
                   />
                   <button
                     onClick={() => handleArmorTonnageChange(armorTonnage + 0.5)}
                     disabled={readOnly || armorTonnage >= maxUsefulTonnage}
                     className={cs.button.stepper}
                   >
-                    +
+                    {' '}
+                    <AppIcon name="add" size="inline" aria-hidden="true" />
                   </button>
                 </div>
               </div>
 
-              {/* Quick Actions */}
-              <div className="flex flex-col gap-2 sm:flex-row">
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-1">
                 <button
                   onClick={handleMaximize}
                   disabled={readOnly || armorTonnage >= maxUsefulTonnage}
-                  className={cs.button.actionFull}
+                  className="border-border-theme bg-surface-raised hover:bg-surface-raised-hover text-text-theme-primary min-h-11 rounded border px-3 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Maximize Tonnage
                 </button>
                 <button
                   onClick={handleAutoAllocate}
                   disabled={readOnly}
-                  className={`${cs.button.actionFull} ${
-                    unallocatedPoints < 0
-                      ? 'bg-red-600 hover:bg-red-500'
-                      : unallocatedPoints > 0
-                        ? 'bg-amber-600 hover:bg-amber-500'
-                        : 'bg-green-600 hover:bg-green-500'
-                  }`}
+                  className="bg-accent hover:bg-accent-hover text-on-accent min-h-11 rounded px-3 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Auto Allocate ({pointsDelta > 0 ? '+' : ''}
                   {pointsDelta} pts)
                 </button>
               </div>
 
-              {/* Summary Stats */}
-              <div className={`${cs.layout.divider} space-y-2`}>
+              <div className="border-border-theme-subtle border-t pt-3">
                 <div className={`${cs.layout.rowBetween} text-sm`}>
                   <span className={cs.text.label}>
                     Unallocated Armor Points
                   </span>
                   <span
-                    className={`font-medium ${unallocatedPoints < 0 ? 'text-red-400' : unallocatedPoints > 0 ? 'text-accent' : 'text-green-400'}`}
+                    className={`font-medium tabular-nums ${
+                      unallocatedPoints < 0
+                        ? 'text-red-400'
+                        : unallocatedPoints > 0
+                          ? 'text-amber-400'
+                          : 'text-text-theme-primary'
+                    }`}
                   >
                     {unallocatedPoints}
                   </span>
                 </div>
-                <div className={`${cs.layout.rowBetween} text-sm`}>
-                  <span className={cs.text.label}>Allocated Armor Points</span>
-                  <span className={cs.text.value}>{allocatedPoints}</span>
-                </div>
-                <div className={`${cs.layout.rowBetween} text-sm`}>
-                  <span className={cs.text.label}>Total Armor Points</span>
-                  <span className={cs.text.value}>{availablePoints}</span>
-                </div>
-                <div className={`${cs.layout.rowBetween} text-sm`}>
-                  <span className={cs.text.label}>
-                    Maximum Possible Armor Points
-                  </span>
-                  <span className="font-medium text-slate-300">
-                    {maxTotalArmor}
-                  </span>
-                </div>
-                {wastedPoints > 0 && (
-                  <div className={`${cs.layout.rowBetween} text-sm`}>
-                    <span className={cs.text.label}>Wasted Armor Points</span>
-                    <span className={cs.text.valueWarning}>{wastedPoints}</span>
+                <details className="group mt-3">
+                  <summary className="text-text-theme-secondary hover:text-text-theme-primary focus-visible:ring-accent cursor-pointer text-xs font-medium tracking-wide uppercase transition-colors focus-visible:ring-2 focus-visible:outline-none">
+                    Advanced allocation details
+                  </summary>
+                  <div className="border-border-theme-subtle mt-3 space-y-2 border-l pl-3">
+                    <div className={`${cs.layout.rowBetween} text-sm`}>
+                      <span className={cs.text.label}>
+                        Allocated Armor Points
+                      </span>
+                      <span className={`${cs.text.value} tabular-nums`}>
+                        {allocatedPoints}
+                      </span>
+                    </div>
+                    <div className={`${cs.layout.rowBetween} text-sm`}>
+                      <span className={cs.text.label}>Total Armor Points</span>
+                      <span className={`${cs.text.value} tabular-nums`}>
+                        {availablePoints}
+                      </span>
+                    </div>
+                    <div className={`${cs.layout.rowBetween} text-sm`}>
+                      <span className={cs.text.label}>
+                        Maximum Possible Armor Points
+                      </span>
+                      <span className="text-text-theme-secondary font-medium tabular-nums">
+                        {maxTotalArmor}
+                      </span>
+                    </div>
+                    {wastedPoints > 0 && (
+                      <div className={`${cs.layout.rowBetween} text-sm`}>
+                        <span className={cs.text.label}>
+                          Wasted Armor Points
+                        </span>
+                        <span
+                          className={`${cs.text.valueWarning} tabular-nums`}
+                        >
+                          {wastedPoints}
+                        </span>
+                      </div>
+                    )}
+                    <div className={`${cs.layout.rowBetween} text-sm`}>
+                      <span className={cs.text.label}>Points Per Ton</span>
+                      <span className="text-text-theme-secondary font-medium tabular-nums">
+                        {pointsPerTon.toFixed(2)}
+                      </span>
+                    </div>
                   </div>
-                )}
-                <div
-                  className={`${cs.layout.rowBetween} border-border-theme border-t pt-2 text-sm`}
-                >
-                  <span className={cs.text.label}>Points Per Ton</span>
-                  <span className="font-medium text-slate-300">
-                    {pointsPerTon.toFixed(2)}
-                  </span>
-                </div>
+                </details>
               </div>
             </div>
           </div>
-        </div>
-
-        <ArmorDiagramPanel
-          configuration={configuration}
-          armorDiagramMode={armorDiagramMode}
-          armorDiagramVariant={armorDiagramVariant}
-          armorData={armorData}
-          selectedLocation={selectedLocation}
-          pointsDelta={pointsDelta}
-          onLocationClick={handleLocationClick}
-        />
+        </aside>
       </div>
     </div>
   );

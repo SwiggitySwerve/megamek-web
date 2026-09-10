@@ -10,6 +10,8 @@ import React, {
   useContext,
 } from 'react';
 
+import { SvgIcon } from '@/components/ui/SvgIcon';
+
 // =============================================================================
 // Types
 // =============================================================================
@@ -164,7 +166,8 @@ const variantStyles: Record<
     bg: 'bg-surface-raised',
     border: 'border-cyan-500/40',
     icon: (
-      <svg
+      <SvgIcon
+        size="control"
         className="h-5 w-5 text-cyan-400"
         fill="none"
         stroke="currentColor"
@@ -176,14 +179,15 @@ const variantStyles: Record<
           strokeWidth={2}
           d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
         />
-      </svg>
+      </SvgIcon>
     ),
   },
   success: {
     bg: 'bg-surface-raised',
     border: 'border-emerald-500/40',
     icon: (
-      <svg
+      <SvgIcon
+        size="control"
         className="h-5 w-5 text-emerald-400"
         fill="none"
         stroke="currentColor"
@@ -195,14 +199,15 @@ const variantStyles: Record<
           strokeWidth={2}
           d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
         />
-      </svg>
+      </SvgIcon>
     ),
   },
   warning: {
     bg: 'bg-surface-raised',
     border: 'border-amber-500/40',
     icon: (
-      <svg
+      <SvgIcon
+        size="control"
         className="h-5 w-5 text-amber-400"
         fill="none"
         stroke="currentColor"
@@ -214,14 +219,15 @@ const variantStyles: Record<
           strokeWidth={2}
           d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
         />
-      </svg>
+      </SvgIcon>
     ),
   },
   error: {
     bg: 'bg-surface-raised',
     border: 'border-red-500/40',
     icon: (
-      <svg
+      <SvgIcon
+        size="control"
         className="h-5 w-5 text-red-400"
         fill="none"
         stroke="currentColor"
@@ -233,7 +239,7 @@ const variantStyles: Record<
           strokeWidth={2}
           d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
         />
-      </svg>
+      </SvgIcon>
     ),
   },
 };
@@ -296,7 +302,8 @@ function ToastItem({ toast, onRemove }: ToastItemProps): React.ReactElement {
           className="hover:bg-surface-base/50 text-text-theme-muted hover:text-text-theme-secondary flex-shrink-0 rounded p-1 transition-colors"
           aria-label="Dismiss notification"
         >
-          <svg
+          <SvgIcon
+            size="inline"
             className="h-4 w-4"
             fill="none"
             stroke="currentColor"
@@ -308,7 +315,7 @@ function ToastItem({ toast, onRemove }: ToastItemProps): React.ReactElement {
               strokeWidth={2}
               d="M6 18L18 6M6 6l12 12"
             />
-          </svg>
+          </SvgIcon>
         </button>
       </div>
     </div>

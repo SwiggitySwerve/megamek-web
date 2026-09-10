@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { SvgIcon } from '@/components/ui/SvgIcon';
+
 import { type CreationMode, type WizardStep } from './WizardTypes';
 
 interface StepIndicatorProps {
@@ -49,7 +51,8 @@ export function StepIndicator({
                 } `}
               >
                 {isCompleted ? (
-                  <svg
+                  <SvgIcon
+                    size="inline"
                     className="h-4 w-4"
                     fill="none"
                     stroke="currentColor"
@@ -61,7 +64,7 @@ export function StepIndicator({
                       strokeWidth={2}
                       d="M5 13l4 4L19 7"
                     />
-                  </svg>
+                  </SvgIcon>
                 ) : (
                   index + 1
                 )}

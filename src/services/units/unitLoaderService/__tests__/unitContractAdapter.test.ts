@@ -80,6 +80,18 @@ describe('parseUnit', () => {
     }
   });
 
+  it('preserves optional equipment mount ownership flags', () => {
+    const raw = JSON.parse(fs.readFileSync(FIXTURE_PATH, 'utf-8'));
+    raw.equipment[0].isRemovable = false;
+    raw.equipment[0].isOmniPodMounted = true;
+
+    const unit = parseUnit(raw);
+    expect(unit.equipment?.[0]).toMatchObject({
+      isRemovable: false,
+      isOmniPodMounted: true,
+    });
+  });
+
   it('forwards extra fields via the index signature passthrough', () => {
     const raw = JSON.parse(fs.readFileSync(FIXTURE_PATH, 'utf-8'));
     const unit = parseUnit(raw);

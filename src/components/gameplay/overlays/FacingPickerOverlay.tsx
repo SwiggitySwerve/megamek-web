@@ -43,11 +43,11 @@ export function FacingPickerOverlay({
 
   return (
     <div
-      className="pointer-events-auto absolute right-4 bottom-4 flex flex-col gap-1 rounded bg-white/95 p-2 text-xs shadow"
+      className="bg-surface-base/95 pointer-events-auto absolute right-4 bottom-20 flex flex-col gap-1 rounded p-2 text-xs shadow lg:right-44 lg:bottom-4"
       data-testid="facing-picker-overlay"
       data-anchor-hex={`${anchorHex.q},${anchorHex.r}`}
     >
-      <div className="font-semibold text-slate-700">Final facing</div>
+      <div className="text-text-theme-primary font-semibold">Final facing</div>
       <FacingPicker selected={selected} onSelect={handleSelect} />
     </div>
   );

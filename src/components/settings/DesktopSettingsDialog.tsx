@@ -11,6 +11,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { ModalOverlay } from '@/components/customizer/dialogs/ModalOverlay';
 import { Button } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { logger } from '@/utils/logger';
 
 import type { TabContentProps } from './DesktopSettingsDialog.tabs';
@@ -269,10 +270,12 @@ function DesktopSettingsHeader({
 }): React.ReactElement {
   return (
     <div className="border-border-theme-subtle flex items-center justify-between border-b px-6 py-4">
-      <h2 className="text-xl font-semibold text-white">Preferences</h2>
+      <h2 className="text-text-theme-primary text-xl font-semibold">
+        Preferences
+      </h2>
       <button
         onClick={onClose}
-        className="text-text-theme-secondary rounded p-1 hover:text-white"
+        className="text-text-theme-secondary hover:text-text-theme-primary rounded p-1"
         disabled={isSaving}
       >
         <CloseIcon />
@@ -283,7 +286,8 @@ function DesktopSettingsHeader({
 
 function CloseIcon(): React.ReactElement {
   return (
-    <svg
+    <SvgIcon
+      size="control"
       className="h-5 w-5"
       fill="none"
       stroke="currentColor"
@@ -295,7 +299,7 @@ function CloseIcon(): React.ReactElement {
         strokeWidth={2}
         d="M6 18L18 6M6 6l12 12"
       />
-    </svg>
+    </SvgIcon>
   );
 }
 
@@ -315,7 +319,7 @@ function TabNavigation({
           className={`w-full px-4 py-2 text-left text-sm transition-colors ${
             activeTab === tab.id
               ? 'bg-accent/20 text-accent border-accent border-r-2'
-              : 'text-text-theme-secondary hover:bg-surface-base hover:text-white'
+              : 'text-text-theme-secondary hover:bg-surface-base hover:text-text-theme-primary'
           }`}
         >
           {tab.label}

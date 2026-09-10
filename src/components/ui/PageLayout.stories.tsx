@@ -27,7 +27,7 @@ export const Default: Story = {
     subtitle: 'Optional subtitle describing the page content',
     children: (
       <div className="bg-surface-base border-border-theme rounded-lg border p-6">
-        <p className="text-slate-300">Page content goes here.</p>
+        <p className="text-text-theme-secondary">Page content goes here.</p>
       </div>
     ),
   },
@@ -41,7 +41,7 @@ export const WithBackLink: Story = {
     backLabel: 'Back to Units',
     children: (
       <div className="bg-surface-base border-border-theme rounded-lg border p-6">
-        <p className="text-slate-300">Unit detail content.</p>
+        <p className="text-text-theme-secondary">Unit detail content.</p>
       </div>
     ),
   },
@@ -54,7 +54,7 @@ export const WithBackCallback: Story = {
     backLabel: 'Cancel',
     children: (
       <div className="bg-surface-base border-border-theme rounded-lg border p-6">
-        <p className="text-slate-300">
+        <p className="text-text-theme-secondary">
           Editor content with callback-based back navigation.
         </p>
       </div>
@@ -68,17 +68,17 @@ export const WithHeaderContent: Story = {
     subtitle: 'Browse and add equipment',
     headerContent: (
       <div className="flex gap-2">
-        <button className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-500">
+        <button className="bg-accent text-on-accent hover:bg-accent-hover rounded px-4 py-2">
           Import
         </button>
-        <button className="rounded bg-slate-700 px-4 py-2 text-white hover:bg-slate-600">
+        <button className="bg-surface-raised text-text-theme-primary hover:bg-surface-raised rounded px-4 py-2">
           Export
         </button>
       </div>
     ),
     children: (
       <div className="bg-surface-base border-border-theme rounded-lg border p-6">
-        <p className="text-slate-300">Equipment list content.</p>
+        <p className="text-text-theme-secondary">Equipment list content.</p>
       </div>
     ),
   },
@@ -90,7 +90,7 @@ export const NarrowWidth: Story = {
     maxWidth: 'narrow',
     children: (
       <div className="bg-surface-base border-border-theme rounded-lg border p-6">
-        <p className="text-slate-300">
+        <p className="text-text-theme-secondary">
           Narrow layout for focused content like settings.
         </p>
       </div>
@@ -109,7 +109,7 @@ export const WideWidth: Story = {
             key={i}
             className="bg-surface-base border-border-theme rounded-lg border p-4"
           >
-            <p className="text-slate-300">Unit {i}</p>
+            <p className="text-text-theme-secondary">Unit {i}</p>
           </div>
         ))}
       </div>
@@ -124,7 +124,9 @@ export const WithGradient: Story = {
     gradient: true,
     children: (
       <div className="bg-surface-base border-border-theme rounded-lg border p-6">
-        <p className="text-slate-300">Content with gradient background.</p>
+        <p className="text-text-theme-secondary">
+          Content with gradient background.
+        </p>
       </div>
     ),
   },
@@ -152,7 +154,7 @@ export const Empty: Story = {
         title="No units yet"
         message="Create your first custom unit to get started."
         action={
-          <button className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-500">
+          <button className="bg-accent text-on-accent hover:bg-accent-hover rounded px-4 py-2">
             Create Unit
           </button>
         }

@@ -1,24 +1,25 @@
 import React, { useEffect, useRef, useState } from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
+import { getEquipmentSlotClasses } from '@/utils/colors/equipmentColors';
 import { getLocationShorthand } from '@/utils/locationUtils';
 
 import { trayStyles } from './GlobalLoadoutTray.styles';
 import { LoadoutEquipmentItem } from './GlobalLoadoutTray.types';
-
-const REMOVE_MARK = '\u00d7';
-const LOCK_MARK = '\uD83D\uDD12';
 
 interface EquipmentItemViewArgs {
   item: LoadoutEquipmentItem;
   isOmni: boolean;
   isDragging: boolean;
   isSelected: boolean;
-  categoryClassName: string;
 }
 
 interface EquipmentItemView {
   canDrag: boolean;
   displayName: string;
+  selectAccessibleName: string;
+  removeAccessibleName: string;
+  confirmRemoveAccessibleName: string;
   tooltip: string;
   rowClassName: string;
 }
@@ -36,6 +37,12 @@ function getDisplayName(item: LoadoutEquipmentItem, isOmni: boolean): string {
   }
 
   return `${item.name} ${item.isOmniPodMounted ? '(Pod)' : '(Fixed)'}`;
+}
+
+function getAccessibleLocation(item: LoadoutEquipmentItem): string {
+  return item.isAllocated && item.location
+    ? item.location
+    : 'unallocated loadout';
 }
 
 function getTooltip(isFixedOnOmni: boolean, canDrag: boolean): string {
@@ -80,9 +87,7 @@ function buildRowClassName({
   }
 
   if (isSelected) {
-    classes.push('ring-accent ring-1 brightness-110 ring-inset');
-  } else {
-    classes.push('hover:brightness-110');
+    classes.push('ring-accent ring-1 ring-inset');
   }
 
   return classes.join(' ');
@@ -102,17 +107,22 @@ export function buildEquipmentItemView({
   isOmni,
   isDragging,
   isSelected,
-  categoryClassName,
 }: EquipmentItemViewArgs): EquipmentItemView {
   const isFixedOnOmni = isOmni && item.isOmniPodMounted === false;
   const canDrag = !item.isAllocated && !isFixedOnOmni;
 
+  const displayName = getDisplayName(item, isOmni);
+  const accessibleLocation = getAccessibleLocation(item);
+
   return {
     canDrag,
-    displayName: getDisplayName(item, isOmni),
+    displayName,
+    selectAccessibleName: `Select ${displayName} in ${accessibleLocation}`,
+    removeAccessibleName: `Remove ${displayName} from ${accessibleLocation}`,
+    confirmRemoveAccessibleName: `Confirm removal of ${displayName} from ${accessibleLocation}`,
     tooltip: getTooltip(isFixedOnOmni, canDrag),
     rowClassName: buildRowClassName({
-      categoryClassName,
+      categoryClassName: getEquipmentSlotClasses(item.category, item.name),
       canDrag,
       isFixedOnOmni,
       isDragging,
@@ -191,22 +201,19 @@ export function EquipmentItemSummary({
   displayName: string;
 }): React.ReactElement {
   return (
-    <div className={`flex w-full items-center ${trayStyles.gap}`}>
+    <div className="flex min-w-0 flex-1 flex-col justify-center py-1">
       <span
-        className={`flex-1 truncate text-white ${trayStyles.text.primary} drop-shadow-sm`}
+        className={`w-full truncate leading-tight text-inherit ${trayStyles.text.primary}`}
       >
         {displayName}
       </span>
       <span
-        className={`text-white/50 ${trayStyles.text.secondary} whitespace-nowrap`}
+        className={`mt-0.5 w-full truncate leading-tight text-inherit ${trayStyles.text.secondary}`}
       >
-        {item.weight}t | {item.criticalSlots} slot
+        {item.weight}t · {item.criticalSlots} slot
         {item.criticalSlots !== 1 ? 's' : ''}
         {item.isAllocated && item.location && (
-          <span className="text-white/80">
-            {' '}
-            | {getLocationShorthand(item.location)}
-          </span>
+          <> · {getLocationShorthand(item.location)}</>
         )}
       </span>
     </div>
@@ -216,34 +223,46 @@ export function EquipmentItemSummary({
 export function EquipmentRemoveControl({
   isRemovable,
   showConfirmRemove,
+  removeAccessibleName,
+  confirmRemoveAccessibleName,
   onRemoveClick,
 }: {
   isRemovable: boolean;
   showConfirmRemove: boolean;
-  onRemoveClick: (event: React.MouseEvent) => void;
+  removeAccessibleName: string;
+  confirmRemoveAccessibleName: string;
+  onRemoveClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }): React.ReactElement {
   if (!isRemovable) {
     return (
       <span
-        className="text-[10px] text-white/30"
+        className="text-[10px] text-inherit"
         title="Managed by configuration"
       >
-        {LOCK_MARK}
+        <AppIcon name="lock" size="inline" aria-hidden="true" />
       </span>
     );
   }
 
   return (
     <button
+      type="button"
       onClick={onRemoveClick}
-      className={`flex h-full w-full items-center justify-center rounded-r-md text-sm font-medium transition-all ${
+      aria-label={
+        showConfirmRemove ? confirmRemoveAccessibleName : removeAccessibleName
+      }
+      className={`focus-visible:ring-accent flex h-full min-h-11 w-full min-w-11 items-center justify-center rounded-r-md text-sm font-medium transition-all focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset ${
         showConfirmRemove
-          ? 'bg-red-900/50 text-red-400'
-          : 'text-slate-400 hover:bg-red-900/30 hover:text-red-400'
+          ? 'bg-red-950 text-white'
+          : 'text-inherit hover:bg-red-950 hover:text-white'
       }`}
       title={showConfirmRemove ? 'Click again to confirm' : 'Remove from unit'}
     >
-      {showConfirmRemove ? '?' : REMOVE_MARK}
+      {showConfirmRemove ? (
+        <AppIcon name="check" size="inline" aria-hidden="true" />
+      ) : (
+        <AppIcon name="trash" size="inline" aria-hidden="true" />
+      )}
     </button>
   );
 }

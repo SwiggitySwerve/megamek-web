@@ -80,14 +80,17 @@ export default function CampaignActivityLogPage(): React.ReactElement {
       {sourceLabel ? (
         <p
           data-testid="activity-log-source-label"
-          className="mt-4 text-xs text-slate-400"
+          className="text-text-theme-secondary mt-4 text-xs"
         >
           {sourceLabel}
         </p>
       ) : null}
 
       {notice ? (
-        <p data-testid={notice.testid} className="mt-4 text-sm text-slate-300">
+        <p
+          data-testid={notice.testid}
+          className="text-text-theme-secondary mt-4 text-sm"
+        >
           {notice.message}
         </p>
       ) : (
@@ -95,7 +98,7 @@ export default function CampaignActivityLogPage(): React.ReactElement {
           <div className="my-4 flex flex-wrap items-center gap-2">
             <label
               htmlFor="activity-log-category-filter"
-              className="text-xs text-slate-400"
+              className="text-text-theme-secondary text-xs"
             >
               Category:
             </label>
@@ -106,7 +109,7 @@ export default function CampaignActivityLogPage(): React.ReactElement {
               onChange={(e) =>
                 setCategory(e.target.value as ActivityLogCategory | 'all')
               }
-              className="rounded border border-slate-600 bg-slate-900 px-2 py-1 text-sm text-slate-200"
+              className="border-border-theme bg-surface-deep text-text-theme-primary rounded border px-2 py-1 text-sm"
             >
               <option value="all">All categories</option>
               {ACTIVITY_LOG_CATEGORIES.map((cat) => (
@@ -118,7 +121,7 @@ export default function CampaignActivityLogPage(): React.ReactElement {
 
             <label
               htmlFor="activity-log-search"
-              className="ml-4 text-xs text-slate-400"
+              className="text-text-theme-secondary ml-4 text-xs"
             >
               Search:
             </label>
@@ -129,7 +132,7 @@ export default function CampaignActivityLogPage(): React.ReactElement {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Filter messages…"
-              className="rounded border border-slate-600 bg-slate-900 px-2 py-1 text-sm text-slate-200"
+              className="border-border-theme bg-surface-deep text-text-theme-primary rounded border px-2 py-1 text-sm"
             />
           </div>
 
@@ -138,7 +141,7 @@ export default function CampaignActivityLogPage(): React.ReactElement {
             className="w-full border-collapse text-sm"
           >
             <thead>
-              <tr className="border-b border-slate-700 text-xs tracking-wide text-slate-400 uppercase">
+              <tr className="border-border-theme text-text-theme-secondary border-b text-xs tracking-wide uppercase">
                 <th className="py-2 text-left">Day</th>
                 <th className="py-2 text-left">Category</th>
                 <th className="py-2 text-left">Message</th>
@@ -150,7 +153,7 @@ export default function CampaignActivityLogPage(): React.ReactElement {
                   <td
                     colSpan={3}
                     data-testid="activity-log-empty"
-                    className="py-6 text-center text-xs text-slate-500"
+                    className="text-text-theme-muted py-6 text-center text-xs"
                   >
                     No matching entries.
                   </td>
@@ -160,15 +163,17 @@ export default function CampaignActivityLogPage(): React.ReactElement {
                   <tr
                     key={entry.id}
                     data-testid={`activity-log-row-${entry.id}`}
-                    className="border-b border-slate-800"
+                    className="border-border-theme-subtle border-b"
                   >
-                    <td className="py-2 font-mono text-slate-400">
+                    <td className="text-text-theme-secondary py-2 font-mono">
                       {entry.campaignDay}
                     </td>
-                    <td className="py-2 text-slate-300">
+                    <td className="text-text-theme-secondary py-2">
                       {CATEGORY_LABELS[entry.category]}
                     </td>
-                    <td className="py-2 text-slate-200">{entry.message}</td>
+                    <td className="text-text-theme-primary py-2">
+                      {entry.message}
+                    </td>
                   </tr>
                 ))
               )}

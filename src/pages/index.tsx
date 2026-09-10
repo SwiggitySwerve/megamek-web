@@ -5,6 +5,8 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
+import { SvgIcon } from '@/components/ui/SvgIcon';
+
 interface SystemStats {
   unitCount: number;
   equipmentCount: number;
@@ -27,11 +29,11 @@ const navigationCards: NavigationCard[] = [
     description: 'Learn the core flow and glossary before your first fight',
     accent: 'from-sky-600 to-indigo-700',
     icon: (
-      <svg
+      <SvgIcon
+        size="feature"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
-        strokeWidth={1.5}
         stroke="currentColor"
         className="h-8 w-8"
       >
@@ -40,7 +42,7 @@ const navigationCards: NavigationCard[] = [
           strokeLinejoin="round"
           d="M12 18.75a6.75 6.75 0 100-13.5 6.75 6.75 0 000 13.5zM12 8.25v4.5l3 1.5M4.5 19.5h15"
         />
-      </svg>
+      </SvgIcon>
     ),
   },
   {
@@ -49,11 +51,11 @@ const navigationCards: NavigationCard[] = [
     description: 'Browse canonical units, equipment, and construction rules',
     accent: 'from-amber-600 to-orange-700',
     icon: (
-      <svg
+      <SvgIcon
+        size="feature"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
-        strokeWidth={1.5}
         stroke="currentColor"
         className="h-8 w-8"
       >
@@ -62,7 +64,7 @@ const navigationCards: NavigationCard[] = [
           strokeLinejoin="round"
           d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"
         />
-      </svg>
+      </SvgIcon>
     ),
   },
   {
@@ -71,11 +73,11 @@ const navigationCards: NavigationCard[] = [
     description: 'Start quick games, campaigns, encounters, and multiplayer',
     accent: 'from-rose-600 to-red-700',
     icon: (
-      <svg
+      <SvgIcon
+        size="feature"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
-        strokeWidth={1.5}
         stroke="currentColor"
         className="h-8 w-8"
       >
@@ -84,7 +86,7 @@ const navigationCards: NavigationCard[] = [
           strokeLinejoin="round"
           d="M6 7.5h12m-10.5 3h9m-7.5 3h6m-10.5 6l1.5-4.5A9 9 0 1119.5 7.5"
         />
-      </svg>
+      </SvgIcon>
     ),
   },
   {
@@ -93,11 +95,11 @@ const navigationCards: NavigationCard[] = [
     description: 'Your custom unit creations and variants',
     accent: 'from-emerald-600 to-teal-700',
     icon: (
-      <svg
+      <SvgIcon
+        size="feature"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
-        strokeWidth={1.5}
         stroke="currentColor"
         className="h-8 w-8"
       >
@@ -106,7 +108,7 @@ const navigationCards: NavigationCard[] = [
           strokeLinejoin="round"
           d="M9 3.75H6.912a2.25 2.25 0 00-2.15 1.588L2.35 13.177a2.25 2.25 0 00-.1.661V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 00-2.15-1.588H15M2.25 13.5h3.86a2.25 2.25 0 012.012 1.244l.256.512a2.25 2.25 0 002.013 1.244h3.218a2.25 2.25 0 002.013-1.244l.256-.512a2.25 2.25 0 012.013-1.244h3.859"
         />
-      </svg>
+      </SvgIcon>
     ),
   },
   {
@@ -115,11 +117,11 @@ const navigationCards: NavigationCard[] = [
     description: 'Build and modify your own custom BattleMech variants',
     accent: 'from-cyan-600 to-blue-700',
     icon: (
-      <svg
+      <SvgIcon
+        size="feature"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
-        strokeWidth={1.5}
         stroke="currentColor"
         className="h-8 w-8"
       >
@@ -133,7 +135,7 @@ const navigationCards: NavigationCard[] = [
           strokeLinejoin="round"
           d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
         />
-      </svg>
+      </SvgIcon>
     ),
   },
   {
@@ -142,11 +144,11 @@ const navigationCards: NavigationCard[] = [
     description: 'Compare multiple units side-by-side',
     accent: 'from-violet-600 to-purple-700',
     icon: (
-      <svg
+      <SvgIcon
+        size="feature"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
-        strokeWidth={1.5}
         stroke="currentColor"
         className="h-8 w-8"
       >
@@ -155,7 +157,7 @@ const navigationCards: NavigationCard[] = [
           strokeLinejoin="round"
           d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"
         />
-      </svg>
+      </SvgIcon>
     ),
   },
 ];
@@ -283,11 +285,11 @@ export default function HomePage(): React.ReactElement {
 
                     {/* Arrow indicator */}
                     <div className="text-text-theme-muted group-hover:text-accent absolute right-4 bottom-4 transition-all group-hover:translate-x-1">
-                      <svg
+                      <SvgIcon
+                        size="control"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
-                        strokeWidth={2}
                         stroke="currentColor"
                         className="h-5 w-5"
                       >
@@ -296,7 +298,7 @@ export default function HomePage(): React.ReactElement {
                           strokeLinejoin="round"
                           d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
                         />
-                      </svg>
+                      </SvgIcon>
                     </div>
                   </div>
                 </Link>

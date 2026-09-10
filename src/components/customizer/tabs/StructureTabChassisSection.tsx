@@ -82,15 +82,30 @@ export function StructureTabChassisSection({
 }: StructureTabChassisSectionProps): React.ReactElement {
   return (
     <div className={cs.panel.main}>
-      <h3 className={cs.text.sectionTitle}>Chassis</h3>
+      <div className="border-border-theme-subtle mb-4 border-b pb-3">
+        <h3 className="text-text-theme-primary text-lg font-semibold">
+          Chassis
+        </h3>
+        <p className={`${cs.text.secondary} mt-0.5`}>
+          Core structure, drive system, and cooling
+        </p>
+      </div>
 
-      <div className={cs.layout.formStack}>
-        <TonnageControl
-          readOnly={readOnly}
-          tonnage={tonnage}
-          isSuperheavy={isSuperheavy}
-          onChange={handleTonnageChange}
-        />
+      <div className="space-y-5">
+        <section aria-labelledby="chassis-configuration-heading">
+          <h4
+            id="chassis-configuration-heading"
+            className="text-text-theme-secondary mb-2 text-xs font-semibold tracking-[0.16em] uppercase"
+          >
+            Chassis
+          </h4>
+          <TonnageControl
+            readOnly={readOnly}
+            tonnage={tonnage}
+            isSuperheavy={isSuperheavy}
+            onChange={handleTonnageChange}
+          />
+        </section>
 
         <SystemSelects
           readOnly={readOnly}
@@ -111,18 +126,26 @@ export function StructureTabChassisSection({
           isAtMaxEngineRating={isAtMaxEngineRating}
         />
 
-        <HeatSinkSection
-          readOnly={readOnly}
-          isOmni={isOmni}
-          heatSinkType={heatSinkType}
-          heatSinkCount={heatSinkCount}
-          baseChassisHeatSinks={baseChassisHeatSinks}
-          calculations={calculations}
-          heatSinkOptions={filteredOptions.heatSinks}
-          handleHeatSinkTypeChange={handleHeatSinkTypeChange}
-          handleHeatSinkCountChange={handleHeatSinkCountChange}
-          handleBaseChassisHeatSinksChange={handleBaseChassisHeatSinksChange}
-        />
+        <section aria-labelledby="cooling-heading">
+          <h4
+            id="cooling-heading"
+            className="text-text-theme-secondary mb-2 text-xs font-semibold tracking-[0.16em] uppercase"
+          >
+            Cooling
+          </h4>
+          <HeatSinkSection
+            readOnly={readOnly}
+            isOmni={isOmni}
+            heatSinkType={heatSinkType}
+            heatSinkCount={heatSinkCount}
+            baseChassisHeatSinks={baseChassisHeatSinks}
+            calculations={calculations}
+            heatSinkOptions={filteredOptions.heatSinks}
+            handleHeatSinkTypeChange={handleHeatSinkTypeChange}
+            handleHeatSinkCountChange={handleHeatSinkCountChange}
+            handleBaseChassisHeatSinksChange={handleBaseChassisHeatSinksChange}
+          />
+        </section>
       </div>
     </div>
   );

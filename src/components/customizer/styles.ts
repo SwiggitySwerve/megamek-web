@@ -35,7 +35,8 @@ const panel = {
 
 const text = {
   /** Section/panel title */
-  sectionTitle: 'text-lg font-semibold text-white mb-4',
+  sectionTitle:
+    'text-sm font-semibold tracking-wide text-text-theme-primary mb-4',
 
   /** Form field label */
   label: 'text-sm text-text-theme-secondary',
@@ -43,8 +44,8 @@ const text = {
   /** Secondary/helper text */
   secondary: 'text-xs text-text-theme-secondary',
 
-  /** Stat value - white */
-  value: 'font-medium text-white',
+  /** Stat value */
+  value: 'font-medium text-text-theme-primary',
 
   /** Highlighted stat value - accent */
   valueHighlight: 'font-medium text-accent',
@@ -65,22 +66,22 @@ const text = {
 
 const input = {
   /** Base input styles (without width) */
-  base: 'px-3 py-2 bg-surface-raised border border-border-theme rounded text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent',
+  base: 'px-3 py-2 bg-surface-raised border border-border-theme rounded text-text-theme-primary text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
 
   /** Full-width input */
-  full: 'w-full px-3 py-2 bg-surface-raised border border-border-theme rounded text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent',
+  full: 'w-full px-3 py-2 bg-surface-raised border border-border-theme rounded text-text-theme-primary text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
 
   /** Compact input (smaller padding) */
   compact:
-    'px-2 py-1.5 bg-surface-raised border border-border-theme rounded text-white text-sm',
+    'px-2 py-1.5 bg-surface-raised border border-border-theme rounded text-text-theme-primary text-sm',
 
   /** Full-width compact input */
   fullCompact:
-    'w-full px-2 py-1.5 bg-surface-raised border border-border-theme rounded text-white text-sm',
+    'w-full px-2 py-1.5 bg-surface-raised border border-border-theme rounded text-text-theme-primary text-sm',
 
   /** Centered number input (for stepper controls) */
   number:
-    'px-2 py-1 bg-surface-raised border border-border-theme text-white text-sm text-center',
+    'min-h-11 min-w-11 px-2 py-1 bg-surface-raised border border-border-theme text-text-theme-primary text-sm text-center',
 
   /** Hide number input spinners - append to number inputs */
   noSpinners:
@@ -93,15 +94,15 @@ const input = {
 
 const select = {
   /** Full-width select */
-  full: 'w-full px-3 py-2 bg-surface-raised border border-border-theme rounded text-white text-sm focus:outline-none focus:ring-2 focus:ring-accent',
+  full: 'w-full px-3 py-2 bg-surface-raised border border-border-theme rounded text-text-theme-primary text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
 
   /** Compact select (smaller padding) */
   compact:
-    'w-full px-2 py-1.5 bg-surface-raised border border-border-theme rounded text-white text-sm',
+    'w-full px-2 py-1.5 bg-surface-raised border border-border-theme rounded text-text-theme-primary text-sm',
 
   /** Inline select (no full width) */
   inline:
-    'px-2 py-1.5 bg-surface-raised border border-border-theme rounded text-white text-sm',
+    'px-2 py-1.5 bg-surface-raised border border-border-theme rounded text-text-theme-primary text-sm',
 } as const;
 
 // =============================================================================
@@ -111,27 +112,27 @@ const select = {
 const button = {
   /** Stepper button (increment/decrement) - small */
   stepper:
-    'px-2 py-1 bg-surface-raised hover:bg-surface-raised-hover disabled:opacity-50 disabled:cursor-not-allowed rounded border border-border-theme text-white text-sm',
+    'min-h-11 min-w-11 px-2 py-1 bg-surface-raised hover:bg-surface-raised-hover disabled:opacity-50 disabled:cursor-not-allowed rounded border border-border-theme text-text-theme-primary text-sm',
 
   /** Stepper button - medium */
   stepperMd:
-    'px-3 py-2 bg-surface-raised hover:bg-surface-raised-hover disabled:opacity-50 disabled:cursor-not-allowed rounded border border-border-theme text-white text-sm',
+    'px-3 py-2 bg-surface-raised hover:bg-surface-raised-hover disabled:opacity-50 disabled:cursor-not-allowed rounded border border-border-theme text-text-theme-primary text-sm',
 
   /** Left stepper in grouped control */
   stepperLeft:
-    'px-2 py-1 bg-surface-raised hover:bg-surface-raised-hover disabled:opacity-50 disabled:cursor-not-allowed rounded-l border border-border-theme text-white text-sm',
+    'min-h-11 min-w-11 px-2 py-1 bg-surface-raised hover:bg-surface-raised-hover disabled:opacity-50 disabled:cursor-not-allowed rounded-l border border-border-theme text-text-theme-primary text-sm',
 
   /** Right stepper in grouped control */
   stepperRight:
-    'px-2 py-1 bg-surface-raised hover:bg-surface-raised-hover disabled:opacity-50 disabled:cursor-not-allowed rounded-r border border-border-theme text-white text-sm',
+    'min-h-11 min-w-11 px-2 py-1 bg-surface-raised hover:bg-surface-raised-hover disabled:opacity-50 disabled:cursor-not-allowed rounded-r border border-border-theme text-text-theme-primary text-sm',
 
   /** Primary action button - blue */
   action:
-    'px-3 py-1.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed rounded text-white text-sm font-medium transition-colors',
+    'px-3 py-1.5 bg-accent hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed rounded text-on-accent text-sm font-medium transition-colors',
 
   /** Full-width action button */
   actionFull:
-    'flex-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed rounded text-white text-sm font-medium transition-colors',
+    'flex-1 px-3 py-1.5 bg-accent hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed rounded text-on-accent text-sm font-medium transition-colors',
 } as const;
 
 // =============================================================================

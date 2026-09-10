@@ -76,7 +76,7 @@ export const ComparisonSection: React.FC<IComparisonSectionProps> = ({
         <select
           value={comparisonMode}
           onChange={handleComparisonModeChange}
-          className={`min-h-[44px] rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 md:min-h-0 md:py-1.5 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 ${FOCUS_RING_CLASSES}`}
+          className={`border-border-theme-subtle bg-surface-base text-text-theme-secondary min-h-[44px] rounded-md border px-3 py-2 text-sm md:min-h-0 md:py-1.5 ${FOCUS_RING_CLASSES}`}
           aria-label="Comparison mode"
           data-testid="comparison-mode-toggle"
         >
@@ -87,7 +87,7 @@ export const ComparisonSection: React.FC<IComparisonSectionProps> = ({
           <select
             value={comparisonBattleId ?? ''}
             onChange={handleComparisonBattleChange}
-            className={`min-h-[44px] rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 md:min-h-0 md:py-1.5 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 ${FOCUS_RING_CLASSES}`}
+            className={`border-border-theme-subtle bg-surface-base text-text-theme-secondary min-h-[44px] rounded-md border px-3 py-2 text-sm md:min-h-0 md:py-1.5 ${FOCUS_RING_CLASSES}`}
             aria-label="Select battle for comparison"
             data-testid="comparison-battle-select"
           >
@@ -105,7 +105,7 @@ export const ComparisonSection: React.FC<IComparisonSectionProps> = ({
 
       {comparisonTarget ? (
         <div
-          className="space-y-4 rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
+          className="border-border-theme-subtle bg-surface-base space-y-4 rounded-lg border p-4"
           data-testid="comparison-metrics"
         >
           {(
@@ -153,10 +153,10 @@ export const ComparisonSection: React.FC<IComparisonSectionProps> = ({
                 data-testid={`comparison-metric-${metric.key}`}
               >
                 <div className="mb-1 flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <span className="text-text-theme-secondary text-sm font-medium">
                     {metric.label}
                   </span>
-                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                  <span className="text-text-theme-muted text-sm">
                     {metric.fmt(metric.current)} vs{' '}
                     {metric.fmt(metric.baseline)}
                   </span>
@@ -176,7 +176,7 @@ export const ComparisonSection: React.FC<IComparisonSectionProps> = ({
                           className={`h-3 w-1.5 rounded-sm ${
                             i < currentFilled
                               ? 'bg-blue-500 dark:bg-blue-400'
-                              : 'bg-gray-200 dark:bg-gray-700'
+                              : 'bg-surface-raised '
                           }`}
                         />
                       ))}
@@ -196,7 +196,7 @@ export const ComparisonSection: React.FC<IComparisonSectionProps> = ({
                           className={`h-3 w-1.5 rounded-sm ${
                             i < baselineFilled
                               ? 'bg-emerald-500 dark:bg-emerald-400'
-                              : 'bg-gray-200 dark:bg-gray-700'
+                              : 'bg-surface-raised '
                           }`}
                         />
                       ))}
@@ -206,7 +206,7 @@ export const ComparisonSection: React.FC<IComparisonSectionProps> = ({
               </div>
             );
           })}
-          <div className="border-t border-gray-200 pt-2 dark:border-gray-700">
+          <div className="border-border-theme-subtle border-t pt-2">
             <DrillDownLink
               label="View Detailed Comparison"
               targetTab="analysis-bugs"
@@ -222,7 +222,7 @@ export const ComparisonSection: React.FC<IComparisonSectionProps> = ({
         </div>
       ) : (
         <p
-          className="text-sm text-gray-500 italic dark:text-gray-400"
+          className="text-text-theme-muted text-sm italic"
           data-testid="no-comparison-target"
         >
           Select a battle to compare against.

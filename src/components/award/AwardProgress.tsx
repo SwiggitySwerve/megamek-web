@@ -8,6 +8,7 @@
 import React, { useMemo } from 'react';
 
 import { Card } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { getCriteriaValue } from '@/stores/awardStoreUtils';
 import { useAwardStore } from '@/stores/useAwardStore';
 import {
@@ -82,7 +83,7 @@ function getProgressBarColor(rarity: AwardRarity): string {
       return 'bg-gradient-to-r from-emerald-500 to-green-400';
     case AwardRarity.Common:
     default:
-      return 'bg-gradient-to-r from-slate-500 to-slate-400';
+      return 'bg-gradient-to-r from-surface-raised to-surface-raised';
   }
 }
 
@@ -256,17 +257,13 @@ function ProgressItem({
           {/* Near completion indicator */}
           {isNearComplete && (
             <div className="mt-2 flex items-center gap-1.5 text-xs text-amber-400">
-              <svg
-                className="h-3.5 w-3.5"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
+              <SvgIcon size="inline" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fillRule="evenodd"
                   d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z"
                   clipRule="evenodd"
                 />
-              </svg>
+              </SvgIcon>
               <span>Almost there!</span>
             </div>
           )}
@@ -318,19 +315,9 @@ export function AwardProgress({
     return (
       <Card className={`p-6 text-center ${className}`}>
         <div className="bg-surface-raised/50 mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full">
-          <svg
-            className="text-text-theme-muted h-6 w-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-            />
-          </svg>
+          <SvgIcon size="toolbar" className="text-text-theme-muted">
+            <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </SvgIcon>
         </div>
         <p className="text-text-theme-muted text-sm">
           {stats

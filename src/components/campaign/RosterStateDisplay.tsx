@@ -17,6 +17,7 @@ import type { ICampaignRosterEntry } from '@/types/campaign/CampaignRosterEntry'
 import type { IRosterUnitProjection } from '@/types/campaign/RosterUnitProjection';
 
 import { Card, Button } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { CampaignPilotStatus } from '@/types/campaign';
 
 import { RosterUnitCard, RosterPilotCard } from './RosterStateCards';
@@ -86,7 +87,8 @@ export function RosterStateDisplay({
       {activeTab === 'units' ? (
         units.length === 0 ? (
           <div className="text-text-theme-muted py-8 text-center">
-            <svg
+            <SvgIcon
+              size="hero"
               className="mx-auto mb-3 h-12 w-12 opacity-50"
               fill="none"
               stroke="currentColor"
@@ -98,7 +100,7 @@ export function RosterStateDisplay({
                 strokeWidth={1.5}
                 d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
               />
-            </svg>
+            </SvgIcon>
             <p>No units in roster</p>
             <p className="mt-1 text-sm">
               Add units from your vault to participate in this campaign
@@ -117,7 +119,8 @@ export function RosterStateDisplay({
         )
       ) : pilots.length === 0 ? (
         <div className="text-text-theme-muted py-8 text-center">
-          <svg
+          <SvgIcon
+            size="hero"
             className="mx-auto mb-3 h-12 w-12 opacity-50"
             fill="none"
             stroke="currentColor"
@@ -129,7 +132,7 @@ export function RosterStateDisplay({
               strokeWidth={1.5}
               d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
             />
-          </svg>
+          </SvgIcon>
           <p>No pilots in roster</p>
           <p className="mt-1 text-sm">
             Add pilots from your vault to crew your units
@@ -152,7 +155,8 @@ export function RosterStateDisplay({
         units.some((u) => u.readiness === 'Damaged') && (
           <div className="border-border-theme-subtle mt-4 border-t pt-4">
             <Button variant="secondary" className="w-full">
-              <svg
+              <SvgIcon
+                size="inline"
                 className="mr-2 h-4 w-4"
                 fill="none"
                 stroke="currentColor"
@@ -170,7 +174,7 @@ export function RosterStateDisplay({
                   strokeWidth={2}
                   d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                 />
-              </svg>
+              </SvgIcon>
               Open Repair Bay
             </Button>
           </div>

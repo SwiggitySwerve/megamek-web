@@ -46,7 +46,7 @@ export const TabNavigation: React.FC<ITabNavigationProps> = ({
   );
 
   const containerClasses = [
-    'flex overflow-x-auto border-b border-gray-200 dark:border-gray-700',
+    'flex overflow-x-auto border-b border-border-theme',
     className,
   ]
     .filter(Boolean)
@@ -66,10 +66,10 @@ export const TabNavigation: React.FC<ITabNavigationProps> = ({
         const tabClasses = [
           'px-4 py-3 min-h-[44px] md:px-6 md:min-h-0 text-sm font-medium transition-colors whitespace-nowrap',
           'flex-1 sm:flex-none',
-          'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset',
+          'focus:outline-none focus:ring-2 focus:ring-accent focus:ring-inset',
           isActive
-            ? 'bg-white dark:bg-gray-800 border-b-2 border-blue-600 text-blue-600'
-            : 'bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800',
+            ? 'bg-surface-base border-b-2 border-accent text-accent'
+            : 'bg-surface-raised text-text-theme-muted hover:bg-surface-base',
         ].join(' ');
 
         return (

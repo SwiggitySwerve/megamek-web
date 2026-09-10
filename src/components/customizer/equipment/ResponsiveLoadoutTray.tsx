@@ -18,12 +18,13 @@
  * @spec openspec/specs/customizer-responsive-layout/spec.md
  */
 
-import React from 'react';
+import React, { useId } from 'react';
 
 import { MechLocation } from '@/types/construction';
 
 import type { MobileLoadoutStats } from '../mobile';
 
+import { ModalOverlay } from '../dialogs/ModalOverlay';
 import { BottomSheetTray } from './BottomSheetTray';
 import {
   GlobalLoadoutTray,
@@ -38,6 +39,11 @@ import {
 export interface ResponsiveLoadoutTrayProps {
   /** Equipment items to display */
   equipment: LoadoutEquipmentItem[];
+  /** Hide only the desktop sidebar; the mobile drawer remains available. */
+  hideDesktopSidebar?: boolean;
+  drawerOpen?: boolean;
+  onCloseDrawer?: () => void;
+  openRequest?: number;
   /** Total equipment count */
   equipmentCount: number;
   /** Called when equipment is removed */
@@ -83,6 +89,10 @@ export interface ResponsiveLoadoutTrayProps {
  */
 export function ResponsiveLoadoutTray({
   equipment,
+  hideDesktopSidebar = false,
+  drawerOpen = false,
+  onCloseDrawer = () => undefined,
+  openRequest = 0,
   equipmentCount,
   onRemoveEquipment,
   onRemoveAllEquipment,
@@ -97,12 +107,13 @@ export function ResponsiveLoadoutTray({
   isOmni = false,
   mobileStats,
 }: ResponsiveLoadoutTrayProps): React.ReactElement {
+  const drawerTitleId = useId();
   // No auto-collapse behavior - state is persisted and only changed by user interaction
 
   return (
     <>
       {/* Desktop/Tablet: Sidebar tray (hidden on mobile) */}
-      <div className="hidden h-full md:flex">
+      <div className={hideDesktopSidebar ? 'hidden' : 'hidden h-full md:flex'}>
         <GlobalLoadoutTray
           equipment={equipment}
           equipmentCount={equipmentCount}
@@ -115,13 +126,55 @@ export function ResponsiveLoadoutTray({
           onUnassignEquipment={onUnassignEquipment}
           onQuickAssign={onQuickAssign}
           availableLocations={availableLocations}
+          getAvailableLocationsForEquipment={getAvailableLocationsForEquipment}
           isOmni={isOmni}
         />
       </div>
 
+      {drawerOpen && hideDesktopSidebar && (
+        <ModalOverlay
+          isOpen
+          fullScreen
+          onClose={onCloseDrawer}
+          ariaLabelledBy={drawerTitleId}
+          className="!bg-surface-deep/80"
+        >
+          <h2 id={drawerTitleId} className="sr-only">
+            Unit loadout
+          </h2>
+          <div className="flex h-full justify-end">
+            <button
+              type="button"
+              aria-label="Close loadout drawer"
+              onClick={onCloseDrawer}
+              className="min-w-11 flex-1"
+            />
+            <GlobalLoadoutTray
+              equipment={equipment}
+              equipmentCount={equipmentCount}
+              onRemoveEquipment={onRemoveEquipment}
+              onRemoveAllEquipment={onRemoveAllEquipment}
+              isExpanded
+              onToggleExpand={onCloseDrawer}
+              selectedEquipmentId={selectedEquipmentId}
+              onSelectEquipment={onSelectEquipment}
+              onUnassignEquipment={onUnassignEquipment}
+              onQuickAssign={onQuickAssign}
+              availableLocations={availableLocations}
+              getAvailableLocationsForEquipment={
+                getAvailableLocationsForEquipment
+              }
+              isOmni={isOmni}
+              className="!w-80 max-w-[calc(100vw-3rem)]"
+            />
+          </div>
+        </ModalOverlay>
+      )}
+
       {/* Mobile: Bottom sheet tray (hidden on desktop) */}
       <div className="md:hidden">
         <BottomSheetTray
+          openRequest={openRequest}
           equipment={equipment}
           equipmentCount={equipmentCount}
           onRemoveEquipment={onRemoveEquipment}

@@ -31,7 +31,7 @@ import { BayEmpty } from './BayStates';
 function injuryClasses(level: IMedicalBayItem['injuryLevel']): string {
   switch (level) {
     case 'none':
-      return 'bg-slate-500/20 text-slate-400';
+      return 'bg-surface-raised/20 text-text-theme-secondary';
     case 'light':
       return 'bg-amber-500/20 text-amber-400';
     case 'serious':
@@ -50,7 +50,7 @@ function statusClasses(status: IMedicalBayItem['status']): string {
     case 'ready':
       return 'bg-emerald-500/20 text-emerald-400';
     case 'discharged':
-      return 'bg-slate-500/20 text-slate-400';
+      return 'bg-surface-raised/20 text-text-theme-secondary';
     case 'recovering':
     default:
       return 'bg-blue-500/20 text-blue-400';

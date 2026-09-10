@@ -4,6 +4,8 @@
  */
 import React from 'react';
 
+import { SvgIcon } from '@/components/ui/SvgIcon';
+
 type ButtonVariant =
   | 'primary'
   | 'secondary'
@@ -23,10 +25,9 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary:
-    'bg-accent-hover hover:bg-accent text-text-theme-primary border-transparent',
+  primary: 'bg-accent-hover hover:bg-accent text-on-accent border-transparent',
   secondary:
-    'bg-surface-raised hover:bg-border-theme border border-border-theme text-slate-300',
+    'bg-surface-raised hover:bg-border-theme border border-border-theme text-text-theme-secondary',
   ghost:
     'bg-transparent hover:bg-surface-raised/50 text-text-theme-secondary hover:text-text-theme-primary border-transparent',
   pagination:
@@ -64,7 +65,8 @@ export function Button({
       {...props}
     >
       {isLoading ? (
-        <svg
+        <SvgIcon
+          size="inline"
           className="h-4 w-4 animate-spin"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -83,7 +85,7 @@ export function Button({
             fill="currentColor"
             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
           />
-        </svg>
+        </SvgIcon>
       ) : (
         leftIcon
       )}

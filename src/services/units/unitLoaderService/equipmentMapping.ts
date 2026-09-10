@@ -12,13 +12,15 @@ import { TechBaseMode } from '@/types/construction/TechBaseConfiguration';
 import { TechBase } from '@/types/enums/TechBase';
 import { EquipmentCategory } from '@/types/equipment';
 import { IMountedEquipmentInstance } from '@/types/equipment/MountedEquipment';
+import { getWeaponById } from '@/utils/equipment/weapons/utilities';
 import { logger } from '@/utils/logger';
 
 import { mapMechLocation } from './componentMappers';
 import {
-  resolveEquipmentId,
-  CRITICAL_SLOTS_LOCATION_KEYS,
-} from './equipmentResolution';
+  getCriticalSlotsForLocation,
+  restoreCriticalSlotEquipment,
+} from './criticalSlotEquipment';
+import { resolveEquipmentId } from './equipmentResolution';
 
 type UnitCriticalSlots = Readonly<Record<string, ReadonlyArray<string | null>>>;
 
@@ -34,6 +36,7 @@ export function mapEquipment(
         readonly location: string;
         readonly slots?: readonly number[];
         readonly isRearMounted?: boolean;
+        readonly isRemovable?: boolean;
         readonly linkedAmmo?: string;
         readonly isOmniPodMounted?: boolean;
       }>
@@ -46,13 +49,12 @@ export function mapEquipment(
     return [];
   }
 
-  return equipment.map((item) => {
+  const mapped = equipment.map((item) => {
     const location = mapMechLocation(item.location);
-    const locationCriticalSlots = unitCriticalSlots
-      ? location
-        ? unitCriticalSlots[CRITICAL_SLOTS_LOCATION_KEYS[location] ?? '']
-        : unitCriticalSlots[item.location]
-      : undefined;
+    const locationCriticalSlots = getCriticalSlotsForLocation(
+      unitCriticalSlots,
+      location,
+    );
 
     // Look up equipment using multiple resolution strategies
     const { equipmentDef, resolvedId } = resolveEquipmentId(
@@ -65,7 +67,8 @@ export function mapEquipment(
     if (equipmentDef) {
       // Found in database - use full properties
       const heat =
-        'heat' in equipmentDef ? (equipmentDef as { heat: number }).heat : 0;
+        getWeaponById(equipmentDef.id)?.heat ??
+        ('heat' in equipmentDef ? (equipmentDef as { heat: number }).heat : 0);
 
       // Log if we resolved through normalization/aliasing
       if (resolvedId !== item.id) {
@@ -85,7 +88,7 @@ export function mapEquipment(
         slots: item.slots ? [...item.slots] : undefined,
         isRearMounted: item.isRearMounted ?? false,
         linkedAmmoId: item.linkedAmmo,
-        isRemovable: true, // User-added equipment is removable
+        isRemovable: item.isRemovable ?? true,
         isOmniPodMounted: item.isOmniPodMounted ?? false,
       };
     } else {
@@ -106,9 +109,17 @@ export function mapEquipment(
         slots: item.slots ? [...item.slots] : undefined,
         isRearMounted: item.isRearMounted ?? false,
         linkedAmmoId: item.linkedAmmo,
-        isRemovable: true, // User-added equipment is removable
+        isRemovable: item.isRemovable ?? true,
         isOmniPodMounted: item.isOmniPodMounted ?? false,
       };
     }
   });
+
+  return restoreCriticalSlotEquipment(
+    equipment,
+    mapped,
+    unitTechBase,
+    unitTechBaseMode,
+    unitCriticalSlots,
+  );
 }

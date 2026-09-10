@@ -38,6 +38,7 @@ yarn-error.log*
 scripts/**
 !scripts/
 !scripts/AGENTS.md
+!scripts/expand-unit-type-requirements.mjs
 !scripts/print-combat-validation-gaps.ts
 !scripts/maintenance/
 !scripts/maintenance/scan-maintenance.mjs
@@ -112,6 +113,15 @@ __pycache__/
 .Python
 *.pyc
 data/
+
+# Keep the source unit schema available to normal staging and commit checks.
+!/public/data/
+/public/data/*
+!/public/data/equipment/
+/public/data/equipment/*
+!/public/data/equipment/_schema/
+/public/data/equipment/_schema/*
+!/public/data/equipment/_schema/unit-schema.json
 
 # Electron / Desktop build artifacts
 desktop/dist/

@@ -9,6 +9,7 @@
 
 import React from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
 import { useAerospaceStore } from '@/stores/useAerospaceStore';
 
 import { customizerStyles as cs } from '../styles';
@@ -45,7 +46,7 @@ export function HeatSection({
             className={cs.button.stepperLeft}
             data-testid="aerospace-heatsinks-decrease"
           >
-            -
+            <AppIcon name="remove" size="inline" aria-hidden="true" />{' '}
           </button>
           <input
             type="number"
@@ -60,7 +61,7 @@ export function HeatSection({
             className={cs.button.stepperRight}
             data-testid="aerospace-heatsinks-increase"
           >
-            +
+            <AppIcon name="add" size="inline" aria-hidden="true" />{' '}
           </button>
         </div>
       </div>

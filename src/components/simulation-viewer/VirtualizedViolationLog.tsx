@@ -25,9 +25,9 @@ export interface IVirtualizedViolationLogProps {
 type Severity = 'critical' | 'warning' | 'info';
 
 const SEVERITY_BADGE_CLASSES: Record<Severity, string> = {
-  critical: 'bg-red-600 text-white',
-  warning: 'bg-amber-500 text-white',
-  info: 'bg-sky-500 text-white',
+  critical: 'bg-red-600 text-on-accent',
+  warning: 'bg-amber-500 text-on-accent',
+  info: 'bg-sky-500 text-on-accent',
 };
 
 const DEFAULT_HEIGHT = 480;
@@ -68,7 +68,7 @@ const ViolationRow = ({
   return (
     <div
       style={style}
-      className={`border-b border-gray-200 px-4 py-2 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 ${onViolationClick ? `cursor-pointer ${FOCUS_RING_CLASSES}` : ''}`}
+      className={`border-border-theme-subtle hover:bg-surface-base border-b px-4 py-2 transition-colors ${onViolationClick ? `cursor-pointer ${FOCUS_RING_CLASSES}` : ''}`}
       onClick={() => onViolationClick?.(violation)}
       onKeyDown={(e) => {
         if ((e.key === 'Enter' || e.key === ' ') && onViolationClick) {
@@ -88,13 +88,13 @@ const ViolationRow = ({
         >
           {violation.severity}
         </span>
-        <span className="w-28 flex-shrink-0 text-xs whitespace-nowrap text-gray-500 dark:text-gray-400">
+        <span className="text-text-theme-muted w-28 flex-shrink-0 text-xs whitespace-nowrap">
           {formatAuditTimestamp(violation.timestamp, { fallbackToInput: true })}
         </span>
-        <span className="w-24 flex-shrink-0 truncate text-xs font-medium whitespace-nowrap text-gray-600 dark:text-gray-300">
+        <span className="text-text-theme-secondary w-24 flex-shrink-0 truncate text-xs font-medium whitespace-nowrap">
           {violation.type}
         </span>
-        <span className="flex-1 truncate text-sm text-gray-800 dark:text-gray-200">
+        <span className="text-text-theme-primary flex-1 truncate text-sm">
           {violation.message}
         </span>
         {onViewBattle && (
@@ -104,7 +104,7 @@ const ViolationRow = ({
               e.stopPropagation();
               onViewBattle(violation.battleId);
             }}
-            className={`flex-shrink-0 rounded px-2 py-1 text-xs whitespace-nowrap text-blue-600 hover:underline dark:text-blue-400 ${FOCUS_RING_CLASSES}`}
+            className={`text-accent flex-shrink-0 rounded px-2 py-1 text-xs whitespace-nowrap hover:underline ${FOCUS_RING_CLASSES}`}
             aria-label={`View battle ${violation.battleId}`}
             data-testid="violation-view-battle"
           >
@@ -136,7 +136,7 @@ export const VirtualizedViolationLog = memo<IVirtualizedViolationLogProps>(
     if (violations.length === 0) {
       return (
         <p
-          className="py-8 text-center text-sm text-gray-500 italic dark:text-gray-400"
+          className="text-text-theme-muted py-8 text-center text-sm italic"
           data-testid="virtualized-violation-log-empty"
         >
           No violations match the current filters.
@@ -147,9 +147,9 @@ export const VirtualizedViolationLog = memo<IVirtualizedViolationLogProps>(
     return (
       <div
         data-testid="virtualized-violation-log"
-        className="overflow-hidden rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800"
+        className="border-border-theme-subtle bg-surface-base overflow-hidden rounded-lg border"
       >
-        <div className="flex items-center gap-3 border-b border-gray-200 bg-gray-100 px-4 py-2 text-xs font-medium text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
+        <div className="border-border-theme-subtle bg-surface-raised text-text-theme-secondary flex items-center gap-3 border-b px-4 py-2 text-xs font-medium">
           <span className="w-16 flex-shrink-0">Severity</span>
           <span className="w-28 flex-shrink-0">Timestamp</span>
           <span className="w-24 flex-shrink-0">Type</span>

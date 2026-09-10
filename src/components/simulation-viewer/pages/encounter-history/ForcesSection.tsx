@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
+
 import type { IBattle } from './types';
 
 import { ViewerSection } from '../SectionFrame';
@@ -14,14 +16,14 @@ export const ForcesSection: React.FC<IForcesSectionProps> = ({ battle }) => {
     <ViewerSection ariaLabel="Forces" testId="forces-section" title="Forces">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div
-          className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
+          className="border-border-theme-subtle bg-surface-base rounded-lg border p-4"
           data-testid="player-force"
         >
           <h3 className="mb-2 text-sm font-semibold tracking-wide text-blue-700 uppercase dark:text-blue-300">
             Player Force
           </h3>
           <p
-            className="mb-2 text-xs text-gray-500 dark:text-gray-400"
+            className="text-text-theme-muted mb-2 text-xs"
             data-testid="player-bv"
           >
             BV: {battle.forces.player.totalBV.toLocaleString()}
@@ -33,9 +35,9 @@ export const ForcesSection: React.FC<IForcesSectionProps> = ({ battle }) => {
                 className="flex items-center justify-between text-sm"
                 data-testid={`unit-${unit.id}`}
               >
-                <span className="text-gray-800 dark:text-gray-200">
+                <span className="text-text-theme-primary">
                   {unit.name}
-                  <span className="ml-1 text-xs text-gray-500 dark:text-gray-400">
+                  <span className="text-text-theme-muted ml-1 text-xs">
                     ({unit.pilot})
                   </span>
                 </span>
@@ -50,14 +52,14 @@ export const ForcesSection: React.FC<IForcesSectionProps> = ({ battle }) => {
           </ul>
         </div>
         <div
-          className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
+          className="border-border-theme-subtle bg-surface-base rounded-lg border p-4"
           data-testid="enemy-force"
         >
           <h3 className="mb-2 text-sm font-semibold tracking-wide text-red-700 uppercase dark:text-red-300">
             Enemy Force
           </h3>
           <p
-            className="mb-2 text-xs text-gray-500 dark:text-gray-400"
+            className="text-text-theme-muted mb-2 text-xs"
             data-testid="enemy-bv"
           >
             BV: {battle.forces.enemy.totalBV.toLocaleString()}
@@ -69,9 +71,9 @@ export const ForcesSection: React.FC<IForcesSectionProps> = ({ battle }) => {
                 className="flex items-center justify-between text-sm"
                 data-testid={`unit-${unit.id}`}
               >
-                <span className="text-gray-800 dark:text-gray-200">
+                <span className="text-text-theme-primary">
                   {unit.name}
-                  <span className="ml-1 text-xs text-gray-500 dark:text-gray-400">
+                  <span className="text-text-theme-muted ml-1 text-xs">
                     ({unit.pilot})
                   </span>
                 </span>
@@ -90,9 +92,21 @@ export const ForcesSection: React.FC<IForcesSectionProps> = ({ battle }) => {
         className={`mt-3 rounded-lg p-3 text-center font-semibold ${OUTCOME_COLORS[battle.outcome]}`}
         data-testid="outcome-summary"
       >
-        {battle.outcome === 'victory' && '🏆 Victory'}
-        {battle.outcome === 'defeat' && '💀 Defeat'}
-        {battle.outcome === 'draw' && '🤝 Draw'}
+        {battle.outcome === 'victory' && (
+          <>
+            <AppIcon name="check" size="inline" aria-hidden="true" /> Victory
+          </>
+        )}
+        {battle.outcome === 'defeat' && (
+          <>
+            <AppIcon name="close" size="inline" aria-hidden="true" /> Defeat
+          </>
+        )}
+        {battle.outcome === 'draw' && (
+          <>
+            <AppIcon name="link" size="inline" aria-hidden="true" /> Draw
+          </>
+        )}
         <span className="ml-3 text-sm font-normal">
           {battle.stats.totalKills} kills · {battle.stats.totalDamage} damage ·{' '}
           {battle.stats.unitsLost} lost

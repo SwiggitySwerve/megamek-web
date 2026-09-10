@@ -24,12 +24,12 @@ export default function TacticalMapE2EHarness(): React.JSX.Element {
 
   return (
     <main
-      className="min-h-screen bg-slate-950 p-4 text-slate-100"
+      className="bg-surface-deep text-text-theme-primary min-h-screen p-4"
       data-testid="tactical-map-e2e-harness"
     >
       <section className="mx-auto flex max-w-6xl flex-col gap-3">
         <h1 className="text-lg font-semibold">Tactical Map E2E Harness</h1>
-        <div className="h-[680px] overflow-hidden rounded border border-slate-700 bg-slate-900">
+        <div className="border-border-theme-subtle bg-surface-deep h-[680px] overflow-hidden rounded border">
           <HexMapDisplay
             mapId="tactical-map-e2e"
             radius={config.mapRadius}

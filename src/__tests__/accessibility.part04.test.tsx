@@ -109,7 +109,7 @@ describe('Accessibility Tests', () => {
       );
       const link = screen.getByRole('link');
       expect(link.className).toContain('focus:ring-2');
-      expect(link.className).toContain('focus:ring-blue-500');
+      expect(link.className).toContain('focus:ring-accent');
     });
 
     it('should hide decorative icons from screen readers', () => {
@@ -292,9 +292,9 @@ describe('Accessibility Utilities', () => {
   describe('CSS class constants', () => {
     it('FOCUS_RING_CLASSES should include ring and offset', () => {
       expect(FOCUS_RING_CLASSES).toContain('focus:ring-2');
-      expect(FOCUS_RING_CLASSES).toContain('focus:ring-blue-500');
+      expect(FOCUS_RING_CLASSES).toContain('focus:ring-accent');
       expect(FOCUS_RING_CLASSES).toContain('focus:ring-offset-2');
-      expect(FOCUS_RING_CLASSES).toContain('dark:focus:ring-offset-gray-900');
+      expect(FOCUS_RING_CLASSES).toContain('focus:ring-offset-surface-base');
     });
 
     it('FOCUS_RING_INSET_CLASSES should use inset variant', () => {

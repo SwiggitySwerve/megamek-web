@@ -58,6 +58,7 @@ export interface IRecordSheetHeader {
   readonly rulesLevel: string;
   readonly era: string;
   readonly role?: string;
+  readonly engineDescription?: string;
   readonly battleValue: number;
   readonly cost: number;
 }

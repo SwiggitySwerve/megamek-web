@@ -8,6 +8,7 @@ import React, { useState, useEffect } from 'react';
 
 import { useMobileSidebarSelector } from '@/stores/useNavigationStore';
 
+import { CustomizerAppMenu } from './CustomizerAppMenu';
 import { getGameplayNavItems } from './gameplayNavItems';
 import {
   MekStationIcon,
@@ -84,6 +85,32 @@ const TopBar: React.FC = () => {
   const isAnyHistoryActive = historyItems.some((item) =>
     isPathActive(item.href),
   );
+
+  if (router.pathname.startsWith('/customizer')) {
+    return (
+      <header
+        className="bg-surface-base border-border-theme relative z-40 flex h-14 shrink-0 items-center gap-1 border-b px-1 sm:px-2 print:hidden"
+        data-testid="customizer-command-header"
+      >
+        <CustomizerAppMenu
+          groups={[
+            { label: 'Browse', items: browseItems },
+            { label: 'Tools', items: toolsItems },
+            { label: 'Gameplay', items: gameplayItems },
+            { label: 'History', items: historyItems },
+          ]}
+        />
+        <div
+          id="customizer-command-bar"
+          className="flex h-full min-w-0 flex-1 items-center"
+        />
+        <div
+          id="customizer-workspace-controls"
+          className="hidden shrink-0 items-center md:flex"
+        />
+      </header>
+    );
+  }
 
   return (
     <>

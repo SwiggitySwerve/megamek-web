@@ -16,7 +16,9 @@ export function QuickGameSetup(): React.ReactElement {
 
   if (!game) {
     return (
-      <div className="py-8 text-center text-gray-400">No game in progress</div>
+      <div className="text-text-theme-muted py-8 text-center">
+        No game in progress
+      </div>
     );
   }
 

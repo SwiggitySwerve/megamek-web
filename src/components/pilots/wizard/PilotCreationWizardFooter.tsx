@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Button } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 
 import { type WizardStep } from './WizardTypes';
 
@@ -16,7 +17,8 @@ interface PilotCreationWizardFooterProps {
 
 function AddIcon(): React.ReactElement {
   return (
-    <svg
+    <SvgIcon
+      size="inline"
       className="h-4 w-4"
       fill="none"
       stroke="currentColor"
@@ -28,13 +30,14 @@ function AddIcon(): React.ReactElement {
         strokeWidth={2}
         d="M12 4v16m8-8H4"
       />
-    </svg>
+    </SvgIcon>
   );
 }
 
 function ContinueIcon(): React.ReactElement {
   return (
-    <svg
+    <SvgIcon
+      size="inline"
       className="h-4 w-4"
       fill="none"
       stroke="currentColor"
@@ -46,7 +49,7 @@ function ContinueIcon(): React.ReactElement {
         strokeWidth={2}
         d="M9 5l7 7-7 7"
       />
-    </svg>
+    </SvgIcon>
   );
 }
 

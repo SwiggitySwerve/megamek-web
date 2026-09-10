@@ -108,8 +108,9 @@ describe('VersionHistoryDialog', () => {
       expect(customUnitApiService.getVersionHistory).toHaveBeenCalled();
     });
 
-    // Find and click the Close button by text
-    const closeButton = await screen.findByRole('button', { name: /close/i });
+    const closeButton = await screen.findByRole('button', {
+      name: 'Close dialog',
+    });
     await user.click(closeButton);
 
     expect(defaultProps.onClose).toHaveBeenCalledTimes(1);

@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react';
 import { CampaignTypeCard } from '@/components/campaign/CampaignTypeCard';
 import { PresetCard } from '@/components/campaign/PresetCard';
 import { Card, Input } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { ALL_PRESETS } from '@/types/campaign/CampaignPreset';
 import { CAMPAIGN_TYPE_DISPLAY } from '@/types/campaign/CampaignType';
 import { CampaignType } from '@/types/campaign/CampaignType';
@@ -50,7 +51,8 @@ export function StepIndicator({
                 }`}
               >
                 {idx < currentStep ? (
-                  <svg
+                  <SvgIcon
+                    size="control"
                     className="h-5 w-5"
                     fill="none"
                     stroke="currentColor"
@@ -62,7 +64,7 @@ export function StepIndicator({
                       strokeWidth={2}
                       d="M5 13l4 4L19 7"
                     />
-                  </svg>
+                  </SvgIcon>
                 ) : (
                   idx + 1
                 )}

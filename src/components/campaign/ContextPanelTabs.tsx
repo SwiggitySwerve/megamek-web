@@ -26,7 +26,7 @@ import {
 export function EmptyPanel(): React.ReactElement {
   return (
     <div
-      className="flex h-full items-center justify-center text-slate-500"
+      className="text-text-theme-muted flex h-full items-center justify-center"
       data-testid="context-panel-empty"
     >
       <div className="flex items-center gap-3">
@@ -52,18 +52,18 @@ export function SystemDetailsPanel({
       </div>
 
       <div className="min-w-0">
-        <div className="mb-0.5 text-xs tracking-wider text-slate-400 uppercase">
+        <div className="text-text-theme-secondary mb-0.5 text-xs tracking-wider uppercase">
           System
         </div>
-        <div className="truncate text-lg font-semibold text-slate-100">
+        <div className="text-text-theme-primary truncate text-lg font-semibold">
           {data.name}
         </div>
       </div>
 
-      <div className="h-8 w-px flex-shrink-0 bg-slate-700" />
+      <div className="bg-surface-raised h-8 w-px flex-shrink-0" />
 
       <div>
-        <div className="mb-1 text-xs tracking-wider text-slate-400 uppercase">
+        <div className="text-text-theme-secondary mb-1 text-xs tracking-wider uppercase">
           Faction
         </div>
         <span className="inline-flex items-center rounded border border-sky-700/40 bg-sky-900/40 px-2.5 py-1 text-sm font-medium text-sky-400">
@@ -73,12 +73,12 @@ export function SystemDetailsPanel({
 
       {data.population !== undefined && (
         <>
-          <div className="h-8 w-px flex-shrink-0 bg-slate-700" />
+          <div className="bg-surface-raised h-8 w-px flex-shrink-0" />
           <div>
-            <div className="mb-0.5 text-xs tracking-wider text-slate-400 uppercase">
+            <div className="text-text-theme-secondary mb-0.5 text-xs tracking-wider uppercase">
               Population
             </div>
-            <div className="font-mono text-sm text-slate-200">
+            <div className="text-text-theme-primary font-mono text-sm">
               {formatPopulation(data.population)}
             </div>
           </div>
@@ -87,9 +87,9 @@ export function SystemDetailsPanel({
 
       {data.industrialRating && (
         <>
-          <div className="h-8 w-px flex-shrink-0 bg-slate-700" />
+          <div className="bg-surface-raised h-8 w-px flex-shrink-0" />
           <div>
-            <div className="mb-0.5 text-xs tracking-wider text-slate-400 uppercase">
+            <div className="text-text-theme-secondary mb-0.5 text-xs tracking-wider uppercase">
               Industry
             </div>
             <div className="text-sm font-medium text-amber-400">
@@ -118,32 +118,32 @@ export function ContractDetailsPanel({
 
       <div className="min-w-0">
         <div className="mb-0.5 flex items-center gap-2">
-          <span className="text-xs tracking-wider text-slate-400 uppercase">
+          <span className="text-text-theme-secondary text-xs tracking-wider uppercase">
             Contract
           </span>
-          <span className="inline-flex items-center gap-1 rounded border border-slate-600/50 bg-slate-700/50 px-1.5 py-0.5 text-xs text-slate-300">
+          <span className="border-border-theme/50 bg-surface-raised/50 text-text-theme-secondary inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-xs">
             {getContractTypeIcon(data.type)}
             {data.type}
           </span>
         </div>
-        <div className="truncate text-lg font-semibold text-slate-100">
+        <div className="text-text-theme-primary truncate text-lg font-semibold">
           {data.name}
         </div>
       </div>
 
-      <div className="h-8 w-px flex-shrink-0 bg-slate-700" />
+      <div className="bg-surface-raised h-8 w-px flex-shrink-0" />
 
       <div>
-        <div className="mb-0.5 text-xs tracking-wider text-slate-400 uppercase">
+        <div className="text-text-theme-secondary mb-0.5 text-xs tracking-wider uppercase">
           Employer
         </div>
-        <div className="text-sm text-slate-200">{data.employer}</div>
+        <div className="text-text-theme-primary text-sm">{data.employer}</div>
       </div>
 
-      <div className="h-8 w-px flex-shrink-0 bg-slate-700" />
+      <div className="bg-surface-raised h-8 w-px flex-shrink-0" />
 
       <div>
-        <div className="mb-0.5 text-xs tracking-wider text-slate-400 uppercase">
+        <div className="text-text-theme-secondary mb-0.5 text-xs tracking-wider uppercase">
           Payment
         </div>
         <div className="font-mono text-sm font-semibold text-amber-400">
@@ -151,13 +151,15 @@ export function ContractDetailsPanel({
         </div>
       </div>
 
-      <div className="h-8 w-px flex-shrink-0 bg-slate-700" />
+      <div className="bg-surface-raised h-8 w-px flex-shrink-0" />
 
       <div>
-        <div className="mb-0.5 text-xs tracking-wider text-slate-400 uppercase">
+        <div className="text-text-theme-secondary mb-0.5 text-xs tracking-wider uppercase">
           Deadline
         </div>
-        <div className="font-mono text-sm text-slate-200">{data.deadline}</div>
+        <div className="text-text-theme-primary font-mono text-sm">
+          {data.deadline}
+        </div>
       </div>
     </div>
   );
@@ -178,31 +180,33 @@ export function MechStatusPanel({
       </div>
 
       <div className="min-w-0">
-        <div className="mb-0.5 text-xs tracking-wider text-slate-400 uppercase">
+        <div className="text-text-theme-secondary mb-0.5 text-xs tracking-wider uppercase">
           Mech
         </div>
-        <div className="text-lg font-semibold text-slate-100">
+        <div className="text-text-theme-primary text-lg font-semibold">
           {data.name}{' '}
-          <span className="font-mono text-sm text-slate-400">
+          <span className="text-text-theme-secondary font-mono text-sm">
             {data.variant}
           </span>
         </div>
       </div>
 
-      <div className="h-8 w-px flex-shrink-0 bg-slate-700" />
+      <div className="bg-surface-raised h-8 w-px flex-shrink-0" />
 
       <div>
-        <div className="mb-0.5 text-xs tracking-wider text-slate-400 uppercase">
+        <div className="text-text-theme-secondary mb-0.5 text-xs tracking-wider uppercase">
           Tonnage
         </div>
-        <div className="font-mono text-sm text-slate-200">{data.tonnage}t</div>
+        <div className="text-text-theme-primary font-mono text-sm">
+          {data.tonnage}t
+        </div>
       </div>
 
-      <div className="h-8 w-px flex-shrink-0 bg-slate-700" />
+      <div className="bg-surface-raised h-8 w-px flex-shrink-0" />
 
       <div className="w-40">
         <div className="mb-1 flex items-center justify-between">
-          <span className="text-xs tracking-wider text-slate-400 uppercase">
+          <span className="text-text-theme-secondary text-xs tracking-wider uppercase">
             Armor
           </span>
           <span
@@ -211,7 +215,7 @@ export function MechStatusPanel({
             {data.armorPercent}%
           </span>
         </div>
-        <div className="h-2 overflow-hidden rounded-full bg-slate-700">
+        <div className="bg-surface-raised h-2 overflow-hidden rounded-full">
           <div
             className={`h-full ${getArmorColor(data.armorPercent)} transition-all duration-300`}
             style={{ width: `${data.armorPercent}%` }}
@@ -219,10 +223,10 @@ export function MechStatusPanel({
         </div>
       </div>
 
-      <div className="h-8 w-px flex-shrink-0 bg-slate-700" />
+      <div className="bg-surface-raised h-8 w-px flex-shrink-0" />
 
       <div>
-        <div className="mb-1 text-xs tracking-wider text-slate-400 uppercase">
+        <div className="text-text-theme-secondary mb-1 text-xs tracking-wider uppercase">
           Status
         </div>
         <span
@@ -252,10 +256,10 @@ export function PilotStatusPanel({
       </div>
 
       <div className="min-w-0">
-        <div className="mb-0.5 text-xs tracking-wider text-slate-400 uppercase">
+        <div className="text-text-theme-secondary mb-0.5 text-xs tracking-wider uppercase">
           Pilot
         </div>
-        <div className="truncate text-lg font-semibold text-slate-100">
+        <div className="text-text-theme-primary truncate text-lg font-semibold">
           {data.name}
           <span className="ml-2 text-sm font-normal text-emerald-400">
             &ldquo;{data.callsign}&rdquo;
@@ -263,10 +267,10 @@ export function PilotStatusPanel({
         </div>
       </div>
 
-      <div className="h-8 w-px flex-shrink-0 bg-slate-700" />
+      <div className="bg-surface-raised h-8 w-px flex-shrink-0" />
 
       <div>
-        <div className="mb-0.5 text-xs tracking-wider text-slate-400 uppercase">
+        <div className="text-text-theme-secondary mb-0.5 text-xs tracking-wider uppercase">
           Gunnery
         </div>
         <div className="font-mono text-xl font-bold text-cyan-400">
@@ -274,10 +278,10 @@ export function PilotStatusPanel({
         </div>
       </div>
 
-      <div className="h-8 w-px flex-shrink-0 bg-slate-700" />
+      <div className="bg-surface-raised h-8 w-px flex-shrink-0" />
 
       <div>
-        <div className="mb-0.5 text-xs tracking-wider text-slate-400 uppercase">
+        <div className="text-text-theme-secondary mb-0.5 text-xs tracking-wider uppercase">
           Piloting
         </div>
         <div className="font-mono text-xl font-bold text-amber-400">
@@ -285,10 +289,10 @@ export function PilotStatusPanel({
         </div>
       </div>
 
-      <div className="h-8 w-px flex-shrink-0 bg-slate-700" />
+      <div className="bg-surface-raised h-8 w-px flex-shrink-0" />
 
       <div>
-        <div className="mb-1 text-xs tracking-wider text-slate-400 uppercase">
+        <div className="text-text-theme-secondary mb-1 text-xs tracking-wider uppercase">
           Wounds
         </div>
         <div className="flex items-center gap-1">
@@ -298,7 +302,7 @@ export function PilotStatusPanel({
               className={`h-3 w-3 rounded-full border ${
                 i < data.wounds
                   ? 'border-red-400 bg-red-500'
-                  : 'border-slate-600 bg-slate-700'
+                  : 'border-border-theme bg-surface-raised'
               }`}
             />
           ))}

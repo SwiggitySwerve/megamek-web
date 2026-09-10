@@ -9,265 +9,351 @@
 import { z } from 'zod';
 
 export const UnitContract = z
-  .object({
-    id: z
-      .string()
-      .regex(new RegExp('^\\S+$'))
-      .min(1)
-      .describe(
-        'Unique identifier for the unit. The converter preserves source punctuation and Unicode, so IDs must be non-empty and whitespace-free.',
-      ),
-    chassis: z
-      .string()
-      .min(1)
-      .describe("Chassis name (e.g., 'Atlas')")
-      .optional(),
-    model: z.string().describe("Model designation (e.g., 'AS7-D')").optional(),
-    variant: z.string().describe('Optional variant name').optional(),
-    unitType: z
-      .enum([
-        'BattleMech',
-        'OmniMech',
-        'IndustrialMech',
-        'ProtoMech',
-        'Vehicle',
-        'VTOL',
-        'Aerospace',
-        'Conventional Fighter',
-        'Small Craft',
-        'DropShip',
-        'JumpShip',
-        'WarShip',
-        'Space Station',
-        'Infantry',
-        'Battle Armor',
-        'BattleArmor',
-        'Support Vehicle',
-        'SupportVehicle',
-        'ConventionalFighter',
-        'SmallCraft',
-        'BATTLEARMOR',
-      ])
-      .describe('Type of unit'),
-    configuration: z
-      .enum(['Biped', 'Quad', 'Tripod', 'LAM', 'QuadVee'])
-      .describe('Mech configuration')
-      .optional(),
-    techBase: z
-      .enum(['INNER_SPHERE', 'CLAN', 'MIXED'])
-      .describe('Technology base')
-      .optional(),
-    rulesLevel: z
-      .enum([
-        'INTRODUCTORY',
-        'STANDARD',
-        'ADVANCED',
-        'EXPERIMENTAL',
-        'UNOFFICIAL',
-      ])
-      .describe('Rules level/complexity')
-      .optional(),
-    era: z.string().describe('BattleTech era identifier').optional(),
-    year: z
-      .number()
-      .int()
-      .gte(1000)
-      .lte(9999)
-      .describe('Introduction year')
-      .optional(),
-    tonnage: z.number().gte(0).lte(250).describe('Unit tonnage').optional(),
-    engine: z
+  .union([
+    z
       .object({
-        type: z
+        id: z
+          .string()
+          .regex(new RegExp('^\\S+$'))
+          .min(1)
+          .describe(
+            'Unique identifier for the unit. The converter preserves source punctuation and Unicode, so IDs must be non-empty and whitespace-free.',
+          ),
+        chassis: z.string().min(1).describe("Chassis name (e.g., 'Atlas')"),
+        model: z.string().describe("Model designation (e.g., 'AS7-D')"),
+        variant: z.string().describe('Optional variant name').optional(),
+        unitType: z
+          .enum(['BattleMech', 'OmniMech', 'IndustrialMech'])
+          .describe('Type of unit'),
+        configuration: z
+          .enum(['Biped', 'Quad', 'Tripod', 'LAM', 'QuadVee'])
+          .describe('Mech configuration'),
+        techBase: z
+          .enum(['INNER_SPHERE', 'CLAN', 'MIXED'])
+          .describe('Technology base'),
+        rulesLevel: z
           .enum([
-            'FUSION',
-            'XL',
-            'CLAN_XL',
-            'LIGHT',
-            'COMPACT',
-            'XXL',
-            'ICE',
-            'FUEL_CELL',
-            'FISSION',
-            'FLYWHEEL',
-            'BATTERY',
+            'INTRODUCTORY',
+            'STANDARD',
+            'ADVANCED',
+            'EXPERIMENTAL',
+            'UNOFFICIAL',
           ])
-          .describe('Engine type'),
-        rating: z
+          .describe('Rules level/complexity'),
+        era: z.string().describe('BattleTech era identifier'),
+        year: z
           .number()
           .int()
-          .gte(0)
-          .lte(1000)
-          .describe('Engine rating')
-          .optional(),
-      })
-      .strict()
-      .optional(),
-    gyro: z
-      .object({
-        type: z
+          .gte(1000)
+          .lte(9999)
+          .describe('Introduction year'),
+        tonnage: z.number().gte(0).lte(250).describe('Unit tonnage'),
+        engine: z
+          .object({
+            type: z
+              .enum([
+                'FUSION',
+                'XL',
+                'CLAN_XL',
+                'LIGHT',
+                'COMPACT',
+                'XXL',
+                'ICE',
+                'FUEL_CELL',
+                'FISSION',
+                'FLYWHEEL',
+                'BATTERY',
+              ])
+              .describe('Engine type'),
+            rating: z
+              .number()
+              .int()
+              .gte(0)
+              .lte(1000)
+              .describe('Engine rating')
+              .optional(),
+          })
+          .strict(),
+        gyro: z
+          .object({
+            type: z
+              .enum([
+                'STANDARD',
+                'XL',
+                'COMPACT',
+                'HEAVY_DUTY',
+                'SUPERHEAVY',
+                'NONE',
+              ])
+              .describe('Gyro type'),
+          })
+          .strict(),
+        cockpit: z
           .enum([
             'STANDARD',
-            'XL',
-            'COMPACT',
-            'HEAVY_DUTY',
-            'SUPERHEAVY',
-            'NONE',
-          ])
-          .describe('Gyro type'),
-      })
-      .strict()
-      .optional(),
-    cockpit: z
-      .enum([
-        'STANDARD',
-        'SMALL',
-        'COMMAND_CONSOLE',
-        'TORSO_MOUNTED',
-        'PRIMITIVE',
-        'INDUSTRIAL',
-        'SUPERHEAVY',
-        'SUPERHEAVY_TRIPOD',
-        'INTERFACE',
-        'QUADVEE',
-        'PRIMITIVE_INDUSTRIAL',
-      ])
-      .describe('Cockpit type')
-      .optional(),
-    structure: z
-      .object({
-        type: z
-          .enum([
-            'STANDARD',
-            'ENDO_STEEL',
-            'ENDO_STEEL_CLAN',
-            'ENDO_COMPOSITE',
-            'REINFORCED',
-            'COMPOSITE',
-            'INDUSTRIAL',
-            'ENDO_COMPOSITE_CLAN',
-          ])
-          .describe('Internal structure type'),
-      })
-      .strict()
-      .optional(),
-    armor: z
-      .object({
-        type: z
-          .enum([
-            'STANDARD',
-            'FERRO_FIBROUS',
-            'FERRO_FIBROUS_CLAN',
-            'LIGHT_FERRO_FIBROUS',
-            'HEAVY_FERRO_FIBROUS',
-            'STEALTH',
-            'REACTIVE',
-            'REFLECTIVE',
-            'HARDENED',
+            'SMALL',
+            'COMMAND_CONSOLE',
+            'TORSO_MOUNTED',
             'PRIMITIVE',
             'INDUSTRIAL',
-            'HEAVY_INDUSTRIAL',
-            'COMMERCIAL',
-            'IMPACT_RESISTANT',
-            'FERRO_LAMELLOR',
-            'FIRE_RESISTANT',
-            'MIMETIC',
-            'STEALTH_IMPROVED',
-            'STEALTH_PROTOTYPE',
-            'REACTIVE_CLAN',
-            'REFLECTIVE_CLAN',
-            'BAR_2',
-            'BAR_4',
-            'BAR_5',
-            'BAR_6',
-            'BAR_7',
-            'BAR_9',
+            'SUPERHEAVY',
+            'SUPERHEAVY_TRIPOD',
+            'INTERFACE',
+            'QUADVEE',
+            'PRIMITIVE_INDUSTRIAL',
           ])
-          .describe('Armor type'),
-        allocation: z
+          .describe('Cockpit type'),
+        structure: z
+          .object({
+            type: z
+              .enum([
+                'STANDARD',
+                'ENDO_STEEL',
+                'ENDO_STEEL_CLAN',
+                'ENDO_COMPOSITE',
+                'REINFORCED',
+                'COMPOSITE',
+                'INDUSTRIAL',
+                'ENDO_COMPOSITE_CLAN',
+              ])
+              .describe('Internal structure type'),
+          })
+          .strict(),
+        armor: z
+          .object({
+            type: z
+              .enum([
+                'STANDARD',
+                'FERRO_FIBROUS',
+                'FERRO_FIBROUS_CLAN',
+                'LIGHT_FERRO_FIBROUS',
+                'HEAVY_FERRO_FIBROUS',
+                'STEALTH',
+                'REACTIVE',
+                'REFLECTIVE',
+                'HARDENED',
+                'PRIMITIVE',
+                'INDUSTRIAL',
+                'HEAVY_INDUSTRIAL',
+                'COMMERCIAL',
+                'IMPACT_RESISTANT',
+                'FERRO_LAMELLOR',
+                'FIRE_RESISTANT',
+                'MIMETIC',
+                'STEALTH_IMPROVED',
+                'STEALTH_PROTOTYPE',
+                'REACTIVE_CLAN',
+                'REFLECTIVE_CLAN',
+                'BAR_2',
+                'BAR_4',
+                'BAR_5',
+                'BAR_6',
+                'BAR_7',
+                'BAR_9',
+              ])
+              .describe('Armor type'),
+            allocation: z
+              .record(
+                z.string(),
+                z.any().superRefine((x, ctx) => {
+                  const schemas = [
+                    z.number().int().gte(0),
+                    z
+                      .object({
+                        front: z.number().int().gte(0),
+                        rear: z.number().int().gte(0),
+                      })
+                      .strict(),
+                  ];
+                  const { errors, failed } = schemas.reduce<{
+                    errors: z.core.$ZodIssue[];
+                    failed: number;
+                  }>(
+                    ({ errors, failed }, schema) =>
+                      ((result) =>
+                        result.error
+                          ? {
+                              errors: [...errors, ...result.error.issues],
+                              failed: failed + 1,
+                            }
+                          : { errors, failed })(schema.safeParse(x)),
+                    { errors: [], failed: 0 },
+                  );
+                  const passed = schemas.length - failed;
+                  if (passed !== 1) {
+                    ctx.addIssue(
+                      errors.length
+                        ? {
+                            path: [],
+                            code: 'invalid_union',
+                            errors: [errors],
+                            message:
+                              'Invalid input: Should pass single schema. Passed ' +
+                              passed,
+                          }
+                        : {
+                            path: [],
+                            code: 'custom',
+                            errors: [errors],
+                            message:
+                              'Invalid input: Should pass single schema. Passed ' +
+                              passed,
+                          },
+                    );
+                  }
+                }),
+              )
+              .describe('Armor points per location')
+              .optional(),
+            byLocation: z
+              .record(z.string(), z.number().int().gte(0))
+              .describe('Armor points per vehicle location')
+              .optional(),
+            byArc: z
+              .record(z.string(), z.number().int().gte(0))
+              .describe('Armor points per aerospace arc')
+              .optional(),
+            perTrooper: z
+              .number()
+              .int()
+              .gte(0)
+              .describe('Battle armor points per trooper')
+              .optional(),
+          })
+          .strict()
+          .and(
+            z.union([
+              z.object({
+                allocation: z.record(
+                  z.string(),
+                  z.any().superRefine((x, ctx) => {
+                    const schemas = [
+                      z.number().int().gte(0),
+                      z
+                        .object({
+                          front: z.number().int().gte(0),
+                          rear: z.number().int().gte(0),
+                        })
+                        .strict(),
+                    ];
+                    const { errors, failed } = schemas.reduce<{
+                      errors: z.core.$ZodIssue[];
+                      failed: number;
+                    }>(
+                      ({ errors, failed }, schema) =>
+                        ((result) =>
+                          result.error
+                            ? {
+                                errors: [...errors, ...result.error.issues],
+                                failed: failed + 1,
+                              }
+                            : { errors, failed })(schema.safeParse(x)),
+                      { errors: [], failed: 0 },
+                    );
+                    const passed = schemas.length - failed;
+                    if (passed !== 1) {
+                      ctx.addIssue(
+                        errors.length
+                          ? {
+                              path: [],
+                              code: 'invalid_union',
+                              errors: [errors],
+                              message:
+                                'Invalid input: Should pass single schema. Passed ' +
+                                passed,
+                            }
+                          : {
+                              path: [],
+                              code: 'custom',
+                              errors: [errors],
+                              message:
+                                'Invalid input: Should pass single schema. Passed ' +
+                                passed,
+                            },
+                      );
+                    }
+                  }),
+                ),
+              }),
+              z.object({
+                byLocation: z.record(z.string(), z.number().int().gte(0)),
+              }),
+              z.object({
+                byArc: z.record(z.string(), z.number().int().gte(0)),
+              }),
+              z.object({ perTrooper: z.number().int().gte(0) }),
+            ]),
+          ),
+        heatSinks: z
+          .object({
+            type: z
+              .enum(['SINGLE', 'DOUBLE', 'DOUBLE_CLAN', 'COMPACT', 'LASER'])
+              .describe('Heat sink type'),
+            count: z
+              .number()
+              .int()
+              .gte(0)
+              .describe('Total number of heat sinks'),
+          })
+          .strict(),
+        movement: z
+          .object({
+            walk: z.number().int().gte(0).describe('Walking MP'),
+            jump: z.number().int().gte(0).describe('Jumping MP'),
+            jumpJetType: z
+              .enum(['STANDARD', 'IMPROVED', 'MECHANICAL', 'UMU'])
+              .describe('Jump jet type')
+              .optional(),
+            enhancements: z
+              .array(z.string())
+              .describe('Movement enhancements (MASC, Supercharger, etc.)')
+              .optional(),
+          })
+          .catchall(z.any()),
+        equipment: z
+          .array(
+            z
+              .object({
+                id: z.string().describe('Equipment ID reference'),
+                name: z
+                  .string()
+                  .describe('Source display name for the mounted equipment')
+                  .optional(),
+                location: z.string().describe('Mounting location'),
+                slots: z
+                  .array(z.number().int())
+                  .describe('Specific slot indices')
+                  .optional(),
+                isRearMounted: z
+                  .boolean()
+                  .describe('Whether weapon is rear-facing')
+                  .default(false),
+                linkedAmmo: z
+                  .string()
+                  .describe('Linked ammunition ID')
+                  .optional(),
+                isRemovable: z
+                  .boolean()
+                  .describe(
+                    'Whether the mounted item can be removed in the customizer',
+                  )
+                  .optional(),
+                isOmniPodMounted: z
+                  .boolean()
+                  .describe(
+                    'Whether the mounted item belongs to an OmniMech pod',
+                  )
+                  .optional(),
+              })
+              .strict(),
+          )
+          .describe('Mounted equipment list'),
+        criticalSlots: z
           .record(
             z.string(),
-            z.any().superRefine((x, ctx) => {
-              const schemas = [
-                z.number().int().gte(0),
-                z
-                  .object({
-                    front: z.number().int().gte(0),
-                    rear: z.number().int().gte(0),
-                  })
-                  .strict(),
-              ];
-              const { errors, failed } = schemas.reduce<{
-                errors: z.core.$ZodIssue[];
-                failed: number;
-              }>(
-                ({ errors, failed }, schema) =>
-                  ((result) =>
-                    result.error
-                      ? {
-                          errors: [...errors, ...result.error.issues],
-                          failed: failed + 1,
-                        }
-                      : { errors, failed })(schema.safeParse(x)),
-                { errors: [], failed: 0 },
-              );
-              const passed = schemas.length - failed;
-              if (passed !== 1) {
-                ctx.addIssue(
-                  errors.length
-                    ? {
-                        path: [],
-                        code: 'invalid_union',
-                        errors: [errors],
-                        message:
-                          'Invalid input: Should pass single schema. Passed ' +
-                          passed,
-                      }
-                    : {
-                        path: [],
-                        code: 'custom',
-                        errors: [errors],
-                        message:
-                          'Invalid input: Should pass single schema. Passed ' +
-                          passed,
-                      },
-                );
-              }
-            }),
-          )
-          .describe('Armor points per location')
-          .optional(),
-        byLocation: z
-          .record(z.string(), z.number().int().gte(0))
-          .describe('Armor points per vehicle location')
-          .optional(),
-        byArc: z
-          .record(z.string(), z.number().int().gte(0))
-          .describe('Armor points per aerospace arc')
-          .optional(),
-        perTrooper: z
-          .number()
-          .int()
-          .gte(0)
-          .describe('Battle armor points per trooper')
-          .optional(),
-      })
-      .strict()
-      .and(
-        z.union([
-          z.object({
-            allocation: z.record(
-              z.string(),
+            z.array(
               z.any().superRefine((x, ctx) => {
-                const schemas = [
-                  z.number().int().gte(0),
-                  z
-                    .object({
-                      front: z.number().int().gte(0),
-                      rear: z.number().int().gte(0),
-                    })
-                    .strict(),
-                ];
+                const schemas = [z.string(), z.null()];
                 const { errors, failed } = schemas.reduce<{
                   errors: z.core.$ZodIssue[];
                   failed: number;
@@ -306,132 +392,512 @@ export const UnitContract = z
                 }
               }),
             ),
-          }),
-          z.object({
-            byLocation: z.record(z.string(), z.number().int().gte(0)),
-          }),
-          z.object({ byArc: z.record(z.string(), z.number().int().gte(0)) }),
-          z.object({ perTrooper: z.number().int().gte(0) }),
-        ]),
-      )
-      .optional(),
-    heatSinks: z
-      .object({
-        type: z
-          .enum(['SINGLE', 'DOUBLE', 'DOUBLE_CLAN', 'COMPACT', 'LASER'])
-          .describe('Heat sink type'),
-        count: z.number().int().gte(0).describe('Total number of heat sinks'),
-      })
-      .strict()
-      .optional(),
-    movement: z
-      .object({
-        walk: z.number().int().gte(0).describe('Walking MP').optional(),
-        jump: z.number().int().gte(0).describe('Jumping MP').optional(),
-        jumpJetType: z
-          .enum(['STANDARD', 'IMPROVED', 'MECHANICAL', 'UMU'])
-          .describe('Jump jet type')
+          )
+          .describe('Critical slot assignments per location'),
+        quirks: z.array(z.string()).describe('Unit quirks').optional(),
+        fluff: z
+          .object({
+            overview: z.string().optional(),
+            capabilities: z.string().optional(),
+            history: z.string().optional(),
+            deployment: z.string().optional(),
+            variants: z.string().optional(),
+            notableUnits: z.string().optional(),
+            manufacturer: z.string().optional(),
+            primaryFactory: z.string().optional(),
+            systemManufacturer: z.record(z.string(), z.string()).optional(),
+          })
+          .strict()
+          .describe('Fluff/flavor text')
           .optional(),
-        enhancements: z
-          .array(z.string())
-          .describe('Movement enhancements (MASC, Supercharger, etc.)')
+        sourceDefinition: z
+          .object({
+            source: z.enum(['canonical', 'custom']),
+            id: z.string().min(1),
+            version: z.number().int().gte(1).optional(),
+          })
+          .strict()
+          .describe(
+            'Originating source definition, independent of editor or campaign instance identity',
+          )
           .optional(),
+        mulId: z
+          .union([z.number().int(), z.string().regex(new RegExp('^[0-9-]+$'))])
+          .describe(
+            'Master Unit List identifier; legacy integer or lossless editor text',
+          )
+          .optional(),
+        role: z.string().describe('Combat role').optional(),
+        source: z.string().describe('Source book/publication').optional(),
       })
       .catchall(z.any())
-      .optional(),
-    equipment: z
-      .array(
-        z
-          .object({
-            id: z.string().describe('Equipment ID reference'),
-            name: z
-              .string()
-              .describe('Source display name for the mounted equipment')
-              .optional(),
-            location: z.string().describe('Mounting location'),
-            slots: z
-              .array(z.number().int())
-              .describe('Specific slot indices')
-              .optional(),
-            isRearMounted: z
-              .boolean()
-              .describe('Whether weapon is rear-facing')
-              .default(false),
-            linkedAmmo: z.string().describe('Linked ammunition ID').optional(),
-          })
-          .strict(),
-      )
-      .describe('Mounted equipment list')
-      .optional(),
-    criticalSlots: z
-      .record(
-        z.string(),
-        z.array(
-          z.any().superRefine((x, ctx) => {
-            const schemas = [z.string(), z.null()];
-            const { errors, failed } = schemas.reduce<{
-              errors: z.core.$ZodIssue[];
-              failed: number;
-            }>(
-              ({ errors, failed }, schema) =>
-                ((result) =>
-                  result.error
-                    ? {
-                        errors: [...errors, ...result.error.issues],
-                        failed: failed + 1,
-                      }
-                    : { errors, failed })(schema.safeParse(x)),
-              { errors: [], failed: 0 },
-            );
-            const passed = schemas.length - failed;
-            if (passed !== 1) {
-              ctx.addIssue(
-                errors.length
-                  ? {
-                      path: [],
-                      code: 'invalid_union',
-                      errors: [errors],
-                      message:
-                        'Invalid input: Should pass single schema. Passed ' +
-                        passed,
-                    }
-                  : {
-                      path: [],
-                      code: 'custom',
-                      errors: [errors],
-                      message:
-                        'Invalid input: Should pass single schema. Passed ' +
-                        passed,
-                    },
-              );
-            }
-          }),
-        ),
-      )
-      .describe('Critical slot assignments per location')
-      .optional(),
-    quirks: z.array(z.string()).describe('Unit quirks').optional(),
-    fluff: z
+      .describe(
+        'Schema for serialized BattleTech unit definitions (BattleMechs, vehicles, etc.)',
+      ),
+    z
       .object({
-        overview: z.string().optional(),
-        capabilities: z.string().optional(),
-        history: z.string().optional(),
-        deployment: z.string().optional(),
-        variants: z.string().optional(),
-        notableUnits: z.string().optional(),
-        manufacturer: z.string().optional(),
-        primaryFactory: z.string().optional(),
-        systemManufacturer: z.record(z.string(), z.string()).optional(),
+        id: z
+          .string()
+          .regex(new RegExp('^\\S+$'))
+          .min(1)
+          .describe(
+            'Unique identifier for the unit. The converter preserves source punctuation and Unicode, so IDs must be non-empty and whitespace-free.',
+          ),
+        chassis: z
+          .string()
+          .min(1)
+          .describe("Chassis name (e.g., 'Atlas')")
+          .optional(),
+        model: z
+          .string()
+          .describe("Model designation (e.g., 'AS7-D')")
+          .optional(),
+        variant: z.string().describe('Optional variant name').optional(),
+        unitType: z
+          .enum([
+            'ProtoMech',
+            'Vehicle',
+            'VTOL',
+            'Aerospace',
+            'Conventional Fighter',
+            'Small Craft',
+            'DropShip',
+            'JumpShip',
+            'WarShip',
+            'Space Station',
+            'Infantry',
+            'Battle Armor',
+            'BattleArmor',
+            'Support Vehicle',
+            'SupportVehicle',
+            'ConventionalFighter',
+            'SmallCraft',
+            'BATTLEARMOR',
+          ])
+          .describe('Type of unit'),
+        configuration: z
+          .enum(['Biped', 'Quad', 'Tripod', 'LAM', 'QuadVee'])
+          .describe('Mech configuration')
+          .optional(),
+        techBase: z
+          .enum(['INNER_SPHERE', 'CLAN', 'MIXED'])
+          .describe('Technology base')
+          .optional(),
+        rulesLevel: z
+          .enum([
+            'INTRODUCTORY',
+            'STANDARD',
+            'ADVANCED',
+            'EXPERIMENTAL',
+            'UNOFFICIAL',
+          ])
+          .describe('Rules level/complexity')
+          .optional(),
+        era: z.string().describe('BattleTech era identifier').optional(),
+        year: z
+          .number()
+          .int()
+          .gte(1000)
+          .lte(9999)
+          .describe('Introduction year')
+          .optional(),
+        tonnage: z.number().gte(0).lte(250).describe('Unit tonnage').optional(),
+        engine: z
+          .object({
+            type: z
+              .enum([
+                'FUSION',
+                'XL',
+                'CLAN_XL',
+                'LIGHT',
+                'COMPACT',
+                'XXL',
+                'ICE',
+                'FUEL_CELL',
+                'FISSION',
+                'FLYWHEEL',
+                'BATTERY',
+              ])
+              .describe('Engine type'),
+            rating: z
+              .number()
+              .int()
+              .gte(0)
+              .lte(1000)
+              .describe('Engine rating')
+              .optional(),
+          })
+          .strict()
+          .optional(),
+        gyro: z
+          .object({
+            type: z
+              .enum([
+                'STANDARD',
+                'XL',
+                'COMPACT',
+                'HEAVY_DUTY',
+                'SUPERHEAVY',
+                'NONE',
+              ])
+              .describe('Gyro type'),
+          })
+          .strict()
+          .optional(),
+        cockpit: z
+          .enum([
+            'STANDARD',
+            'SMALL',
+            'COMMAND_CONSOLE',
+            'TORSO_MOUNTED',
+            'PRIMITIVE',
+            'INDUSTRIAL',
+            'SUPERHEAVY',
+            'SUPERHEAVY_TRIPOD',
+            'INTERFACE',
+            'QUADVEE',
+            'PRIMITIVE_INDUSTRIAL',
+          ])
+          .describe('Cockpit type')
+          .optional(),
+        structure: z
+          .object({
+            type: z
+              .enum([
+                'STANDARD',
+                'ENDO_STEEL',
+                'ENDO_STEEL_CLAN',
+                'ENDO_COMPOSITE',
+                'REINFORCED',
+                'COMPOSITE',
+                'INDUSTRIAL',
+                'ENDO_COMPOSITE_CLAN',
+              ])
+              .describe('Internal structure type'),
+          })
+          .strict()
+          .optional(),
+        armor: z
+          .object({
+            type: z
+              .enum([
+                'STANDARD',
+                'FERRO_FIBROUS',
+                'FERRO_FIBROUS_CLAN',
+                'LIGHT_FERRO_FIBROUS',
+                'HEAVY_FERRO_FIBROUS',
+                'STEALTH',
+                'REACTIVE',
+                'REFLECTIVE',
+                'HARDENED',
+                'PRIMITIVE',
+                'INDUSTRIAL',
+                'HEAVY_INDUSTRIAL',
+                'COMMERCIAL',
+                'IMPACT_RESISTANT',
+                'FERRO_LAMELLOR',
+                'FIRE_RESISTANT',
+                'MIMETIC',
+                'STEALTH_IMPROVED',
+                'STEALTH_PROTOTYPE',
+                'REACTIVE_CLAN',
+                'REFLECTIVE_CLAN',
+                'BAR_2',
+                'BAR_4',
+                'BAR_5',
+                'BAR_6',
+                'BAR_7',
+                'BAR_9',
+              ])
+              .describe('Armor type'),
+            allocation: z
+              .record(
+                z.string(),
+                z.any().superRefine((x, ctx) => {
+                  const schemas = [
+                    z.number().int().gte(0),
+                    z
+                      .object({
+                        front: z.number().int().gte(0),
+                        rear: z.number().int().gte(0),
+                      })
+                      .strict(),
+                  ];
+                  const { errors, failed } = schemas.reduce<{
+                    errors: z.core.$ZodIssue[];
+                    failed: number;
+                  }>(
+                    ({ errors, failed }, schema) =>
+                      ((result) =>
+                        result.error
+                          ? {
+                              errors: [...errors, ...result.error.issues],
+                              failed: failed + 1,
+                            }
+                          : { errors, failed })(schema.safeParse(x)),
+                    { errors: [], failed: 0 },
+                  );
+                  const passed = schemas.length - failed;
+                  if (passed !== 1) {
+                    ctx.addIssue(
+                      errors.length
+                        ? {
+                            path: [],
+                            code: 'invalid_union',
+                            errors: [errors],
+                            message:
+                              'Invalid input: Should pass single schema. Passed ' +
+                              passed,
+                          }
+                        : {
+                            path: [],
+                            code: 'custom',
+                            errors: [errors],
+                            message:
+                              'Invalid input: Should pass single schema. Passed ' +
+                              passed,
+                          },
+                    );
+                  }
+                }),
+              )
+              .describe('Armor points per location')
+              .optional(),
+            byLocation: z
+              .record(z.string(), z.number().int().gte(0))
+              .describe('Armor points per vehicle location')
+              .optional(),
+            byArc: z
+              .record(z.string(), z.number().int().gte(0))
+              .describe('Armor points per aerospace arc')
+              .optional(),
+            perTrooper: z
+              .number()
+              .int()
+              .gte(0)
+              .describe('Battle armor points per trooper')
+              .optional(),
+          })
+          .strict()
+          .and(
+            z.union([
+              z.object({
+                allocation: z.record(
+                  z.string(),
+                  z.any().superRefine((x, ctx) => {
+                    const schemas = [
+                      z.number().int().gte(0),
+                      z
+                        .object({
+                          front: z.number().int().gte(0),
+                          rear: z.number().int().gte(0),
+                        })
+                        .strict(),
+                    ];
+                    const { errors, failed } = schemas.reduce<{
+                      errors: z.core.$ZodIssue[];
+                      failed: number;
+                    }>(
+                      ({ errors, failed }, schema) =>
+                        ((result) =>
+                          result.error
+                            ? {
+                                errors: [...errors, ...result.error.issues],
+                                failed: failed + 1,
+                              }
+                            : { errors, failed })(schema.safeParse(x)),
+                      { errors: [], failed: 0 },
+                    );
+                    const passed = schemas.length - failed;
+                    if (passed !== 1) {
+                      ctx.addIssue(
+                        errors.length
+                          ? {
+                              path: [],
+                              code: 'invalid_union',
+                              errors: [errors],
+                              message:
+                                'Invalid input: Should pass single schema. Passed ' +
+                                passed,
+                            }
+                          : {
+                              path: [],
+                              code: 'custom',
+                              errors: [errors],
+                              message:
+                                'Invalid input: Should pass single schema. Passed ' +
+                                passed,
+                            },
+                      );
+                    }
+                  }),
+                ),
+              }),
+              z.object({
+                byLocation: z.record(z.string(), z.number().int().gte(0)),
+              }),
+              z.object({
+                byArc: z.record(z.string(), z.number().int().gte(0)),
+              }),
+              z.object({ perTrooper: z.number().int().gte(0) }),
+            ]),
+          )
+          .optional(),
+        heatSinks: z
+          .object({
+            type: z
+              .enum(['SINGLE', 'DOUBLE', 'DOUBLE_CLAN', 'COMPACT', 'LASER'])
+              .describe('Heat sink type'),
+            count: z
+              .number()
+              .int()
+              .gte(0)
+              .describe('Total number of heat sinks'),
+          })
+          .strict()
+          .optional(),
+        movement: z
+          .object({
+            walk: z.number().int().gte(0).describe('Walking MP').optional(),
+            jump: z.number().int().gte(0).describe('Jumping MP').optional(),
+            jumpJetType: z
+              .enum(['STANDARD', 'IMPROVED', 'MECHANICAL', 'UMU'])
+              .describe('Jump jet type')
+              .optional(),
+            enhancements: z
+              .array(z.string())
+              .describe('Movement enhancements (MASC, Supercharger, etc.)')
+              .optional(),
+          })
+          .catchall(z.any())
+          .optional(),
+        equipment: z
+          .array(
+            z
+              .object({
+                id: z.string().describe('Equipment ID reference'),
+                name: z
+                  .string()
+                  .describe('Source display name for the mounted equipment')
+                  .optional(),
+                location: z.string().describe('Mounting location'),
+                slots: z
+                  .array(z.number().int())
+                  .describe('Specific slot indices')
+                  .optional(),
+                isRearMounted: z
+                  .boolean()
+                  .describe('Whether weapon is rear-facing')
+                  .default(false),
+                linkedAmmo: z
+                  .string()
+                  .describe('Linked ammunition ID')
+                  .optional(),
+                isRemovable: z
+                  .boolean()
+                  .describe(
+                    'Whether the mounted item can be removed in the customizer',
+                  )
+                  .optional(),
+                isOmniPodMounted: z
+                  .boolean()
+                  .describe(
+                    'Whether the mounted item belongs to an OmniMech pod',
+                  )
+                  .optional(),
+              })
+              .strict(),
+          )
+          .describe('Mounted equipment list')
+          .optional(),
+        criticalSlots: z
+          .record(
+            z.string(),
+            z.array(
+              z.any().superRefine((x, ctx) => {
+                const schemas = [z.string(), z.null()];
+                const { errors, failed } = schemas.reduce<{
+                  errors: z.core.$ZodIssue[];
+                  failed: number;
+                }>(
+                  ({ errors, failed }, schema) =>
+                    ((result) =>
+                      result.error
+                        ? {
+                            errors: [...errors, ...result.error.issues],
+                            failed: failed + 1,
+                          }
+                        : { errors, failed })(schema.safeParse(x)),
+                  { errors: [], failed: 0 },
+                );
+                const passed = schemas.length - failed;
+                if (passed !== 1) {
+                  ctx.addIssue(
+                    errors.length
+                      ? {
+                          path: [],
+                          code: 'invalid_union',
+                          errors: [errors],
+                          message:
+                            'Invalid input: Should pass single schema. Passed ' +
+                            passed,
+                        }
+                      : {
+                          path: [],
+                          code: 'custom',
+                          errors: [errors],
+                          message:
+                            'Invalid input: Should pass single schema. Passed ' +
+                            passed,
+                        },
+                  );
+                }
+              }),
+            ),
+          )
+          .describe('Critical slot assignments per location')
+          .optional(),
+        quirks: z.array(z.string()).describe('Unit quirks').optional(),
+        fluff: z
+          .object({
+            overview: z.string().optional(),
+            capabilities: z.string().optional(),
+            history: z.string().optional(),
+            deployment: z.string().optional(),
+            variants: z.string().optional(),
+            notableUnits: z.string().optional(),
+            manufacturer: z.string().optional(),
+            primaryFactory: z.string().optional(),
+            systemManufacturer: z.record(z.string(), z.string()).optional(),
+          })
+          .strict()
+          .describe('Fluff/flavor text')
+          .optional(),
+        sourceDefinition: z
+          .object({
+            source: z.enum(['canonical', 'custom']),
+            id: z.string().min(1),
+            version: z.number().int().gte(1).optional(),
+          })
+          .strict()
+          .describe(
+            'Originating source definition, independent of editor or campaign instance identity',
+          )
+          .optional(),
+        mulId: z
+          .union([z.number().int(), z.string().regex(new RegExp('^[0-9-]+$'))])
+          .describe(
+            'Master Unit List identifier; legacy integer or lossless editor text',
+          )
+          .optional(),
+        role: z.string().describe('Combat role').optional(),
+        source: z.string().describe('Source book/publication').optional(),
       })
-      .strict()
-      .describe('Fluff/flavor text')
-      .optional(),
-    mulId: z.number().int().describe('Master Unit List ID').optional(),
-    role: z.string().describe('Combat role').optional(),
-    source: z.string().describe('Source book/publication').optional(),
-  })
-  .catchall(z.any())
-  .and(z.intersection(z.any(), z.any()))
+      .catchall(z.any())
+      .describe(
+        'Schema for serialized BattleTech unit definitions (BattleMechs, vehicles, etc.)',
+      ),
+  ])
   .describe(
     'Schema for serialized BattleTech unit definitions (BattleMechs, vehicles, etc.)',
   );

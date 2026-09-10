@@ -47,6 +47,8 @@ function mapCombatEquipment(
   eq: UnitEquipment,
   weaponData: WeaponLookupResult | undefined,
 ): IRecordSheetEquipment {
+  if (eq.isAmmo) return mapFallbackCombatEquipment(eq);
+
   if (weaponData) {
     return mapWeaponEquipment(eq, weaponData);
   }
@@ -59,6 +61,7 @@ function mapCombatEquipment(
 }
 
 function locationAbbr(location: string): string {
+  if (!location || location === 'Unassigned') return '—';
   return LOCATION_ABBREVIATIONS[location as MechLocation] || location;
 }
 

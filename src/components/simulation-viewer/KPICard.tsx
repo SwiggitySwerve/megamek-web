@@ -2,6 +2,7 @@ import React, { memo } from 'react';
 
 import type { IKPICardProps } from '@/components/simulation-viewer/types';
 
+import { AppIcon, type AppIconName } from '@/components/ui/AppIcon';
 import { FOCUS_RING_CLASSES } from '@/utils/accessibility';
 
 const Sparkline = ({
@@ -46,17 +47,17 @@ const DIRECTION_CONFIG = {
   up: {
     color: 'text-green-600 dark:text-green-400',
     strokeColor: '#16a34a',
-    arrow: '↑',
+    arrow: 'arrow-up' as AppIconName,
   },
   down: {
     color: 'text-red-600 dark:text-red-400',
     strokeColor: '#dc2626',
-    arrow: '↓',
+    arrow: 'arrow-down' as AppIconName,
   },
   neutral: {
-    color: 'text-gray-600 dark:text-gray-400',
-    strokeColor: '#4b5563',
-    arrow: '→',
+    color: 'text-text-theme-muted',
+    strokeColor: 'var(--text-secondary)',
+    arrow: 'arrow-right' as AppIconName,
   },
 } as const;
 
@@ -74,7 +75,7 @@ export const KPICard = memo<IKPICardProps>(
     const dirConfig = DIRECTION_CONFIG[comparisonDirection];
 
     const cardClasses = [
-      'bg-white dark:bg-gray-800',
+      'bg-surface-base ',
       'rounded-lg',
       'shadow-md hover:shadow-lg',
       'transition-shadow duration-200',
@@ -104,14 +105,14 @@ export const KPICard = memo<IKPICardProps>(
         data-testid="kpi-card"
       >
         <p
-          className="text-sm tracking-wide text-gray-600 uppercase dark:text-gray-400"
+          className="text-text-theme-secondary text-sm tracking-wide uppercase"
           data-testid="kpi-label"
         >
           {label}
         </p>
 
         <p
-          className="mt-1 text-2xl font-bold text-gray-900 md:text-3xl dark:text-gray-100"
+          className="text-text-theme-primary mt-1 text-2xl font-bold md:text-3xl"
           data-testid="kpi-value"
         >
           {value}
@@ -122,7 +123,10 @@ export const KPICard = memo<IKPICardProps>(
             className={`text-sm ${dirConfig.color} mt-1`}
             data-testid="kpi-comparison"
           >
-            <span aria-hidden="true">{dirConfig.arrow}</span> {comparison}
+            <span aria-hidden="true">
+              <AppIcon name={dirConfig.arrow} size="inline" />
+            </span>{' '}
+            {comparison}
           </p>
         )}
 

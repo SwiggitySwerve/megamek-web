@@ -118,7 +118,9 @@ export function GmCampaignInterventionActions({
         type="button"
         variant={canApprove || canTakeManualControl ? 'secondary' : 'primary'}
         className={
-          canApprove || canTakeManualControl ? '' : 'font-bold !text-slate-950'
+          canApprove || canTakeManualControl
+            ? ''
+            : '!text-text-theme-primary font-bold'
         }
         onClick={handleGenerateCorrection}
         data-testid="gm-ledger-preview-btn"
@@ -128,7 +130,7 @@ export function GmCampaignInterventionActions({
       <Button
         type="button"
         variant={canApprove ? 'success' : 'secondary'}
-        className={canApprove ? 'font-bold !text-slate-950' : ''}
+        className={canApprove ? '!text-text-theme-primary font-bold' : ''}
         onClick={onApprove}
         disabled={!canApprove}
         data-testid="gm-ledger-approve-btn"

@@ -56,7 +56,7 @@ export function SyncStatusPanelContent({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
       <div
-        className={`mx-4 flex max-h-[85vh] w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-gray-700/50 bg-gray-800 shadow-2xl shadow-black/50 ${className}`}
+        className={`border-border-theme/50 bg-surface-base mx-4 flex max-h-[85vh] w-full max-w-xl flex-col overflow-hidden rounded-2xl border shadow-2xl shadow-black/50 ${className}`}
       >
         <SyncStatusHeader onClose={onClose} />
         <SyncStatusBody

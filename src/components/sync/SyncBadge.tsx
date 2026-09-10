@@ -7,6 +7,8 @@
  */
 import React, { useState, useCallback } from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { SyncState } from '@/lib/p2p/types';
 
 // =============================================================================
@@ -35,87 +37,38 @@ interface StateConfig {
   animate: boolean;
 }
 
-function getSyncedIcon(className: string): React.ReactNode {
-  return (
-    <svg
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M5 13l4 4L19 7"
-      />
-    </svg>
-  );
+function getSyncedIcon(size: 'inline' | 'control'): React.ReactNode {
+  return <AppIcon name="check" size={size} />;
 }
 
-function getPendingIcon(className: string): React.ReactNode {
+function getPendingIcon(size: 'inline' | 'control'): React.ReactNode {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <SvgIcon size={size} fill="currentColor">
       <circle cx="12" cy="12" r="4" />
-    </svg>
+    </SvgIcon>
   );
 }
 
-function getSyncingIcon(className: string): React.ReactNode {
+function getSyncingIcon(size: 'inline' | 'control'): React.ReactNode {
+  return <AppIcon name="refresh" size={size} className="animate-spin" />;
+}
+
+function getConflictIcon(size: 'inline' | 'control'): React.ReactNode {
+  return <AppIcon name="warning" size={size} />;
+}
+
+function getDisabledIcon(size: 'inline' | 'control'): React.ReactNode {
   return (
-    <svg
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-      />
-    </svg>
+    <SvgIcon size={size}>
+      <path d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+    </SvgIcon>
   );
 }
 
-function getConflictIcon(className: string): React.ReactNode {
-  return (
-    <svg
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-      />
-    </svg>
-  );
-}
-
-function getDisabledIcon(className: string): React.ReactNode {
-  return (
-    <svg
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
-      />
-    </svg>
-  );
-}
-
-function getStateConfig(state: SyncState, iconSize: string): StateConfig {
+function getStateConfig(
+  state: SyncState,
+  iconSize: 'inline' | 'control',
+): StateConfig {
   switch (state) {
     case SyncState.Synced:
       return {
@@ -137,7 +90,7 @@ function getStateConfig(state: SyncState, iconSize: string): StateConfig {
       };
     case SyncState.Syncing:
       return {
-        icon: getSyncingIcon(`${iconSize} animate-spin`),
+        icon: getSyncingIcon(iconSize),
         bgColor: 'bg-cyan-600/20',
         iconColor: 'text-cyan-400',
         borderColor: 'border-cyan-500/40',
@@ -157,9 +110,9 @@ function getStateConfig(state: SyncState, iconSize: string): StateConfig {
     default:
       return {
         icon: getDisabledIcon(iconSize),
-        bgColor: 'bg-slate-600/20',
-        iconColor: 'text-slate-500',
-        borderColor: 'border-slate-500/30',
+        bgColor: 'bg-surface-raised/20',
+        iconColor: 'text-text-theme-muted',
+        borderColor: 'border-border-theme-strong/30',
         tooltip: 'Sync disabled',
         animate: false,
       };
@@ -173,11 +126,11 @@ function getStateConfig(state: SyncState, iconSize: string): StateConfig {
 const sizeConfig = {
   sm: {
     container: 'w-5 h-5',
-    icon: 'w-3 h-3',
+    icon: 'inline' as const,
   },
   md: {
     container: 'w-6 h-6',
-    icon: 'w-3.5 h-3.5',
+    icon: 'control' as const,
   },
 };
 

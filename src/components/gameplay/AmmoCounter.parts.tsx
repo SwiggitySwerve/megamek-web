@@ -52,7 +52,7 @@ export function AmmoCounterHeader({
 
   return (
     <div className="mb-3 flex items-center justify-between">
-      <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+      <h3 className="text-text-theme-primary text-sm font-semibold dark:text-white">
         {weaponName}
       </h3>
       <button
@@ -61,7 +61,7 @@ export function AmmoCounterHeader({
         disabled={reloadDisabled}
         className={`min-h-[44px] min-w-[44px] rounded-md px-3 py-2 text-sm font-medium transition-colors ${
           reloadDisabled
-            ? 'cursor-not-allowed bg-gray-200 text-gray-400 dark:bg-gray-700 dark:text-gray-500'
+            ? 'bg-surface-raised text-text-theme-secondary dark:bg-surface-raised dark:text-text-theme-muted cursor-not-allowed'
             : 'bg-blue-500 text-white hover:bg-blue-600'
         }`}
         aria-label={`Reload ${weaponName}`}
@@ -98,13 +98,15 @@ export function AmmoReadout({
         >
           {shotsRemaining}
         </span>
-        <span className="text-xl text-gray-500 dark:text-gray-400">/</span>
-        <span className="text-xl text-gray-600 tabular-nums dark:text-gray-400">
+        <span className="text-text-theme-muted dark:text-text-theme-secondary text-xl">
+          /
+        </span>
+        <span className="text-text-theme-muted dark:text-text-theme-secondary text-xl tabular-nums">
           {magazineSize}
         </span>
       </div>
 
-      <div className="h-4 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+      <div className="bg-surface-raised dark:bg-surface-raised h-4 w-full overflow-hidden rounded-full">
         <div
           className={`h-full transition-all duration-300 ${ammoBarClass(
             isEmpty,
@@ -203,7 +205,7 @@ export function FireButton({
       disabled={fireDisabled}
       className={`min-h-[48px] w-full rounded-md px-4 py-3 font-medium transition-colors ${
         fireDisabled
-          ? 'cursor-not-allowed bg-gray-300 text-gray-500 dark:bg-gray-700 dark:text-gray-400'
+          ? 'bg-surface-raised text-text-theme-muted dark:bg-surface-raised dark:text-text-theme-secondary cursor-not-allowed'
           : 'bg-red-500 text-white hover:bg-red-600 active:scale-95'
       }`}
       aria-label={`Fire ${weaponName}`}

@@ -88,10 +88,10 @@ export function QuickSimResultSummary({
   if (!hasResult) {
     return (
       <div
-        className={`flex flex-wrap items-center justify-between gap-3 rounded-md border border-dashed border-slate-700 bg-slate-900/30 px-4 py-3 ${className}`}
+        className={`border-border-theme bg-surface-deep/30 flex flex-wrap items-center justify-between gap-3 rounded-md border border-dashed px-4 py-3 ${className}`}
         data-testid="quick-sim-result-summary-empty"
       >
-        <span className="text-sm text-slate-400">
+        <span className="text-text-theme-secondary text-sm">
           No quick resolve data yet
         </span>
         {onRunBatch && (
@@ -116,20 +116,20 @@ export function QuickSimResultSummary({
 
   return (
     <div
-      className={`flex flex-wrap items-center gap-3 rounded-md border border-slate-700 bg-slate-900/30 px-4 py-3 ${className}`}
+      className={`border-border-theme bg-surface-deep/30 flex flex-wrap items-center gap-3 rounded-md border px-4 py-3 ${className}`}
       data-testid="quick-sim-result-summary"
     >
       <div
         role="img"
         aria-label={buildBarAriaLabel(r)}
-        className="flex h-2.5 w-32 flex-shrink-0 overflow-hidden rounded-full border border-slate-700"
+        className="border-border-theme flex h-2.5 w-32 flex-shrink-0 overflow-hidden rounded-full border"
       >
         <div className="bg-blue-600" style={{ width: `${playerWidth}%` }} />
         <div className="bg-red-600" style={{ width: `${opponentWidth}%` }} />
-        <div className="bg-slate-500" style={{ width: `${drawWidth}%` }} />
+        <div className="bg-surface-raised" style={{ width: `${drawWidth}%` }} />
       </div>
       <span
-        className="flex-1 truncate text-sm font-semibold text-slate-100"
+        className="text-text-theme-primary flex-1 truncate text-sm font-semibold"
         data-testid="quick-sim-summary-headline"
       >
         {buildHeadline(r)}

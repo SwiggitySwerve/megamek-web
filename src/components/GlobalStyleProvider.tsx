@@ -12,6 +12,7 @@
 
 import { useEffect } from 'react';
 
+import { UI_THEMES } from '@/constants/appearance';
 import { useAccessibilityStore } from '@/stores/useAccessibilityStore';
 import {
   useAppearanceStore,
@@ -56,14 +57,18 @@ export function GlobalStyleProvider({
     root.style.setProperty('--font-size-base', FONT_SIZE_CSS[fontSize]);
 
     // Apply theme class (remove old, add new)
-    const themeClasses = [
-      'theme-default',
-      'theme-neon',
-      'theme-tactical',
-      'theme-minimal',
-    ];
-    themeClasses.forEach((cls) => body.classList.remove(cls));
-    body.classList.add(`theme-${uiTheme}`);
+    const themeClasses = UI_THEMES.map((theme) => `theme-${theme}`);
+    for (const element of [root, body]) {
+      themeClasses.forEach((cls) => element.classList.remove(cls));
+      element.classList.add(`theme-${uiTheme}`);
+    }
+    root.dataset.colorScheme = 'dark';
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute(
+        'content',
+        getComputedStyle(root).getPropertyValue('--surface-deep').trim(),
+      );
 
     // Apply reduce motion class
     if (reduceMotion) {
@@ -72,6 +77,16 @@ export function GlobalStyleProvider({
       body.classList.remove('reduce-motion');
     }
   }, [accentColor, fontSize, uiTheme, reduceMotion]);
+
+  useEffect(() => {
+    const syncAppearance = (event: StorageEvent) => {
+      if (event.key === 'mekstation-appearance' && event.newValue !== null) {
+        void useAppearanceStore.persist.rehydrate();
+      }
+    };
+    window.addEventListener('storage', syncAppearance);
+    return () => window.removeEventListener('storage', syncAppearance);
+  }, []);
 
   return <>{children}</>;
 }

@@ -413,6 +413,14 @@
           "linkedAmmo": {
             "type": "string",
             "description": "Linked ammunition ID"
+          },
+          "isRemovable": {
+            "type": "boolean",
+            "description": "Whether the mounted item can be removed in the customizer"
+          },
+          "isOmniPodMounted": {
+            "type": "boolean",
+            "description": "Whether the mounted item belongs to an OmniMech pod"
           }
         },
         "additionalProperties": false
@@ -480,9 +488,23 @@
       "additionalProperties": false,
       "description": "Fluff/flavor text"
     },
+    "sourceDefinition": {
+      "type": "object",
+      "description": "Originating source definition, independent of editor or campaign instance identity",
+      "required": ["source", "id"],
+      "additionalProperties": false,
+      "properties": {
+        "source": { "type": "string", "enum": ["canonical", "custom"] },
+        "id": { "type": "string", "minLength": 1 },
+        "version": { "type": "integer", "minimum": 1 }
+      }
+    },
     "mulId": {
-      "type": "integer",
-      "description": "Master Unit List ID"
+      "anyOf": [
+        { "type": "integer" },
+        { "type": "string", "pattern": "^[0-9-]+$" }
+      ],
+      "description": "Master Unit List identifier; legacy integer or lossless editor text"
     },
     "role": {
       "type": "string",

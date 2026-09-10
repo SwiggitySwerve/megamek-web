@@ -6,15 +6,89 @@ import { createDefaultUnitState, type UnitState } from '@/stores/unitState';
 import { MechLocation } from '@/types/construction/CriticalSlotAllocation';
 import { EngineType } from '@/types/construction/EngineType';
 import { GyroType } from '@/types/construction/GyroType';
+import { MovementEnhancementType } from '@/types/construction/MovementEnhancement';
 import { TechBaseMode } from '@/types/construction/TechBaseConfiguration';
 import { UnitContract } from '@/types/contracts';
 import { RulesLevel } from '@/types/enums/RulesLevel';
 import { TechBase } from '@/types/enums/TechBase';
 import { EquipmentCategory } from '@/types/equipment';
 import { Era } from '@/types/temporal/Era';
+import { JumpJetType } from '@/utils/construction/movementCalculations';
 import { serializeCustomUnitState } from '@/utils/serialization/CustomUnitSerializer';
 
 describe('serializeCustomUnitState', () => {
+  it.each([
+    [JumpJetType.IMPROVED, MovementEnhancementType.MASC],
+    [JumpJetType.MECHANICAL, MovementEnhancementType.SUPERCHARGER],
+    [JumpJetType.STANDARD, MovementEnhancementType.TSM],
+    [JumpJetType.STANDARD, MovementEnhancementType.PARTIAL_WING],
+  ] as const)(
+    'retains %s and %s through a saved definition',
+    (jumpJetType, enhancement) => {
+      const state = createDefaultUnitState({
+        id: '98dcb1cd-2290-455d-9bc3-a3ab8e0368d6',
+        name: 'Movement Fixture',
+        tonnage: 50,
+        techBase: TechBase.INNER_SPHERE,
+      });
+      const serialized = serializeCustomUnitState(
+        { ...state, jumpJetType, enhancement, jumpMP: 3 },
+        {
+          id: state.id,
+          chassis: 'Movement Fixture',
+          variant: 'M-1',
+          era: Era.RENAISSANCE,
+        },
+      );
+      const reloaded = new UnitLoaderService().mapToUnitState(
+        parseUnit(serialized),
+        false,
+      );
+      expect(reloaded).toMatchObject({ jumpJetType, enhancement, jumpMP: 3 });
+    },
+  );
+
+  it.each(['12-34', '002401', '-1', '2401', '9007199254740993'])(
+    'preserves supported MUL identity %s through schema and loader',
+    (mulId) => {
+      const state = createDefaultUnitState({
+        id: '98dcb1cd-2290-455d-9bc3-a3ab8e0368d6',
+        name: 'Warhammer WHM-6R',
+        tonnage: 70,
+        techBase: TechBase.INNER_SPHERE,
+      });
+      const serialized = serializeCustomUnitState(
+        {
+          ...state,
+          mulId,
+          sourceDefinition: {
+            source: 'custom',
+            id: 'original-design',
+            version: 3,
+          },
+        },
+        {
+          id: state.id,
+          chassis: 'Warhammer',
+          variant: 'WHM-6R',
+          era: Era.RENAISSANCE,
+        },
+      );
+      expect(UnitContract.safeParse(serialized).success).toBe(true);
+      const reloaded = new UnitLoaderService().mapToUnitState(
+        parseUnit(serialized),
+        false,
+      );
+      expect(reloaded.mulId).toBe(mulId);
+      expect(reloaded.id).not.toBe(state.id);
+      expect(reloaded.sourceDefinition).toEqual({
+        source: 'custom',
+        id: 'original-design',
+        version: 3,
+      });
+    },
+  );
+
   it('produces the canonical payload required to reload customized combat state', () => {
     const baseState = createDefaultUnitState({
       id: '98dcb1cd-2290-455d-9bc3-a3ab8e0368d6',
@@ -25,7 +99,14 @@ describe('serializeCustomUnitState', () => {
     const customizedState: UnitState = {
       ...baseState,
       chassis: 'Warhammer',
+      clanName: 'Hammerhands',
       model: 'WHM-6R',
+      mulId: '2401',
+      role: 'Brawler',
+      fluff: {
+        overview: 'A storied heavy BattleMech.',
+        history: 'Refitted for the Night Watch.',
+      },
       year: 3025,
       rulesLevel: RulesLevel.INTRODUCTORY,
       techBaseMode: TechBaseMode.INNER_SPHERE,
@@ -53,6 +134,21 @@ describe('serializeCustomUnitState', () => {
           slots: [4],
           isRearMounted: false,
           isRemovable: true,
+          isOmniPodMounted: true,
+        },
+        {
+          instanceId: 'external-single-heat-sink-1',
+          equipmentId: 'single-heat-sink',
+          name: 'Single Heat Sink',
+          category: EquipmentCategory.MISC_EQUIPMENT,
+          weight: 1,
+          criticalSlots: 1,
+          heat: 0,
+          techBase: TechBase.INNER_SPHERE,
+          location: MechLocation.LEFT_TORSO,
+          slots: [4],
+          isRearMounted: false,
+          isRemovable: false,
           isOmniPodMounted: false,
         },
       ],
@@ -71,7 +167,14 @@ describe('serializeCustomUnitState', () => {
     );
     expect(serialized).toMatchObject({
       chassis: 'Warhammer',
+      clanName: 'Hammerhands',
       model: 'WHM-6R Night Watch',
+      mulId: 2401,
+      role: 'Brawler',
+      fluff: {
+        overview: 'A storied heavy BattleMech.',
+        history: 'Refitted for the Night Watch.',
+      },
       tonnage: 70,
       techBase: 'INNER_SPHERE',
       rulesLevel: 'INTRODUCTORY',
@@ -91,6 +194,16 @@ describe('serializeCustomUnitState', () => {
           location: 'Right Arm',
           slots: [4],
           isRearMounted: false,
+          isRemovable: true,
+          isOmniPodMounted: true,
+        },
+        {
+          id: 'single-heat-sink',
+          location: 'Left Torso',
+          slots: [4],
+          isRearMounted: false,
+          isRemovable: false,
+          isOmniPodMounted: false,
         },
       ],
     });
@@ -102,7 +215,14 @@ describe('serializeCustomUnitState', () => {
     );
     expect(reloaded).toMatchObject({
       chassis: 'Warhammer',
+      clanName: 'Hammerhands',
       model: 'WHM-6R Night Watch',
+      mulId: '2401',
+      role: 'Brawler',
+      fluff: {
+        overview: 'A storied heavy BattleMech.',
+        history: 'Refitted for the Night Watch.',
+      },
       tonnage: 70,
       engineRating: 280,
       heatSinkCount: 18,
@@ -110,6 +230,14 @@ describe('serializeCustomUnitState', () => {
         {
           equipmentId: 'medium-laser',
           location: MechLocation.RIGHT_ARM,
+          isRemovable: true,
+          isOmniPodMounted: true,
+        },
+        {
+          equipmentId: 'single-heat-sink',
+          location: MechLocation.LEFT_TORSO,
+          isRemovable: false,
+          isOmniPodMounted: false,
         },
       ],
     });

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Badge, Card } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { IPilotIdentity, IPilotSkills, getPilotRating } from '@/types/pilot';
 
 import { SkillPreview } from './SkillsStep';
@@ -33,7 +34,8 @@ export function ReviewStep({
       <Card variant="accent-left" accentColor="amber" className="p-5">
         <div className="flex items-start gap-4">
           <div className="bg-surface-raised flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-lg">
-            <svg
+            <SvgIcon
+              size="feature"
               className="text-text-theme-secondary h-8 w-8"
               fill="none"
               stroke="currentColor"
@@ -45,7 +47,7 @@ export function ReviewStep({
                 strokeWidth={1.5}
                 d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
               />
-            </svg>
+            </SvgIcon>
           </div>
 
           <div className="min-w-0 flex-1">
@@ -95,7 +97,8 @@ export function ReviewStep({
 
       {mode === 'statblock' && (
         <div className="flex items-start gap-3 rounded-lg border border-amber-600/30 bg-amber-900/20 p-3">
-          <svg
+          <SvgIcon
+            size="control"
             className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-400"
             fill="none"
             stroke="currentColor"
@@ -107,7 +110,7 @@ export function ReviewStep({
               strokeWidth={2}
               d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
             />
-          </svg>
+          </SvgIcon>
           <p className="text-sm text-amber-200">
             Statblock pilots are not saved to the database. They&apos;re
             intended for quick NPC creation during gameplay.

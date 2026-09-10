@@ -1,3 +1,4 @@
+import type { ResultType } from '@/types/common/result';
 /**
  * Unit Serialization Types
  *
@@ -5,8 +6,7 @@
  *
  * @spec openspec/specs/serialization-formats/spec.md
  */
-
-import type { ResultType } from '@/types/common/result';
+import type { IUnitDefinitionReference } from '@/types/unit/UnitDefinition';
 
 import { IBattleMech } from './BattleMechInterfaces';
 
@@ -51,6 +51,10 @@ export interface ISerializedUnit {
   readonly era: string;
   readonly year: number;
   readonly tonnage: number;
+  readonly mulId?: number | string;
+  /** Originating definition retained across draft and library round trips. */
+  readonly sourceDefinition?: IUnitDefinitionReference;
+  readonly role?: string;
 
   // Structural components
   readonly engine: ISerializedEngine;
@@ -141,6 +145,7 @@ export interface ISerializedEquipment {
   readonly slots?: number[];
   readonly isRearMounted?: boolean;
   readonly linkedAmmo?: string;
+  readonly isRemovable?: boolean;
   readonly isOmniPodMounted?: boolean;
 }
 

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
+
 export interface ArmorLocationProps {
   location: string;
   currentArmor: number;
@@ -39,7 +41,7 @@ export function ArmorLocation({
 
   return (
     <section
-      className={`armor-location rounded-lg bg-white shadow-md dark:bg-gray-800 ${className}`.trim()}
+      className={`armor-location bg-surface-base rounded-lg shadow-md ${className}`.trim()}
       aria-label={`${location} armor allocation`}
     >
       {/* Location Header - Always Visible */}
@@ -51,11 +53,11 @@ export function ArmorLocation({
         aria-controls={`${location.toLowerCase()}-details`}
       >
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+          <h3 className="text-text-theme-primary text-lg font-semibold">
             {location}
           </h3>
           <div className="mt-1 flex items-center gap-2">
-            <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+            <div className="bg-surface-raised h-2 flex-1 overflow-hidden rounded-full">
               <div
                 className={`h-full ${progressColor} transition-all duration-200`}
                 style={{ width: `${percentage}%` }}
@@ -66,41 +68,31 @@ export function ArmorLocation({
                 aria-label={`${location} armor: ${currentArmor} of ${maxArmor}`}
               />
             </div>
-            <span className="text-sm text-gray-600 tabular-nums dark:text-gray-400">
+            <span className="text-text-theme-muted text-sm tabular-nums">
               {currentArmor} / {maxArmor}
             </span>
           </div>
         </div>
-        <svg
-          className={`h-5 w-5 text-gray-500 transition-transform duration-200 ${
-            isExpanded ? 'rotate-180' : ''
-          }`}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+        <AppIcon
+          name="chevron-down"
+          size="control"
+          className={isExpanded ? 'rotate-180' : ' '}
           aria-hidden="true"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 9l-7 7-7-7"
-          />
-        </svg>
+        />
       </button>
 
       {/* Expanded Controls */}
       {isExpanded && (
         <div
           id={`${location.toLowerCase()}-details`}
-          className="border-t border-gray-200 px-4 pb-4 dark:border-gray-700"
+          className="border-border-theme border-t px-4 pb-4"
         >
           {/* Quick Add Buttons */}
           <div className="mt-4 grid grid-cols-4 gap-2">
             <button
               type="button"
               onClick={() => handleQuickAdd(5)}
-              className="min-h-[44px] rounded-md bg-blue-500 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-600"
+              className="bg-accent text-on-accent hover:bg-accent-hover min-h-[44px] rounded-md px-3 py-2 text-sm font-medium transition-colors"
               aria-label={`Add 5 armor to ${location}`}
               disabled={currentArmor >= maxArmor}
             >
@@ -109,7 +101,7 @@ export function ArmorLocation({
             <button
               type="button"
               onClick={() => handleQuickAdd(10)}
-              className="min-h-[44px] rounded-md bg-blue-500 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-600"
+              className="bg-accent text-on-accent hover:bg-accent-hover min-h-[44px] rounded-md px-3 py-2 text-sm font-medium transition-colors"
               aria-label={`Add 10 armor to ${location}`}
               disabled={currentArmor >= maxArmor}
             >
@@ -118,7 +110,7 @@ export function ArmorLocation({
             <button
               type="button"
               onClick={() => handleQuickAdd(20)}
-              className="min-h-[44px] rounded-md bg-blue-500 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-600"
+              className="bg-accent text-on-accent hover:bg-accent-hover min-h-[44px] rounded-md px-3 py-2 text-sm font-medium transition-colors"
               aria-label={`Add 20 armor to ${location}`}
               disabled={currentArmor >= maxArmor}
             >
@@ -140,51 +132,25 @@ export function ArmorLocation({
             <button
               type="button"
               onClick={handleDecrement}
-              className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-gray-200 p-2 transition-colors hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600"
+              className="bg-surface-raised flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full p-2 transition-colors"
               aria-label={`Remove 1 armor from ${location}`}
               disabled={currentArmor <= 0}
             >
-              <svg
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
+              <AppIcon name="remove" size="toolbar" aria-hidden="true" />
             </button>
             <div className="w-20 text-center">
-              <span className="text-2xl font-bold text-gray-900 tabular-nums dark:text-white">
+              <span className="text-text-theme-primary text-2xl font-bold tabular-nums">
                 {currentArmor}
               </span>
             </div>
             <button
               type="button"
               onClick={handleIncrement}
-              className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-gray-200 p-2 transition-colors hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600"
+              className="bg-surface-raised flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full p-2 transition-colors"
               aria-label={`Add 1 armor to ${location}`}
               disabled={currentArmor >= maxArmor}
             >
-              <svg
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
+              <AppIcon name="add" size="toolbar" aria-hidden="true" />
             </button>
           </div>
         </div>

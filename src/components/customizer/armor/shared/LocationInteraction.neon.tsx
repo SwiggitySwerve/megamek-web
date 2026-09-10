@@ -1,4 +1,4 @@
-import type { ReactElement } from 'react';
+import { useId, type ReactElement } from 'react';
 
 import type { LocationContentProps } from './LocationTypes';
 
@@ -8,7 +8,7 @@ import { ProgressRing } from './LocationRenderer';
 type ArmorPosition = LocationContentProps['pos'];
 
 function getFillPercent(value: number, maximum: number): number {
-  return maximum > 0 ? Math.min(100, (value / maximum) * 100) : 0;
+  return maximum > 0 ? Math.min(100, Math.max(0, (value / maximum) * 100)) : 0;
 }
 
 function getSplitArmorPercents({
@@ -36,37 +36,27 @@ function getNeonLocationColors({
   maximum,
   rear,
   showRear,
-  isSelected,
-  isHovered,
 }: {
   current: number;
   maximum: number;
   rear: number;
   showRear: boolean;
-  isSelected: boolean;
-  isHovered: boolean;
 }): {
   frontColor: string;
   rearColor: string;
   glowColor: string;
   fillOpacity: number;
 } {
-  const frontColor = isSelected
-    ? ArmorFills.SELECTED_COLOR
-    : showRear
-      ? ArmorFills.getTorsoFrontStatusColor(current, maximum)
-      : ArmorFills.getArmorStatusColor(current, maximum);
-  const rearColor = isSelected
-    ? ArmorFills.SELECTED_COLOR
-    : ArmorFills.getTorsoRearStatusColor(rear, maximum);
+  const frontColor = showRear
+    ? ArmorFills.getTorsoFrontStatusColor(current, maximum)
+    : ArmorFills.getArmorStatusColor(current, maximum);
+  const rearColor = ArmorFills.getTorsoRearStatusColor(rear, maximum);
 
   return {
     frontColor,
     rearColor,
-    glowColor: isHovered
-      ? ArmorFills.lightenColor(frontColor, 0.2)
-      : frontColor,
-    fillOpacity: isHovered ? 0.4 : 0.25,
+    glowColor: frontColor,
+    fillOpacity: 0.35,
   };
 }
 
@@ -98,27 +88,55 @@ function getNeonSections(
 
 function NeonLocationFrame({
   pos,
+  current,
+  maximum,
+  marker,
   glowColor,
   fillOpacity,
   isSelected,
   isHovered,
 }: {
   pos: ArmorPosition;
+  current: number;
+  maximum: number;
+  marker: string;
   glowColor: string;
   fillOpacity: number;
   isSelected: boolean;
   isHovered: boolean;
 }): ReactElement {
+  const clipId = useId();
+  const ratio = maximum > 0 ? Math.min(1, Math.max(0, current / maximum)) : 0;
+  const fillHeight = pos.height * ratio;
+  const fillY = pos.y + pos.height - fillHeight;
+
   return (
     <>
+      <defs>
+        <clipPath id={clipId}>
+          <rect x={pos.x} y={fillY} width={pos.width} height={fillHeight} />
+        </clipPath>
+      </defs>
       <rect
         x={pos.x}
         y={pos.y}
         width={pos.width}
         height={pos.height}
         rx={4}
+        fill="#020b12"
+        className="transition-all duration-200"
+      />
+      <rect
+        x={pos.x}
+        y={pos.y}
+        width={pos.width}
+        height={pos.height}
+        rx={4}
+        data-armor-fill={marker}
+        data-armor-fill-ratio={ratio}
         fill={glowColor}
         fillOpacity={fillOpacity}
+        clipPath={`url(#${clipId})`}
         className="transition-all duration-200"
       />
       <rect
@@ -313,8 +331,6 @@ export function NeonLocationContent({
       maximum,
       rear,
       showRear,
-      isSelected,
-      isHovered,
     });
   const sections = getNeonSections(pos, showRear);
 
@@ -322,6 +338,9 @@ export function NeonLocationContent({
     <>
       <NeonLocationFrame
         pos={pos}
+        current={showRear ? current + rear : current}
+        maximum={maximum}
+        marker={label + '-total'}
         glowColor={glowColor}
         fillOpacity={fillOpacity}
         isSelected={isSelected}

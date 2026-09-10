@@ -36,10 +36,12 @@ export const Expanded: Story = {
 
 export const InContext: Story = {
   render: () => (
-    <div className="max-w-md space-y-4 rounded bg-slate-900 p-4">
-      <div className="rounded bg-slate-800 p-4">
-        <h3 className="mb-2 font-bold text-white">Critical Slots</h3>
-        <p className="text-sm text-slate-400">
+    <div className="bg-surface-deep max-w-md space-y-4 rounded p-4">
+      <div className="bg-surface-base rounded p-4">
+        <h3 className="text-text-theme-primary mb-2 font-bold">
+          Critical Slots
+        </h3>
+        <p className="text-text-theme-secondary text-sm">
           Select a location to view slots...
         </p>
       </div>

@@ -13,6 +13,8 @@
 
 import React from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
+
 const PANEL_WIDTH_OPEN = 280;
 const PANEL_WIDTH_COLLAPSED = 40;
 const HUD_HEIGHT = 48;
@@ -75,20 +77,22 @@ function HudBar({
 }: HudBarProps): React.ReactElement {
   return (
     <div
-      className="flex items-center justify-between border-b border-slate-700 bg-slate-900 px-4"
+      className="border-border-theme bg-surface-deep flex items-center justify-between border-b px-4"
       style={{ height: HUD_HEIGHT }}
       data-testid="hud-bar"
     >
       <div className="flex items-center gap-6">
         <div className="flex items-center gap-2">
-          <span className="text-xs tracking-wider text-slate-500 uppercase">
+          <span className="text-text-theme-muted text-xs tracking-wider uppercase">
             Date
           </span>
-          <span className="font-mono text-sm text-slate-200">{date}</span>
+          <span className="text-text-theme-primary font-mono text-sm">
+            {date}
+          </span>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs tracking-wider text-slate-500 uppercase">
+          <span className="text-text-theme-muted text-xs tracking-wider uppercase">
             C-Bills
           </span>
           <span className="font-mono text-sm font-semibold text-amber-400">
@@ -97,7 +101,7 @@ function HudBar({
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs tracking-wider text-slate-500 uppercase">
+          <span className="text-text-theme-muted text-xs tracking-wider uppercase">
             Morale
           </span>
           <span
@@ -108,7 +112,7 @@ function HudBar({
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs tracking-wider text-slate-500 uppercase">
+          <span className="text-text-theme-muted text-xs tracking-wider uppercase">
             Rep
           </span>
           <span className="text-sm font-medium text-sky-400">{reputation}</span>
@@ -117,22 +121,10 @@ function HudBar({
 
       <button
         type="button"
-        className="rounded p-2 text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-200"
+        className="text-text-theme-secondary hover:bg-surface-base hover:text-text-theme-primary rounded p-2 transition-colors"
         aria-label="Menu"
       >
-        <svg
-          className="h-5 w-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M4 6h16M4 12h16M4 18h16"
-          />
-        </svg>
+        <AppIcon name="menu" size="control" />
       </button>
     </div>
   );
@@ -159,36 +151,27 @@ function SidePanel({
 
   return (
     <div
-      className={`relative flex-shrink-0 overflow-hidden border-slate-700 bg-slate-800 transition-all duration-300 ease-in-out ${isLeft ? 'border-r' : 'border-l'} `}
+      className={`border-border-theme bg-surface-base relative flex-shrink-0 overflow-hidden transition-all duration-300 ease-in-out ${isLeft ? 'border-r' : 'border-l'} `}
       style={{ width: isOpen ? PANEL_WIDTH_OPEN : PANEL_WIDTH_COLLAPSED }}
       data-testid={testId}
     >
       {isOpen ? (
         <div className="flex h-full flex-col">
           <div
-            className={`bg-slate-850 flex items-center gap-2 border-b border-slate-700 px-3 py-2 ${isLeft ? 'flex-row' : 'flex-row-reverse'} `}
+            className={`bg-surface-base border-border-theme flex items-center gap-2 border-b px-3 py-2 ${isLeft ? 'flex-row' : 'flex-row-reverse'} `}
           >
             <button
               type="button"
               onClick={onToggle}
-              className="rounded p-1 text-slate-400 transition-colors hover:bg-slate-700 hover:text-slate-200"
+              className="text-text-theme-secondary hover:bg-surface-raised hover:text-text-theme-primary rounded p-1 transition-colors"
               aria-label={`Collapse ${title}`}
             >
-              <svg
-                className="h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d={isLeft ? 'M15 19l-7-7 7-7' : 'M9 5l7 7-7 7'}
-                />
-              </svg>
+              <AppIcon
+                name={isLeft ? 'chevron-left' : 'chevron-right'}
+                size="inline"
+              />
             </button>
-            <h3 className="flex-1 text-xs font-semibold tracking-wider text-slate-400 uppercase">
+            <h3 className="text-text-theme-secondary flex-1 text-xs font-semibold tracking-wider uppercase">
               {title}
             </h3>
           </div>
@@ -199,22 +182,13 @@ function SidePanel({
         <button
           type="button"
           onClick={onToggle}
-          className="flex h-full w-full flex-col items-center justify-center gap-2 text-slate-400 transition-colors hover:bg-slate-700 hover:text-slate-200"
+          className="text-text-theme-secondary hover:bg-surface-raised hover:text-text-theme-primary flex h-full w-full flex-col items-center justify-center gap-2 transition-colors"
           aria-label={`Expand ${title}`}
         >
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d={isLeft ? 'M9 5l7 7-7 7' : 'M15 19l-7-7 7-7'}
-            />
-          </svg>
+          <AppIcon
+            name={isLeft ? 'chevron-right' : 'chevron-left'}
+            size="inline"
+          />
           <span
             className="text-xs font-semibold tracking-wider uppercase"
             style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}
@@ -243,7 +217,7 @@ export function CampaignLayout({
   className = '',
 }: CampaignLayoutProps): React.ReactElement {
   return (
-    <div className={`flex h-full flex-col bg-slate-900 ${className}`}>
+    <div className={`bg-surface-deep flex h-full flex-col ${className}`}>
       <HudBar
         date={date}
         cBills={cBills}
@@ -278,12 +252,12 @@ export function CampaignLayout({
       </div>
 
       <div
-        className="overflow-hidden border-t border-slate-700 bg-slate-800"
+        className="border-border-theme bg-surface-base overflow-hidden border-t"
         style={{ height: CONTEXT_PANEL_HEIGHT }}
         data-testid="context-panel"
       >
         {contextPanelContent ?? (
-          <div className="flex h-full items-center justify-center text-sm text-slate-500">
+          <div className="text-text-theme-muted flex h-full items-center justify-center text-sm">
             Select a system or unit to view details
           </div>
         )}

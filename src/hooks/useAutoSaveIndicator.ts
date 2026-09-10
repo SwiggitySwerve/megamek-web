@@ -1,53 +1,98 @@
-import { useContext, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { useToast } from '@/components/shared/Toast';
-import { UnitStoreContext } from '@/stores/useUnitStore';
+import { subscribeToStorageWriteReceipts } from '@/stores/utils/clientSafeStorage';
+import { UnitType } from '@/types/unit/BattleMechInterfaces';
+
+export interface AutoSaveIndicatorTarget {
+  readonly unitId: string;
+  readonly unitType: UnitType;
+}
+
+function getDraftStoragePrefix(unitType: UnitType): string {
+  switch (unitType) {
+    case UnitType.BATTLEMECH:
+    case UnitType.OMNIMECH:
+    case UnitType.INDUSTRIALMECH:
+      return 'megamek-unit';
+    case UnitType.VEHICLE:
+    case UnitType.VTOL:
+    case UnitType.SUPPORT_VEHICLE:
+      return 'megamek-vehicle';
+    case UnitType.AEROSPACE:
+    case UnitType.CONVENTIONAL_FIGHTER:
+    case UnitType.SMALL_CRAFT:
+    case UnitType.DROPSHIP:
+    case UnitType.JUMPSHIP:
+    case UnitType.WARSHIP:
+    case UnitType.SPACE_STATION:
+      return 'megamek-aerospace';
+    case UnitType.BATTLE_ARMOR:
+      return 'megamek-battlearmor';
+    case UnitType.INFANTRY:
+      return 'megamek-infantry';
+    case UnitType.PROTOMECH:
+      return 'megamek-protomech';
+  }
+}
+
+export function getCustomizerDraftStorageKey({
+  unitId,
+  unitType,
+}: AutoSaveIndicatorTarget): string {
+  return `${getDraftStoragePrefix(unitType)}-${unitId}`;
+}
 
 /**
- * Shows a "Saved" toast when the active unit store records a modification.
+ * Reports browser-draft persistence for the active customizer unit.
  *
- * `UnitStoreContext` is only provided on the BattleMech editor branch of the
- * customizer (see UnitStoreProvider in UnitTypeRouter). This hook is mounted by
- * CustomizerWithRouter, which sits ABOVE that provider — so on non-mech tabs
- * (Vehicle / Aerospace / Battle Armor / Infantry / ProtoMech) the context is
- * null. Read the context directly (nullable) instead of useUnitStoreApi (which
- * throws) and no-op the subscription when there is no store — autosave
- * indication is a mech-store capability today.
+ * Success is driven by the completed localStorage write receipt, rather than a
+ * state-change timer. The explicit library-save flow has its own API result and
+ * continues to report "Unit ... saved successfully", so the two destinations
+ * are unambiguous to the user.
  */
-export function useAutoSaveIndicator(): void {
+export function useAutoSaveIndicator(
+  target: AutoSaveIndicatorTarget | null,
+): void {
   const { showToast } = useToast();
-  const storeApi = useContext(UnitStoreContext);
-
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const lastModifiedRef = useRef<number>(0);
+  const successTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const storageKey = target ? getCustomizerDraftStorageKey(target) : null;
 
   useEffect(() => {
-    if (!storeApi) return;
+    if (!storageKey) return;
 
-    const unsubscribe = storeApi.subscribe((state) => {
-      if (state.lastModifiedAt !== lastModifiedRef.current) {
-        lastModifiedRef.current = state.lastModifiedAt;
+    const unsubscribe = subscribeToStorageWriteReceipts((receipt) => {
+      if (receipt.key !== storageKey) return;
 
-        if (debounceTimerRef.current) {
-          clearTimeout(debounceTimerRef.current);
-        }
-
-        debounceTimerRef.current = setTimeout(() => {
-          showToast({
-            message: 'Saved',
-            variant: 'success',
-            duration: 1500,
-          });
-          debounceTimerRef.current = null;
-        }, 500);
+      if (successTimerRef.current) {
+        clearTimeout(successTimerRef.current);
+        successTimerRef.current = null;
       }
+
+      if (receipt.status === 'failed') {
+        showToast({
+          message: 'Draft could not be saved in this browser',
+          variant: 'error',
+        });
+        return;
+      }
+
+      successTimerRef.current = setTimeout(() => {
+        showToast({
+          message: 'Draft saved in this browser',
+          variant: 'success',
+          duration: 1500,
+        });
+        successTimerRef.current = null;
+      }, 500);
     });
 
     return () => {
       unsubscribe();
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
+      if (successTimerRef.current) {
+        clearTimeout(successTimerRef.current);
+        successTimerRef.current = null;
       }
     };
-  }, [storeApi, showToast]);
+  }, [showToast, storageKey]);
 }

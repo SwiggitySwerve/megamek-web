@@ -200,7 +200,7 @@ function LeftTray({
     // affordance discoverable for keyboard / screen-reader users.
     return (
       <ShellSlot id="left-tray" ownerId="TacticalLensControls">
-        <div className="flex w-8 flex-shrink-0 flex-col border-r border-gray-200 bg-white">
+        <div className="border-border-theme-subtle bg-surface-base flex w-8 flex-shrink-0 flex-col border-r">
           <button
             type="button"
             onClick={toggle}
@@ -208,7 +208,7 @@ function LeftTray({
             aria-label="Show map lenses"
             title="Show map lenses"
             data-testid="left-tray-toggle"
-            className="hover:bg-surface-deep focus:ring-border-theme flex w-full flex-1 cursor-pointer items-center justify-center text-gray-500 focus:ring-2 focus:outline-none"
+            className="hover:bg-surface-deep focus:ring-border-theme text-text-theme-muted flex w-full flex-1 cursor-pointer items-center justify-center focus:ring-2 focus:outline-none"
           >
             <span
               className="text-xs font-semibold tracking-wide uppercase"
@@ -224,7 +224,7 @@ function LeftTray({
 
   return (
     <ShellSlot id="left-tray" ownerId="TacticalLensControls">
-      <div className="flex w-28 flex-shrink-0 flex-col border-r border-gray-200 bg-white">
+      <div className="border-border-theme-subtle bg-surface-base flex w-28 flex-shrink-0 flex-col border-r">
         <div className="flex items-center justify-end px-1 pt-1">
           <button
             type="button"
@@ -233,7 +233,7 @@ function LeftTray({
             aria-label="Hide map lenses"
             title="Hide map lenses"
             data-testid="left-tray-toggle"
-            className="hover:bg-surface-deep focus:ring-border-theme cursor-pointer rounded px-1 text-xs text-gray-500 focus:ring-2 focus:outline-none"
+            className="hover:bg-surface-deep focus:ring-border-theme text-text-theme-muted cursor-pointer rounded px-1 text-xs focus:ring-2 focus:outline-none"
           >
             {'«'}
           </button>
@@ -279,7 +279,7 @@ function DesktopSplitTray({
   return (
     <>
       <div
-        className="w-1 cursor-col-resize bg-gray-300 transition-colors hover:bg-blue-400"
+        className="bg-surface-raised w-1 cursor-col-resize transition-colors hover:bg-blue-400"
         onMouseDown={onStartDragging}
         data-testid="resize-handle"
       />

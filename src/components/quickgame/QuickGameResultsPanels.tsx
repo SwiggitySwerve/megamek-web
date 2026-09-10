@@ -109,10 +109,12 @@ function ScenarioSummary({
   };
 }): React.ReactElement {
   return (
-    <div className="mt-4 rounded-lg bg-gray-800/50 p-4">
-      <h4 className="mb-2 text-sm font-medium text-gray-300">Scenario</h4>
-      <p className="text-white">{scenario.template.name}</p>
-      <p className="mt-1 text-xs text-gray-500">
+    <div className="bg-surface-base/50 mt-4 rounded-lg p-4">
+      <h4 className="text-text-theme-secondary mb-2 text-sm font-medium">
+        Scenario
+      </h4>
+      <p className="text-text-theme-primary">{scenario.template.name}</p>
+      <p className="text-text-theme-muted mt-1 text-xs">
         {scenario.mapPreset.name} - {scenario.mapPreset.biome}
       </p>
     </div>
@@ -138,11 +140,11 @@ function UnitsPanel({
       hidden={activeTab !== 'units'}
     >
       {units.length === 0 ? (
-        <p className="p-4 text-center text-gray-400">
+        <p className="text-text-theme-muted p-4 text-center">
           No units in this battle.
         </p>
       ) : (
-        <div className="divide-y divide-gray-700/50">
+        <div className="divide-border-theme/50 divide-y">
           {units.map(({ unit, forceType }) => (
             <UnitStatusRow
               key={unit.instanceId}
@@ -195,9 +197,11 @@ function TimelinePanel({
       hidden={activeTab !== 'timeline'}
     >
       {events.length === 0 ? (
-        <p className="p-4 text-center text-gray-400">No events recorded.</p>
+        <p className="text-text-theme-muted p-4 text-center">
+          No events recorded.
+        </p>
       ) : (
-        <div className="max-h-96 divide-y divide-gray-700/30 overflow-y-auto">
+        <div className="divide-border-theme/30 max-h-96 divide-y overflow-y-auto">
           {events.map((event, index) => (
             <TimelineEventRow key={event.id} event={event} index={index} />
           ))}

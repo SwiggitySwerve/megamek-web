@@ -5,6 +5,8 @@
 
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 
+import { SvgIcon } from '@/components/ui/SvgIcon';
+
 export interface ValidationResult {
   isValid: boolean;
   error?: string;
@@ -38,7 +40,7 @@ export interface ControlledInputProps<T = string> {
 const BASE_INPUT_CLASSES =
   'w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-colors';
 const DEFAULT_INPUT_CLASSES =
-  'border-gray-300 focus:border-blue-500 focus:ring-blue-500';
+  'border-border-theme focus:border-accent focus:ring-accent';
 
 interface InputClassNameOptions {
   readonly className: string;
@@ -62,7 +64,7 @@ function getControlledInputClassName({
   warningClassName,
 }: InputClassNameOptions): string {
   if (disabled) {
-    return `${BASE_INPUT_CLASSES} bg-gray-100 text-gray-500 cursor-not-allowed`;
+    return `${BASE_INPUT_CLASSES} bg-surface-raised text-text-theme-muted cursor-not-allowed`;
   }
 
   if (!showValidation || !isDirty) {
@@ -126,7 +128,8 @@ function ValidationWarningIcon({
   readonly className: string;
 }): React.ReactElement {
   return (
-    <svg
+    <SvgIcon
+      size="control"
       className={className}
       fill="none"
       viewBox="0 0 24 24"
@@ -138,13 +141,14 @@ function ValidationWarningIcon({
         strokeWidth={2}
         d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
       />
-    </svg>
+    </SvgIcon>
   );
 }
 
 function ValidationSuccessIcon(): React.ReactElement {
   return (
-    <svg
+    <SvgIcon
+      size="control"
       className="h-5 w-5 text-green-500"
       fill="none"
       viewBox="0 0 24 24"
@@ -156,7 +160,7 @@ function ValidationSuccessIcon(): React.ReactElement {
         strokeWidth={2}
         d="M5 13l4 4L19 7"
       />
-    </svg>
+    </SvgIcon>
   );
 }
 
@@ -321,7 +325,7 @@ export function ControlledInput<T = string>({
   return (
     <div className="space-y-1">
       {label && (
-        <label className="block text-sm font-medium text-gray-700">
+        <label className="text-text-theme-primary block text-sm font-medium">
           {label}
           {required && <span className="ml-1 text-red-500">*</span>}
         </label>

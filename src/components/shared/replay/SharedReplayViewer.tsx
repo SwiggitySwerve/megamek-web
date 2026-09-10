@@ -7,6 +7,7 @@
 
 import React, { useMemo } from 'react';
 
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import {
   useSharedReplayPlayer,
   formatSpeed,
@@ -79,96 +80,131 @@ function ReplayControls({
       <button
         onClick={onStepBackward}
         disabled={isAtStart}
-        className="rounded p-2 hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+        className="hover:bg-surface-raised rounded p-2 disabled:cursor-not-allowed disabled:opacity-50"
         title="Step backward"
       >
-        <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+        <SvgIcon
+          size="control"
+          className="h-5 w-5"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
           <path d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z" />
-        </svg>
+        </SvgIcon>
       </button>
 
       {/* Play/Pause */}
       <button
         onClick={isPlaying ? onPause : onPlay}
-        className="rounded p-2 hover:bg-gray-700"
+        className="hover:bg-surface-raised rounded p-2"
         title={isPlaying ? 'Pause' : 'Play'}
       >
         {isPlaying ? (
-          <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 20 20">
+          <SvgIcon
+            size="toolbar"
+            className="h-6 w-6"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
             <path
               fillRule="evenodd"
               d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z"
               clipRule="evenodd"
             />
-          </svg>
+          </SvgIcon>
         ) : (
-          <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 20 20">
+          <SvgIcon
+            size="toolbar"
+            className="h-6 w-6"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
             <path
               fillRule="evenodd"
               d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
               clipRule="evenodd"
             />
-          </svg>
+          </SvgIcon>
         )}
       </button>
 
       {/* Stop */}
       <button
         onClick={onStop}
-        className="rounded p-2 hover:bg-gray-700"
+        className="hover:bg-surface-raised rounded p-2"
         title="Stop"
       >
-        <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+        <SvgIcon
+          size="control"
+          className="h-5 w-5"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
           <path
             fillRule="evenodd"
             d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z"
             clipRule="evenodd"
           />
-        </svg>
+        </SvgIcon>
       </button>
 
       {/* Step forward */}
       <button
         onClick={onStepForward}
         disabled={isAtEnd}
-        className="rounded p-2 hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+        className="hover:bg-surface-raised rounded p-2 disabled:cursor-not-allowed disabled:opacity-50"
         title="Step forward"
       >
-        <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+        <SvgIcon
+          size="control"
+          className="h-5 w-5"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
           <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798L4.555 5.168z" />
-        </svg>
+        </SvgIcon>
       </button>
 
       {/* Speed control */}
-      <div className="ml-2 flex items-center gap-1 rounded bg-gray-800 px-2 py-1">
+      <div className="bg-surface-base ml-2 flex items-center gap-1 rounded px-2 py-1">
         <button
           onClick={() => onSpeedChange(getPrevSpeed(speed))}
-          className="rounded p-1 hover:bg-gray-700"
+          className="hover:bg-surface-raised rounded p-1"
           title="Decrease speed"
         >
-          <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+          <SvgIcon
+            size="inline"
+            className="h-3 w-3"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
             <path
               fillRule="evenodd"
               d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
               clipRule="evenodd"
             />
-          </svg>
+          </SvgIcon>
         </button>
         <span className="w-10 text-center font-mono text-sm">
           {formatSpeed(speed)}
         </span>
         <button
           onClick={() => onSpeedChange(getNextSpeed(speed))}
-          className="rounded p-1 hover:bg-gray-700"
+          className="hover:bg-surface-raised rounded p-1"
           title="Increase speed"
         >
-          <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+          <SvgIcon
+            size="inline"
+            className="h-3 w-3"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
             <path
               fillRule="evenodd"
               d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
               clipRule="evenodd"
             />
-          </svg>
+          </SvgIcon>
         </button>
       </div>
     </div>
@@ -200,7 +236,7 @@ function ReplayTimeline({
   return (
     <div className="flex flex-col gap-2">
       {/* Progress info */}
-      <div className="flex justify-between text-sm text-gray-400">
+      <div className="text-text-theme-secondary flex justify-between text-sm">
         <span>
           Event {currentIndex + 1} / {totalEvents}
         </span>
@@ -211,10 +247,10 @@ function ReplayTimeline({
       {/* Timeline bar */}
       <div className="relative h-8">
         {/* Background track */}
-        <div className="absolute inset-x-0 top-3 h-2 rounded-full bg-gray-700">
+        <div className="bg-surface-raised absolute inset-x-0 top-3 h-2 rounded-full">
           {/* Progress fill */}
           <div
-            className="absolute inset-y-0 left-0 rounded-full bg-blue-600 transition-all"
+            className="bg-accent absolute inset-y-0 left-0 rounded-full transition-all"
             style={{ width: `${progress * 100}%` }}
           />
         </div>
@@ -269,10 +305,10 @@ function EventList({
 }) {
   return (
     <div
-      className="mt-4 overflow-hidden rounded-lg border border-gray-700"
+      className="border-border-theme mt-4 overflow-hidden rounded-lg border"
       style={{ maxHeight }}
     >
-      <div className="border-b border-gray-700 bg-gray-800 px-3 py-2 text-sm font-medium">
+      <div className="border-border-theme bg-surface-base border-b px-3 py-2 text-sm font-medium">
         Event Log
       </div>
       <div
@@ -283,21 +319,23 @@ function EventList({
           <button
             key={event.id}
             onClick={() => onEventClick?.(event, index)}
-            className={`w-full border-b border-gray-800 px-3 py-2 text-left text-sm transition-colors hover:bg-gray-800 ${
+            className={`border-border-theme hover:bg-surface-base w-full border-b px-3 py-2 text-left text-sm transition-colors ${
               index === currentIndex ? 'bg-blue-900/50' : ''
-            } ${index < currentIndex ? 'text-gray-500' : ''}`}
+            } ${index < currentIndex ? 'text-text-theme-muted' : ''}`}
           >
             <div className="flex items-center gap-2">
               <span
                 className={`h-2 w-2 rounded-full ${getMarkerColor(event.type)}`}
               />
-              <span className="font-mono text-xs text-gray-400">
+              <span className="text-text-theme-secondary font-mono text-xs">
                 T{event.turn}
               </span>
               <span className="flex-1 truncate">
                 {formatEventType(event.type)}
               </span>
-              <span className="text-xs text-gray-500">#{event.sequence}</span>
+              <span className="text-text-theme-muted text-xs">
+                #{event.sequence}
+              </span>
             </div>
           </button>
         ))}
@@ -317,9 +355,9 @@ const EVENT_MARKER_COLOR_BY_TYPE: Readonly<Record<string, string>> = {
   [GameEventType.GameCreated]: 'bg-green-500',
   [GameEventType.GameStarted]: 'bg-green-500',
   [GameEventType.GameEnded]: 'bg-green-500',
-  [GameEventType.TurnStarted]: 'bg-blue-500',
-  [GameEventType.TurnEnded]: 'bg-blue-500',
-  [GameEventType.PhaseChanged]: 'bg-blue-500',
+  [GameEventType.TurnStarted]: 'bg-accent',
+  [GameEventType.TurnEnded]: 'bg-accent',
+  [GameEventType.PhaseChanged]: 'bg-accent',
   [GameEventType.MovementDeclared]: 'bg-yellow-500',
   [GameEventType.MovementLocked]: 'bg-yellow-500',
   [GameEventType.AttackDeclared]: 'bg-red-500',
@@ -331,7 +369,7 @@ const EVENT_MARKER_COLOR_BY_TYPE: Readonly<Record<string, string>> = {
 };
 
 function getMarkerColor(type: GameEventType | string): string {
-  return EVENT_MARKER_COLOR_BY_TYPE[type] ?? 'bg-gray-500';
+  return EVENT_MARKER_COLOR_BY_TYPE[type] ?? 'bg-surface-raised';
 }
 
 /**
@@ -410,14 +448,14 @@ export function SharedReplayViewer({
 
   if (events.length === 0) {
     return (
-      <div className={`p-4 text-center text-gray-500 ${className}`}>
+      <div className={`text-text-theme-muted p-4 text-center ${className}`}>
         No events to replay
       </div>
     );
   }
 
   return (
-    <div className={`rounded-lg bg-gray-900 p-4 ${className}`}>
+    <div className={`bg-surface-deep rounded-lg p-4 ${className}`}>
       {/* Controls */}
       <ReplayControls
         playbackState={replay.playbackState}
@@ -448,7 +486,7 @@ export function SharedReplayViewer({
 
       {/* Current event display */}
       {replay.currentEvent && (
-        <div className="mt-4 rounded-lg bg-gray-800 p-3">
+        <div className="bg-surface-base mt-4 rounded-lg p-3">
           <div className="flex items-center gap-2 text-sm">
             <span
               className={`h-3 w-3 rounded-full ${getMarkerColor(replay.currentEvent.type)}`}
@@ -456,7 +494,7 @@ export function SharedReplayViewer({
             <span className="font-medium">
               {formatEventType(replay.currentEvent.type)}
             </span>
-            <span className="text-gray-400">
+            <span className="text-text-theme-secondary">
               Turn {replay.currentEvent.turn}, Sequence #
               {replay.currentEvent.sequence}
             </span>

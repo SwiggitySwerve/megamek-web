@@ -5,6 +5,8 @@ import Link from 'next/link';
  */
 import React from 'react';
 
+import { SvgIcon } from '@/components/ui/SvgIcon';
+
 import { Breadcrumb, BreadcrumbItem } from './Breadcrumb';
 
 interface PageLayoutProps {
@@ -56,11 +58,11 @@ export function PageLayout({
       : backLink;
 
   const BackIcon = () => (
-    <svg
+    <SvgIcon
+      size="inline"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
-      strokeWidth={2}
       stroke="currentColor"
       className="mr-2 h-4 w-4"
     >
@@ -69,7 +71,7 @@ export function PageLayout({
         strokeLinejoin="round"
         d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
       />
-    </svg>
+    </SvgIcon>
   );
 
   const showBackLink = !breadcrumbs && (normalizedBackLink || onBack);

@@ -1,10 +1,13 @@
+import { getStructurePoints } from '@/types/construction/InternalStructureType';
 /**
  * Calculation Service - Calculation Logic
  *
  * Complex calculation methods extracted from CalculationService.
  */
-
-import { getStructurePoints } from '@/types/construction/InternalStructureType';
+import {
+  MechConfiguration,
+  getLocationsForConfig,
+} from '@/types/construction/MechConfigurationSystem';
 
 import { IEditableMech } from './MechBuilderService';
 
@@ -12,23 +15,12 @@ import { IEditableMech } from './MechBuilderService';
  * Calculate total structure points for the mech
  */
 export function calculateTotalStructurePoints(mech: IEditableMech): number {
-  const locations = [
-    'head',
-    'centerTorso',
-    'leftTorso',
-    'rightTorso',
-    'leftArm',
-    'rightArm',
-    'leftLeg',
-    'rightLeg',
-  ];
-  let total = 0;
-
-  for (const location of locations) {
-    total += getStructurePoints(mech.tonnage, location);
-  }
-
-  return total;
+  return getLocationsForConfig(
+    mech.configuration ?? MechConfiguration.BIPED,
+  ).reduce(
+    (total, location) => total + getStructurePoints(mech.tonnage, location),
+    0,
+  );
 }
 
 /**
@@ -36,18 +28,33 @@ export function calculateTotalStructurePoints(mech: IEditableMech): number {
  */
 export function calculateTotalArmorPoints(mech: IEditableMech): number {
   const a = mech.armorAllocation;
-  return (
+  const core =
     a.head +
     a.centerTorso +
     a.centerTorsoRear +
     a.leftTorso +
     a.leftTorsoRear +
     a.rightTorso +
-    a.rightTorsoRear +
+    a.rightTorsoRear;
+  if (
+    mech.configuration === MechConfiguration.QUAD ||
+    mech.configuration === MechConfiguration.QUADVEE
+  ) {
+    return (
+      core +
+      (a.frontLeftLeg ?? 0) +
+      (a.frontRightLeg ?? 0) +
+      (a.rearLeftLeg ?? 0) +
+      (a.rearRightLeg ?? 0)
+    );
+  }
+  return (
+    core +
     a.leftArm +
     a.rightArm +
     a.leftLeg +
-    a.rightLeg
+    a.rightLeg +
+    (mech.configuration === MechConfiguration.TRIPOD ? (a.centerLeg ?? 0) : 0)
   );
 }
 

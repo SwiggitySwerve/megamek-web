@@ -57,7 +57,7 @@ function ActionSheetDemo({
     <div className="space-y-4 text-center">
       <button
         onClick={() => setIsOpen(true)}
-        className="bg-accent hover:bg-accent-hover rounded-lg px-6 py-3 text-white transition-colors"
+        className="bg-accent hover:bg-accent-hover text-on-accent rounded-lg px-6 py-3 transition-colors"
       >
         Open Action Sheet
       </button>

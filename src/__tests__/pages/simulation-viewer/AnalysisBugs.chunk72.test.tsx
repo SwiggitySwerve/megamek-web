@@ -341,13 +341,13 @@ describe('AnalysisBugs', () => {
   });
 
   /* ================================================================== */
-  /*  7. Dark Mode Tests                                                  */
+  /*  7. Semantic Palette Tests                                                  */
   /* ================================================================== */
-  describe('Dark Mode', () => {
-    it('threshold slider has dark mode accent', () => {
+  describe('Semantic palette', () => {
+    it('uses the semantic accent token for the threshold slider', () => {
       renderPage();
       const slider = screen.getByTestId('threshold-input-heatSuicide');
-      expect(slider.className).toContain('dark:accent-blue-400');
+      expect(slider).toHaveClass('accent-accent');
     });
   });
 });

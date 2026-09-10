@@ -68,7 +68,7 @@ export function MovementPlanningSection({
 }: MovementPlanningSectionProps): React.ReactElement {
   return (
     <section
-      className={`bg-surface-base flex flex-col gap-3 border-t border-gray-200 p-3 ${className}`}
+      className={`bg-surface-base border-border-theme-subtle flex flex-col gap-3 border-t p-3 ${className}`}
       aria-label="Movement planning"
       data-testid="combat-planning-panel-movement"
     >
@@ -113,14 +113,14 @@ function MovementModeReadout({
 }): React.ReactElement {
   return (
     <div
-      className="rounded border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-700"
+      className="border-border-theme-subtle bg-surface-base text-text-theme-primary rounded border px-3 py-2 text-sm"
       data-testid="movement-mode-readout"
     >
-      <span className="font-semibold text-slate-900">Mode:</span>{' '}
+      <span className="text-text-theme-primary font-semibold">Mode:</span>{' '}
       <span data-testid="movement-mode-readout-active">
         {formatMovementMode(movementType)}
       </span>
-      <span className="ml-3 text-slate-500">
+      <span className="text-text-theme-muted ml-3">
         Walk {walkMP} MP / Run {runMP} MP / Jump {jumpMP} MP
       </span>
     </div>
@@ -213,7 +213,7 @@ export function WeaponAttackPlanningSection({
 
   return (
     <section
-      className={`bg-surface-base flex flex-col gap-3 border-t border-gray-200 p-3 ${className}`}
+      className={`bg-surface-base border-border-theme-subtle flex flex-col gap-3 border-t p-3 ${className}`}
       aria-label="Attack planning"
       data-testid="combat-planning-panel-attack"
       data-attacker-locked={attackerLocked}
@@ -250,8 +250,8 @@ export function WeaponAttackPlanningSection({
           disabled={!forecastReady}
           className={`min-h-[44px] rounded px-4 py-2 font-medium transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none ${
             forecastReady
-              ? 'cursor-pointer bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500'
-              : 'cursor-not-allowed bg-gray-300 text-gray-500'
+              ? 'bg-accent text-on-accent hover:bg-accent-hover focus:ring-accent cursor-pointer'
+              : 'bg-surface-raised text-text-theme-muted cursor-not-allowed'
           }`}
           data-testid="preview-forecast-button"
         >
@@ -300,7 +300,7 @@ export function PhysicalAttackPlanningSection({
 
   return (
     <section
-      className={`bg-surface-base flex flex-col gap-3 border-t border-gray-200 p-3 ${className}`}
+      className={`bg-surface-base border-border-theme-subtle flex flex-col gap-3 border-t p-3 ${className}`}
       aria-label="Physical attack planning"
       data-testid="combat-planning-panel-physical"
     >

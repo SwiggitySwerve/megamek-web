@@ -120,8 +120,8 @@ export function MapControls({
           }
           className={`flex min-h-[44px] min-w-[44px] items-center justify-center rounded p-2 text-xs font-medium shadow transition-colors ${
             isIsometric
-              ? 'bg-slate-800 text-white hover:bg-slate-900'
-              : 'bg-white text-slate-700 hover:bg-gray-100'
+              ? 'bg-accent text-on-accent hover:bg-accent-hover'
+              : 'bg-surface-base text-text-theme-primary hover:bg-surface-raised'
           }`}
           title="Toggle isometric 2.5D view"
           aria-label={formatProjectionModeControlLabel(
@@ -148,7 +148,7 @@ export function MapControls({
             data-testid="isometric-rotation-controls"
           >
             <div
-              className="pointer-events-none hidden rounded bg-slate-950/85 px-2 py-1 text-[10px] font-semibold text-slate-100 shadow lg:block"
+              className="bg-surface-deep/85 text-text-theme-primary pointer-events-none hidden rounded px-2 py-1 text-[10px] font-semibold shadow lg:block"
               aria-label={`Isometric camera heading ${isometricRotationDegrees} degrees`}
               data-testid="isometric-rotation-heading"
               data-isometric-rotation-step={interaction.isometricRotationStep}
@@ -159,7 +159,7 @@ export function MapControls({
             <button
               type="button"
               onClick={interaction.rotateIsometricLeft}
-              className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded bg-white p-2 text-xs font-medium text-slate-700 shadow hover:bg-gray-100"
+              className="bg-surface-base text-text-theme-primary hover:bg-surface-raised flex min-h-[44px] min-w-[44px] items-center justify-center rounded p-2 text-xs font-medium shadow"
               title="Rotate isometric camera left"
               aria-label={formatIsometricCameraControlLabel(
                 'left',
@@ -176,7 +176,7 @@ export function MapControls({
             <button
               type="button"
               onClick={interaction.rotateIsometricRight}
-              className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded bg-white p-2 text-xs font-medium text-slate-700 shadow hover:bg-gray-100"
+              className="bg-surface-base text-text-theme-primary hover:bg-surface-raised flex min-h-[44px] min-w-[44px] items-center justify-center rounded p-2 text-xs font-medium shadow"
               title="Rotate isometric camera right"
               aria-label={formatIsometricCameraControlLabel(
                 'right',
@@ -198,7 +198,7 @@ export function MapControls({
           className={`flex min-h-[44px] min-w-[44px] items-center justify-center rounded p-2 text-xs font-medium shadow transition-colors ${
             interaction.showMovementOverlay
               ? 'bg-blue-600 text-white hover:bg-blue-700'
-              : 'bg-white text-slate-700 hover:bg-gray-100'
+              : 'bg-surface-base text-text-theme-primary hover:bg-surface-raised'
           }`}
           title="Toggle movement cost overlay"
           aria-label={formatLayerToggleLabel(
@@ -224,7 +224,7 @@ export function MapControls({
           className={`flex min-h-[44px] min-w-[44px] items-center justify-center rounded p-2 text-xs font-medium shadow transition-colors ${
             interaction.showElevationBadges
               ? 'bg-sky-600 text-white hover:bg-sky-700'
-              : 'bg-white text-slate-700 hover:bg-gray-100'
+              : 'bg-surface-base text-text-theme-primary hover:bg-surface-raised'
           }`}
           title="Toggle terrain elevation badges"
           aria-label={formatLayerToggleLabel(
@@ -250,7 +250,7 @@ export function MapControls({
           className={`flex min-h-[44px] min-w-[44px] items-center justify-center rounded p-2 text-xs font-medium shadow transition-colors ${
             interaction.showCoverOverlay
               ? 'bg-green-600 text-white hover:bg-green-700'
-              : 'bg-white text-slate-700 hover:bg-gray-100'
+              : 'bg-surface-base text-text-theme-primary hover:bg-surface-raised'
           }`}
           title="Toggle cover level overlay"
           aria-label={formatLayerToggleLabel(
@@ -276,7 +276,7 @@ export function MapControls({
           className={`flex min-h-[44px] min-w-[44px] items-center justify-center rounded p-2 text-xs font-medium shadow transition-colors ${
             interaction.showFiringArcOverlay
               ? 'bg-rose-600 text-white hover:bg-rose-700'
-              : 'bg-white text-slate-700 hover:bg-gray-100'
+              : 'bg-surface-base text-text-theme-primary hover:bg-surface-raised'
           }`}
           title="Toggle firing arc overlay"
           aria-label={formatLayerToggleLabel(
@@ -302,7 +302,7 @@ export function MapControls({
           className={`flex min-h-[44px] min-w-[44px] items-center justify-center rounded p-2 text-xs font-medium shadow transition-colors ${
             interaction.showLOSOverlay
               ? 'bg-amber-600 text-white hover:bg-amber-700'
-              : 'bg-white text-slate-700 hover:bg-gray-100'
+              : 'bg-surface-base text-text-theme-primary hover:bg-surface-raised'
           }`}
           title="Toggle LOS overlay"
           aria-label={formatLayerToggleLabel(
@@ -327,7 +327,7 @@ export function MapControls({
         <button
           type="button"
           onClick={() => interaction.setZoom((z) => Math.min(3, z * 1.2))}
-          className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded bg-white p-2 shadow hover:bg-gray-100"
+          className="bg-surface-base text-text-theme-primary hover:bg-surface-raised flex min-h-[44px] min-w-[44px] items-center justify-center rounded p-2 shadow"
           title="Zoom in"
           aria-label="Zoom in"
           data-testid="zoom-in-btn"
@@ -337,7 +337,7 @@ export function MapControls({
         <button
           type="button"
           onClick={() => interaction.setZoom((z) => Math.max(0.5, z / 1.2))}
-          className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded bg-white p-2 shadow hover:bg-gray-100"
+          className="bg-surface-base text-text-theme-primary hover:bg-surface-raised flex min-h-[44px] min-w-[44px] items-center justify-center rounded p-2 shadow"
           title="Zoom out"
           aria-label="Zoom out"
           data-testid="zoom-out-btn"
@@ -351,7 +351,7 @@ export function MapControls({
             interaction.setPan({ x: 0, y: 0 });
             interaction.setIsometricRotationStep(0);
           }}
-          className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded bg-white p-2 shadow hover:bg-gray-100"
+          className="bg-surface-base text-text-theme-primary hover:bg-surface-raised flex min-h-[44px] min-w-[44px] items-center justify-center rounded p-2 shadow"
           title="Reset view"
           aria-label="Reset map view"
           data-testid="reset-view-btn"

@@ -82,13 +82,13 @@ export default function SimulationViewerTestPage(): React.JSX.Element {
 
   return (
     <div
-      className="min-h-screen bg-gray-50 dark:bg-gray-900"
+      className="bg-surface-deep dark:bg-surface-deep min-h-screen"
       data-testid="simulation-viewer-harness"
       data-victory-count={victoryCount}
     >
-      <div className="flex items-center justify-between border-b border-gray-200 bg-white px-4 py-2 dark:border-gray-700 dark:bg-gray-800">
+      <div className="border-border-theme-subtle bg-surface-base dark:border-border-theme-subtle dark:bg-surface-base flex items-center justify-between border-b px-4 py-2">
         <span
-          className="text-sm font-medium text-gray-700 dark:text-gray-300"
+          className="text-text-theme-secondary text-sm font-medium"
           data-testid="harness-label"
         >
           Simulation Viewer E2E Harness
@@ -96,7 +96,7 @@ export default function SimulationViewerTestPage(): React.JSX.Element {
         <button
           type="button"
           onClick={handleToggleDarkMode}
-          className="min-h-[44px] rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+          className="border-border-theme text-text-theme-primary hover:bg-surface-raised dark:border-border-theme dark:text-text-theme-secondary dark:hover:bg-surface-raised min-h-[44px] rounded-md border px-4 py-2 text-sm transition-colors"
           aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
           data-testid="dark-mode-toggle"
         >

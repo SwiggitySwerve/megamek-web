@@ -107,7 +107,7 @@ function MovementLegendButton({
     <button
       type="button"
       className={`pointer-events-auto flex items-center gap-2 rounded px-1 py-0.5 ${
-        isActive ? 'font-semibold ring-1 ring-slate-700' : 'opacity-70'
+        isActive ? 'ring-border-theme font-semibold ring-1' : 'opacity-70'
       } ${disabledReason ? 'opacity-40' : ''}`}
       data-testid={`mp-legend-${kind}`}
       data-active={isActive ? 'true' : undefined}
@@ -151,7 +151,7 @@ export function MapMovementPointLegend({
 
   return (
     <div
-      className="pointer-events-none absolute bottom-4 left-4 flex flex-col gap-1 rounded bg-white/90 p-2 text-xs shadow"
+      className="bg-surface-base/90 pointer-events-none absolute bottom-4 left-4 flex flex-col gap-1 rounded p-2 text-xs shadow"
       data-testid="mp-legend"
       data-non-color-encodings="blocked:cross-hatch|run:dashed-border|jump:diagonal-hatch"
       data-movement-mode={movementMode}
@@ -161,7 +161,7 @@ export function MapMovementPointLegend({
     >
       {movementModeLabel && (
         <div
-          className="pointer-events-auto rounded bg-slate-100 px-1 py-0.5 font-semibold text-slate-700"
+          className="bg-surface-base text-text-theme-primary pointer-events-auto rounded px-1 py-0.5 font-semibold"
           data-testid="mp-legend-motive"
           data-movement-mode={movementMode}
           aria-label={`Movement motive ${movementModeLabel}`}
@@ -182,12 +182,12 @@ export function MapMovementPointLegend({
         />
       ))}
       <div
-        className="pointer-events-auto flex items-center gap-2 rounded px-1 py-0.5 text-slate-700"
+        className="text-text-theme-primary pointer-events-auto flex items-center gap-2 rounded px-1 py-0.5"
         data-testid="mp-legend-blocked"
         data-non-color-encoding="cross-hatch"
         aria-label="Blocked movement projection; non-color encoding cross-hatch and blocked marker"
       >
-        <span className="inline-block h-3 w-3 rounded-sm border border-slate-700 bg-slate-500" />
+        <span className="border-border-theme bg-surface-raised inline-block h-3 w-3 rounded-sm border" />
         <span>Blocked</span>
       </div>
     </div>

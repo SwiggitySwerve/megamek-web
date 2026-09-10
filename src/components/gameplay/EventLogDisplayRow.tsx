@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { AppIcon, type AppIconName } from '@/components/ui/AppIcon';
+
 import {
   getIconColor,
   getPhaseLabel,
@@ -19,16 +21,16 @@ interface EventRowProps {
   readonly onRowFocus?: (eventId: string, unitId?: string) => void;
 }
 
-const EVENT_ICON_TEXT: Readonly<
-  Record<IFormattedEventWithGrouping['icon'], string>
+const EVENT_ICON_NAMES: Readonly<
+  Record<IFormattedEventWithGrouping['icon'], AppIconName>
 > = {
-  movement: '\u2192',
-  attack: '\u2694',
-  damage: '\u{1F4A5}',
-  heat: '\u{1F525}',
-  critical: '\u26A0',
-  phase: '\u25C6',
-  status: '\u2022',
+  movement: 'arrow-right',
+  attack: 'swords',
+  damage: 'impact',
+  heat: 'flame',
+  critical: 'warning',
+  phase: 'encounter',
+  status: 'info',
 };
 
 function eventRowInteractionProps(
@@ -69,8 +71,8 @@ export function EventRow({
 
   return (
     <div
-      className={`flex items-start gap-2 px-2 py-1 text-sm hover:bg-gray-50 ${
-        isNested ? 'pl-8 text-gray-600 italic' : ''
+      className={`hover:bg-surface-base flex items-start gap-2 px-2 py-1 text-sm ${
+        isNested ? 'text-text-theme-muted pl-8 italic' : ''
       } ${onRowFocus ? 'cursor-pointer' : ''}`}
       data-testid="event-row"
       data-event-id={event.id}
@@ -82,13 +84,20 @@ export function EventRow({
         data-testid="event-icon"
         data-icon-type={event.icon}
       >
-        {EVENT_ICON_TEXT[event.icon]}
+        <AppIcon
+          name={EVENT_ICON_NAMES[event.icon]}
+          size="inline"
+          aria-hidden="true"
+        />
       </span>
-      <span className="w-8 text-xs text-gray-500" data-testid="event-turn">
+      <span
+        className="text-text-theme-muted w-8 text-xs"
+        data-testid="event-turn"
+      >
         T{event.turn}
       </span>
       <span
-        className="w-12 rounded bg-gray-100 px-1 text-center text-[10px] font-semibold tracking-wide text-gray-600 uppercase"
+        className="bg-surface-base text-text-theme-muted w-12 rounded px-1 text-center text-[10px] font-semibold tracking-wide uppercase"
         data-testid="event-phase"
         data-phase={event.phase}
       >
@@ -96,7 +105,7 @@ export function EventRow({
       </span>
       {actor && (
         <span
-          className="w-20 truncate text-xs font-medium text-gray-700"
+          className="text-text-theme-primary w-20 truncate text-xs font-medium"
           data-testid="event-actor"
           data-unit-id={event.unitId}
           title={actor}
@@ -107,7 +116,7 @@ export function EventRow({
       <span className="flex-1" data-testid="event-text">
         {event.transferPrefix && (
           <span
-            className="mr-1 text-gray-500"
+            className="text-text-theme-muted mr-1"
             data-testid="event-transfer-prefix"
           >
             {event.transferPrefix}

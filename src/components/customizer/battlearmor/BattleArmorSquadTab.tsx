@@ -144,7 +144,9 @@ export function BattleArmorSquadTab({
               disabled={readOnly}
               className="border-border-theme bg-surface-raised rounded"
             />
-            <span className="text-sm text-white">Anti-Personnel Mount</span>
+            <span className="text-text-theme-primary text-sm">
+              Anti-Personnel Mount
+            </span>
           </label>
           <label className="flex cursor-pointer items-center gap-2">
             <input
@@ -154,7 +156,9 @@ export function BattleArmorSquadTab({
               disabled={readOnly}
               className="border-border-theme bg-surface-raised rounded"
             />
-            <span className="text-sm text-white">Modular Mount</span>
+            <span className="text-text-theme-primary text-sm">
+              Modular Mount
+            </span>
           </label>
           <label className="flex cursor-pointer items-center gap-2">
             <input
@@ -164,7 +168,9 @@ export function BattleArmorSquadTab({
               disabled={readOnly}
               className="border-border-theme bg-surface-raised rounded"
             />
-            <span className="text-sm text-white">Turret Mount</span>
+            <span className="text-text-theme-primary text-sm">
+              Turret Mount
+            </span>
           </label>
         </div>
       </div>
@@ -205,7 +211,9 @@ export function BattleArmorSquadTab({
                 key={item.id}
                 className="bg-surface-raised flex items-center justify-between rounded p-2"
               >
-                <span className="text-sm text-white">{item.name}</span>
+                <span className="text-text-theme-primary text-sm">
+                  {item.name}
+                </span>
                 <div className="flex items-center gap-2">
                   <select
                     value={item.location}

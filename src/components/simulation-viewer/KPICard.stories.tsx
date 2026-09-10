@@ -151,7 +151,7 @@ export const DarkMode: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="dark w-80 rounded-lg bg-gray-900 p-8">
+      <div className="bg-surface-deep w-80 rounded-lg p-8">
         <Story />
       </div>
     ),
@@ -192,7 +192,7 @@ export const AllVariants: StoryObj = {
 
 export const DarkModeGrid: StoryObj = {
   render: () => (
-    <div className="dark rounded-lg bg-gray-900 p-8">
+    <div className="bg-surface-deep rounded-lg p-8">
       <div className="grid max-w-2xl grid-cols-2 gap-4">
         <KPICard
           label="BV Efficiency"

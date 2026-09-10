@@ -46,9 +46,9 @@ describe('NeonOperatorDiagram', () => {
     jest.clearAllMocks();
   });
 
-  it('should render the diagram with sci-fi title', () => {
+  it('should render the diagram with shared title', () => {
     render(<NeonOperatorDiagram {...defaultProps} />);
-    expect(screen.getByText('ARMOR STATUS')).toBeInTheDocument();
+    expect(screen.getByText('Armor Allocation')).toBeInTheDocument();
   });
 
   it('should render front/rear labels on torso locations', () => {
@@ -57,7 +57,7 @@ describe('NeonOperatorDiagram', () => {
     // Torso locations have stacked front/rear with "-F" suffix for front
     expect(screen.getByText('CT-F')).toBeInTheDocument();
     // Multiple "R" labels for each torso rear section
-    const rearLabels = screen.getAllByText('R');
+    const rearLabels = screen.getAllByText('REAR');
     expect(rearLabels.length).toBe(3);
   });
 
@@ -78,13 +78,16 @@ describe('NeonOperatorDiagram', () => {
   it('should display unallocated points info', () => {
     render(<NeonOperatorDiagram {...defaultProps} />);
 
-    expect(screen.getByText('UNALLOC: 12')).toBeInTheDocument();
+    expect(screen.getByText('Available')).toBeInTheDocument();
+    expect(screen.getByText('12 points')).toBeInTheDocument();
   });
 
   it('should display targeting instruction', () => {
     render(<NeonOperatorDiagram {...defaultProps} />);
 
-    expect(screen.getByText('SELECT TARGET LOCATION')).toBeInTheDocument();
+    expect(
+      screen.getByText('Click a location to edit armor values'),
+    ).toBeInTheDocument();
   });
 
   it('should apply custom className', () => {

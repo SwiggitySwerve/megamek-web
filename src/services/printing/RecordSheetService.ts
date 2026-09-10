@@ -189,7 +189,10 @@ export class RecordSheetService {
 
     return {
       unitType: 'mech',
-      header: extractHeader(unit),
+      header: {
+        ...extractHeader(unit),
+        engineDescription: `${unit.engine.rating} ${unit.engine.type}`,
+      },
       movement: extractMovement(unit),
       armor: extractArmor(unit),
       structure: extractStructure(unit),

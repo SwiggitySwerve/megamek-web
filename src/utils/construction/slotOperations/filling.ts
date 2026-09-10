@@ -1,6 +1,11 @@
 import { MechLocation } from '@/types/construction/CriticalSlotAllocation';
 import { EngineType } from '@/types/construction/EngineType';
 import { GyroType } from '@/types/construction/GyroType';
+import {
+  getLocationsForConfig,
+  getLocationSlotCount,
+  MechConfiguration,
+} from '@/types/construction/MechConfigurationSystem';
 import { IMountedEquipmentInstance } from '@/types/equipment/MountedEquipment';
 
 import { getAvailableSlotIndices, isUnhittableEquipment } from './queries';
@@ -11,9 +16,12 @@ const FILL_LOCATION_PAIRS: readonly (readonly [MechLocation, MechLocation])[] =
     [MechLocation.LEFT_TORSO, MechLocation.RIGHT_TORSO],
     [MechLocation.LEFT_ARM, MechLocation.RIGHT_ARM],
     [MechLocation.LEFT_LEG, MechLocation.RIGHT_LEG],
+    [MechLocation.FRONT_LEFT_LEG, MechLocation.FRONT_RIGHT_LEG],
+    [MechLocation.REAR_LEFT_LEG, MechLocation.REAR_RIGHT_LEG],
   ];
 
 const FILL_SINGLE_LOCATIONS: readonly MechLocation[] = [
+  MechLocation.CENTER_LEG,
   MechLocation.CENTER_TORSO,
   MechLocation.HEAD,
 ];
@@ -32,12 +40,16 @@ function createAvailableSlotsByLocation(
   equipment: readonly IMountedEquipmentInstance[],
   engineType: EngineType,
   gyroType: GyroType,
+  configuration: MechConfiguration,
 ): AvailableSlotsByLocation {
   const availableByLocation: AvailableSlotsByLocation = new Map();
-  for (const loc of Object.values(MechLocation)) {
+  for (const location of getLocationsForConfig(configuration)) {
+    const slotCount = getLocationSlotCount(location, configuration);
     availableByLocation.set(
-      loc,
-      getAvailableSlotIndices(loc, engineType, gyroType, equipment),
+      location,
+      getAvailableSlotIndices(location, engineType, gyroType, equipment).filter(
+        (index) => index < slotCount,
+      ),
     );
   }
   return availableByLocation;
@@ -145,6 +157,7 @@ export function fillUnhittableSlots(
   equipment: readonly IMountedEquipmentInstance[],
   engineType: EngineType,
   gyroType: GyroType,
+  configuration: MechConfiguration = MechConfiguration.BIPED,
 ): SlotOperationResult {
   const assignments: SlotAssignment[] = [];
 
@@ -157,6 +170,7 @@ export function fillUnhittableSlots(
     equipment,
     engineType,
     gyroType,
+    configuration,
   );
   const pairedIndex = fillPairedLocations(
     unhittables,

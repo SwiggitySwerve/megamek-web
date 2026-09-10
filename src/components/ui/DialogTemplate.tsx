@@ -26,6 +26,7 @@ import React from 'react';
 
 import { ModalOverlay } from '@/components/customizer/dialogs/ModalOverlay';
 import { cs } from '@/components/customizer/styles';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 
 export interface DialogTemplateProps {
   /** Whether dialog is open */
@@ -92,6 +93,8 @@ export function DialogTemplate({
       onClose={onClose}
       preventClose={preventClose}
       className={className}
+      ariaLabelledBy={titleId}
+      ariaDescribedBy={ariaDescribedBy || subtitleId}
     >
       {/* Header */}
       <div className={cs.dialog.header}>
@@ -112,7 +115,8 @@ export function DialogTemplate({
             aria-label="Close dialog"
             disabled={preventClose}
           >
-            <svg
+            <SvgIcon
+              size="control"
               className="h-5 w-5"
               fill="none"
               stroke="currentColor"
@@ -125,19 +129,13 @@ export function DialogTemplate({
                 strokeWidth={2}
                 d="M6 18L18 6M6 6l12 12"
               />
-            </svg>
+            </SvgIcon>
           </button>
         )}
       </div>
 
       {/* Content */}
-      <div
-        className={cs.dialog.content}
-        aria-labelledby={titleId}
-        aria-describedby={ariaDescribedBy || subtitleId}
-      >
-        {children}
-      </div>
+      <div className={cs.dialog.content}>{children}</div>
 
       {/* Footer */}
       {footer && <div className={cs.dialog.footer}>{footer}</div>}

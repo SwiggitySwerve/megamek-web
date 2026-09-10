@@ -271,7 +271,7 @@ export function CampaignRefitCommandBar({
           className={
             canSaveRefit
               ? 'rounded border border-sky-500/60 bg-sky-600/20 px-3 py-2 text-sm font-semibold text-sky-100'
-              : 'cursor-not-allowed rounded border border-slate-700 bg-slate-900/40 px-3 py-2 text-sm font-semibold text-slate-500'
+              : 'border-border-theme bg-surface-deep/40 text-text-theme-muted cursor-not-allowed rounded border px-3 py-2 text-sm font-semibold'
           }
           data-testid="campaign-refit-save"
         >

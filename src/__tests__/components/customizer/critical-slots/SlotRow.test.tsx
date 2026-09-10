@@ -22,7 +22,7 @@ describe('SlotRow', () => {
   it('should render empty slot', () => {
     render(<SlotRow {...defaultProps} />);
 
-    expect(screen.getByText('- Empty -')).toBeInTheDocument();
+    expect(screen.getByText('Available')).toBeInTheDocument();
   });
 
   it('should render equipment slot', () => {
@@ -38,11 +38,29 @@ describe('SlotRow', () => {
     expect(screen.getByText('Medium Laser')).toBeInTheDocument();
   });
 
+  it('shows the equipment name and slot index in every occupied slot', () => {
+    const slot: SlotContent = {
+      index: 2,
+      type: 'equipment',
+      name: 'Large Pulse Laser',
+      equipmentId: 'equip-1',
+      totalSlots: 2,
+      isFirstSlot: false,
+      isLastSlot: true,
+    };
+
+    render(<SlotRow {...defaultProps} slot={slot} />);
+
+    expect(screen.getByText('3')).toBeInTheDocument();
+    expect(screen.getByText('LPL Laser')).toBeInTheDocument();
+    expect(screen.queryByText('Continuation')).not.toBeInTheDocument();
+  });
+
   it('should call onClick when clicked', async () => {
     const user = userEvent.setup();
     render(<SlotRow {...defaultProps} />);
 
-    const slot = screen.getByText('- Empty -').closest('div');
+    const slot = screen.getByText('Available').closest('div');
     if (slot) {
       await user.click(slot);
       expect(defaultProps.onClick).toHaveBeenCalledTimes(1);
@@ -70,14 +88,14 @@ describe('SlotRow', () => {
   it('should highlight assignable slots', () => {
     render(<SlotRow {...defaultProps} isAssignable={true} />);
 
-    const slot = screen.getByText('- Empty -').closest('div');
-    expect(slot).toHaveClass('bg-green-900/60');
+    const slot = screen.getByText('Available').closest('div');
+    expect(slot).toHaveClass('bg-amber-500/10');
   });
 
   it('should highlight selected slots', () => {
     render(<SlotRow {...defaultProps} isSelected={true} />);
 
-    const slot = screen.getByText('- Empty -').closest('div');
+    const slot = screen.getByText('Available').closest('div');
     expect(slot).toHaveClass('ring-2');
   });
 

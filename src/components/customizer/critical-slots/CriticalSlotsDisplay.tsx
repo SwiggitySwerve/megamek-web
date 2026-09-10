@@ -133,13 +133,13 @@ export function CriticalSlotsDisplay({
           onSlotClick={(i) => onSlotClick(selectedLocation, i)}
           onEquipmentDrop={(i, e) => onEquipmentDrop(selectedLocation, i, e)}
           onEquipmentRemove={(i) => onEquipmentRemove(selectedLocation, i)}
-          className="w-full max-w-xs"
+          className="w-full"
         />
       </div>
 
       {/* Desktop grid layout - MegaMekLab style with 5 columns */}
       <div className="hidden p-4 md:block">
-        <div className="flex items-start gap-2">
+        <div className="grid grid-cols-5 items-start gap-2">
           {/* Column 1: Left Arm */}
           <div className="flex flex-col" style={{ marginTop: '40px' }}>
             <LocationGrid

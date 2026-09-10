@@ -23,11 +23,14 @@ import { RulesLevel } from '@/types/enums/RulesLevel';
 import { TechBase } from '@/types/enums/TechBase';
 import { EquipmentCategory } from '@/types/equipment';
 
+import atlasDefinition from '../../../../public/data/units/battlemechs/2-star-league/standard/Atlas AS7-D.json';
+
 // Mock dependencies
 jest.mock('@/services/units/CanonicalUnitService', () => {
   const _mock_canonicalUnitService = {
     getIndex: jest.fn(),
     getById: jest.fn(),
+    invalidateUnit: jest.fn(),
     query: jest.fn(),
   };
   return { getCanonicalUnitService: () => _mock_canonicalUnitService };
@@ -87,21 +90,52 @@ describe('UnitLoaderService', () => {
       .mockResolvedValue(undefined);
   });
 
+  describe('fetched definition validation', () => {
+    it.each(['canonical', 'custom'] as const)(
+      'rejects malformed %s definitions before creating editor state',
+      async (source) => {
+        const invalid = {
+          id: 'broken-unit',
+          chassis: 'Broken',
+          variant: 'B-1',
+          unitType: 'BattleMech',
+          tonnage: -50,
+          techBase: 'INNER_SPHERE',
+        };
+        if (source === 'canonical')
+          mockCanonicalUnitService.getById.mockResolvedValue(
+            invalid as unknown as IFullUnit,
+          );
+        else
+          mockCustomUnitApiService.getById.mockResolvedValue(
+            invalid as unknown as IFullUnit,
+          );
+        const result = await service.loadUnit('broken-unit', source);
+        expect(result.success).toBe(false);
+        expect(result.state).toBeUndefined();
+        expect(result.error).toMatch(/invalid.*definition/i);
+      },
+    );
+  });
+  // Host IFullUnit still types armor as a flat map; these fixtures preserve the actual serialized payload.
   describe('loadCanonicalUnit', () => {
     it('should load canonical unit successfully', async () => {
-      const mockUnit: IFullUnit = {
+      const mockUnit = {
+        ...atlasDefinition,
         id: 'canon-1',
         chassis: 'Atlas',
         variant: 'AS7-D',
         tonnage: 100,
-        techBase: TechBase.INNER_SPHERE,
-      } as IFullUnit;
+        techBase: 'INNER_SPHERE',
+      };
 
-      mockCanonicalUnitService.getById.mockResolvedValue(mockUnit);
+      mockCanonicalUnitService.getById.mockResolvedValue(
+        mockUnit as unknown as IFullUnit,
+      );
 
       const result = await service.loadCanonicalUnit('canon-1');
 
-      expect(result.success).toBe(true);
+      expect(result).toEqual(expect.objectContaining({ success: true }));
       expect(result.state).toBeDefined();
       expect(result.state?.chassis).toBe('Atlas');
       expect(result.state?.model).toBe('AS7-D');
@@ -133,22 +167,24 @@ describe('UnitLoaderService', () => {
   describe('loadCustomUnit', () => {
     it('should load custom unit successfully', async () => {
       const mockUnit = {
+        ...atlasDefinition,
         id: 'custom-1',
         chassis: 'Custom Atlas',
         variant: 'AS7-X',
         tonnage: 100,
-        techBase: TechBase.INNER_SPHERE,
+        techBase: 'INNER_SPHERE',
         currentVersion: 1,
         createdAt: '2024-01-01',
         updatedAt: '2024-01-02',
       };
 
-      // @ts-expect-error - Partial mock of IFullUnit for testing
-      mockCustomUnitApiService.getById.mockResolvedValue(mockUnit);
+      mockCustomUnitApiService.getById.mockResolvedValue(
+        mockUnit as unknown as IFullUnit,
+      );
 
       const result = await service.loadCustomUnit('custom-1');
 
-      expect(result.success).toBe(true);
+      expect(result).toEqual(expect.objectContaining({ success: true }));
       expect(result.state).toBeDefined();
       expect(result.state?.chassis).toBe('Custom Atlas');
     });
@@ -174,39 +210,100 @@ describe('UnitLoaderService', () => {
     });
   });
 
+  it.each([
+    { movement: { ...atlasDefinition.movement, jumpJetType: 'UMU' } },
+    {
+      movement: {
+        ...atlasDefinition.movement,
+        enhancements: ['MASC', 'Supercharger'],
+      },
+    },
+  ])(
+    'reports unsupported movement without producing a partial editor',
+    async (overrides) => {
+      mockCanonicalUnitService.getById.mockResolvedValue({
+        ...atlasDefinition,
+        ...overrides,
+      } as unknown as IFullUnit);
+      const result = await service.loadCanonicalUnit(atlasDefinition.id);
+      expect(result).toMatchObject({
+        success: false,
+        errorCode: 'unsupported-configuration',
+      });
+      expect(result.state).toBeUndefined();
+    },
+  );
+
+  it('retains source provenance while reporting the immediate custom revision separately', async () => {
+    const sourceDefinition = { source: 'canonical', id: atlasDefinition.id };
+    mockCustomUnitApiService.getById.mockResolvedValue({
+      ...atlasDefinition,
+      id: 'saved-atlas',
+      currentVersion: 4,
+      sourceDefinition,
+    } as unknown as IFullUnit);
+    const result = await service.loadCustomUnit('saved-atlas');
+    expect(result).toMatchObject({
+      success: true,
+      sourceDefinition: { source: 'custom', id: 'saved-atlas', version: 4 },
+      state: { sourceDefinition },
+    });
+  });
+
+  it('rejects a valid non-mech definition at the BattleMech session boundary', async () => {
+    mockCanonicalUnitService.getById.mockResolvedValue({
+      id: 'infantry-squad',
+      unitType: 'Infantry',
+    } as IFullUnit);
+    const result = await service.loadCanonicalUnit('infantry-squad');
+    expect(result).toMatchObject({
+      success: false,
+      errorCode: 'unsupported-family',
+    });
+    expect(result.state).toBeUndefined();
+    expect(mockEquipmentLookupService.initialize).not.toHaveBeenCalled();
+  });
+
   describe('loadUnit', () => {
     it('should load canonical unit when source is canonical', async () => {
-      const mockUnit: IFullUnit = {
+      const mockUnit = {
+        ...atlasDefinition,
         id: 'canon-1',
         chassis: 'Atlas',
         variant: 'AS7-D',
         tonnage: 100,
-        techBase: TechBase.INNER_SPHERE,
-      } as IFullUnit;
+        techBase: 'INNER_SPHERE',
+      };
 
-      mockCanonicalUnitService.getById.mockResolvedValue(mockUnit);
+      mockCanonicalUnitService.getById.mockResolvedValue(
+        mockUnit as unknown as IFullUnit,
+      );
 
       const result = await service.loadUnit('canon-1', 'canonical');
 
-      expect(result.success).toBe(true);
-      expect(mockCanonicalUnitService.getById).toHaveBeenCalledWith('canon-1');
+      expect(result).toEqual(expect.objectContaining({ success: true }));
+      expect(mockCanonicalUnitService.getById).toHaveBeenCalledWith('canon-1', {
+        strict: true,
+      });
     });
 
     it('should load custom unit when source is custom', async () => {
       const mockUnit = {
+        ...atlasDefinition,
         id: 'custom-1',
         chassis: 'Custom',
         variant: 'Mech',
         tonnage: 50,
-        techBase: TechBase.INNER_SPHERE,
+        techBase: 'INNER_SPHERE',
       };
 
-      // @ts-expect-error - Partial mock of IFullUnit for testing
-      mockCustomUnitApiService.getById.mockResolvedValue(mockUnit);
+      mockCustomUnitApiService.getById.mockResolvedValue(
+        mockUnit as unknown as IFullUnit,
+      );
 
       const result = await service.loadUnit('custom-1', 'custom');
 
-      expect(result.success).toBe(true);
+      expect(result).toEqual(expect.objectContaining({ success: true }));
       expect(mockCustomUnitApiService.getById).toHaveBeenCalledWith('custom-1');
     });
   });

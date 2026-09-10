@@ -5,6 +5,7 @@ import {
   SkeletonFormSection,
 } from '@/components/common/SkeletonLoader';
 import { Button, PageLayout } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { PilotStatus } from '@/types/pilot';
 
 interface ForceLoadingStateProps {
@@ -69,7 +70,8 @@ export function ForceHeaderActions({
         onClick={onEdit}
         data-testid="edit-force-btn"
         leftIcon={
-          <svg
+          <SvgIcon
+            size="inline"
             className="h-4 w-4"
             fill="none"
             stroke="currentColor"
@@ -81,7 +83,7 @@ export function ForceHeaderActions({
               strokeWidth={2}
               d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
             />
-          </svg>
+          </SvgIcon>
         }
       >
         Edit
@@ -93,7 +95,8 @@ export function ForceHeaderActions({
         className="text-red-400 hover:bg-red-900/20 hover:text-red-300"
         data-testid="delete-force-btn"
         leftIcon={
-          <svg
+          <SvgIcon
+            size="inline"
             className="h-4 w-4"
             fill="none"
             stroke="currentColor"
@@ -105,7 +108,7 @@ export function ForceHeaderActions({
               strokeWidth={2}
               d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
             />
-          </svg>
+          </SvgIcon>
         }
       >
         Delete
@@ -128,7 +131,8 @@ export function ForceErrorBanner({
       <div className="flex items-center justify-between">
         <p className="text-sm text-red-400">{forceError}</p>
         <button onClick={onDismiss} className="text-red-400 hover:text-red-300">
-          <svg
+          <SvgIcon
+            size="inline"
             className="h-4 w-4"
             fill="none"
             stroke="currentColor"
@@ -140,7 +144,7 @@ export function ForceErrorBanner({
               strokeWidth={2}
               d="M6 18L18 6M6 6l12 12"
             />
-          </svg>
+          </SvgIcon>
         </button>
       </div>
     </div>
@@ -161,7 +165,8 @@ export function ForcePilotsLinkBar({
           href="/gameplay/pilots"
           className="text-accent hover:text-accent/80 inline-flex items-center gap-2 transition-colors"
         >
-          <svg
+          <SvgIcon
+            size="inline"
             className="h-4 w-4"
             fill="none"
             stroke="currentColor"
@@ -173,7 +178,7 @@ export function ForcePilotsLinkBar({
               strokeWidth={2}
               d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
             />
-          </svg>
+          </SvgIcon>
           Manage Pilots
         </Link>
         <span className="text-text-theme-muted">&bull;</span>

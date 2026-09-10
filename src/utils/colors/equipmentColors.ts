@@ -57,7 +57,7 @@ export const HEATSINK_COLORS: CategoryColorDefinition = {
   label: 'Heat Sink',
   badgeVariant: 'cyan',
   slotBg: 'bg-cyan-700',
-  slotBorder: 'border-cyan-800',
+  slotBorder: 'border-cyan-400',
   slotText: 'text-white',
   slotHoverBg: 'hover:bg-cyan-600',
   indicatorBg: 'bg-cyan-500',
@@ -113,4 +113,13 @@ export function getEquipmentSlotClassesByName(name: string): string {
   }
 
   return getCategorySlotClasses(category);
+}
+
+export function getEquipmentSlotClasses(
+  category: EquipmentCategory,
+  name: string,
+): string {
+  return classifyEquipmentByName(name) === 'heatsink'
+    ? getEquipmentSlotClassesByName(name)
+    : getCategorySlotClasses(category);
 }

@@ -154,16 +154,24 @@ export class CanonicalUnitService implements ICanonicalUnitService {
   /**
    * Load JSON data - works on both server and client side using fetch
    */
-  private async loadJson<T>(relativePath: string): Promise<T | null> {
+  private async loadJson<T>(
+    relativePath: string,
+    strict = false,
+  ): Promise<T | null> {
     try {
       const baseUrl = getBaseUrl();
       const url = `${baseUrl}${relativePath}`;
       const response = await fetch(url);
       if (!response.ok) {
+        if (strict)
+          throw new Error(
+            `Canonical source request failed (${response.status})`,
+          );
         return null;
       }
       return (await response.json()) as T;
-    } catch {
+    } catch (error) {
+      if (strict) throw error;
       return null;
     }
   }
@@ -171,7 +179,9 @@ export class CanonicalUnitService implements ICanonicalUnitService {
   /**
    * Load the lightweight unit index
    */
-  getIndex = async (): Promise<readonly IUnitIndexEntry[]> => {
+  getIndex = async (
+    options: { readonly strict?: boolean } = {},
+  ): Promise<readonly IUnitIndexEntry[]> => {
     if (this.indexCache !== null) {
       return this.indexCache;
     }
@@ -179,16 +189,21 @@ export class CanonicalUnitService implements ICanonicalUnitService {
     try {
       const data = await this.loadJson<{ units?: RawUnitIndexEntry[] }>(
         this.indexPath,
+        options.strict,
       );
 
-      if (!data || !Array.isArray(data.units) || data.units.length === 0) {
+      if (!data || !Array.isArray(data.units)) {
+        if (options.strict)
+          throw new Error('Canonical source index is invalid');
         return [];
       }
+      if (data.units.length === 0) return [];
 
       // Map raw index data to IUnitIndexEntry format
       this.indexCache = data.units.map(mapRawToIndexEntry);
       return this.indexCache;
-    } catch {
+    } catch (error) {
+      if (options.strict) throw error;
       // Index not available - return empty array
       return [];
     }
@@ -197,14 +212,17 @@ export class CanonicalUnitService implements ICanonicalUnitService {
   /**
    * Get full unit data by ID (lazy loads from static JSON)
    */
-  getById = async (id: string): Promise<IFullUnit | null> => {
+  getById = async (
+    id: string,
+    options: { readonly strict?: boolean } = {},
+  ): Promise<IFullUnit | null> => {
     // Check cache first
     if (this.unitCache.has(id)) {
       return this.unitCache.get(id)!;
     }
 
     // Find in index to get file path
-    const index = await this.getIndex();
+    const index = await this.getIndex(options);
     const entry = index.find((e) => e.id === id);
 
     if (!entry) {
@@ -212,13 +230,17 @@ export class CanonicalUnitService implements ICanonicalUnitService {
     }
 
     try {
-      const unit = await this.loadJson<IFullUnit>(entry.filePath);
+      const unit = await this.loadJson<IFullUnit>(
+        entry.filePath,
+        options.strict,
+      );
       if (!unit) {
         return null;
       }
       this.unitCache.set(id, unit);
       return unit;
-    } catch {
+    } catch (error) {
+      if (options.strict) throw error;
       return null;
     }
   };
@@ -264,6 +286,10 @@ export class CanonicalUnitService implements ICanonicalUnitService {
     }
 
     return results;
+  };
+
+  invalidateUnit = (id: string): void => {
+    this.unitCache.delete(id);
   };
 
   /**

@@ -6,56 +6,124 @@ import { getInfantryStore } from '@/stores/infantryStoreRegistry';
 import { getProtoMechStore } from '@/stores/protoMechStoreRegistry';
 import { getUnitStore } from '@/stores/unitStoreRegistry';
 import { getVehicleStore } from '@/stores/vehicleStoreRegistry';
+import { TechBaseMode } from '@/types/construction/TechBaseConfiguration';
+import { TechBase } from '@/types/enums/TechBase';
 import { UnitType } from '@/types/unit/BattleMechInterfaces';
+
+import type { TabDisplayInfo } from './tabTypes';
 
 interface UnitStoreStateLike {
   name?: string;
   isModified?: boolean;
+  techBaseMode?: TechBaseMode;
+  techBase?: TechBase;
+}
+
+export function isLibrarySaveSupported(unitType?: UnitType): boolean {
+  return (
+    unitType === undefined ||
+    unitType === UnitType.BATTLEMECH ||
+    unitType === UnitType.OMNIMECH ||
+    unitType === UnitType.INDUSTRIALMECH
+  );
+}
+
+export function getLibrarySaveDisabledReason(
+  tab: Pick<TabInfo, 'unitType'> | null | undefined,
+): string | null {
+  if (!tab) return 'Select a unit before saving it to the library.';
+  if (isLibrarySaveSupported(tab.unitType)) return null;
+
+  return `Library save is not available for ${tab.unitType} units yet. Your browser draft remains open.`;
+}
+
+function isVehicleType(unitType: UnitType): boolean {
+  return (
+    unitType === UnitType.VEHICLE ||
+    unitType === UnitType.VTOL ||
+    unitType === UnitType.SUPPORT_VEHICLE
+  );
+}
+
+function isAerospaceType(unitType: UnitType): boolean {
+  return (
+    unitType === UnitType.AEROSPACE ||
+    unitType === UnitType.CONVENTIONAL_FIGHTER ||
+    unitType === UnitType.SMALL_CRAFT ||
+    unitType === UnitType.DROPSHIP ||
+    unitType === UnitType.JUMPSHIP ||
+    unitType === UnitType.WARSHIP ||
+    unitType === UnitType.SPACE_STATION
+  );
+}
+
+function getTabStore(tabId: string, unitType?: UnitType) {
+  if (unitType && isVehicleType(unitType)) {
+    return getVehicleStore(tabId);
+  }
+
+  if (unitType && isAerospaceType(unitType)) {
+    return getAerospaceStore(tabId);
+  }
+
+  if (unitType === UnitType.BATTLE_ARMOR) {
+    return getBattleArmorStore(tabId);
+  }
+
+  if (unitType === UnitType.INFANTRY) {
+    return getInfantryStore(tabId);
+  }
+
+  if (unitType === UnitType.PROTOMECH) {
+    return getProtoMechStore(tabId);
+  }
+
+  return getUnitStore(tabId);
 }
 
 function getUnitStoreState(
   tabId: string,
   unitType?: UnitType,
 ): UnitStoreStateLike | undefined {
-  if (unitType === UnitType.VEHICLE || unitType === UnitType.VTOL) {
-    return getVehicleStore(tabId)?.getState();
-  }
+  return getTabStore(tabId, unitType)?.getState();
+}
 
-  if (
-    unitType === UnitType.AEROSPACE ||
-    unitType === UnitType.CONVENTIONAL_FIGHTER
-  ) {
-    return getAerospaceStore(tabId)?.getState();
-  }
-
-  if (unitType === UnitType.BATTLE_ARMOR) {
-    return getBattleArmorStore(tabId)?.getState();
-  }
-
-  if (unitType === UnitType.INFANTRY) {
-    return getInfantryStore(tabId)?.getState();
-  }
-
-  if (unitType === UnitType.PROTOMECH) {
-    return getProtoMechStore(tabId)?.getState();
-  }
-
-  return getUnitStore(tabId)?.getState();
+export function subscribeToTabDisplayState(
+  tab: TabInfo,
+  onChange: () => void,
+): () => void {
+  const store = getTabStore(tab.id, tab.unitType);
+  if (!store) return () => undefined;
+  let previous = getTabDisplayState(tab);
+  return store.subscribe(() => {
+    const next = getTabDisplayState(tab);
+    if (
+      previous.name !== next.name ||
+      previous.isModified !== next.isModified ||
+      previous.techBaseMode !== next.techBaseMode
+    ) {
+      previous = next;
+      onChange();
+    }
+  });
 }
 
 export function isTabModified(tabId: string, unitType?: UnitType): boolean {
   return getUnitStoreState(tabId, unitType)?.isModified ?? false;
 }
 
-export function getTabDisplayState(tab: TabInfo): {
-  id: string;
-  name: string;
-  isModified: boolean;
-} {
+export function getTabDisplayState(
+  tab: TabInfo,
+): TabDisplayInfo & { isModified: boolean } {
   const runtimeState = getUnitStoreState(tab.id, tab.unitType);
   return {
     id: tab.id,
     name: runtimeState?.name ?? tab.name,
     isModified: runtimeState?.isModified ?? false,
+    techBaseMode:
+      runtimeState?.techBaseMode ??
+      ((runtimeState?.techBase ?? tab.techBase) === TechBase.CLAN
+        ? TechBaseMode.CLAN
+        : TechBaseMode.INNER_SPHERE),
   };
 }

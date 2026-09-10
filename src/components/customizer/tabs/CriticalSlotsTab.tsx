@@ -9,14 +9,17 @@
  * @spec openspec/specs/critical-slot-allocation/spec.md
  */
 
-import React from 'react';
+import React, { useContext } from 'react';
 
 import type { IMountedEquipmentInstance } from '@/types/equipment/MountedEquipment';
 
+import { Button } from '@/components/ui/Button';
 import { MechLocation } from '@/types/construction';
+import { getEquipmentSlotClasses } from '@/utils/colors/equipmentColors';
+import { canChangeEquipmentMount } from '@/utils/construction/equipmentMutationPolicy';
 
 import { LocationGrid } from '../critical-slots/LocationGrid';
-import { VerticalSlotChip } from '../critical-slots/VerticalSlotChip';
+import { CustomizerToolbarContext } from '../CustomizerToolbarContext';
 import { useCriticalSlotsTabLogic } from './CriticalSlotsTab.logic';
 import { CriticalSlotsToolbar } from './CriticalSlotsToolbar';
 
@@ -40,7 +43,15 @@ export function CriticalSlotsTab({
   hideLoadoutTray = true,
   className = '',
 }: CriticalSlotsTabProps): React.ReactElement {
+  const workbench = useContext(CustomizerToolbarContext);
   const {
+    locations,
+    isBiped,
+    handlePlaceInLocation,
+    placementIssues,
+    placementOptions,
+    handleUnassignSelected,
+    isSuperheavy,
     selectedEquipment,
     unassignedEquipment,
     isOmni,
@@ -85,18 +96,26 @@ export function CriticalSlotsTab({
     const isSelected = selectedEquipmentId === item.instanceId;
 
     return (
-      <VerticalSlotChip
+      <Button
         key={item.instanceId}
-        name={item.name}
-        criticalSlots={item.criticalSlots}
-        isSelected={isSelected}
+        variant={isSelected ? 'primary' : 'secondary'}
+        size="sm"
+        aria-pressed={isSelected}
         onClick={() => onSelectEquipment?.(isSelected ? null : item.instanceId)}
-      />
+      >
+        <span
+          className={`rounded border px-2 py-1 ${getEquipmentSlotClasses(item.category, item.name)}`}
+        >
+          {item.name} · {item.criticalSlots} cr
+        </span>
+      </Button>
     );
   };
 
   return (
-    <div className={`bg-surface-deep flex h-full flex-col ${className}`}>
+    <div
+      className={`bg-surface-deep flex h-full min-h-0 flex-col ${className}`}
+    >
       <CriticalSlotsToolbar
         autoFillUnhittables={autoModeSettings.autoFillUnhittables}
         autoCompact={autoModeSettings.autoCompact}
@@ -109,77 +128,192 @@ export function CriticalSlotsTab({
         onSort={handleSort}
         onReset={handleReset}
         readOnly={readOnly}
+        placementIssues={workbench ? placementIssues : []}
+        onSelectIssue={(id) => {
+          onSelectEquipment?.(id);
+          workbench?.requestLoadout();
+        }}
+        notice={
+          isSuperheavy
+            ? 'Shared-slot pairing is not supported by this editor. Place equipment in separate empty slots.'
+            : undefined
+        }
       />
 
-      {hideLoadoutTray && unassignedEquipment.length > 0 && (
-        <div className="bg-surface-base/30 border-border-theme-subtle flex-shrink-0 border-b px-1.5 py-1">
-          <div className="mb-1 flex items-center gap-2">
-            <span className="text-[9px] font-medium text-amber-400 uppercase">
-              Unassigned
+      {isSuperheavy && !workbench && (
+        <p className="text-text-theme-secondary px-4 py-2 text-sm">
+          Shared-slot pairing is not supported by this editor. Place equipment
+          in separate empty slots.
+        </p>
+      )}
+      {placementIssues.length > 0 && !workbench && (
+        <details className="border-border-theme border-b bg-amber-500/5 px-4 py-2 text-sm">
+          <summary className="focus-visible:ring-accent cursor-pointer font-medium text-amber-400 focus-visible:ring-2 focus-visible:outline-none">
+            {placementIssues.length} placement issues
+          </summary>
+          <ul className="mt-2 space-y-1">
+            {placementIssues.map((issue, index) => (
+              <li key={index}>
+                <button
+                  type="button"
+                  className="text-text-theme-secondary focus-visible:ring-accent text-left underline focus-visible:ring-2"
+                  onClick={() => onSelectEquipment?.(issue.instanceId)}
+                >
+                  {issue.message}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
+      {selectedEquipment && !workbench && (
+        <section
+          aria-label="Equipment placement"
+          className="border-border-theme bg-surface-base/90 border-l-accent border-b border-l-2 p-3"
+        >
+          <div className="mb-2 flex flex-wrap items-center gap-2">
+            <span className="text-text-theme-primary text-sm font-medium">
+              Place {selectedEquipment.name} · {selectedEquipment.criticalSlots}{' '}
+              cr
             </span>
-            <span className="text-text-theme-muted text-[9px]">
+            {selectedEquipment.location && (
+              <Button
+                size="sm"
+                variant="secondary"
+                disabled={
+                  readOnly ||
+                  !canChangeEquipmentMount(isOmni, selectedEquipment)
+                }
+                title={
+                  !canChangeEquipmentMount(isOmni, selectedEquipment)
+                    ? 'Fixed OmniMech equipment'
+                    : undefined
+                }
+                onClick={handleUnassignSelected}
+              >
+                Unassign {selectedEquipment.name}
+              </Button>
+            )}
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => onSelectEquipment?.(null)}
+            >
+              Cancel selection
+            </Button>
+          </div>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {placementOptions.map((option) => (
+              <Button
+                key={option.location}
+                size="sm"
+                variant="secondary"
+                disabled={readOnly || !option.canFit}
+                title={option.reason}
+                onClick={() => handlePlaceInLocation(option.location)}
+              >
+                <span>
+                  {option.location}
+                  <span className="block text-xs font-normal">
+                    {option.reason ?? 'Place in first free slot'}
+                  </span>
+                </span>
+              </Button>
+            ))}
+          </div>
+        </section>
+      )}
+      {hideLoadoutTray && !workbench && unassignedEquipment.length > 0 && (
+        <div className="bg-surface-base/50 border-border-theme-subtle flex-shrink-0 border-b px-3 py-2">
+          <div className="mb-1 flex items-center gap-2">
+            <span className="text-xs font-medium text-amber-400 uppercase">
+              Needs placement
+            </span>
+            <span className="text-text-theme-muted text-xs tabular-nums">
               ({unassignedEquipment.length})
             </span>
           </div>
-          <div className="flex gap-1 overflow-x-auto">
+          <div className="flex flex-wrap gap-2">
             {unassignedEquipment.map(renderUnassignedChip)}
           </div>
         </div>
       )}
 
-      <div className="flex-1 overflow-auto p-1 md:hidden">
-        <div className="flex items-start justify-center gap-1">
-          <div className="flex flex-col gap-1" style={{ marginTop: '80px' }}>
-            {renderLocation(MechLocation.LEFT_ARM)}
-            {renderLocation(MechLocation.LEFT_TORSO)}
-            {renderLocation(MechLocation.LEFT_LEG)}
-          </div>
-
-          <div className="flex flex-col gap-1">
-            {renderLocation(MechLocation.HEAD)}
-            {renderLocation(MechLocation.CENTER_TORSO)}
-          </div>
-
-          <div className="flex flex-col gap-1" style={{ marginTop: '80px' }}>
-            {renderLocation(MechLocation.RIGHT_ARM)}
-            {renderLocation(MechLocation.RIGHT_TORSO)}
-            {renderLocation(MechLocation.RIGHT_LEG)}
-          </div>
+      {!isBiped && (
+        <div className="grid grid-cols-1 items-start gap-3 overflow-auto p-3 min-[480px]:grid-cols-2 min-[720px]:grid-cols-3 xl:grid-cols-4">
+          {locations.map(renderLocation)}
         </div>
-      </div>
-
-      <div className="hidden flex-1 overflow-auto p-2 md:flex lg:p-4">
-        <div className="mx-auto flex min-w-max items-start justify-center gap-2 lg:gap-3">
-          <div className="flex flex-col" style={{ marginTop: '136px' }}>
-            {renderLocation(MechLocation.LEFT_ARM)}
-          </div>
-
-          <div className="flex flex-col" style={{ marginTop: '40px' }}>
-            {renderLocation(MechLocation.LEFT_TORSO)}
-            <div className="mt-16">{renderLocation(MechLocation.LEFT_LEG)}</div>
-          </div>
-
-          <div className="flex flex-col gap-3">
-            {renderLocation(MechLocation.HEAD)}
-            {renderLocation(MechLocation.CENTER_TORSO)}
-          </div>
-
-          <div className="flex flex-col" style={{ marginTop: '40px' }}>
-            {renderLocation(MechLocation.RIGHT_TORSO)}
-            <div className="mt-16">
-              {renderLocation(MechLocation.RIGHT_LEG)}
+      )}
+      {isBiped && (
+        <>
+          <div
+            className="min-h-0 flex-1 overflow-auto p-2 lg:hidden"
+            data-testid="critical-slots-grid-mobile"
+          >
+            <div className="grid grid-cols-1 items-start gap-3 min-[480px]:grid-cols-2 min-[720px]:grid-cols-3">
+              {[
+                MechLocation.HEAD,
+                MechLocation.CENTER_TORSO,
+                MechLocation.LEFT_TORSO,
+                MechLocation.RIGHT_TORSO,
+                MechLocation.LEFT_ARM,
+                MechLocation.RIGHT_ARM,
+                MechLocation.LEFT_LEG,
+                MechLocation.RIGHT_LEG,
+              ].map(renderLocation)}
             </div>
           </div>
 
-          <div className="flex flex-col" style={{ marginTop: '136px' }}>
-            {renderLocation(MechLocation.RIGHT_ARM)}
-          </div>
-        </div>
-      </div>
+          <div
+            className="hidden min-h-0 flex-1 overflow-auto p-2 lg:flex lg:p-4"
+            data-testid="critical-slots-grid-desktop"
+          >
+            <div className="grid w-full min-w-0 grid-cols-5 items-start gap-2 lg:gap-3">
+              <div
+                className="flex min-w-0 flex-col"
+                style={{ marginTop: '136px' }}
+              >
+                {renderLocation(MechLocation.LEFT_ARM)}
+              </div>
 
-      {selectedEquipment && (
-        <div className="bg-surface-base border-border-theme-subtle flex-shrink-0 border-t px-2 py-1.5 text-center">
-          <span className="text-xs text-slate-300 sm:text-sm">
+              <div
+                className="flex min-w-0 flex-col"
+                style={{ marginTop: '40px' }}
+              >
+                {renderLocation(MechLocation.LEFT_TORSO)}
+                <div className="mt-16">
+                  {renderLocation(MechLocation.LEFT_LEG)}
+                </div>
+              </div>
+
+              <div className="flex min-w-0 flex-col gap-3">
+                {renderLocation(MechLocation.HEAD)}
+                {renderLocation(MechLocation.CENTER_TORSO)}
+              </div>
+
+              <div
+                className="flex min-w-0 flex-col"
+                style={{ marginTop: '40px' }}
+              >
+                {renderLocation(MechLocation.RIGHT_TORSO)}
+                <div className="mt-16">
+                  {renderLocation(MechLocation.RIGHT_LEG)}
+                </div>
+              </div>
+
+              <div
+                className="flex min-w-0 flex-col"
+                style={{ marginTop: '136px' }}
+              >
+                {renderLocation(MechLocation.RIGHT_ARM)}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+      {selectedEquipment && !workbench && (
+        <div className="bg-surface-base/90 border-border-theme-subtle flex-shrink-0 border-t px-3 py-2 text-center">
+          <span className="text-text-theme-secondary text-xs sm:text-sm">
             Tap a slot to place:{' '}
             <span className="text-accent font-medium">
               {selectedEquipment.name}
@@ -191,8 +325,8 @@ export function CriticalSlotsTab({
         </div>
       )}
 
-      {hideLoadoutTray && !selectedEquipment && (
-        <div className="bg-surface-base border-border-theme-subtle flex flex-shrink-0 items-center justify-between border-t px-2 py-1.5 text-xs">
+      {hideLoadoutTray && !workbench && !selectedEquipment && (
+        <div className="bg-surface-base/90 border-border-theme-subtle flex flex-shrink-0 items-center justify-between border-t px-3 py-2 text-xs">
           <span
             className={
               unassignedEquipment.length === 0
@@ -201,7 +335,7 @@ export function CriticalSlotsTab({
             }
           >
             {unassignedEquipment.length === 0
-              ? '✓ All equipment placed'
+              ? 'All equipment has slot assignments'
               : `${unassignedEquipment.length} unassigned`}
           </span>
           <span className="text-text-theme-muted">

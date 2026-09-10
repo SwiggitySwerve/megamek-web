@@ -73,7 +73,9 @@ function getArmorValues(data?: LocationArmorData): ArmorValues {
 }
 
 function getFilledPercent(current: number, maximum: number): number {
-  return maximum > 0 ? Math.min(100, (current / maximum) * 100) : 0;
+  return maximum > 0
+    ? Math.min(100, Math.max(0, (current / maximum) * 100))
+    : 0;
 }
 
 function getFrontExpectedMax(showRear: boolean, frontMax: number): number {

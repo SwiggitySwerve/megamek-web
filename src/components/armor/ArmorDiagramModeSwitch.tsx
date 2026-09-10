@@ -29,8 +29,8 @@ export function ArmorDiagramModeSwitch(): React.ReactElement {
           onClick={() => setArmorDiagramMode(mode.id)}
           className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
             armorDiagramMode === mode.id
-              ? 'bg-accent text-white'
-              : 'text-text-theme-secondary hover:bg-surface-base hover:text-white'
+              ? 'bg-accent text-on-accent'
+              : 'text-text-theme-secondary hover:bg-surface-base hover:text-text-theme-primary'
           } `}
           aria-pressed={armorDiagramMode === mode.id}
         >

@@ -46,9 +46,9 @@ describe('TacticalHUDDiagram', () => {
     jest.clearAllMocks();
   });
 
-  it('should render the diagram with military title', () => {
+  it('should render the diagram with shared title', () => {
     render(<TacticalHUDDiagram {...defaultProps} />);
-    expect(screen.getByText('ARMOR DIAGNOSTIC')).toBeInTheDocument();
+    expect(screen.getByText('Armor Allocation')).toBeInTheDocument();
   });
 
   it('should display front and rear labels on torso locations', () => {
@@ -56,7 +56,7 @@ describe('TacticalHUDDiagram', () => {
 
     // Torso locations show stacked front/rear with "-F" and "-R" labels
     expect(screen.getByText('CT-F')).toBeInTheDocument();
-    expect(screen.getByText('CT-R')).toBeInTheDocument();
+    expect(screen.getAllByText('REAR')).toHaveLength(3);
   });
 
   // Note: Auto-allocate button was moved to ArmorTab.tsx
@@ -64,21 +64,22 @@ describe('TacticalHUDDiagram', () => {
   it('should display status readout', () => {
     render(<TacticalHUDDiagram {...defaultProps} />);
 
-    expect(screen.getByText('STATUS:')).toBeInTheDocument();
-    expect(screen.getByText('NOMINAL')).toBeInTheDocument();
-    expect(screen.getByText('AVAIL:')).toBeInTheDocument();
+    expect(screen.getByText('Available')).toBeInTheDocument();
+    expect(screen.getByText('12 points')).toBeInTheDocument();
   });
 
   it('should show OVERALLOC status when negative points', () => {
     render(<TacticalHUDDiagram {...defaultProps} unallocatedPoints={-5} />);
 
-    expect(screen.getByText('OVERALLOC')).toBeInTheDocument();
+    expect(screen.getByText('Over allocated')).toBeInTheDocument();
   });
 
   it('should display instruction text', () => {
     render(<TacticalHUDDiagram {...defaultProps} />);
 
-    expect(screen.getByText('SELECT LOCATION TO MODIFY')).toBeInTheDocument();
+    expect(
+      screen.getByText('Click a location to edit armor values'),
+    ).toBeInTheDocument();
   });
 
   it('should call onLocationClick when a location is clicked', async () => {
@@ -101,11 +102,13 @@ describe('TacticalHUDDiagram', () => {
     expect(container.firstChild).toHaveClass('custom-class');
   });
 
-  it('should show online indicator', () => {
+  it('should retain the HUD line treatment', () => {
     const { container } = render(<TacticalHUDDiagram {...defaultProps} />);
 
-    // Check for the animated pulse indicator
-    const indicator = container.querySelector('.animate-pulse');
-    expect(indicator).toBeInTheDocument();
+    const plates = container.querySelectorAll('[data-armor-plate]');
+    expect(plates).toHaveLength(8);
+    plates.forEach((plate) =>
+      expect(plate).toHaveAttribute('stroke-dasharray', '3 2'),
+    );
   });
 });

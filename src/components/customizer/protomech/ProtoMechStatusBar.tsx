@@ -153,7 +153,7 @@ export function ProtoMechStatusBar({
       <div
         className={`bg-surface-base border-border-theme-subtle flex items-center justify-between gap-2 border-b px-3 py-1.5 text-xs ${className}`}
       >
-        <span className="font-medium text-white">
+        <span className="text-text-theme-primary font-medium">
           {tonnage}t {chassisLabel(chassisType)}
         </span>
         <span className="text-text-theme-secondary">
@@ -161,7 +161,7 @@ export function ProtoMechStatusBar({
           {jumpMP > 0 ? `/${jumpMP}J` : ''}
         </span>
         <span className="text-text-theme-secondary">{totalArmor} armor</span>
-        <span className="font-semibold text-white">
+        <span className="text-text-theme-primary font-semibold">
           BV {breakdown.final}
           <span className="text-text-theme-secondary ml-1 font-normal">
             (pt {pointBV})

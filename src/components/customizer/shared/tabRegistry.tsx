@@ -68,6 +68,7 @@ import { VehicleArmorTab } from '@/components/customizer/vehicle/VehicleArmorTab
 import { VehicleEquipmentTab } from '@/components/customizer/vehicle/VehicleEquipmentTab';
 import { VehicleStructureTab } from '@/components/customizer/vehicle/VehicleStructureTab';
 import { VehicleTurretTab } from '@/components/customizer/vehicle/VehicleTurretTab';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { AerospaceState } from '@/stores/aerospaceState';
 import { InfantryState } from '@/stores/infantryState';
 import { ProtoMechState } from '@/stores/protoMechState';
@@ -83,20 +84,10 @@ import { TabSpec } from './TabSpec';
 // Using inline JSX keeps the registry self-contained with zero extra icon deps.
 
 function iconSvg(pathD: string): React.ReactNode {
-  return React.createElement(
-    'svg',
-    {
-      className: 'h-4 w-4',
-      fill: 'none',
-      stroke: 'currentColor',
-      viewBox: '0 0 24 24',
-    },
-    React.createElement('path', {
-      strokeLinecap: 'round',
-      strokeLinejoin: 'round',
-      strokeWidth: 2,
-      d: pathD,
-    }),
+  return (
+    <SvgIcon size="inline">
+      <path d={pathD} />
+    </SvgIcon>
   );
 }
 

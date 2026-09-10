@@ -25,19 +25,17 @@ export function TacticalLocationContent({
   const expectedRearMax = showRear ? Math.round(maximum * 0.25) : 1;
   const frontPercent =
     expectedFrontMax > 0
-      ? Math.min(100, (current / expectedFrontMax) * 100)
+      ? Math.min(100, Math.max(0, (current / expectedFrontMax) * 100))
       : 0;
   const rearPercent =
-    expectedRearMax > 0 ? Math.min(100, (rear / expectedRearMax) * 100) : 0;
+    expectedRearMax > 0
+      ? Math.min(100, Math.max(0, (rear / expectedRearMax) * 100))
+      : 0;
 
-  const frontColor = isSelected
-    ? '#3b82f6'
-    : showRear
-      ? getTorsoFrontStatusColor(current, maximum)
-      : getArmorStatusColor(current, maximum);
-  const rearColor = isSelected
-    ? '#3b82f6'
-    : getTorsoRearStatusColor(rear, maximum);
+  const frontColor = showRear
+    ? getTorsoFrontStatusColor(current, maximum)
+    : getArmorStatusColor(current, maximum);
+  const rearColor = getTorsoRearStatusColor(rear, maximum);
   const darkFrontFill = darkenColor(frontColor, 0.6);
   const darkRearFill = darkenColor(rearColor, 0.6);
 
@@ -58,8 +56,8 @@ export function TacticalLocationContent({
         width={pos.width}
         height={frontSectionHeight}
         fill={darkFrontFill}
-        stroke="#475569"
-        strokeWidth={1}
+        stroke={isSelected ? '#60a5fa' : '#475569'}
+        strokeWidth={isSelected ? 2 : 1}
         className="transition-colors duration-200"
       />
       <rect
@@ -67,6 +65,9 @@ export function TacticalLocationContent({
         y={frontFillY}
         width={pos.width}
         height={frontFillHeight}
+        data-armor-fill={label + '-front'}
+        data-armor-fill-ratio={frontPercent / 100}
+        data-armor-fill-section="front"
         fill={frontColor}
         opacity={0.8}
         className="transition-all duration-300"
@@ -143,6 +144,9 @@ export function TacticalLocationContent({
             y={rearFillY}
             width={pos.width}
             height={rearFillHeight}
+            data-armor-fill={label + '-rear'}
+            data-armor-fill-ratio={rearPercent / 100}
+            data-armor-fill-section="rear"
             fill={rearColor}
             opacity={0.8}
             className="transition-all duration-300"

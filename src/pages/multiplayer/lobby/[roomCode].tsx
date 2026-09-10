@@ -105,7 +105,7 @@ function BackToMultiplayerLink(): React.ReactElement {
   return (
     <Link
       href="/multiplayer"
-      className="text-sm text-slate-400 hover:text-slate-200"
+      className="text-text-theme-secondary hover:text-text-theme-primary text-sm"
     >
       Back to multiplayer hub
     </Link>
@@ -118,7 +118,7 @@ function LobbyResolveError({
   readonly error: string;
 }): React.ReactElement {
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8 text-slate-200">
+    <div className="text-text-theme-primary mx-auto max-w-2xl px-4 py-8">
       <BackToMultiplayerLink />
       <h1 className="mt-2 text-2xl font-bold">Lobby not found</h1>
       <p className="mt-2 text-sm text-rose-400">{error}</p>
@@ -140,25 +140,26 @@ function LobbyAuthPrompt({
   readonly onSubmit: () => void;
 }): React.ReactElement {
   return (
-    <div className="mx-auto max-w-md px-4 py-8 text-slate-200">
+    <div className="text-text-theme-primary mx-auto max-w-md px-4 py-8">
       <BackToMultiplayerLink />
       <h1 className="mt-2 text-2xl font-bold">Unlock vault</h1>
-      <p className="mt-2 text-xs text-slate-400">
-        Lobby <span className="font-mono text-slate-200">{roomCode}</span>{' '}
+      <p className="text-text-theme-secondary mt-2 text-xs">
+        Lobby{' '}
+        <span className="text-text-theme-primary font-mono">{roomCode}</span>{' '}
         requires a signed identity. Enter your vault password to mint a token.
       </p>
       <input
         type="password"
         value={password}
         onChange={(e) => onPasswordChange(e.target.value)}
-        className="mt-3 w-full rounded border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+        className="border-border-theme bg-surface-deep text-text-theme-primary mt-3 w-full rounded border px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none"
         placeholder="Vault password"
       />
       <button
         type="button"
         onClick={onSubmit}
         disabled={password.length === 0}
-        className="mt-2 w-full rounded bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-500 disabled:cursor-not-allowed disabled:bg-slate-700"
+        className="disabled:bg-surface-raised mt-2 w-full rounded bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-500 disabled:cursor-not-allowed"
       >
         Connect to lobby
       </button>
@@ -179,10 +180,10 @@ function LobbyJoiningState({
   readonly error?: ReturnType<typeof useMultiplayerSession>['error'];
 }): React.ReactElement {
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8 text-slate-200">
+    <div className="text-text-theme-primary mx-auto max-w-2xl px-4 py-8">
       <BackToMultiplayerLink />
       <h1 className="mt-2 text-2xl font-bold">Joining lobby...</h1>
-      <p className="mt-2 text-xs text-slate-400">
+      <p className="text-text-theme-secondary mt-2 text-xs">
         Status: {status}. Waiting for the first lobby snapshot.
       </p>
       {error && (
@@ -202,11 +203,11 @@ function LobbyUnavailableState({
   return (
     <div
       data-testid="multiplayer-unavailable-panel"
-      className="mx-auto max-w-2xl px-4 py-8 text-slate-200"
+      className="text-text-theme-primary mx-auto max-w-2xl px-4 py-8"
     >
       <BackToMultiplayerLink />
       <h1 className="mt-2 text-2xl font-bold">Multiplayer unavailable</h1>
-      <p className="mt-2 text-sm text-slate-400">
+      <p className="text-text-theme-secondary mt-2 text-sm">
         This lobby is not connected to a live multiplayer session. Return to the
         multiplayer hub and try the invite again.
       </p>
@@ -315,7 +316,7 @@ export default function LobbyPage(): React.ReactElement {
 
   if (!roomCode) {
     return (
-      <div className="mx-auto max-w-2xl px-4 py-8 text-slate-200">
+      <div className="text-text-theme-primary mx-auto max-w-2xl px-4 py-8">
         <p>Loading...</p>
       </div>
     );
@@ -363,10 +364,10 @@ export default function LobbyPage(): React.ReactElement {
   const isActive = session.lobbyState.status === 'active';
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 text-slate-200">
+    <div className="text-text-theme-primary mx-auto max-w-4xl px-4 py-8">
       <header className="mb-6 flex items-center justify-between">
         <BackToMultiplayerLink />
-        <span className="rounded border border-slate-700 bg-slate-900 px-2 py-1 font-mono text-xs text-slate-300">
+        <span className="border-border-theme bg-surface-deep text-text-theme-secondary rounded border px-2 py-1 font-mono text-xs">
           {roomCode}
         </span>
       </header>

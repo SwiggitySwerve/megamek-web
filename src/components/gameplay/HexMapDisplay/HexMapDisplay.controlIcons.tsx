@@ -1,23 +1,25 @@
 import React from 'react';
 
+import { SvgIcon } from '@/components/ui/SvgIcon';
+
 interface ControlIconProps {
   readonly children: React.ReactNode;
 }
 
 function ControlIcon({ children }: ControlIconProps): React.ReactElement {
   return (
-    <svg
+    <SvgIcon
+      size="control"
       aria-hidden="true"
       viewBox="0 0 24 24"
       className="h-5 w-5"
       fill="none"
       stroke="currentColor"
-      strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"
     >
       {children}
-    </svg>
+    </SvgIcon>
   );
 }
 

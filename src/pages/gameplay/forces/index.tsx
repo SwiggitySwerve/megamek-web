@@ -15,6 +15,7 @@ import {
 } from '@/components/common/SkeletonLoader';
 import { ForceCard } from '@/components/force';
 import { PageLayout, Card, Input, Button, EmptyState } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { useForceSelector } from '@/stores/useForceStore';
 import { IForce } from '@/types/force';
 
@@ -124,7 +125,8 @@ export default function ForceRosterPage(): React.ReactElement {
           onClick={handleCreateForce}
           data-testid="create-force-btn"
           leftIcon={
-            <svg
+            <SvgIcon
+              size="inline"
               className="h-4 w-4"
               fill="none"
               stroke="currentColor"
@@ -136,7 +138,7 @@ export default function ForceRosterPage(): React.ReactElement {
                 strokeWidth={2}
                 d="M12 4v16m8-8H4"
               />
-            </svg>
+            </SvgIcon>
           }
         >
           Create Force
@@ -175,7 +177,8 @@ export default function ForceRosterPage(): React.ReactElement {
           data-testid="forces-empty-state"
           icon={
             <div className="bg-surface-raised/50 mx-auto flex h-16 w-16 items-center justify-center rounded-full">
-              <svg
+              <SvgIcon
+                size="feature"
                 className="text-text-theme-muted h-8 w-8"
                 fill="none"
                 stroke="currentColor"
@@ -187,7 +190,7 @@ export default function ForceRosterPage(): React.ReactElement {
                   strokeWidth={1.5}
                   d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
                 />
-              </svg>
+              </SvgIcon>
             </div>
           }
           title={searchQuery ? 'No forces match your search' : 'No forces yet'}
@@ -223,7 +226,8 @@ export default function ForceRosterPage(): React.ReactElement {
           href="/gameplay/pilots"
           className="text-accent hover:text-accent/80 inline-flex items-center gap-2 transition-colors"
         >
-          <svg
+          <SvgIcon
+            size="inline"
             className="h-4 w-4"
             fill="none"
             stroke="currentColor"
@@ -235,7 +239,7 @@ export default function ForceRosterPage(): React.ReactElement {
               strokeWidth={2}
               d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
             />
-          </svg>
+          </SvgIcon>
           Manage Pilots
         </Link>
       </div>

@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 
@@ -29,16 +29,26 @@ describe('CompactFilterBar', () => {
   });
 
   describe('Category Buttons', () => {
-    it('should render all category buttons with icons', () => {
+    it('should render accessible category chips', () => {
       render(<CompactFilterBar {...defaultProps} />);
 
-      expect(screen.getByText('⚡')).toBeInTheDocument();
-      expect(screen.getByText('🎯')).toBeInTheDocument();
-      expect(screen.getByText('🚀')).toBeInTheDocument();
-      expect(screen.getByText('💥')).toBeInTheDocument();
-      expect(screen.getByText('🔨')).toBeInTheDocument();
-      expect(screen.getByText('📦')).toBeInTheDocument();
-      expect(screen.getByText('⚙️')).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Energy' }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Ballistic' }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Missile' }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Artillery' }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Physical' }),
+      ).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Ammo' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Other' })).toBeInTheDocument();
     });
 
     it('should render All button', () => {
@@ -49,14 +59,16 @@ describe('CompactFilterBar', () => {
     it('should highlight All button when showAll is true', () => {
       render(<CompactFilterBar {...defaultProps} showAll={true} />);
       const allButton = screen.getByText('All').closest('button');
-      expect(allButton).toHaveClass('bg-accent');
+      expect(allButton).toHaveAttribute('aria-pressed', 'true');
     });
 
     it('should call onSelectCategory when category is clicked', async () => {
       const user = userEvent.setup();
       render(<CompactFilterBar {...defaultProps} showAll={false} />);
 
-      const energyButton = screen.getByText('⚡').closest('button');
+      const energyButton = screen
+        .getByRole('button', { name: 'Energy' })
+        .closest('button');
       await user.click(energyButton!);
 
       expect(defaultProps.onSelectCategory).toHaveBeenCalledWith(
@@ -85,7 +97,9 @@ describe('CompactFilterBar', () => {
         />,
       );
 
-      const energyButton = screen.getByText('⚡').closest('button');
+      const energyButton = screen
+        .getByRole('button', { name: 'Energy' })
+        .closest('button');
       expect(energyButton).toHaveClass('ring-1');
     });
   });
@@ -93,7 +107,9 @@ describe('CompactFilterBar', () => {
   describe('Hide Filters Toggle', () => {
     it('should render Hide button', () => {
       render(<CompactFilterBar {...defaultProps} />);
-      expect(screen.getByText('Hide')).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Visibility filters' }),
+      ).toBeInTheDocument();
     });
 
     it('should show active hide filter count badge', () => {
@@ -111,23 +127,27 @@ describe('CompactFilterBar', () => {
       const user = userEvent.setup();
       render(<CompactFilterBar {...defaultProps} />);
 
-      const hideButton = screen.getByText('Hide').closest('button');
+      const hideButton = screen
+        .getByRole('button', { name: 'Visibility filters' })
+        .closest('button');
       await user.click(hideButton!);
 
-      expect(screen.getByText('Proto')).toBeInTheDocument();
-      expect(screen.getByText('1-Shot')).toBeInTheDocument();
-      expect(screen.getByText('No Wpn')).toBeInTheDocument();
-      expect(screen.getByText('Unavail')).toBeInTheDocument();
+      expect(screen.getByText('Prototype')).toBeInTheDocument();
+      expect(screen.getByText('One-shot')).toBeInTheDocument();
+      expect(screen.getByText('Ammo without weapon')).toBeInTheDocument();
+      expect(screen.getByText('Unavailable')).toBeInTheDocument();
     });
 
     it('should call onTogglePrototype when Proto is clicked', async () => {
       const user = userEvent.setup();
       render(<CompactFilterBar {...defaultProps} />);
 
-      const hideButton = screen.getByText('Hide').closest('button');
+      const hideButton = screen
+        .getByRole('button', { name: 'Visibility filters' })
+        .closest('button');
       await user.click(hideButton!);
 
-      const protoButton = screen.getByText('Proto');
+      const protoButton = screen.getByText('Prototype');
       await user.click(protoButton);
 
       expect(defaultProps.onTogglePrototype).toHaveBeenCalledTimes(1);
@@ -137,10 +157,12 @@ describe('CompactFilterBar', () => {
       const user = userEvent.setup();
       render(<CompactFilterBar {...defaultProps} />);
 
-      const hideButton = screen.getByText('Hide').closest('button');
+      const hideButton = screen
+        .getByRole('button', { name: 'Visibility filters' })
+        .closest('button');
       await user.click(hideButton!);
 
-      const oneShotButton = screen.getByText('1-Shot');
+      const oneShotButton = screen.getByText('One-shot');
       await user.click(oneShotButton);
 
       expect(defaultProps.onToggleOneShot).toHaveBeenCalledTimes(1);
@@ -150,11 +172,13 @@ describe('CompactFilterBar', () => {
       const user = userEvent.setup();
       render(<CompactFilterBar {...defaultProps} hidePrototype={true} />);
 
-      const hideButton = screen.getByText('Hide').closest('button');
+      const hideButton = screen
+        .getByRole('button', { name: 'Visibility filters' })
+        .closest('button');
       await user.click(hideButton!);
 
-      const protoButton = screen.getByText('Proto').closest('button');
-      expect(protoButton).toHaveClass('bg-red-900/50');
+      const protoButton = screen.getByText('Prototype').closest('button');
+      expect(protoButton).toHaveAttribute('aria-pressed', 'true');
     });
   });
 
@@ -198,29 +222,41 @@ describe('CompactFilterBar', () => {
   describe('Clear All Filters', () => {
     it('should show Clear button when filters are active', () => {
       render(<CompactFilterBar {...defaultProps} search="test" />);
-      expect(screen.getByText('Clear')).toBeInTheDocument();
+      fireEvent.click(
+        screen.getByRole('button', { name: 'Visibility filters' }),
+      );
+      expect(screen.getByText('Clear filters')).toBeInTheDocument();
     });
 
     it('should show Clear button when showAll is false', () => {
       render(<CompactFilterBar {...defaultProps} showAll={false} />);
-      expect(screen.getByText('Clear')).toBeInTheDocument();
+      fireEvent.click(
+        screen.getByRole('button', { name: 'Visibility filters' }),
+      );
+      expect(screen.getByText('Clear filters')).toBeInTheDocument();
     });
 
     it('should show Clear button when hide filters are active', () => {
       render(<CompactFilterBar {...defaultProps} hidePrototype={true} />);
-      expect(screen.getByText('Clear')).toBeInTheDocument();
+      fireEvent.click(
+        screen.getByRole('button', { name: 'Visibility filters' }),
+      );
+      expect(screen.getByText('Clear filters')).toBeInTheDocument();
     });
 
-    it('should not show Clear button when no filters active', () => {
+    it('keeps reset inside the closed filters menu', () => {
       render(<CompactFilterBar {...defaultProps} showAll={true} />);
-      expect(screen.queryByText('Clear')).not.toBeInTheDocument();
+      expect(screen.queryByText('Clear filters')).not.toBeInTheDocument();
     });
 
     it('should call onClearFilters when Clear is clicked', async () => {
       const user = userEvent.setup();
       render(<CompactFilterBar {...defaultProps} search="test" />);
 
-      const clearButton = screen.getByText('Clear');
+      await user.click(
+        screen.getByRole('button', { name: 'Visibility filters' }),
+      );
+      const clearButton = screen.getByText('Clear filters');
       await user.click(clearButton);
 
       expect(defaultProps.onClearFilters).toHaveBeenCalledTimes(1);

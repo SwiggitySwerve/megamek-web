@@ -8,19 +8,28 @@
  * @spec openspec/specs/superheavy-mech-system/spec.md
  */
 
-import React, { useState, useRef, useEffect, memo } from 'react';
+import React, { useState, memo } from 'react';
+
+import type { CritEntry } from './criticalSlotTypes';
+import type {
+  DoubleSlotContextMenuState,
+  DoubleSlotDragStartState,
+  DoubleSlotDropState,
+  DoubleSlotRemoveState,
+} from './SlotInteractionTypes';
 
 import {
-  classifyEquipment,
-  getEquipmentColors,
-} from '@/utils/colors/equipmentColors';
+  getDoubleSlotContainerClasses,
+  getDoubleSlotTitle,
+  getPairDoubleSlotAriaLabel,
+  getSingleDoubleSlotAriaLabel,
+} from './DoubleSlotVisualHelpers';
+import { SlotContextMenuShell } from './SlotContextMenuShell';
 import {
-  getSlotColors,
-  classifySystemComponent,
-} from '@/utils/colors/slotColors';
-import { abbreviateEquipmentName } from '@/utils/equipmentNameAbbreviations';
-
-import type { CritEntry, SlotContent } from './criticalSlotTypes';
+  getSlotContentClasses,
+  getSlotDisplayName,
+  getSlotMarkerClasses,
+} from './SlotVisualHelpers';
 
 // =============================================================================
 // Context Menu for Double Slot
@@ -44,36 +53,9 @@ function DoubleSlotContextMenu({
   onUnassign,
   onUnpair,
   onClose,
-}: DoubleSlotContextMenuProps) {
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        onClose();
-      }
-    };
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('keydown', handleEscape);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleEscape);
-    };
-  }, [onClose]);
-
-  const adjustedX = Math.min(x, window.innerWidth - 180);
-  const adjustedY = Math.min(y, window.innerHeight - 120);
-
+}: DoubleSlotContextMenuProps): React.ReactElement {
   return (
-    <div
-      ref={menuRef}
-      className="bg-surface-base border-border-theme fixed z-50 min-w-[140px] rounded-lg border py-1 shadow-xl"
-      style={{ left: adjustedX, top: adjustedY }}
-    >
+    <SlotContextMenuShell x={x} y={y} menuHeight={120} onClose={onClose}>
       <div className="border-border-theme-subtle text-text-theme-secondary max-w-[200px] truncate border-b px-3 py-1 text-xs">
         {primaryName}
         {secondaryName && ` + ${secondaryName}`}
@@ -98,127 +80,13 @@ function DoubleSlotContextMenu({
       >
         Unassign All
       </button>
-    </div>
+    </SlotContextMenuShell>
   );
 }
 
 // =============================================================================
 // Helpers
 // =============================================================================
-
-function getItemClasses(slot: SlotContent): string {
-  if (slot.type === 'empty') {
-    return 'bg-surface-base border-border-theme text-slate-500';
-  }
-  if (slot.type === 'system' && slot.name) {
-    const componentType = classifySystemComponent(slot.name);
-    const colors = getSlotColors(componentType);
-    return `${colors.bg} ${colors.border} ${colors.text}`;
-  }
-  if (slot.type === 'equipment' && slot.name) {
-    const colorType = classifyEquipment(slot.name);
-    const colors = getEquipmentColors(colorType);
-    return `${colors.bg} ${colors.border} ${colors.text}`;
-  }
-  return 'bg-surface-raised border-border-theme text-slate-300';
-}
-
-function getDisplayName(slot: SlotContent): string {
-  if (slot.type === 'empty') return '- Empty -';
-  if (slot.name) return abbreviateEquipmentName(slot.name);
-  return '';
-}
-
-interface DoubleSlotVisualState {
-  primary: SlotContent;
-  isAssignable: boolean;
-  isDragOver: boolean;
-  isPairable: boolean;
-  hasPair: boolean;
-}
-
-interface DoubleSlotTitleState {
-  primary: SlotContent;
-  canDrag: boolean;
-  isPairable: boolean;
-  hasPair: boolean;
-}
-
-interface DoubleSlotDragStartState {
-  canDrag: boolean;
-  equipmentId?: string;
-  onDragStart?: (equipmentId: string) => void;
-}
-
-interface DoubleSlotDropState {
-  onDrop: (equipmentId: string) => void;
-  setIsDragOver: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-interface DoubleSlotRemoveState {
-  canUnassign: boolean;
-  onRemove: () => void;
-}
-
-interface DoubleSlotContextMenuState extends DoubleSlotRemoveState {
-  setContextMenu: React.Dispatch<
-    React.SetStateAction<{ x: number; y: number } | null>
-  >;
-}
-
-function canAcceptDrop({
-  primary,
-  isAssignable,
-  isPairable,
-  hasPair,
-}: DoubleSlotVisualState): boolean {
-  return (primary.type === 'empty' && isAssignable) || (isPairable && !hasPair);
-}
-
-function getContainerClasses(state: DoubleSlotVisualState): string {
-  const { primary, isAssignable, isDragOver, isPairable, hasPair } = state;
-  if (isDragOver) {
-    return canAcceptDrop(state)
-      ? 'bg-green-800 border-green-400 scale-[1.02]'
-      : 'bg-red-900/70 border-red-400';
-  }
-
-  if (isAssignable && primary.type === 'empty') {
-    return 'bg-green-900/60 border-green-500';
-  }
-
-  if (isPairable && !hasPair && primary.type === 'equipment') {
-    return `${getItemClasses(primary)} ring-1 ring-blue-500/30 ring-inset`;
-  }
-
-  return getItemClasses(primary);
-}
-
-function getSingleSlotTitle({
-  primary,
-  canDrag,
-  isPairable,
-  hasPair,
-}: DoubleSlotTitleState): string | undefined {
-  if (isPairable && !hasPair && primary.type === 'equipment') {
-    return 'Double-slot: drop compatible ammo or heat sink to pair';
-  }
-  return canDrag
-    ? 'Drag to move, double-click or right-click to unassign'
-    : undefined;
-}
-
-function getSingleSlotAriaLabel(entry: CritEntry): string {
-  return entry.primary.name
-    ? `Slot ${entry.index + 1}: ${entry.primary.name}`
-    : `Empty slot ${entry.index + 1}`;
-}
-
-function getPairAriaLabel(entry: CritEntry, secondary: SlotContent): string {
-  return `Double slot ${entry.index + 1}: ${entry.primary.name ?? 'unknown'} + ${
-    secondary.name ?? 'unknown'
-  }`;
-}
 
 function handleDoubleSlotDragStart(
   e: React.DragEvent,
@@ -334,7 +202,9 @@ export const DoubleSlotRow = memo(function DoubleSlotRow({
   const canDrag = !!(primary.equipmentId && primary.type === 'equipment');
   const canUnassign = primary.type === 'equipment' || hasPair;
 
-  const selectionClasses = isSelected ? 'ring-2 ring-accent' : '';
+  const selectionClasses = isSelected
+    ? 'ring-2 ring-accent ring-offset-1 ring-offset-surface-deep'
+    : '';
   const sizeClasses = compact
     ? 'px-1 py-0.5 text-[10px] sm:text-xs'
     : 'px-1 py-0.5 text-[10px] sm:px-2 sm:py-1 sm:text-sm';
@@ -347,13 +217,13 @@ export const DoubleSlotRow = memo(function DoubleSlotRow({
   };
   const removeState = { canUnassign, onRemove };
   const contextMenuState = { ...removeState, setContextMenu };
-  const containerClasses = getContainerClasses(visualState);
-  const singleSlotTitle = getSingleSlotTitle({
+  const containerClasses = getDoubleSlotContainerClasses(visualState);
+  const singleSlotTitle = getDoubleSlotTitle(
     primary,
     canDrag,
     isPairable,
     hasPair,
-  });
+  );
 
   if (hasPair && secondary) {
     // Split view: two items side by side
@@ -362,7 +232,7 @@ export const DoubleSlotRow = memo(function DoubleSlotRow({
         <div
           role="gridcell"
           tabIndex={0}
-          className={`border-border-theme-subtle my-0.5 flex items-stretch rounded-sm border transition-all ${selectionClasses} ${sizeClasses}`}
+          className={`focus-visible:ring-accent my-0.5 flex min-h-8 items-stretch rounded-sm border transition-all focus-visible:ring-2 ${selectionClasses} ${sizeClasses}`}
           onClick={onClick}
           onDoubleClick={() => handleDoubleSlotDoubleClick(removeState)}
           onContextMenu={(e) =>
@@ -375,19 +245,43 @@ export const DoubleSlotRow = memo(function DoubleSlotRow({
           onDragLeave={() => setIsDragOver(false)}
           onDrop={(e) => handleDoubleSlotDrop(e, { onDrop, setIsDragOver })}
           title="Double-slot: two items paired. Right-click to unpair."
-          aria-label={getPairAriaLabel(entry, secondary)}
+          aria-label={getPairDoubleSlotAriaLabel(entry, secondary)}
         >
           {/* Primary half */}
           <div
-            className={`flex flex-1 items-center truncate border-r border-dashed border-slate-600 pr-1 ${getItemClasses(primary)}`}
+            className={`border-border-theme flex min-w-0 flex-1 items-center border-r border-dashed pr-1 ${getSlotContentClasses(primary)}`}
           >
-            <span className="truncate">{getDisplayName(primary)}</span>
+            <span
+              aria-hidden="true"
+              className={`mr-1 h-3.5 w-1 flex-shrink-0 rounded-full ${getSlotMarkerClasses(primary)}`}
+            />
+            <span
+              aria-hidden="true"
+              className="mr-1 text-[10px] text-inherit tabular-nums"
+            >
+              {primary.index + 1}
+            </span>
+            <span className="min-w-0 flex-1 break-words whitespace-normal">
+              {getSlotDisplayName(primary)}
+            </span>
           </div>
           {/* Secondary half */}
           <div
-            className={`flex flex-1 items-center truncate pl-1 ${getItemClasses(secondary)}`}
+            className={`flex min-w-0 flex-1 items-center pl-1 ${getSlotContentClasses(secondary)}`}
           >
-            <span className="truncate">{getDisplayName(secondary)}</span>
+            <span
+              aria-hidden="true"
+              className={`mr-1 h-3.5 w-1 flex-shrink-0 rounded-full ${getSlotMarkerClasses(secondary)}`}
+            />
+            <span
+              aria-hidden="true"
+              className="mr-1 text-[10px] text-inherit tabular-nums"
+            >
+              {secondary.index + 1}
+            </span>
+            <span className="min-w-0 flex-1 break-words whitespace-normal">
+              {getSlotDisplayName(secondary)}
+            </span>
           </div>
         </div>
 
@@ -413,7 +307,7 @@ export const DoubleSlotRow = memo(function DoubleSlotRow({
         role="gridcell"
         tabIndex={0}
         draggable={canDrag}
-        className={`border-border-theme-subtle my-0.5 flex items-center rounded-sm border transition-all ${canDrag ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer'} ${containerClasses} ${selectionClasses} ${sizeClasses}`}
+        className={`focus-visible:ring-accent my-0.5 flex min-h-8 items-center rounded-sm border transition-all focus-visible:ring-2 ${canDrag ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer'} ${containerClasses} ${selectionClasses} ${sizeClasses}`}
         onClick={onClick}
         onDoubleClick={() => handleDoubleSlotDoubleClick(removeState)}
         onContextMenu={(e) => handleDoubleSlotContextMenu(e, contextMenuState)}
@@ -434,9 +328,21 @@ export const DoubleSlotRow = memo(function DoubleSlotRow({
           handleDoubleSlotKeyDown(e, { ...removeState, onClick });
         }}
         title={singleSlotTitle}
-        aria-label={getSingleSlotAriaLabel(entry)}
+        aria-label={getSingleDoubleSlotAriaLabel(entry)}
       >
-        <span className="flex-1 truncate">{getDisplayName(primary)}</span>
+        <span
+          aria-hidden="true"
+          className={`mr-1 h-4 w-1 flex-shrink-0 rounded-full ${getSlotMarkerClasses(primary)}`}
+        />
+        <span
+          aria-hidden="true"
+          className="mr-1 w-4 flex-shrink-0 pr-1 text-right text-[10px] text-inherit tabular-nums"
+        >
+          {primary.index + 1}
+        </span>
+        <span className="min-w-0 flex-1 break-words whitespace-normal">
+          {getSlotDisplayName(primary)}
+        </span>
         {/* Double-slot indicator dot */}
         {entry.isDoubleSlot &&
           primary.type === 'equipment' &&

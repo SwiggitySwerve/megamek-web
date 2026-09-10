@@ -1,4 +1,5 @@
 import { Badge } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { RepairJobStatus, type IRepairJob } from '@/types/repair';
 
 import type {
@@ -87,7 +88,8 @@ export function UnitRepairCard({
       <div className="flex items-center justify-between text-xs">
         <div className="text-text-theme-secondary flex items-center gap-3">
           <span className="flex items-center gap-1">
-            <svg
+            <SvgIcon
+              size="inline"
               className="h-3.5 w-3.5"
               fill="none"
               stroke="currentColor"
@@ -99,7 +101,7 @@ export function UnitRepairCard({
                 strokeWidth={2}
                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
               />
-            </svg>
+            </SvgIcon>
             {job.timeRemainingHours}h
           </span>
         </div>

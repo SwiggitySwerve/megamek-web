@@ -43,5 +43,5 @@ export function getStatusBadgeStyle(status: string): string {
   if (statusLower === 'repairing' || statusLower === 'recovering') {
     return 'bg-sky-900/50 text-sky-400 border-sky-700/50';
   }
-  return 'bg-slate-700/50 text-slate-400 border-slate-600/50';
+  return 'bg-surface-raised/50 text-text-theme-secondary border-border-theme/50';
 }

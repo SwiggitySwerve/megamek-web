@@ -155,7 +155,7 @@ export function GmInterventionConfirmationPanel({
         {previewState.approvalIssue && (
           <p
             id={approvalIssueId}
-            className="rounded border border-amber-400 bg-amber-50 px-2 py-1 text-xs font-semibold text-slate-950"
+            className="text-text-theme-primary rounded border border-amber-400 bg-amber-50 px-2 py-1 text-xs font-semibold"
             data-testid="gm-intervention-approval-issue"
             role="status"
           >

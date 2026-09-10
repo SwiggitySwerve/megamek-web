@@ -94,11 +94,19 @@ export interface IValidatableUnit {
   // Critical slot validation fields
   /** Per-location critical slot usage */
   readonly slotsByLocation?: ISlotsByLocation;
+  readonly equipmentSlotIssues?: readonly ICriticalSlotIssue[];
 }
 
 /**
  * Single armor location entry with current and max values
  */
+export interface ICriticalSlotIssue {
+  readonly instanceId: string;
+  readonly location?: string;
+  readonly message: string;
+  readonly severity: UnitValidationSeverity;
+}
+
 export interface IArmorLocationEntry {
   readonly current: number;
   readonly max: number;

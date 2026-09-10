@@ -2,13 +2,16 @@ import type { JSX } from 'react';
 
 import React from 'react';
 
+import { SvgIcon } from '@/components/ui/SvgIcon';
+
 export function GlobeIcon({
   className = 'w-5 h-5',
 }: {
   className?: string;
 }): JSX.Element {
   return (
-    <svg
+    <SvgIcon
+      size="control"
       className={className}
       fill="none"
       stroke="currentColor"
@@ -20,7 +23,7 @@ export function GlobeIcon({
         strokeWidth={1.5}
         d="M12 21a9 9 0 100-18 9 9 0 000 18zm0 0c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3s-4.5 4.03-4.5 9 2.015 9 4.5 9zm-9-9h18"
       />
-    </svg>
+    </SvgIcon>
   );
 }
 
@@ -30,7 +33,8 @@ export function DocumentIcon({
   className?: string;
 }): JSX.Element {
   return (
-    <svg
+    <SvgIcon
+      size="control"
       className={className}
       fill="none"
       stroke="currentColor"
@@ -42,7 +46,7 @@ export function DocumentIcon({
         strokeWidth={1.5}
         d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
       />
-    </svg>
+    </SvgIcon>
   );
 }
 
@@ -52,7 +56,8 @@ export function MechIcon({
   className?: string;
 }): JSX.Element {
   return (
-    <svg
+    <SvgIcon
+      size="control"
       className={className}
       fill="none"
       stroke="currentColor"
@@ -64,7 +69,7 @@ export function MechIcon({
         strokeWidth={1.5}
         d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"
       />
-    </svg>
+    </SvgIcon>
   );
 }
 
@@ -74,7 +79,8 @@ export function PilotIcon({
   className?: string;
 }): JSX.Element {
   return (
-    <svg
+    <SvgIcon
+      size="control"
       className={className}
       fill="none"
       stroke="currentColor"
@@ -86,7 +92,7 @@ export function PilotIcon({
         strokeWidth={1.5}
         d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
       />
-    </svg>
+    </SvgIcon>
   );
 }
 
@@ -96,7 +102,8 @@ export function CrosshairIcon({
   className?: string;
 }): JSX.Element {
   return (
-    <svg
+    <SvgIcon
+      size="control"
       className={className}
       fill="none"
       stroke="currentColor"
@@ -108,7 +115,7 @@ export function CrosshairIcon({
         strokeWidth={1.5}
         d="M12 2v4m0 12v4m8-10h-4M6 12H2"
       />
-    </svg>
+    </SvgIcon>
   );
 }
 
@@ -118,7 +125,8 @@ export function getContractTypeIcon(type: string): React.ReactNode {
 
   if (typeLower === 'raid' || typeLower === 'assault') {
     return (
-      <svg
+      <SvgIcon
+        size="control"
         className={iconClass}
         fill="none"
         stroke="currentColor"
@@ -130,12 +138,13 @@ export function getContractTypeIcon(type: string): React.ReactNode {
           strokeWidth={2}
           d="M13 10V3L4 14h7v7l9-11h-7z"
         />
-      </svg>
+      </SvgIcon>
     );
   }
   if (typeLower === 'garrison' || typeLower === 'defense') {
     return (
-      <svg
+      <SvgIcon
+        size="control"
         className={iconClass}
         fill="none"
         stroke="currentColor"
@@ -147,12 +156,13 @@ export function getContractTypeIcon(type: string): React.ReactNode {
           strokeWidth={2}
           d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
         />
-      </svg>
+      </SvgIcon>
     );
   }
   if (typeLower === 'recon' || typeLower === 'reconnaissance') {
     return (
-      <svg
+      <SvgIcon
+        size="control"
         className={iconClass}
         fill="none"
         stroke="currentColor"
@@ -170,12 +180,13 @@ export function getContractTypeIcon(type: string): React.ReactNode {
           strokeWidth={2}
           d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
         />
-      </svg>
+      </SvgIcon>
     );
   }
   if (typeLower === 'escort' || typeLower === 'extraction') {
     return (
-      <svg
+      <SvgIcon
+        size="control"
         className={iconClass}
         fill="none"
         stroke="currentColor"
@@ -187,11 +198,12 @@ export function getContractTypeIcon(type: string): React.ReactNode {
           strokeWidth={2}
           d="M17 8l4 4m0 0l-4 4m4-4H3"
         />
-      </svg>
+      </SvgIcon>
     );
   }
   return (
-    <svg
+    <SvgIcon
+      size="control"
       className={iconClass}
       fill="none"
       stroke="currentColor"
@@ -203,6 +215,6 @@ export function getContractTypeIcon(type: string): React.ReactNode {
         strokeWidth={2}
         d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
       />
-    </svg>
+    </SvgIcon>
   );
 }

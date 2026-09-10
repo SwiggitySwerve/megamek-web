@@ -136,7 +136,7 @@ function SPACostBadge({
 
   if (spa.xpCost === null) {
     return (
-      <span className="rounded bg-slate-700/50 px-2 py-0.5 text-xs font-semibold text-slate-200">
+      <span className="bg-surface-raised/50 text-text-theme-primary rounded px-2 py-0.5 text-xs font-semibold">
         {spa.isOriginOnly ? 'Origin-Only' : 'No XP'}
       </span>
     );
@@ -214,7 +214,7 @@ function SPASelectAction({
       className={`rounded px-3 py-1 text-xs font-semibold transition-colors ${
         disabled
           ? 'bg-surface-raised text-text-theme-muted cursor-not-allowed'
-          : 'bg-accent text-surface-base hover:bg-accent/90'
+          : 'bg-accent text-on-accent hover:bg-accent/90'
       }`}
     >
       {excluded ? 'Already owned' : 'Select'}
@@ -280,7 +280,7 @@ function SPADesignationPrompt({
         <button
           type="button"
           onClick={onConfirm}
-          className="bg-accent text-surface-base hover:bg-accent/90 rounded px-3 py-1 text-xs font-semibold"
+          className="bg-accent text-on-accent hover:bg-accent/90 rounded px-3 py-1 text-xs font-semibold"
         >
           Confirm
         </button>

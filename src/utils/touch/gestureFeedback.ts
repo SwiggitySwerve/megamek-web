@@ -205,7 +205,7 @@ export function getTouchButtonClasses(): string {
     // Pressed state feedback
     'active:scale-[0.97] active:opacity-90',
     // Focus visible ring for accessibility
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base',
     // Smooth transitions
     'transition-all duration-100',
   ].join(' ');
@@ -241,7 +241,7 @@ export function getIconButtonClasses(size: 'sm' | 'md' | 'lg' = 'md'): string {
     // Pressed state feedback
     'active:scale-[0.95] active:opacity-90',
     // Focus visible ring
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
     // Smooth transitions
     'transition-all duration-100',
     // Rounded for touch

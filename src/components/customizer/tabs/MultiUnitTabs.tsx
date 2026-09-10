@@ -12,9 +12,14 @@ import {
 import { UnitLoadDialog } from '@/components/customizer/dialogs/UnitLoadDialog';
 import { UnsavedChangesDialog } from '@/components/customizer/dialogs/UnsavedChangesDialog';
 import { useToast } from '@/components/shared/Toast';
+import { AppIcon } from '@/components/ui/AppIcon';
+import { Button } from '@/components/ui/Button';
 import { useUnitValidation } from '@/hooks/useUnitValidation';
 import { getUnitStore } from '@/stores/unitStoreRegistry';
 import { UnitStoreContext } from '@/stores/useUnitStore';
+
+import { CustomizerCommandBar } from '../CustomizerCommandBar';
+import { BrowserDraftStatus } from '../shared/BrowserDraftStatus';
 
 // Lazy-load the two heaviest vault dialogs (~360 + ~300 LOC pulling
 // CSV/JSON parsers, Zod, and Toast plumbing). They only mount when
@@ -107,7 +112,10 @@ export function MultiUnitTabs({
     isNewTabModalOpen,
     closeDialog,
     saveDialog,
+    librarySaveDisabledReason,
     isLoadDialogOpen,
+    isLoadingUnit,
+    cancelPendingLoad,
     isExportDialogOpen,
     isImportDialogOpen,
     tabBarTabs,
@@ -124,6 +132,7 @@ export function MultiUnitTabs({
     closeExportDialog,
     openImportDialog,
     closeImportDialog,
+    openSaveDialog,
     createNewUnit,
     handleLoadUnit,
     handleCloseDialogCancel,
@@ -133,6 +142,15 @@ export function MultiUnitTabs({
     handleSaveDialogSave,
     handleImportComplete,
   } = useMultiUnitTabsController();
+
+  const createBlankUnit = (): void => {
+    createNewUnit(50);
+    closeLoadDialog();
+  };
+  const configureNewUnit = (): void => {
+    closeLoadDialog();
+    openNewTabModal();
+  };
 
   if (isLoading) {
     return (
@@ -146,12 +164,15 @@ export function MultiUnitTabs({
     return (
       <MultiUnitTabsEmptyState
         className={className}
-        onOpenNewTabModal={openNewTabModal}
+        onOpenNewTabModal={configureNewUnit}
+        onCreateBlankUnit={createBlankUnit}
         onOpenLoadDialog={openLoadDialog}
         isNewTabModalOpen={isNewTabModalOpen}
         onCloseNewTabModal={closeNewTabModal}
         onCreateUnit={createNewUnit}
         isLoadDialogOpen={isLoadDialogOpen}
+        isLoadingUnit={isLoadingUnit}
+        onSelectionChange={cancelPendingLoad}
         onLoadUnit={handleLoadUnit}
         onCloseLoadDialog={closeLoadDialog}
       />
@@ -160,18 +181,49 @@ export function MultiUnitTabs({
 
   return (
     <div className={`flex h-full flex-col ${className}`}>
-      <TabBar
-        tabs={tabBarTabs}
-        activeTabId={activeTabId}
-        onSelectTab={selectTab}
-        onCloseTab={closeTab}
-        onRenameTab={renameTab}
-        onNewTab={openNewTabModal}
-        onLoadUnit={openLoadDialog}
-        onExport={openExportDialog}
-        onImport={openImportDialog}
-        canExport={!!activeUnitExportData}
-      />
+      <CustomizerCommandBar>
+        <TabBar
+          className="min-w-0 flex-1"
+          tabs={tabBarTabs}
+          activeTabId={activeTabId}
+          onSelectTab={selectTab}
+          onCloseTab={closeTab}
+          onRenameTab={renameTab}
+          onLoadUnit={openLoadDialog}
+          onExport={openExportDialog}
+          onImport={openImportDialog}
+          canExport={!!activeUnitExportData}
+        />
+        <div className="bg-surface-base flex shrink-0 items-center px-1">
+          <Button
+            type="button"
+            size="sm"
+            variant="secondary"
+            aria-label="Save active unit to library"
+            aria-describedby={
+              librarySaveDisabledReason
+                ? 'library-save-disabled-reason'
+                : undefined
+            }
+            title={librarySaveDisabledReason ?? 'Save active unit to library'}
+            disabled={librarySaveDisabledReason !== null}
+            className="!text-text-theme-primary relative !h-11 !w-11 shrink-0 !p-0"
+            onClick={openSaveDialog}
+          >
+            <AppIcon name="save" size="toolbar" />
+            {activeTabId && (
+              <span className="absolute right-1 bottom-1 flex">
+                <BrowserDraftStatus unitId={activeTabId} compact />
+              </span>
+            )}
+          </Button>
+          {librarySaveDisabledReason && (
+            <span id="library-save-disabled-reason" className="sr-only">
+              {librarySaveDisabledReason}
+            </span>
+          )}
+        </div>
+      </CustomizerCommandBar>
 
       <div className="min-h-0 flex-1 overflow-hidden">{children}</div>
 
@@ -199,7 +251,11 @@ export function MultiUnitTabs({
       />
 
       <UnitLoadDialog
+        onCreateBlankUnit={createBlankUnit}
+        onConfigureNewUnit={configureNewUnit}
         isOpen={isLoadDialogOpen}
+        isLoadingUnit={isLoadingUnit}
+        onSelectionChange={cancelPendingLoad}
         onLoadUnit={handleLoadUnit}
         onCancel={closeLoadDialog}
       />

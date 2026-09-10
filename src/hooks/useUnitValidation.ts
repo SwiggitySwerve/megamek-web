@@ -234,6 +234,7 @@ export function useUnitValidation(
       maxWeight: weightData.maxWeight,
       // Slot validation fields
       slotsByLocation: equipmentData.slotsByLocation,
+      equipmentSlotIssues: equipmentData.equipmentSlotIssues,
     };
 
     try {

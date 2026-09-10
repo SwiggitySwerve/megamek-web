@@ -4,6 +4,7 @@ import React from 'react';
 import type { InteractiveSession } from '@/engine/GameEngine';
 
 import { Button } from '@/components/ui';
+import { AppIcon } from '@/components/ui/AppIcon';
 import { GamePhase, GameSide, IGameSession } from '@/types/gameplay';
 
 // =============================================================================
@@ -56,11 +57,11 @@ export function PlaybackControls({
 
   return (
     <div
-      className="flex items-center gap-4 rounded-lg border border-gray-700 bg-gray-800/90 px-5 py-3 shadow-lg backdrop-blur-sm"
+      className="border-border-theme bg-surface-base/90 flex items-center gap-4 rounded-lg border px-5 py-3 shadow-lg backdrop-blur-sm"
       data-testid="spectator-controls"
     >
-      <div className="mr-2 border-r border-gray-600 pr-4">
-        <div className="text-xs font-medium tracking-wider text-gray-500 uppercase">
+      <div className="border-border-theme mr-2 border-r pr-4">
+        <div className="text-text-theme-muted text-xs font-medium tracking-wider uppercase">
           Turn {turn}
         </div>
         <div className="text-sm font-semibold text-cyan-400 capitalize">
@@ -76,30 +77,23 @@ export function PlaybackControls({
         aria-label={playing ? 'Pause' : 'Play'}
       >
         {playing ? (
-          <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-            <rect x="6" y="4" width="4" height="16" rx="1" />
-            <rect x="14" y="4" width="4" height="16" rx="1" />
-          </svg>
+          <AppIcon name="pause" size="control" />
         ) : (
-          <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M8 5v14l11-7z" />
-          </svg>
+          <AppIcon name="play" size="control" />
         )}
       </button>
 
       <button
         onClick={onStepForward}
         disabled={playing || gameOver}
-        className="flex h-8 w-8 items-center justify-center rounded-md border border-gray-600 text-gray-300 transition-colors hover:border-gray-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+        className="border-border-theme text-text-theme-secondary hover:border-border-theme flex h-8 w-8 items-center justify-center rounded-md border transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
         data-testid="spectator-step"
         aria-label="Step Forward"
       >
-        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M5 4v16l10-8zM17 4h2v16h-2z" />
-        </svg>
+        <AppIcon name="skip-forward" size="inline" />
       </button>
 
-      <div className="flex items-center gap-1 rounded-md border border-gray-600 p-0.5">
+      <div className="border-border-theme flex items-center gap-1 rounded-md border p-0.5">
         {speeds.map((s) => (
           <button
             key={s}
@@ -107,7 +101,7 @@ export function PlaybackControls({
             className={`rounded px-2.5 py-1 text-xs font-bold transition-colors ${
               speed === s
                 ? 'bg-cyan-600 text-white'
-                : 'text-gray-400 hover:text-white'
+                : 'text-text-theme-secondary hover:text-white'
             }`}
             data-testid={`spectator-speed-${s}`}
           >
@@ -160,12 +154,12 @@ export function UnitRoster({
                 key={u.id}
                 className={`flex items-center justify-between rounded px-2 py-1.5 text-xs ${
                   status === 'destroyed'
-                    ? 'bg-red-900/30 text-gray-500 line-through'
-                    : 'bg-gray-800 text-gray-200'
+                    ? 'text-text-theme-muted bg-red-900/30 line-through'
+                    : 'bg-surface-base text-text-theme-primary'
                 }`}
               >
                 <span>{u.name}</span>
-                <span className="text-gray-500">
+                <span className="text-text-theme-muted">
                   {u.gunnery}/{u.piloting}
                 </span>
               </div>
@@ -185,12 +179,12 @@ export function UnitRoster({
                 key={u.id}
                 className={`flex items-center justify-between rounded px-2 py-1.5 text-xs ${
                   status === 'destroyed'
-                    ? 'bg-red-900/30 text-gray-500 line-through'
-                    : 'bg-gray-800 text-gray-200'
+                    ? 'text-text-theme-muted bg-red-900/30 line-through'
+                    : 'bg-surface-base text-text-theme-primary'
                 }`}
               >
                 <span>{u.name}</span>
-                <span className="text-gray-500">
+                <span className="text-text-theme-muted">
                   {u.gunnery}/{u.piloting}
                 </span>
               </div>
@@ -232,14 +226,14 @@ export function ResultsOverlay({
 
   return (
     <div
-      className="absolute inset-0 z-20 flex items-center justify-center bg-gray-900/80 backdrop-blur-sm"
+      className="bg-surface-deep/80 absolute inset-0 z-20 flex items-center justify-center backdrop-blur-sm"
       data-testid="spectator-results"
     >
-      <div className="max-w-md rounded-xl border border-gray-700 bg-gray-800 p-8 text-center shadow-2xl">
+      <div className="border-border-theme bg-surface-base max-w-md rounded-xl border p-8 text-center shadow-2xl">
         <div className={`mb-3 text-4xl font-black ${winnerColor}`}>
           {winnerText}
         </div>
-        <p className="mb-6 text-gray-400 capitalize">
+        <p className="text-text-theme-secondary mb-6 capitalize">
           {(result?.reason ?? 'unknown').replace(/_/g, ' ')}
         </p>
         <div className="flex items-center justify-center gap-3">

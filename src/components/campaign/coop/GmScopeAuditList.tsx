@@ -45,10 +45,12 @@ function auditRow(event: ICampaignEvent): React.ReactElement {
     <li
       key={`${event.sequence}-${event.type}`}
       data-testid={`gm-scope-audit-row-${event.sequence}`}
-      className="flex items-center justify-between gap-3 rounded border border-slate-700 bg-slate-800/60 px-2 py-1.5"
+      className="border-border-theme bg-surface-base/60 flex items-center justify-between gap-3 rounded border px-2 py-1.5"
     >
-      <span className="font-mono text-xs text-slate-400">{event.sequence}</span>
-      <span className="flex-1 truncate text-xs text-slate-200">
+      <span className="text-text-theme-secondary font-mono text-xs">
+        {event.sequence}
+      </span>
+      <span className="text-text-theme-primary flex-1 truncate text-xs">
         {event.type}
       </span>
       <span
@@ -73,7 +75,7 @@ export function GmScopeAuditList(
   const rows = [...events].reverse().slice(0, limit);
   return (
     <section data-testid="gm-scope-audit" className="mt-4">
-      <h3 className="mb-2 text-xs font-semibold tracking-wide text-slate-400 uppercase">
+      <h3 className="text-text-theme-secondary mb-2 text-xs font-semibold tracking-wide uppercase">
         Event scope audit
       </h3>
       <ul className="space-y-1">{rows.map((event) => auditRow(event))}</ul>

@@ -341,13 +341,13 @@ describe('AnalysisBugs', () => {
   });
 
   /* ================================================================== */
-  /*  7. Dark Mode Tests                                                  */
+  /*  7. Semantic Palette Tests                                                  */
   /* ================================================================== */
-  describe('Dark Mode', () => {
-    it('title has dark mode text color', () => {
+  describe('Semantic palette', () => {
+    it('uses the semantic primary-text token for the title', () => {
       renderPage();
       const title = screen.getByTestId('page-title');
-      expect(title.className).toContain('dark:text-gray-100');
+      expect(title).toHaveClass('text-text-theme-primary');
     });
   });
 });

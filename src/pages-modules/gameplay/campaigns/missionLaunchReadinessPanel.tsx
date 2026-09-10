@@ -7,6 +7,7 @@ import type {
 } from '@/lib/campaign/readiness/missionReadinessProjection';
 
 import { Badge } from '@/components/ui';
+import { AppIcon, type AppIconName } from '@/components/ui/AppIcon';
 
 function readinessStatusVariant(
   status: IMissionReadinessUnitProjection['status'],
@@ -20,10 +21,10 @@ function readinessStatusVariant(
 // AMBIENT-CHROME rule): status never reads through color alone.
 function readinessStatusGlyph(
   status: IMissionReadinessUnitProjection['status'],
-): string {
-  if (status === 'eligible') return '✓ ';
-  if (status === 'risky') return '▲ ';
-  return '! ';
+): AppIconName {
+  if (status === 'eligible') return 'check';
+  if (status === 'risky') return 'warning';
+  return 'close';
 }
 
 function launchReadinessVariant(
@@ -33,10 +34,17 @@ function launchReadinessVariant(
   return projection.warnings.length > 0 ? 'warning' : 'success';
 }
 
+function launchReadinessGlyph(
+  projection: IMissionReadinessProjection,
+): AppIconName {
+  if (!projection.canLaunch) return 'close';
+  return projection.warnings.length === 0 ? 'check' : 'warning';
+}
+
 function launchReadinessLabel(projection: IMissionReadinessProjection): string {
-  if (!projection.canLaunch) return '! Launch blocked';
-  if (projection.warnings.length === 0) return '✓ Launch ready';
-  return `▲ Ready with warnings (${projection.warnings.length})`;
+  if (!projection.canLaunch) return 'Launch blocked';
+  if (projection.warnings.length === 0) return 'Launch ready';
+  return `Ready with warnings (${projection.warnings.length})`;
 }
 
 export function MissionReadinessPanel({
@@ -67,6 +75,11 @@ export function MissionReadinessPanel({
           variant={launchReadinessVariant(projection)}
           data-testid="mission-readiness-status"
         >
+          <AppIcon
+            name={launchReadinessGlyph(projection)}
+            size="inline"
+            aria-hidden="true"
+          />
           {launchReadinessLabel(projection)}
         </Badge>
       </div>
@@ -98,7 +111,11 @@ export function MissionReadinessPanel({
                     variant={readinessStatusVariant(unitProjection.status)}
                     size="sm"
                   >
-                    {readinessStatusGlyph(unitProjection.status)}
+                    <AppIcon
+                      name={readinessStatusGlyph(unitProjection.status)}
+                      size="inline"
+                      aria-hidden="true"
+                    />
                     {unitProjection.status}
                   </Badge>
                 </span>
@@ -124,8 +141,16 @@ export function MissionReadinessPanel({
                             : 'flex flex-wrap items-center gap-2 text-xs text-amber-300'
                         }
                       >
-                        <span>
-                          {reason.severity === 'blocker' ? '! ' : '▲ '}
+                        <span className="inline-flex items-center gap-1">
+                          <AppIcon
+                            name={
+                              reason.severity === 'blocker'
+                                ? 'close'
+                                : 'warning'
+                            }
+                            size="inline"
+                            aria-hidden="true"
+                          />
                           {reason.message}
                         </span>
                         {reason.actionHref ? (

@@ -27,6 +27,7 @@ describe('OverviewTab', () => {
     typeof useTabManagerStore
   >;
   const mockStoreValues = {
+    equipment: [],
     id: 'unit-1',
     chassis: 'Atlas',
     clanName: '',
@@ -92,6 +93,21 @@ describe('OverviewTab', () => {
     render(<OverviewTab />);
 
     expect(screen.getByTestId('tech-base-config')).toBeInTheDocument();
+  });
+
+  it('reveals component technology on demand', async () => {
+    const user = userEvent.setup();
+    render(<OverviewTab />);
+
+    const disclosure = screen
+      .getByText('Component technology')
+      .closest('details');
+
+    expect(disclosure).not.toHaveAttribute('open');
+
+    await user.click(screen.getByText('Component technology'));
+
+    expect(disclosure).toHaveAttribute('open');
   });
 
   it('should call setChassis when chassis changes', async () => {

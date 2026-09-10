@@ -100,9 +100,9 @@ const DESKTOP_GRID_STYLE: CSSProperties = {
 const FACING_BUTTON_BASE_CLASS =
   'min-h-[44px] min-w-[44px] rounded-md px-4 py-2 text-sm font-medium transition-colors';
 const FACING_BUTTON_ACTIVE_CLASS =
-  'bg-white text-gray-900 shadow dark:bg-gray-600 dark:text-white';
+  'text-text-theme-primary shadow bg-surface-raised ';
 const FACING_BUTTON_INACTIVE_CLASS =
-  'text-gray-700 hover:bg-gray-300 dark:text-gray-300 dark:hover:bg-gray-600';
+  'text-text-theme-secondary hover:bg-surface-raised ';
 
 function formatFacingLabel(facing: ArmorFacing): string {
   return facing === 'front' ? 'Front' : 'Rear';
@@ -133,7 +133,7 @@ export function FacingToggle({
 }: FacingToggleProps): ReactElement {
   return (
     <div className="mb-4 flex justify-center">
-      <div className="inline-flex rounded-lg bg-gray-200 p-1 dark:bg-gray-700">
+      <div className="bg-surface-raised inline-flex rounded-lg p-1">
         {FACING_OPTIONS.map((option) => {
           const isSelected = facing === option;
 
@@ -167,7 +167,7 @@ export function AutoAllocateControl({
     <div className="mb-4">
       <label
         htmlFor="auto-allocate-select"
-        className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+        className="text-text-theme-secondary mb-2 block text-sm font-medium"
       >
         Auto-Allocate Armor
       </label>
@@ -176,7 +176,7 @@ export function AutoAllocateControl({
           id="auto-allocate-select"
           value={allocationType}
           onChange={handleAllocationChange}
-          className="min-h-[44px] flex-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-800"
+          className="border-border-theme-strong bg-surface-base min-h-[44px] flex-1 rounded-md border px-3 py-2 text-sm"
         >
           {ALLOCATION_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
@@ -187,7 +187,7 @@ export function AutoAllocateControl({
         <button
           type="button"
           onClick={onApply}
-          className="min-h-[44px] min-w-[44px] rounded-md bg-blue-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-600"
+          className="bg-accent text-on-accent hover:bg-accent-hover min-h-[44px] min-w-[44px] rounded-md px-4 py-2 text-sm font-medium transition-colors"
         >
           Apply
         </button>
@@ -245,7 +245,7 @@ function MobileArmorGroup({
 }: MobileArmorGroupProps): ReactElement {
   return (
     <div className="space-y-3">
-      <h4 className="px-1 text-sm font-semibold text-gray-700 dark:text-gray-300">
+      <h4 className="text-text-theme-secondary px-1 text-sm font-semibold">
         {label}
       </h4>
       {locations.map((location) => (

@@ -34,7 +34,7 @@ export function ProjectionContextRows({
 
   return (
     <div
-      className="mt-1 border-t border-slate-700/70 pt-1 text-[11px] text-slate-200"
+      className="border-border-theme/70 text-text-theme-primary mt-1 border-t pt-1 text-[11px]"
       data-testid={`${testIdPrefix}-projection-context`}
       data-tactical-tooltip-status={projection.status}
       data-tactical-tooltip-intent={projection.intent}

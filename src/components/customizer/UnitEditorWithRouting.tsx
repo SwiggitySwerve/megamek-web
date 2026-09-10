@@ -1,21 +1,27 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+
+import type { IUnitValidationError } from '@/types/validation/UnitValidationInterfaces';
 
 import { ErrorBoundary } from '@/components/common';
 import { CampaignRefitCommandBar } from '@/components/customizer/campaign/CampaignRefitCommandBar';
 import { ResponsiveLoadoutTray } from '@/components/customizer/equipment/ResponsiveLoadoutTray';
 import { UnitInfoBanner } from '@/components/customizer/shared/UnitInfoBanner';
+import { ValidationSummary } from '@/components/customizer/shared/ValidationSummary';
 import {
   CustomizerTabs,
   DEFAULT_CUSTOMIZER_TABS,
 } from '@/components/customizer/tabs/CustomizerTabs';
 import { CustomizerTabId, VALID_TAB_IDS } from '@/hooks/useCustomizerRouter';
-import { useEquipmentRegistry } from '@/hooks/useEquipmentRegistry';
 import { STORAGE_KEYS, usePersistedState } from '@/hooks/usePersistedState';
 import { useUnitValidation } from '@/hooks/useUnitValidation';
 import { useValidationNavigation } from '@/hooks/useValidationNavigation';
 import { useValidationToast } from '@/hooks/useValidationToast';
 import { useUnitStore } from '@/stores/useUnitStore';
+import { getTabForCategory } from '@/utils/validation/validationNavigation';
 
+import { CustomizerToolbarContext } from './CustomizerToolbarContext';
+import workbenchStyles from './CustomizerWorkbench.module.css';
+import { CustomizerWorkspaceControls } from './CustomizerWorkspaceControls';
 import { useUnitEditorLoadout } from './UnitEditorWithRoutingLoadout';
 import { useUnitEditorRoutingStats } from './UnitEditorWithRoutingStats';
 import { UnitEditorWithRoutingTabContent } from './UnitEditorWithRoutingTabContent';
@@ -34,8 +40,12 @@ export function UnitEditorWithRouting({
     true,
   );
 
-  const { isReady: _registryReady } = useEquipmentRegistry();
+  const [isWideWorkspace, setIsWideWorkspace] = usePersistedState(
+    'mekstation:customizer-wide-workspace',
+    false,
+  );
 
+  const unitId = useUnitStore((s) => s.id);
   const unitName = useUnitStore((s) => s.name);
   const chassis = useUnitStore((s) => s.chassis);
   const model = useUnitStore((s) => s.model);
@@ -80,6 +90,8 @@ export function UnitEditorWithRouting({
     handleQuickAssign,
     getAvailableLocationsForEquipment,
   } = useUnitEditorLoadout({
+    unitId,
+    configuration,
     equipment,
     engineType,
     gyroType,
@@ -127,41 +139,138 @@ export function UnitEditorWithRouting({
     [onTabChange],
   );
 
+  const [toolbarTarget, setToolbarTarget] = useState<HTMLElement | null>(null);
+  const [loadoutRequest, setLoadoutRequest] = useState(0);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [validationTarget, setValidationTarget] = useState<{
+    unitId: string;
+    tabId: CustomizerTabId;
+    instanceId?: string;
+  } | null>(null);
+  const requestLoadout = useCallback(() => {
+    if (window.innerWidth < 768) setLoadoutRequest((value) => value + 1);
+    else if (isWideWorkspace) setDrawerOpen(true);
+    else setIsTrayExpanded(true);
+  }, [isWideWorkspace, setIsTrayExpanded]);
+  const toolbarLayout = useMemo(
+    () => ({ target: toolbarTarget, requestLoadout }),
+    [toolbarTarget, requestLoadout],
+  );
+  const handleValidationIssue = useCallback(
+    (issue: IUnitValidationError) => {
+      const tabId = getTabForCategory(issue.category);
+      const candidate = issue.field?.startsWith('criticalSlots.')
+        ? issue.field.slice('criticalSlots.'.length)
+        : undefined;
+      const instanceId =
+        candidate && equipment.some((item) => item.instanceId === candidate)
+          ? candidate
+          : undefined;
+      if (instanceId) {
+        handleSelectEquipment(instanceId);
+        requestLoadout();
+      }
+      handleTabChange(tabId);
+      setValidationTarget({ unitId, tabId, instanceId });
+    },
+    [equipment, handleSelectEquipment, handleTabChange, requestLoadout, unitId],
+  );
+
+  useEffect(() => {
+    if (
+      !validationTarget ||
+      validationTarget.unitId !== unitId ||
+      validationTarget.tabId !== activeTabId
+    )
+      return;
+    let observer: MutationObserver | undefined;
+    const focus = (): boolean => {
+      const candidates = validationTarget.instanceId
+        ? Array.from(
+            document.querySelectorAll<HTMLElement>(
+              '[data-equipment-placement],[data-equipment-select]',
+            ),
+          ).filter(
+            (element) =>
+              element.dataset.equipmentPlacement ===
+                validationTarget.instanceId ||
+              element.dataset.equipmentSelect === validationTarget.instanceId,
+          )
+        : [document.getElementById(`tabpanel-${activeTabId}`)];
+      const target = candidates.find(
+        (element) => element && element.getClientRects().length > 0,
+      );
+      if (!target) return false;
+      target.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      target.focus({ preventScroll: true });
+      setValidationTarget(null);
+      return true;
+    };
+    if (!focus()) {
+      observer = new MutationObserver(() => {
+        if (focus()) observer?.disconnect();
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
+    }
+    return () => observer?.disconnect();
+  }, [activeTabId, unitId, validationTarget, selectedEquipmentId]);
+
   return (
-    <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-      <CampaignRefitCommandBar onTabChange={handleTabChange} />
-
-      <div className="bg-surface-deep border-border-theme flex-shrink-0 border-b p-2">
-        <UnitInfoBanner
-          stats={unitStats}
-          validation={validation}
-          onValidationNavigate={handleTabChange}
-        />
-      </div>
-
-      <div className="flex min-h-0 flex-1 overflow-hidden">
-        <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-          <div className="flex-shrink-0">
-            <CustomizerTabs
-              tabs={DEFAULT_CUSTOMIZER_TABS}
-              activeTab={activeTabId}
-              onTabChange={handleTabChange}
-              validationCounts={validationNav.errorsByTab}
-            />
-          </div>
-
-          <div className="min-h-0 flex-1 overflow-auto">
+    <CustomizerToolbarContext.Provider value={toolbarLayout}>
+      <div
+        className={`${workbenchStyles.workbench} flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden`}
+        data-testid="customizer-workbench"
+      >
+        <CampaignRefitCommandBar onTabChange={handleTabChange} />
+        <div className="bg-surface-base border-border-theme shrink-0 border-b">
+          <UnitInfoBanner stats={unitStats} compact />
+        </div>
+        <div
+          className="bg-surface-base border-border-theme flex h-12 shrink-0 items-center gap-1 border-b px-1"
+          data-testid="customizer-section-bar"
+        >
+          <CustomizerTabs
+            tabs={DEFAULT_CUSTOMIZER_TABS}
+            activeTab={activeTabId}
+            onTabChange={handleTabChange}
+            validationCounts={validationNav.errorsByTab}
+            compact
+            className="min-w-0 flex-1 !border-b-0"
+          />
+          <div ref={setToolbarTarget} className="flex shrink-0 items-center" />
+          <ValidationSummary
+            key={unitId}
+            validation={validation}
+            unitName={unitName}
+            onIssueNavigate={handleValidationIssue}
+          />
+          <CustomizerWorkspaceControls
+            wide={isWideWorkspace}
+            onOpenLoadout={requestLoadout}
+            onToggle={() => {
+              setIsWideWorkspace((value) => !value);
+              setDrawerOpen(false);
+            }}
+          />
+        </div>
+        <div className="flex min-h-0 flex-1 overflow-hidden pb-11 md:pb-0">
+          <div
+            className="min-h-0 min-w-0 flex-1 overflow-auto"
+            data-testid="customizer-workspace"
+          >
             <UnitEditorWithRoutingTabContent
               activeTabId={activeTabId}
               selectedEquipmentId={selectedEquipmentId}
               onSelectEquipment={handleSelectEquipment}
+              workbench
             />
           </div>
-        </div>
-
-        {activeTabId !== 'preview' && activeTabId !== 'criticals' && (
           <ErrorBoundary componentName="ResponsiveLoadoutTray">
             <ResponsiveLoadoutTray
+              hideDesktopSidebar={isWideWorkspace}
+              drawerOpen={drawerOpen}
+              onCloseDrawer={() => setDrawerOpen(false)}
+              openRequest={loadoutRequest}
               equipment={loadoutEquipment}
               equipmentCount={equipment.length}
               onRemoveEquipment={handleRemoveEquipment}
@@ -180,8 +289,8 @@ export function UnitEditorWithRouting({
               mobileStats={mobileLoadoutStats}
             />
           </ErrorBoundary>
-        )}
+        </div>
       </div>
-    </div>
+    </CustomizerToolbarContext.Provider>
   );
 }

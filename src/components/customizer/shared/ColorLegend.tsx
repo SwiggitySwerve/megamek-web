@@ -8,6 +8,7 @@
 
 import React, { useState } from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
 import { TechBase } from '@/types/enums/TechBase';
 import {
   EQUIPMENT_COLORS,
@@ -76,13 +77,13 @@ export function ColorLegend({
     >
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="text-text-theme-primary flex w-full items-center justify-between px-3 py-2 text-sm transition-colors hover:text-white"
+        className="text-text-theme-primary hover:text-text-theme-primary flex w-full items-center justify-between px-3 py-2 text-sm transition-colors"
       >
         <span className="font-medium">Color Legend</span>
         <span
           className={`transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}
         >
-          ▼
+          <AppIcon name="chevron-down" size="inline" aria-hidden="true" />
         </span>
       </button>
 

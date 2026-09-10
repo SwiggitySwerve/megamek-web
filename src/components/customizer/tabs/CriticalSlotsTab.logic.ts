@@ -1,13 +1,16 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import type { IMountedEquipmentInstance } from '@/types/equipment/MountedEquipment';
+import type { ICriticalSlotIssue } from '@/types/validation/UnitValidationInterfaces';
 
 import { useCustomizerStore } from '@/stores/useCustomizerStore';
 import { useUnitStore } from '@/stores/useUnitStore';
 import { MechLocation } from '@/types/construction';
+import { MechConfiguration } from '@/types/construction/MechConfigurationSystem';
 import { getUnallocatedUnhittables } from '@/utils/construction/slotOperations';
 
 import type { LocationData } from '../critical-slots';
+import type { CriticalSlotPlacementOption } from './CriticalSlotsTab.placement';
 
 import { slotsToCritEntries } from '../critical-slots';
 import { buildPlacementFingerprint } from './CriticalSlotsTab.auto';
@@ -19,6 +22,7 @@ import {
   scheduleAutoFillUnhittables,
   scheduleAutoOrganizeEquipment,
 } from './CriticalSlotsTab.logicAuto';
+import { useCriticalSlotPlacement } from './CriticalSlotsTab.placement';
 import {
   buildAssignableSlots,
   findEquipmentByInstanceId,
@@ -41,6 +45,13 @@ interface AutoModeSettingsView {
 }
 
 interface UseCriticalSlotsTabLogicResult {
+  readonly locations: readonly MechLocation[];
+  readonly isBiped: boolean;
+  readonly handlePlaceInLocation: (location: MechLocation) => void;
+  readonly placementIssues: readonly ICriticalSlotIssue[];
+  readonly placementOptions: readonly CriticalSlotPlacementOption[];
+  readonly handleUnassignSelected: () => void;
+  readonly isSuperheavy: boolean;
   readonly selectedEquipment: IMountedEquipmentInstance | null;
   readonly unassignedEquipment: readonly IMountedEquipmentInstance[];
   readonly isOmni: boolean;
@@ -72,6 +83,8 @@ export function useCriticalSlotsTabLogic({
   selectedEquipmentId,
   onSelectEquipment,
 }: UseCriticalSlotsTabLogicArgs): UseCriticalSlotsTabLogicResult {
+  const configuration =
+    useUnitStore((s) => s.configuration) ?? MechConfiguration.BIPED;
   const equipment = useUnitStore((s) => s.equipment);
   const engineType = useUnitStore((s) => s.engineType);
   const gyroType = useUnitStore((s) => s.gyroType);
@@ -99,12 +112,14 @@ export function useCriticalSlotsTabLogic({
   );
 
   const getLocationData = useCallback(
-    (location: MechLocation): LocationData => {
+    (location: MechLocation, excludedEquipmentId?: string): LocationData => {
       const slots = buildLocationSlots(
         location,
         engineType,
         gyroType,
-        equipment,
+        excludedEquipmentId
+          ? equipment.filter((item) => item.instanceId !== excludedEquipmentId)
+          : equipment,
       );
       return {
         location,
@@ -198,9 +213,19 @@ export function useCriticalSlotsTabLogic({
       equipment,
       engineType,
       gyroType,
+      configuration,
+      isOmni,
       bulkUpdateEquipmentLocations,
     });
-  }, [readOnly, equipment, engineType, gyroType, bulkUpdateEquipmentLocations]);
+  }, [
+    readOnly,
+    equipment,
+    engineType,
+    gyroType,
+    configuration,
+    isOmni,
+    bulkUpdateEquipmentLocations,
+  ]);
 
   const handleCompact = useCallback(() => {
     runCompactAction({
@@ -208,9 +233,19 @@ export function useCriticalSlotsTabLogic({
       equipment,
       engineType,
       gyroType,
+      configuration,
+      isOmni,
       bulkUpdateEquipmentLocations,
     });
-  }, [readOnly, equipment, engineType, gyroType, bulkUpdateEquipmentLocations]);
+  }, [
+    readOnly,
+    equipment,
+    engineType,
+    gyroType,
+    configuration,
+    isOmni,
+    bulkUpdateEquipmentLocations,
+  ]);
 
   const handleSort = useCallback(() => {
     runSortAction({
@@ -218,9 +253,19 @@ export function useCriticalSlotsTabLogic({
       equipment,
       engineType,
       gyroType,
+      configuration,
+      isOmni,
       bulkUpdateEquipmentLocations,
     });
-  }, [readOnly, equipment, engineType, gyroType, bulkUpdateEquipmentLocations]);
+  }, [
+    readOnly,
+    equipment,
+    engineType,
+    gyroType,
+    configuration,
+    isOmni,
+    bulkUpdateEquipmentLocations,
+  ]);
 
   const isAutoRunning = useRef(false);
 
@@ -235,6 +280,8 @@ export function useCriticalSlotsTabLogic({
         equipment,
         engineType,
         gyroType,
+        configuration,
+        isOmni,
         bulkUpdateEquipmentLocations,
         autoModeSettings,
         isAutoRunning,
@@ -247,6 +294,8 @@ export function useCriticalSlotsTabLogic({
       equipment,
       engineType,
       gyroType,
+      configuration,
+      isOmni,
       bulkUpdateEquipmentLocations,
     ],
   );
@@ -263,6 +312,8 @@ export function useCriticalSlotsTabLogic({
         equipment,
         engineType,
         gyroType,
+        configuration,
+        isOmni,
         bulkUpdateEquipmentLocations,
         autoModeSettings,
         isAutoRunning,
@@ -274,6 +325,8 @@ export function useCriticalSlotsTabLogic({
       equipment,
       engineType,
       gyroType,
+      configuration,
+      isOmni,
       bulkUpdateEquipmentLocations,
     ],
   );
@@ -285,11 +338,37 @@ export function useCriticalSlotsTabLogic({
     [onSelectEquipment],
   );
 
-  const unassignedEquipment = useMemo(() => {
-    return equipment.filter((e) => !e.location);
-  }, [equipment]);
+  const {
+    locations,
+    isBiped,
+    placementIssues,
+    placementOptions,
+    handlePlaceInLocation,
+    handleUnassignSelected,
+    unassignedEquipment,
+  } = useCriticalSlotPlacement({
+    readOnly,
+    isOmni,
+    equipment,
+    selectedEquipment,
+    configuration,
+    engineType,
+    gyroType,
+    unitIsSuperheavy,
+    getLocationData,
+    updateEquipmentLocation,
+    clearEquipmentLocation,
+    onSelectEquipment,
+  });
 
   return {
+    locations,
+    isBiped,
+    handlePlaceInLocation,
+    placementIssues,
+    placementOptions,
+    handleUnassignSelected,
+    isSuperheavy: unitIsSuperheavy,
     selectedEquipment,
     unassignedEquipment,
     isOmni,

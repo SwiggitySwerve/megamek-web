@@ -31,7 +31,7 @@ export const DamageMatrixSection: React.FC<IDamageMatrixSectionProps> = ({
     >
       {battle.damageMatrix.cells.length === 0 ? (
         <p
-          className="text-sm text-gray-500 italic dark:text-gray-400"
+          className="text-text-theme-muted text-sm italic"
           data-testid="empty-damage-matrix"
         >
           No damage exchanges recorded.
@@ -39,18 +39,18 @@ export const DamageMatrixSection: React.FC<IDamageMatrixSectionProps> = ({
       ) : (
         <div className="overflow-x-auto">
           <table
-            className="border-collapse rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800"
+            className="border-border-theme-subtle bg-surface-base border-collapse rounded-lg border"
             data-testid="damage-matrix"
           >
             <thead>
               <tr>
-                <th className="border border-gray-200 p-2 text-xs text-gray-500 dark:border-gray-700 dark:text-gray-400">
+                <th className="border-border-theme-subtle text-text-theme-muted border p-2 text-xs">
                   Attacker ↓ / Target →
                 </th>
                 {battle.damageMatrix.targets.map((targetId) => (
                   <th
                     key={targetId}
-                    className="border border-gray-200 p-2 text-xs font-medium text-gray-700 dark:border-gray-700 dark:text-gray-300"
+                    className="border-border-theme-subtle text-text-theme-secondary border p-2 text-xs font-medium"
                   >
                     {resolveUnitName(battle, targetId)}
                   </th>
@@ -60,7 +60,7 @@ export const DamageMatrixSection: React.FC<IDamageMatrixSectionProps> = ({
             <tbody>
               {battle.damageMatrix.attackers.map((attackerId) => (
                 <tr key={attackerId}>
-                  <td className="border border-gray-200 p-2 text-xs font-medium text-gray-700 dark:border-gray-700 dark:text-gray-300">
+                  <td className="border-border-theme-subtle text-text-theme-secondary border p-2 text-xs font-medium">
                     {resolveUnitName(battle, attackerId)}
                   </td>
                   {battle.damageMatrix.targets.map((targetId) => {
@@ -72,7 +72,7 @@ export const DamageMatrixSection: React.FC<IDamageMatrixSectionProps> = ({
                     return (
                       <td
                         key={`${attackerId}-${targetId}`}
-                        className={`cursor-pointer border border-gray-200 p-2 text-center font-mono text-xs hover:ring-2 hover:ring-blue-400 dark:border-gray-700 ${FOCUS_RING_CLASSES} ${getDamageIntensityClass(damage, maxDamage)}`}
+                        className={`border-border-theme-subtle hover:ring-accent cursor-pointer border p-2 text-center font-mono text-xs hover:ring-2 ${FOCUS_RING_CLASSES} ${getDamageIntensityClass(damage, maxDamage)}`}
                         title={`${damage} damage`}
                         aria-label={`${resolveUnitName(battle, attackerId)} dealt ${damage} damage to ${resolveUnitName(battle, targetId)}`}
                         onClick={() =>

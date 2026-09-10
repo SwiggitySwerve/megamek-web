@@ -9,6 +9,8 @@ import React, { useState, useMemo, useCallback } from 'react';
 
 import type { IEventLogFilter, IGameEvent } from '@/types/gameplay';
 
+import { AppIcon } from '@/components/ui/AppIcon';
+
 import {
   annotateGroupedEvents,
   filterEvents,
@@ -99,30 +101,34 @@ export function EventLogDisplay({
 
   return (
     <div
-      className={`border-t border-gray-300 bg-white ${className}`}
+      className={`border-border-theme-subtle bg-surface-base border-t ${className}`}
       data-testid="event-log"
     >
       <button
         type="button"
         onClick={toggleCollapse}
-        className="flex w-full items-center justify-between bg-gray-50 px-4 py-2 transition-colors hover:bg-gray-100"
+        className="bg-surface-base hover:bg-surface-base flex w-full items-center justify-between px-4 py-2 transition-colors"
         data-testid="event-log-toggle"
       >
         <span className="text-sm font-medium" data-testid="event-log-count">
           Event Log ({events.length})
         </span>
-        <span className="text-gray-500">{isCollapsed ? '▼' : '▲'}</span>
+        <AppIcon
+          name={isCollapsed ? 'chevron-down' : 'chevron-up'}
+          size="inline"
+          aria-hidden="true"
+        />
       </button>
 
       {!isCollapsed && (
         <div
-          className="overflow-y-auto border-t border-gray-200"
+          className="border-border-theme-subtle overflow-y-auto border-t"
           style={{ maxHeight }}
           data-testid="event-log-content"
         >
           {formattedEvents.length === 0 ? (
             <div
-              className="p-4 text-center text-sm text-gray-500"
+              className="text-text-theme-muted p-4 text-center text-sm"
               data-testid="event-log-empty"
             >
               No events yet

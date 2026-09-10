@@ -308,7 +308,7 @@ describe('EncounterHistory', () => {
       selectBattle('b1');
       const card = screen.getByTestId('battle-card-b1');
       expect(card).toHaveAttribute('aria-current', 'true');
-      expect(card).toHaveClass('border-blue-500');
+      expect(card).toHaveClass('border-accent');
     });
   });
 });

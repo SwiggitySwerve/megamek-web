@@ -24,7 +24,18 @@ export type ArmorDiagramVariant =
   | 'neon-operator'
   | 'tactical-hud'
   | 'premium-material'
+  // Retained only so historical localStorage values can be migrated safely.
   | 'megamek';
+
+/** Legacy presentation preference retained for persisted-settings compatibility. */
+export const LEGACY_ARMOR_DIAGRAM_VARIANT = 'megamek' as const;
+
+/** Resolve retired presentation choices before they reach the rendered UI. */
+export function resolveArmorDiagramVariant(
+  variant: ArmorDiagramVariant,
+): ArmorDiagramVariant {
+  return variant === LEGACY_ARMOR_DIAGRAM_VARIANT ? 'clean-tech' : variant;
+}
 
 /**
  * Customizer settings that support live preview with save/revert
@@ -100,7 +111,7 @@ export const useCustomizerSettingsStore = create<CustomizerSettingsState>()(
       // Direct setters (immediately persisted)
       setArmorDiagramMode: (mode) => set({ armorDiagramMode: mode }),
       setArmorDiagramVariant: (variant) =>
-        set({ armorDiagramVariant: variant }),
+        set({ armorDiagramVariant: resolveArmorDiagramVariant(variant) }),
       setShowArmorDiagramSelector: (show) =>
         set({ showArmorDiagramSelector: show }),
 
@@ -109,9 +120,10 @@ export const useCustomizerSettingsStore = create<CustomizerSettingsState>()(
         set((state) => ({
           draftCustomizer: {
             armorDiagramMode: mode,
-            armorDiagramVariant:
+            armorDiagramVariant: resolveArmorDiagramVariant(
               state.draftCustomizer?.armorDiagramVariant ??
-              state.armorDiagramVariant,
+                state.armorDiagramVariant,
+            ),
           },
           hasUnsavedCustomizer: true,
         })),
@@ -121,7 +133,7 @@ export const useCustomizerSettingsStore = create<CustomizerSettingsState>()(
           draftCustomizer: {
             armorDiagramMode:
               state.draftCustomizer?.armorDiagramMode ?? state.armorDiagramMode,
-            armorDiagramVariant: variant,
+            armorDiagramVariant: resolveArmorDiagramVariant(variant),
           },
           hasUnsavedCustomizer: true,
         })),
@@ -131,7 +143,9 @@ export const useCustomizerSettingsStore = create<CustomizerSettingsState>()(
         set((state) => ({
           draftCustomizer: {
             armorDiagramMode: state.armorDiagramMode,
-            armorDiagramVariant: state.armorDiagramVariant,
+            armorDiagramVariant: resolveArmorDiagramVariant(
+              state.armorDiagramVariant,
+            ),
           },
           hasUnsavedCustomizer: false,
         })),
@@ -142,7 +156,9 @@ export const useCustomizerSettingsStore = create<CustomizerSettingsState>()(
           if (!state.draftCustomizer) return state;
           return {
             armorDiagramMode: state.draftCustomizer.armorDiagramMode,
-            armorDiagramVariant: state.draftCustomizer.armorDiagramVariant,
+            armorDiagramVariant: resolveArmorDiagramVariant(
+              state.draftCustomizer.armorDiagramVariant,
+            ),
             hasUnsavedCustomizer: false,
           };
         }),
@@ -164,9 +180,9 @@ export const useCustomizerSettingsStore = create<CustomizerSettingsState>()(
 
       getEffectiveArmorDiagramVariant: () => {
         const state = get();
-        return (
+        return resolveArmorDiagramVariant(
           state.draftCustomizer?.armorDiagramVariant ??
-          state.armorDiagramVariant
+            state.armorDiagramVariant,
         );
       },
 
@@ -179,14 +195,24 @@ export const useCustomizerSettingsStore = create<CustomizerSettingsState>()(
       name: 'mekstation-customizer-settings',
       // Validate the rehydrated `localStorage` payload against a Zod schema;
       // a corrupt payload is discarded and the store keeps its default state.
-      merge: createZodPersistMerge<CustomizerSettingsState>(
-        CustomizerSettingsPersistedSchema,
-        'mekstation-customizer-settings',
-      ),
+      merge: (persistedState, currentState) => {
+        const merged = createZodPersistMerge<CustomizerSettingsState>(
+          CustomizerSettingsPersistedSchema,
+          'mekstation-customizer-settings',
+        )(persistedState, currentState);
+        return {
+          ...merged,
+          armorDiagramVariant: resolveArmorDiagramVariant(
+            merged.armorDiagramVariant,
+          ),
+        };
+      },
       // Don't persist draft state
       partialize: (state) => ({
         armorDiagramMode: state.armorDiagramMode,
-        armorDiagramVariant: state.armorDiagramVariant,
+        armorDiagramVariant: resolveArmorDiagramVariant(
+          state.armorDiagramVariant,
+        ),
         showArmorDiagramSelector: state.showArmorDiagramSelector,
       }),
     },

@@ -243,23 +243,23 @@ describe('TrendChart', () => {
     });
   });
 
-  describe('Dark Mode', () => {
-    it('has dark mode background class on container', () => {
+  describe('Application Palette', () => {
+    it('has palette background class on container', () => {
       render(<TrendChart {...defaultProps} />);
-      expect(screen.getByTestId('trend-chart')).toHaveClass('dark:bg-gray-800');
+      expect(screen.getByTestId('trend-chart')).toHaveClass('bg-surface-base');
     });
 
-    it('has dark mode border class on time range select', () => {
+    it('has palette border class on time range select', () => {
       render(<TrendChart {...defaultProps} />);
       expect(screen.getByTestId('time-range-select')).toHaveClass(
-        'dark:border-gray-600',
+        'border-border-theme-subtle',
       );
     });
 
-    it('empty state has dark mode text classes', () => {
+    it('empty state has palette text classes', () => {
       render(<TrendChart data={[]} />);
       const noData = screen.getByText('No data available');
-      expect(noData).toHaveClass('dark:text-gray-400');
+      expect(noData).toHaveClass('text-text-theme-muted');
     });
   });
 

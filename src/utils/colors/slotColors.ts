@@ -116,10 +116,10 @@ export const SLOT_COLORS: Record<SystemComponentType, SlotColorDefinition> = {
     hoverBg: 'hover:bg-slate-500/50',
   },
   empty: {
-    bg: 'bg-gray-700',
-    border: 'border-gray-600 border-dashed',
-    text: 'text-gray-400',
-    hoverBg: 'hover:bg-gray-600',
+    bg: 'bg-surface-raised',
+    border: 'border-border-theme border-dashed',
+    text: 'text-text-theme-secondary',
+    hoverBg: 'hover:bg-surface-base',
   },
 };
 

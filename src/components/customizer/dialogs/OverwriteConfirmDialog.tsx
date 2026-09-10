@@ -9,6 +9,8 @@
 
 import React from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
+
 import { customizerStyles as cs } from '../styles';
 import { ModalOverlay } from './ModalOverlay';
 
@@ -53,19 +55,7 @@ export function OverwriteConfirmDialog({
       <div className={cs.dialog.header}>
         <h3 className={cs.dialog.headerTitle}>Unit Already Exists</h3>
         <button onClick={onCancel} className={cs.dialog.closeBtn}>
-          <svg
-            className="h-5 w-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          <AppIcon name="close" size="control" />
         </button>
       </div>
 
@@ -74,27 +64,15 @@ export function OverwriteConfirmDialog({
         <div className="flex items-start gap-4">
           {/* Warning icon */}
           <div className={cs.dialog.warningIcon}>
-            <svg
-              className="text-accent h-6 w-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-              />
-            </svg>
+            <AppIcon name="warning" size="toolbar" className="text-accent" />
           </div>
 
           {/* Message */}
           <div className="flex-1">
-            <p className="text-slate-300">
+            <p className="text-text-theme-secondary">
               A custom unit with this name already exists:
             </p>
-            <p className="bg-surface-raised/50 mt-2 rounded p-2 font-medium text-white">
+            <p className="bg-surface-raised/50 text-text-theme-primary mt-2 rounded p-2 font-medium">
               {existingUnitName}
             </p>
             <p className="text-text-theme-secondary mt-3 text-sm">

@@ -3,6 +3,7 @@ import { List } from 'react-window';
 
 import type { IBattleEvent } from '@/components/simulation-viewer/pages/encounter-history/types';
 
+import { AppIcon, type AppIconName } from '@/components/ui/AppIcon';
 import { FOCUS_RING_CLASSES } from '@/utils/accessibility';
 
 /* ========================================================================== */
@@ -30,11 +31,11 @@ export interface IVirtualizedTimelineProps {
 /*  Constants                                                                  */
 /* ========================================================================== */
 
-const EVENT_TYPE_ICONS: Record<string, string> = {
-  movement: '🚶',
-  attack: '⚔',
-  damage: '💥',
-  'status-change': '⚡',
+const EVENT_TYPE_ICONS: Record<string, AppIconName> = {
+  movement: 'arrow-right',
+  attack: 'swords',
+  damage: 'impact',
+  'status-change': 'flame',
 };
 
 const DEFAULT_HEIGHT = 384; // matches max-h-96
@@ -68,7 +69,7 @@ const TimelineRow = ({
   const event = events[index];
   if (!event) return null;
 
-  const icon = EVENT_TYPE_ICONS[event.type] ?? '📋';
+  const icon = EVENT_TYPE_ICONS[event.type] ?? 'list';
   const unitNames = resolveUnitName
     ? event.involvedUnits.map(resolveUnitName).join(', ')
     : event.involvedUnits.join(', ');
@@ -76,7 +77,7 @@ const TimelineRow = ({
   return (
     <div
       style={style}
-      className={`border-b border-gray-200 px-4 py-2 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 ${onEventClick ? `cursor-pointer ${FOCUS_RING_CLASSES}` : ''}`}
+      className={`border-border-theme-subtle hover:bg-surface-base border-b px-4 py-2 transition-colors ${onEventClick ? `cursor-pointer ${FOCUS_RING_CLASSES}` : ''}`}
       onClick={() => onEventClick?.(event)}
       onKeyDown={(e) => {
         if ((e.key === 'Enter' || e.key === ' ') && onEventClick) {
@@ -91,19 +92,19 @@ const TimelineRow = ({
     >
       <div className="flex h-full items-center gap-3">
         <span className="flex-shrink-0 text-base" aria-hidden="true">
-          {icon}
+          <AppIcon name={icon} size="inline" />
         </span>
-        <span className="w-14 flex-shrink-0 text-xs font-medium whitespace-nowrap text-gray-500 dark:text-gray-400">
+        <span className="text-text-theme-muted w-14 flex-shrink-0 text-xs font-medium whitespace-nowrap">
           Turn {event.turn}
         </span>
-        <span className="w-16 flex-shrink-0 text-xs whitespace-nowrap text-gray-400 dark:text-gray-500">
+        <span className="text-text-theme-muted w-16 flex-shrink-0 text-xs whitespace-nowrap">
           {event.phase}
         </span>
-        <span className="flex-1 truncate text-sm text-gray-800 dark:text-gray-200">
+        <span className="text-text-theme-primary flex-1 truncate text-sm">
           {event.description}
         </span>
         {unitNames && (
-          <span className="ml-auto max-w-32 flex-shrink-0 truncate text-xs whitespace-nowrap text-gray-500 dark:text-gray-400">
+          <span className="text-text-theme-muted ml-auto max-w-32 flex-shrink-0 truncate text-xs whitespace-nowrap">
             {unitNames}
           </span>
         )}
@@ -136,7 +137,7 @@ export const VirtualizedTimeline = memo<IVirtualizedTimelineProps>(
     if (events.length === 0) {
       return (
         <p
-          className="py-8 text-center text-sm text-gray-500 italic dark:text-gray-400"
+          className="text-text-theme-muted py-8 text-center text-sm italic"
           data-testid="virtualized-timeline-empty"
         >
           No events recorded.
@@ -147,7 +148,7 @@ export const VirtualizedTimeline = memo<IVirtualizedTimelineProps>(
     return (
       <div
         data-testid="virtualized-timeline"
-        className="overflow-hidden rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800"
+        className="border-border-theme-subtle bg-surface-base overflow-hidden rounded-lg border"
       >
         <List
           rowComponent={TimelineRow}

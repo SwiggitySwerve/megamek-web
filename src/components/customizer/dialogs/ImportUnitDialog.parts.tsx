@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
 import {
   customUnitApiService,
   type ISaveResult,
@@ -192,24 +193,17 @@ function DropZone({
         onChange={onFileSelect}
         className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
       />
-      <svg
-        className="mx-auto mb-3 h-10 w-10 text-slate-500"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={1.5}
-          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-        />
-      </svg>
-      <p className="text-slate-300">
+      <AppIcon
+        name="upload"
+        size="feature"
+        className="text-text-theme-muted mx-auto mb-3"
+        aria-hidden="true"
+      />
+      <p className="text-text-theme-secondary">
         Drag and drop a JSON file here, or{' '}
         <span className="text-blue-400 underline">click to browse</span>
       </p>
-      <p className="mt-1 text-sm text-slate-500">
+      <p className="text-text-theme-muted mt-1 text-sm">
         Supports .json files exported from this editor
       </p>
     </div>
@@ -221,14 +215,14 @@ function ParsedUnitInfo({ parsedUnit }: { parsedUnit: ParsedUnit }) {
     <div className={cs.dialog.infoPanel}>
       <div className="flex items-center justify-between">
         <div>
-          <div className="font-medium text-white">
+          <div className="text-text-theme-primary font-medium">
             {parsedUnit.chassis} {parsedUnit.variant}
           </div>
           <div className="text-text-theme-secondary text-sm">
             Ready to import
           </div>
         </div>
-        <CheckIcon className="h-6 w-6 text-green-400" />
+        <CheckIcon size="toolbar" className="text-green-400" />
       </div>
     </div>
   );
@@ -250,7 +244,7 @@ function ConflictResolution({
   return (
     <div className={`${cs.dialog.warningPanel} space-y-3`}>
       <div className="flex items-start gap-2">
-        <WarningIcon className="text-accent mt-0.5 h-5 w-5" />
+        <WarningIcon size="control" className="text-accent mt-0.5" />
         <div>
           <div className="text-accent font-medium">Name Conflict</div>
           <div className="text-accent/80 text-sm">
@@ -268,7 +262,7 @@ function ConflictResolution({
             onChange={(event) => setUseAlternateName(event.target.checked)}
             className="border-border-theme bg-surface-raised focus:ring-offset-surface-base h-4 w-4 rounded text-blue-500 focus:ring-blue-500"
           />
-          <span className="text-sm text-slate-300">
+          <span className="text-text-theme-secondary text-sm">
             Import with alternate name
           </span>
         </label>

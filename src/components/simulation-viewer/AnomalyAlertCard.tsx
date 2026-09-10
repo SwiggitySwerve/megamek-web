@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 
 import type { IAnomalyAlertCardProps } from '@/components/simulation-viewer/types';
 
+import { AppIcon } from '@/components/ui/AppIcon';
 import { FOCUS_RING_CLASSES, announce } from '@/utils/accessibility';
 
 const SEVERITY_STYLES = {
@@ -13,7 +14,7 @@ const SEVERITY_STYLES = {
     context: 'text-red-600 dark:text-red-400',
     button:
       'text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/40',
-    icon: '🔴',
+    icon: 'warning',
   },
   warning: {
     border: 'border-orange-600',
@@ -23,7 +24,7 @@ const SEVERITY_STYLES = {
     context: 'text-orange-600 dark:text-orange-400',
     button:
       'text-orange-700 dark:text-orange-300 hover:bg-orange-100 dark:hover:bg-orange-900/40',
-    icon: '⚠️',
+    icon: 'warning',
   },
   info: {
     border: 'border-blue-600',
@@ -33,7 +34,7 @@ const SEVERITY_STYLES = {
     context: 'text-blue-600 dark:text-blue-400',
     button:
       'text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/40',
-    icon: 'ℹ️',
+    icon: 'info',
   },
 } as const;
 
@@ -92,11 +93,11 @@ export const AnomalyAlertCard: React.FC<IAnomalyAlertCardProps> = ({
     >
       <div className="flex items-start gap-3">
         <span
-          className="flex-shrink-0 text-2xl"
+          className="flex-shrink-0"
           data-testid="anomaly-icon"
           aria-hidden="true"
         >
-          {styles.icon}
+          <AppIcon name={styles.icon} size="toolbar" />
         </span>
 
         <div className="min-w-0 flex-1">

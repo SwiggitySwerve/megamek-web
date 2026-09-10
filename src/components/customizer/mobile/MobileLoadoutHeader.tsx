@@ -10,6 +10,8 @@
 
 import React from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
+
 // =============================================================================
 // Types
 // =============================================================================
@@ -66,7 +68,7 @@ function getHeatStatus(generated: number, dissipation: number): StatusLevel {
 }
 
 const statusColors: Record<StatusLevel, string> = {
-  normal: 'text-white',
+  normal: 'text-text-theme-primary',
   warning: 'text-amber-400',
   error: 'text-red-400',
 };
@@ -99,8 +101,8 @@ function StatDisplay({
         </span>
         {max !== undefined && (
           <>
-            <span className="text-[9px] text-slate-500">/</span>
-            <span className="text-[9px] text-slate-500">{max}</span>
+            <span className="text-text-theme-muted text-[9px]">/</span>
+            <span className="text-text-theme-muted text-[9px]">{max}</span>
           </>
         )}
       </div>
@@ -124,7 +126,7 @@ export function MobileLoadoutHeader({
 
   return (
     <div
-      className={`bg-surface-base border-border-theme flex h-11 w-full items-center border-t ${className} `}
+      className={`bg-surface-base border-border-theme flex h-[45px] w-full items-center border-t ${className} `}
     >
       {/* Main stats area - tappable to expand loadout */}
       <button
@@ -179,7 +181,7 @@ export function MobileLoadoutHeader({
             <span
               className={`text-accent text-[10px] transition-transform ${isExpanded ? 'rotate-180' : ''}`}
             >
-              ▲
+              <AppIcon name="chevron-up" size="inline" aria-hidden="true" />
             </span>
           </div>
         </div>

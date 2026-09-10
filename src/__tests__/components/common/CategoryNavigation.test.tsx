@@ -119,7 +119,7 @@ describe('CategoryNavigation', () => {
       });
 
       const meksButton = screen.getByText('meks');
-      expect(meksButton).toHaveClass('bg-blue-500');
+      expect(meksButton).toHaveClass('bg-accent', 'text-on-accent');
     });
 
     it('should highlight "All Units" when no category selected', async () => {
@@ -135,7 +135,7 @@ describe('CategoryNavigation', () => {
       });
 
       const allUnitsButton = screen.getByText('All Units');
-      expect(allUnitsButton).toHaveClass('bg-blue-500');
+      expect(allUnitsButton).toHaveClass('bg-accent', 'text-on-accent');
     });
   });
 

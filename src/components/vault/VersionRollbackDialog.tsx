@@ -11,6 +11,7 @@ import React, { useState, useCallback } from 'react';
 
 import { runBusyOperation } from '@/components/common/runUiOperation';
 import { Button } from '@/components/ui/Button';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 
 import type { VersionRollbackDialogProps } from './VersionHistoryTypes';
 
@@ -39,28 +40,32 @@ export function VersionRollbackDialog({
   return (
     <VaultDialogFrame
       overlayClassName="bg-black/70 backdrop-blur-sm"
-      panelClassName="mx-4 w-full max-w-md rounded-2xl border border-gray-700/50 bg-gray-800 p-6 shadow-2xl shadow-black/50"
+      panelClassName="mx-4 w-full max-w-md rounded-2xl border border-border-theme/50 bg-surface-base p-6 shadow-2xl shadow-black/50"
     >
       {/* Warning icon */}
       <div className="mb-5 flex items-center justify-center">
         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500/30 to-orange-500/20">
-          <ExclamationTriangleIcon className="h-8 w-8 text-amber-400" />
+          <ExclamationTriangleIcon size="feature" className="text-amber-400" />
         </div>
       </div>
 
       {/* Title */}
-      <h2 className="mb-2 text-center text-xl font-bold text-white">
+      <h2 className="text-text-theme-primary mb-2 text-center text-xl font-bold">
         Confirm Rollback
       </h2>
-      <p className="mb-6 text-center text-sm text-gray-400">
+      <p className="text-text-theme-secondary mb-6 text-center text-sm">
         This will restore the content to a previous version
       </p>
 
       {/* Version info */}
-      <div className="mb-6 rounded-xl border border-gray-700/50 bg-gray-900/50 p-4">
+      <div className="border-border-theme/50 bg-surface-deep/50 mb-6 rounded-xl border p-4">
         <div className="mb-3 flex items-center justify-between">
-          <span className="text-sm text-gray-400">Rolling back from</span>
-          <span className="text-sm text-gray-400">Restoring to</span>
+          <span className="text-text-theme-secondary text-sm">
+            Rolling back from
+          </span>
+          <span className="text-text-theme-secondary text-sm">
+            Restoring to
+          </span>
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -69,14 +74,14 @@ export function VersionRollbackDialog({
                 v{currentVersion}
               </span>
             </div>
-            <span className="text-sm text-gray-500">Current</span>
+            <span className="text-text-theme-muted text-sm">Current</span>
           </div>
-          <div className="flex items-center gap-2 text-gray-600">
-            <svg
+          <div className="text-text-theme-muted flex items-center gap-2">
+            <SvgIcon
+              size="control"
               className="h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
-              strokeWidth={2}
               stroke="currentColor"
             >
               <path
@@ -84,10 +89,10 @@ export function VersionRollbackDialog({
                 strokeLinejoin="round"
                 d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
               />
-            </svg>
+            </SvgIcon>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">Target</span>
+            <span className="text-text-theme-muted text-sm">Target</span>
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-500/20">
               <span className="font-mono font-bold text-green-400">
                 v{version.version}
@@ -97,9 +102,13 @@ export function VersionRollbackDialog({
         </div>
 
         {version.message && (
-          <div className="mt-4 border-t border-gray-700/50 pt-3">
-            <p className="mb-1 text-xs text-gray-500">Version message</p>
-            <p className="text-sm text-gray-300">{version.message}</p>
+          <div className="border-border-theme/50 mt-4 border-t pt-3">
+            <p className="text-text-theme-muted mb-1 text-xs">
+              Version message
+            </p>
+            <p className="text-text-theme-secondary text-sm">
+              {version.message}
+            </p>
           </div>
         )}
       </div>

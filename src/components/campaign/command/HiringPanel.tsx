@@ -39,7 +39,7 @@ function experienceClasses(level: string): string {
     case 'veteran':
       return 'bg-sky-500/20 text-sky-400';
     case 'regular':
-      return 'bg-slate-500/20 text-slate-300';
+      return 'bg-surface-raised/20 text-text-theme-secondary';
     case 'green':
     default:
       return 'bg-amber-500/20 text-amber-400';

@@ -1,0 +1,152 @@
+import { expect, test } from '@playwright/test';
+
+test('critical panels use the workspace and keep slot names readable @customizer', async ({
+  page,
+}, testInfo) => {
+  await page.goto('/customizer');
+  await page
+    .getByRole('button', { name: 'Load from Library', exact: true })
+    .click();
+  const dialog = page.getByRole('dialog');
+  await dialog.getByRole('combobox').first().selectOption('canonical');
+  await page
+    .getByPlaceholder('Search by chassis or variant...')
+    .fill('Atlas AS7-D');
+  await page.getByText('AS7-D', { exact: true }).click();
+  await page.getByRole('button', { name: 'Load Unit', exact: true }).click();
+  await dialog.waitFor({ state: 'hidden' });
+  await page.getByRole('tab', { name: 'Critical Slots', exact: true }).click();
+  const measurements = [];
+  for (const layout of [
+    {
+      name: 'desktop-sidebar',
+      width: 1378,
+      height: 912,
+      minimumPanelWidth: 200,
+      wide: false,
+    },
+    {
+      name: 'desktop-wide',
+      width: 1378,
+      height: 912,
+      minimumPanelWidth: 250,
+      wide: true,
+    },
+    {
+      name: 'small-desktop',
+      width: 1180,
+      height: 912,
+      minimumPanelWidth: 160,
+      wide: false,
+    },
+    {
+      name: 'phone',
+      width: 390,
+      height: 844,
+      minimumPanelWidth: 340,
+      wide: false,
+    },
+  ]) {
+    await page.setViewportSize({ width: layout.width, height: layout.height });
+    const toggle = page.getByRole('button', {
+      name: 'Wide workspace',
+      exact: true,
+    });
+    if (
+      (await toggle.isVisible()) &&
+      ((await toggle.getAttribute('aria-pressed')) === 'true') !== layout.wide
+    )
+      await toggle.click();
+    const grid = page.getByTestId(
+      layout.width >= 1024
+        ? 'critical-slots-grid-desktop'
+        : 'critical-slots-grid-mobile',
+    );
+    await expect(grid).toBeVisible();
+    await expect(
+      grid.getByRole('group', { name: /critical slots$/ }),
+    ).toHaveCount(8);
+    const actual = await grid.evaluate((element) => ({
+      workspaceWidth: element.getBoundingClientRect().width,
+      panels: Array.from(element.querySelectorAll('[role=group]')).map(
+        (panel) => ({
+          label: panel.getAttribute('aria-label'),
+          width: panel.getBoundingClientRect().width,
+        }),
+      ),
+      clippedLabels: Array.from(element.querySelectorAll('span'))
+        .filter(
+          (span) =>
+            span.clientWidth > 0 && span.scrollWidth > span.clientWidth + 1,
+        )
+        .map((span) => span.textContent),
+      documentOverflow: document.documentElement.scrollWidth - innerWidth,
+    }));
+    for (const panel of actual.panels)
+      expect(panel.width).toBeGreaterThanOrEqual(layout.minimumPanelWidth);
+    expect(actual.clippedLabels).toEqual([]);
+    expect(actual.documentOverflow).toBe(0);
+    await expect(
+      grid.getByText('Standard Gyro', { exact: true }).first(),
+    ).toBeVisible();
+    await expect(
+      grid.getByText('Standard Cockpit', { exact: true }),
+    ).toBeVisible();
+    await expect(grid.getByText('Continuation', { exact: true })).toHaveCount(
+      0,
+    );
+    expect(
+      await grid.getByText('AC/20', { exact: true }).count(),
+    ).toBeGreaterThan(1);
+    const equipmentNames = grid.getByText('AC/20', { exact: true });
+    const grouping = await equipmentNames.evaluateAll((labels) =>
+      labels.map((label) => {
+        const cell = label.closest('[role=gridcell]')!;
+        const indicator = cell.querySelector<HTMLElement>(
+          '[data-testid=equipment-group-bracket]',
+        )!;
+        const style = getComputedStyle(label);
+        const numberStyle = getComputedStyle(label.previousElementSibling!);
+        const bracketStyle = getComputedStyle(indicator);
+        const bounds = indicator.getBoundingClientRect();
+        return {
+          nameBorders: [
+            style.borderLeftWidth,
+            style.borderRightWidth,
+            numberStyle.borderRightWidth,
+          ],
+          right: bounds.right,
+          top: bounds.top,
+          bottom: bounds.bottom,
+          topCap: bracketStyle.borderTopWidth,
+          rail: bracketStyle.borderRightWidth,
+          bottomCap: bracketStyle.borderBottomWidth,
+          afterName: bounds.left > label.getBoundingClientRect().right,
+        };
+      }),
+    );
+    for (let index = 0; index < grouping.length; index++) {
+      const item = grouping[index];
+      expect(item.nameBorders).toEqual(['0px', '0px', '0px']);
+      expect(item.afterName).toBe(true);
+      expect(item.right).toBe(grouping[0].right);
+      expect(item.rail).toBe('2px');
+      expect(item.topCap).toBe(index === 0 ? '2px' : '0px');
+      expect(item.bottomCap).toBe(
+        index === grouping.length - 1 ? '2px' : '0px',
+      );
+      if (index > 0)
+        expect(item.top - grouping[index - 1].bottom).toBeLessThanOrEqual(1);
+    }
+    await expect(grid.getByText('↳', { exact: true })).toHaveCount(0);
+    measurements.push({ layout, ...actual, grouping });
+    await page.screenshot({
+      path: testInfo.outputPath(layout.name + '.png'),
+      animations: 'disabled',
+    });
+  }
+  await testInfo.attach('critical-slot-readability.json', {
+    body: JSON.stringify(measurements, null, 2),
+    contentType: 'application/json',
+  });
+});

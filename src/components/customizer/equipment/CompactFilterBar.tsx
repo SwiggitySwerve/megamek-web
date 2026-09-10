@@ -3,11 +3,15 @@
  * @spec openspec/specs/equipment-browser/spec.md
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 
-import { BalancedGrid } from '@/components/common/BalancedGrid';
+import { AppIcon } from '@/components/ui/AppIcon';
+import { Button } from '@/components/ui/Button';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { EquipmentCategory } from '@/types/equipment';
-import { getCategoryColorsLegacy } from '@/utils/colors/equipmentColors';
+import { getCategorySlotClasses } from '@/utils/colors/equipmentColors';
+
+import { EquipmentControlPopover } from './EquipmentControlPopover';
 
 export interface CompactFilterBarProps {
   activeCategories: Set<EquipmentCategory>;
@@ -29,30 +33,30 @@ export interface CompactFilterBarProps {
   onSearchChange: (search: string) => void;
   onClearFilters: () => void;
   className?: string;
+  resultSummary?: string;
+  availabilitySummary?: string;
+  sortControls?: React.ReactNode;
 }
 
 interface CategoryConfig {
   category: EquipmentCategory;
   label: string;
-  icon: string;
 }
 
 const CATEGORY_CONFIGS: CategoryConfig[] = [
-  { category: EquipmentCategory.ENERGY_WEAPON, label: 'Energy', icon: '⚡' },
+  { category: EquipmentCategory.ENERGY_WEAPON, label: 'Energy' },
   {
     category: EquipmentCategory.BALLISTIC_WEAPON,
     label: 'Ballistic',
-    icon: '🎯',
   },
-  { category: EquipmentCategory.MISSILE_WEAPON, label: 'Missile', icon: '🚀' },
-  { category: EquipmentCategory.ARTILLERY, label: 'Artillery', icon: '💥' },
+  { category: EquipmentCategory.MISSILE_WEAPON, label: 'Missile' },
+  { category: EquipmentCategory.ARTILLERY, label: 'Artillery' },
   {
     category: EquipmentCategory.PHYSICAL_WEAPON,
     label: 'Physical',
-    icon: '🔨',
   },
-  { category: EquipmentCategory.AMMUNITION, label: 'Ammo', icon: '📦' },
-  { category: EquipmentCategory.MISC_EQUIPMENT, label: 'Other', icon: '⚙️' },
+  { category: EquipmentCategory.AMMUNITION, label: 'Ammo' },
+  { category: EquipmentCategory.MISC_EQUIPMENT, label: 'Other' },
 ];
 
 const OTHER_COMBINED_CATEGORIES: readonly EquipmentCategory[] = [
@@ -77,187 +81,196 @@ export function CompactFilterBar({
   onSearchChange,
   onClearFilters,
   className = '',
+  resultSummary,
+  availabilitySummary,
+  sortControls,
 }: CompactFilterBarProps): React.ReactElement {
-  const [hideFiltersExpanded, setHideFiltersExpanded] = useState(false);
-
   const activeHideCount = [
     hidePrototype,
     hideOneShot,
     hideUnavailable,
     hideAmmoWithoutWeapon,
   ].filter(Boolean).length;
-  const hasActiveFilters = search || !showAll || activeHideCount > 0;
-
   const handleCategoryClick = useCallback(
-    (category: EquipmentCategory, event: React.MouseEvent) => {
-      const isMultiSelect = event.ctrlKey || event.metaKey;
-      onSelectCategory(category, isMultiSelect);
-    },
+    (category: EquipmentCategory, event: React.MouseEvent) =>
+      onSelectCategory(category, event.ctrlKey || event.metaKey),
     [onSelectCategory],
   );
-
+  const toggles = [
+    { label: 'Prototype', active: hidePrototype, toggle: onTogglePrototype },
+    { label: 'One-shot', active: hideOneShot, toggle: onToggleOneShot },
+    {
+      label: 'Ammo without weapon',
+      active: hideAmmoWithoutWeapon,
+      toggle: onToggleAmmoWithoutWeapon,
+    },
+    {
+      label: 'Unavailable',
+      active: hideUnavailable,
+      toggle: onToggleUnavailable,
+    },
+  ];
   return (
-    <div className={`space-y-1.5 ${className}`}>
-      {/* Row 1: Category buttons with balanced grid */}
-      <BalancedGrid
-        minItemWidth={85}
-        gap={4}
-        fallbackColumns="repeat(auto-fill, minmax(40px, 1fr))"
+    <div className={`flex shrink-0 flex-col ${className}`}>
+      <div
+        className="border-border-theme flex h-[52px] shrink-0 items-center gap-1 border-b px-3"
+        data-testid="equipment-search-controls"
       >
-        {CATEGORY_CONFIGS.map(({ category, label, icon }) => {
-          const isActive =
-            showAll ||
-            (category === EquipmentCategory.MISC_EQUIPMENT
-              ? OTHER_COMBINED_CATEGORIES.some((cat) =>
-                  activeCategories.has(cat),
-                )
-              : activeCategories.has(category));
-          const colors = getCategoryColorsLegacy(category);
-
-          return (
-            <button
-              key={category}
-              onClick={(e) => handleCategoryClick(category, e)}
-              className={`flex items-center justify-center gap-1 rounded px-1.5 py-0.5 text-[10px] transition-all ${
-                isActive
-                  ? `${colors.bg} ${colors.text} ring-1 ${colors.border} shadow-sm`
-                  : 'bg-surface-raised/60 text-text-theme-secondary hover:bg-surface-raised hover:text-white'
-              } `}
-              title={`${label} (Ctrl+click to multi-select)`}
+        <div className="relative min-w-0 flex-1">
+          <input
+            type="text"
+            aria-label="Search equipment"
+            value={search}
+            onChange={(event) => onSearchChange(event.target.value)}
+            placeholder="Search..."
+            className="bg-surface-raised border-border-theme placeholder-text-theme-secondary text-text-theme-primary focus:outline-accent min-h-11 w-full rounded border px-3 pr-11 text-sm focus:outline-2 focus:outline-offset-[-2px]"
+          />
+          {search && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onSearchChange('')}
+              title="Clear search"
+              aria-label="Clear search"
+              className="absolute top-0 right-0 !min-w-11 !px-2"
             >
-              <span className="text-sm">{icon}</span>
-              <span className="hidden sm:inline">{label}</span>
-            </button>
-          );
-        })}
-
+              {' '}
+              <AppIcon name="close" size="inline" aria-hidden="true" />
+            </Button>
+          )}
+        </div>
+        <EquipmentControlPopover
+          ariaLabel="Visibility filters"
+          label={
+            <>
+              <span>Filters</span>
+              {activeHideCount > 0 && (
+                <span className="text-accent">{activeHideCount}</span>
+              )}
+              {hideUnavailable && availabilitySummary && (
+                <span className="hidden xl:inline">
+                  · {availabilitySummary}
+                </span>
+              )}
+            </>
+          }
+        >
+          <p className="text-text-theme-secondary mb-2 text-xs">
+            Hide these equipment types:
+          </p>
+          <div className="flex flex-col gap-1">
+            {toggles.map(({ label, active, toggle }) => (
+              <Button
+                key={label}
+                variant="ghost"
+                size="sm"
+                aria-pressed={active}
+                onClick={toggle}
+                className="!justify-between !text-xs"
+              >
+                {label}
+                <span
+                  aria-hidden="true"
+                  className={active ? 'text-accent' : 'text-text-theme-muted'}
+                >
+                  {active ? (
+                    <AppIcon name="check" size="inline" aria-hidden="true" />
+                  ) : (
+                    <SvgIcon size="inline" aria-hidden="true">
+                      <circle cx="12" cy="12" r="8" />
+                    </SvgIcon>
+                  )}
+                </span>
+              </Button>
+            ))}
+          </div>
+          {hideUnavailable && availabilitySummary && (
+            <p className="text-text-theme-secondary my-2 text-xs">
+              Available for: {availabilitySummary}
+            </p>
+          )}
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={onClearFilters}
+            title="Clear all filters"
+            className="mt-2 w-full"
+          >
+            Clear filters
+          </Button>
+          <p className="text-text-theme-secondary mt-3 text-xs">
+            Inspect equipment, add a copy, then choose its placement. Ctrl-click
+            or Command-click categories to combine them.
+          </p>
+        </EquipmentControlPopover>
+        {sortControls && (
+          <EquipmentControlPopover
+            ariaLabel="Sort equipment"
+            label="Sort"
+            className="lg:hidden"
+          >
+            {sortControls}
+          </EquipmentControlPopover>
+        )}
+        {resultSummary && (
+          <span
+            className="text-text-theme-secondary hidden shrink-0 px-1 text-xs whitespace-nowrap md:block"
+            aria-live="polite"
+          >
+            {resultSummary}
+          </span>
+        )}
+        <EquipmentControlPopover
+          ariaLabel="Equipment help"
+          label="Help"
+          className="hidden lg:block"
+        >
+          <p className="text-text-theme-secondary text-sm">
+            Inspect equipment, add a copy, then choose its placement in the
+            loadout or Critical Slots. Sort using the column headings.
+            Ctrl-click or Command-click categories to combine them.
+          </p>
+        </EquipmentControlPopover>
+      </div>
+      <div
+        className="border-border-theme flex h-[52px] shrink-0 items-center gap-1 overflow-x-auto px-3 py-1"
+        role="group"
+        aria-label="Equipment categories"
+        data-testid="equipment-category-controls"
+      >
         <button
+          type="button"
           onClick={onShowAll}
-          className={`rounded px-1.5 py-0.5 text-[10px] transition-all ${
-            showAll
-              ? 'bg-accent ring-accent text-white shadow-sm ring-1'
-              : 'bg-surface-raised/60 text-text-theme-secondary hover:bg-surface-raised hover:text-white'
-          } `}
+          aria-pressed={showAll}
           title="Show all categories"
+          className={`focus-visible:outline-accent min-h-11 shrink-0 rounded border px-3 text-xs focus-visible:outline-2 focus-visible:outline-offset-2 ${showAll ? 'border-accent bg-accent/10 text-accent' : 'border-border-theme bg-surface-raised text-text-theme-secondary'}`}
         >
           All
         </button>
-      </BalancedGrid>
-
-      {/* Row 2: Controls (Hide, Search, Clear) */}
-      <div className="flex flex-wrap items-center gap-1.5">
-        <button
-          onClick={() => setHideFiltersExpanded(!hideFiltersExpanded)}
-          className={`flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] transition-all ${
-            activeHideCount > 0
-              ? 'bg-red-900/50 text-red-300 ring-1 ring-red-700'
-              : 'bg-surface-raised/60 text-text-theme-secondary hover:bg-surface-raised hover:text-white'
-          } `}
-          title={
-            hideFiltersExpanded ? 'Hide filter options' : 'Show filter options'
-          }
-        >
-          <span>Hide</span>
-          {activeHideCount > 0 && (
-            <span className="min-w-[14px] rounded-full bg-red-600 px-1 text-center text-[8px] text-white">
-              {activeHideCount}
-            </span>
-          )}
-          <span
-            className={`text-[8px] transition-transform ${hideFiltersExpanded ? 'rotate-180' : ''}`}
-          >
-            ▼
-          </span>
-        </button>
-
-        <div className="min-w-[60px] flex-1" />
-
-        <div className="relative w-32 flex-shrink-0 sm:w-40">
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Search..."
-            className="bg-surface-raised border-border-theme-subtle placeholder-text-theme-secondary focus:ring-accent w-full rounded border px-2 py-1 text-[11px] text-white focus:ring-1 focus:outline-none"
-          />
-          {search && (
+        {CATEGORY_CONFIGS.map(({ category, label }) => {
+          const isActive =
+            showAll ||
+            (category === EquipmentCategory.MISC_EQUIPMENT
+              ? OTHER_COMBINED_CATEGORIES.some((candidate) =>
+                  activeCategories.has(candidate),
+                )
+              : activeCategories.has(category));
+          return (
             <button
-              onClick={() => onSearchChange('')}
-              className="text-text-theme-secondary absolute top-1/2 right-1.5 -translate-y-1/2 text-[10px] hover:text-white"
-              title="Clear search"
+              key={category}
+              type="button"
+              aria-label={label}
+              aria-pressed={isActive}
+              onClick={(event) => handleCategoryClick(category, event)}
+              title={`${label} (Ctrl+click to multi-select)`}
+              className={`focus-visible:outline-accent min-h-11 shrink-0 rounded border px-3 text-xs focus-visible:outline-2 focus-visible:outline-offset-2 ${getCategorySlotClasses(category)} ${!isActive ? 'opacity-60' : ''} ${isActive && !showAll ? 'ring-accent ring-offset-surface-base ring-1 ring-offset-1' : ''}`}
             >
-              ✕
+              {label}
             </button>
-          )}
-        </div>
-
-        {hasActiveFilters && (
-          <button
-            onClick={onClearFilters}
-            className="bg-surface-raised/60 hover:bg-surface-raised text-text-theme-secondary rounded px-1.5 py-0.5 text-[10px] transition-colors hover:text-white"
-            title="Clear all filters"
-          >
-            Clear
-          </button>
-        )}
+          );
+        })}
       </div>
-
-      {hideFiltersExpanded && (
-        <div className="animate-fadeIn flex items-center gap-1 pl-1">
-          <span className="text-text-theme-secondary mr-0.5 text-[9px]">
-            Hide:
-          </span>
-
-          <HideToggle
-            label="Proto"
-            fullLabel="Prototype"
-            isActive={hidePrototype}
-            onClick={onTogglePrototype}
-          />
-          <HideToggle
-            label="1-Shot"
-            fullLabel="One-Shot"
-            isActive={hideOneShot}
-            onClick={onToggleOneShot}
-          />
-          <HideToggle
-            label="No Wpn"
-            fullLabel="Ammo without Weapon"
-            isActive={hideAmmoWithoutWeapon}
-            onClick={onToggleAmmoWithoutWeapon}
-          />
-          <HideToggle
-            label="Unavail"
-            fullLabel="Unavailable (tech/era)"
-            isActive={hideUnavailable}
-            onClick={onToggleUnavailable}
-          />
-        </div>
-      )}
     </div>
-  );
-}
-
-interface HideToggleProps {
-  label: string;
-  fullLabel: string;
-  isActive: boolean;
-  onClick: () => void;
-}
-
-function HideToggle({ label, fullLabel, isActive, onClick }: HideToggleProps) {
-  return (
-    <button
-      onClick={onClick}
-      className={`rounded px-1.5 py-0.5 text-[10px] transition-colors ${
-        isActive
-          ? 'bg-red-900/50 text-red-300 ring-1 ring-red-700'
-          : 'bg-surface-raised/60 text-text-theme-secondary hover:bg-surface-raised hover:text-white'
-      } `}
-      title={`${isActive ? 'Show' : 'Hide'} ${fullLabel.toLowerCase()}`}
-    >
-      {label}
-    </button>
   );
 }
 

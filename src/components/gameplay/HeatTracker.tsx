@@ -1,5 +1,8 @@
 import React from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
+import { SvgIcon } from '@/components/ui/SvgIcon';
+
 export type HeatScale = 'Single' | 'Double' | 'Triple';
 
 const HEAT_SCALE_MAX: Record<HeatScale, number> = {
@@ -67,18 +70,18 @@ export function HeatTracker({
 
   return (
     <div
-      className={`heat-tracker rounded-lg bg-gray-50 p-4 dark:bg-gray-800 ${className}`.trim()}
+      className={`heat-tracker bg-surface-base dark:bg-surface-base rounded-lg p-4 ${className}`.trim()}
       data-testid="heat-tracker"
     >
       {/* Header with scale selector */}
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+        <h3 className="text-text-theme-primary text-sm font-semibold dark:text-white">
           Heat
         </h3>
         <select
           value={heatScale}
           onChange={(e) => onScaleChange(e.target.value as HeatScale)}
-          className="min-h-[44px] rounded-md border border-gray-300 bg-white px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-700"
+          className="border-border-theme-subtle bg-surface-base dark:border-border-theme dark:bg-surface-raised min-h-[44px] rounded-md border px-3 py-2 text-sm"
           aria-label="Heat scale"
           data-testid="heat-scale-select"
         >
@@ -97,11 +100,11 @@ export function HeatTracker({
           >
             {currentHeat}
           </span>
-          <span className="mx-1 text-xl text-gray-500 dark:text-gray-400">
+          <span className="text-text-theme-muted dark:text-text-theme-secondary mx-1 text-xl">
             /
           </span>
           <span
-            className="text-xl text-gray-600 tabular-nums dark:text-gray-400"
+            className="text-text-theme-muted dark:text-text-theme-secondary text-xl tabular-nums"
             data-testid="heat-tracker-max"
           >
             {maxHeat}
@@ -109,7 +112,7 @@ export function HeatTracker({
         </div>
 
         {/* Progress bar */}
-        <div className="h-4 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+        <div className="bg-surface-raised dark:bg-surface-raised h-4 w-full overflow-hidden rounded-full">
           <div
             className={`h-full ${warning.color} transition-all duration-300`}
             style={{ width: `${Math.min(heatPercentage, 100)}%` }}
@@ -136,7 +139,8 @@ export function HeatTracker({
               className="mt-1 text-center text-xs"
               data-testid="heat-tracker-ammo-risk"
             >
-              ⚠️ Ammo explosion risk
+              <AppIcon name="warning" size="inline" aria-hidden="true" /> Ammo
+              explosion risk
             </p>
           )}
         </div>
@@ -148,7 +152,8 @@ export function HeatTracker({
           className="flex items-center justify-center gap-2 rounded-md bg-blue-100 p-2 dark:bg-blue-900/30"
           data-testid="heat-tracker-cooling"
         >
-          <svg
+          <SvgIcon
+            size="control"
             className="h-5 w-5 animate-pulse text-blue-500"
             fill="none"
             viewBox="0 0 24 24"
@@ -161,7 +166,7 @@ export function HeatTracker({
               strokeWidth={2}
               d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
             />
-          </svg>
+          </SvgIcon>
           <span className="text-sm text-blue-700 dark:text-blue-300">
             Cooling: {coolingTurns} turn{coolingTurns !== 1 ? 's' : ''}{' '}
             remaining
@@ -176,7 +181,8 @@ export function HeatTracker({
           data-testid="heat-tracker-overflow"
         >
           <p className="text-center text-sm font-semibold text-red-700 dark:text-red-300">
-            ⚠️ HEAT OVERFLOW: {currentHeat - maxHeat} over limit
+            <AppIcon name="warning" size="inline" aria-hidden="true" /> HEAT
+            OVERFLOW: {currentHeat - maxHeat} over limit
           </p>
         </div>
       )}

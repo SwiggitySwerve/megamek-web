@@ -13,6 +13,7 @@
 import React from 'react';
 
 import { ModalOverlay } from '@/components/customizer/dialogs/ModalOverlay';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 
 import { PilotCreationWizardContent } from './wizard/PilotCreationWizardContent';
 import { PilotCreationWizardFooter } from './wizard/PilotCreationWizardFooter';
@@ -50,7 +51,8 @@ export function PilotCreationWizard({
             className="text-text-theme-secondary hover:text-text-theme-primary hover:bg-surface-raised rounded-lg p-2 transition-colors"
             aria-label="Close"
           >
-            <svg
+            <SvgIcon
+              size="control"
               className="h-5 w-5"
               fill="none"
               stroke="currentColor"
@@ -62,7 +64,7 @@ export function PilotCreationWizard({
                 strokeWidth={2}
                 d="M6 18L18 6M6 6l12 12"
               />
-            </svg>
+            </SvgIcon>
           </button>
         </div>
 

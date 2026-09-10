@@ -3,25 +3,45 @@
  *
  * SSR-safe localStorage wrapper for Zustand persist middleware.
  * Safely handles server-side rendering where window/localStorage are unavailable.
- *
- * @example
- * ```typescript
- * import { clientSafeStorage } from '@/stores/utils/clientSafeStorage';
- * import { persist, createJSONStorage } from 'zustand/middleware';
- *
- * const store = create(
- *   persist(
- *     (set, get) => ({ ... }),
- *     {
- *       name: 'my-store',
- *       storage: createJSONStorage(() => clientSafeStorage),
- *     }
- *   )
- * );
- * ```
  */
 
 import type { StateStorage } from 'zustand/middleware';
+
+export type StorageWriteReceipt =
+  | {
+      readonly key: string;
+      readonly status: 'saved';
+    }
+  | {
+      readonly error: unknown;
+      readonly key: string;
+      readonly status: 'failed';
+    };
+
+type StorageWriteReceiptListener = (receipt: StorageWriteReceipt) => void;
+
+const storageWriteReceiptListeners = new Set<StorageWriteReceiptListener>();
+
+/**
+ * Observe completed browser-storage writes. Observers run only after setItem
+ * succeeds, or with a failure receipt immediately before the error is rethrown.
+ */
+export function subscribeToStorageWriteReceipts(
+  listener: StorageWriteReceiptListener,
+): () => void {
+  storageWriteReceiptListeners.add(listener);
+  return () => storageWriteReceiptListeners.delete(listener);
+}
+
+function publishStorageWriteReceipt(receipt: StorageWriteReceipt): void {
+  storageWriteReceiptListeners.forEach((listener) => {
+    try {
+      listener(receipt);
+    } catch {
+      // Receipt observers must never change the persistence result.
+    }
+  });
+}
 
 /**
  * Storage wrapper that safely handles SSR (no localStorage on server).
@@ -36,7 +56,14 @@ export const clientSafeStorage: StateStorage = {
   },
   setItem: (name: string, value: string): void => {
     if (typeof window === 'undefined') return;
-    localStorage.setItem(name, value);
+
+    try {
+      localStorage.setItem(name, value);
+      publishStorageWriteReceipt({ key: name, status: 'saved' });
+    } catch (error) {
+      publishStorageWriteReceipt({ error, key: name, status: 'failed' });
+      throw error;
+    }
   },
   removeItem: (name: string): void => {
     if (typeof window === 'undefined') return;

@@ -11,6 +11,7 @@ import React, { useCallback, useMemo } from 'react';
 
 import type { LocationArmorData } from '@/types/construction/LocationArmorData';
 
+import { AppIcon } from '@/components/ui/AppIcon';
 import { MechLocation } from '@/types/construction/CriticalSlotAllocation';
 import { getMaxArmorForLocation } from '@/utils/construction/armorCalculations';
 
@@ -106,7 +107,7 @@ export function LocationArmorEditor({
 
   // Common styles
   const inputClass =
-    'w-14 px-1.5 py-1 bg-surface-raised border border-border-theme-strong rounded text-white text-sm text-center font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none';
+    'min-h-11 w-16 px-1.5 py-1 bg-surface-raised border border-border-theme-strong rounded text-text-theme-primary text-sm text-center font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none';
   const labelClass = 'text-xs font-semibold uppercase tracking-wide';
   const sliderTrackClass =
     'flex-1 h-2 rounded-lg appearance-none cursor-pointer';
@@ -118,27 +119,20 @@ export function LocationArmorEditor({
     >
       {/* Header Row */}
       <div className="mb-4 flex items-center justify-between">
-        <h4 className="text-base font-semibold text-white">
+        <h4 className="text-text-theme-primary text-base font-semibold">
           {getLocationName(location)}
         </h4>
         <button
           onClick={onClose}
-          className="hover:bg-surface-raised rounded p-1 transition-colors"
+          className="hover:bg-surface-raised focus-visible:ring-accent flex min-h-11 min-w-11 items-center justify-center rounded p-1 transition-colors focus-visible:ring-2"
           aria-label="Close editor"
         >
-          <svg
-            className="text-text-theme-secondary h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          <AppIcon
+            name="close"
+            size="inline"
+            className="text-text-theme-secondary"
+            aria-hidden="true"
+          />
         </button>
       </div>
 
@@ -155,6 +149,7 @@ export function LocationArmorEditor({
         <div className="flex items-center gap-3">
           <input
             type="range"
+            aria-label={`${location} front armor`}
             min={0}
             max={maxFront}
             value={front}
@@ -167,6 +162,7 @@ export function LocationArmorEditor({
           />
           <input
             type="number"
+            aria-label={`${location} front armor`}
             value={front}
             onChange={(e) =>
               handleFrontChange(parseInt(e.target.value, 10) || 0)
@@ -194,6 +190,7 @@ export function LocationArmorEditor({
           <div className="flex items-center gap-3">
             <input
               type="range"
+              aria-label={`${location} rear armor`}
               min={0}
               max={maxRear}
               value={rear}
@@ -206,6 +203,7 @@ export function LocationArmorEditor({
             />
             <input
               type="number"
+              aria-label={`${location} rear armor`}
               value={rear}
               onChange={(e) =>
                 handleRearChange(parseInt(e.target.value, 10) || 0)
@@ -226,7 +224,7 @@ export function LocationArmorEditor({
           <span className="text-text-theme-secondary text-xs font-medium tracking-wide uppercase">
             Total
           </span>
-          <span className="text-sm font-semibold text-white">
+          <span className="text-text-theme-primary text-sm font-semibold">
             {total}{' '}
             <span className="text-text-theme-secondary font-normal">
               / {maxArmor}

@@ -203,45 +203,43 @@ describe('FilterPanel', () => {
     });
   });
 
-  describe('Dark Mode', () => {
-    it('has dark mode background class on container', () => {
+  describe('Semantic palette', () => {
+    it('uses the semantic surface token on the container', () => {
+      render(<FilterPanel {...defaultProps} />);
+
+      expect(screen.getByTestId('filter-panel')).toHaveClass('bg-surface-base');
+    });
+
+    it('uses the semantic border token on the container', () => {
       render(<FilterPanel {...defaultProps} />);
 
       expect(screen.getByTestId('filter-panel')).toHaveClass(
-        'dark:bg-gray-800',
+        'border-border-theme-subtle',
       );
     });
 
-    it('has dark mode border class on container', () => {
-      render(<FilterPanel {...defaultProps} />);
-
-      expect(screen.getByTestId('filter-panel')).toHaveClass(
-        'dark:border-gray-700',
-      );
-    });
-
-    it('has dark mode text classes on header', () => {
+    it('uses the semantic secondary-text token on the header', () => {
       render(<FilterPanel {...defaultProps} />);
 
       const header = screen.getByTestId('filter-header').querySelector('h3');
-      expect(header).toHaveClass('dark:text-gray-300');
+      expect(header).toHaveClass('text-text-theme-secondary');
     });
 
-    it('has dark mode classes on active badges', () => {
+    it('uses semantic accent tokens on active badges', () => {
       render(<FilterPanel {...activeProps} />);
 
       const badge = screen.getByTestId('badge-severity-critical');
-      expect(badge).toHaveClass('dark:bg-blue-900/30');
-      expect(badge).toHaveClass('dark:text-blue-200');
+      expect(badge).toHaveClass('bg-accent-muted');
+      expect(badge).toHaveClass('text-accent');
     });
 
-    it('has dark mode classes on search input', () => {
+    it('uses semantic surface, text, and border tokens on search input', () => {
       render(<FilterPanel {...defaultProps} enableSearch />);
 
       const input = screen.getByTestId('filter-search-input');
-      expect(input).toHaveClass('dark:bg-gray-700');
-      expect(input).toHaveClass('dark:text-gray-100');
-      expect(input).toHaveClass('dark:border-gray-600');
+      expect(input).toHaveClass('bg-surface-base');
+      expect(input).toHaveClass('text-text-theme-primary');
+      expect(input).toHaveClass('border-border-theme-subtle');
     });
 
     it('has dark mode classes on Clear All button', () => {
@@ -338,23 +336,23 @@ describe('FilterPanel', () => {
   });
 
   describe('Styling', () => {
-    it('has correct container classes', () => {
+    it('uses semantic container classes', () => {
       render(<FilterPanel {...defaultProps} />);
 
       const panel = screen.getByTestId('filter-panel');
-      expect(panel).toHaveClass('bg-white');
+      expect(panel).toHaveClass('bg-surface-base');
       expect(panel).toHaveClass('rounded-lg');
       expect(panel).toHaveClass('p-4');
       expect(panel).toHaveClass('border');
-      expect(panel).toHaveClass('border-gray-200');
+      expect(panel).toHaveClass('border-border-theme-subtle');
     });
 
-    it('has correct badge styling classes', () => {
+    it('uses semantic badge styling classes', () => {
       render(<FilterPanel {...activeProps} />);
 
       const badge = screen.getByTestId('badge-severity-critical');
-      expect(badge).toHaveClass('bg-blue-100');
-      expect(badge).toHaveClass('text-blue-800');
+      expect(badge).toHaveClass('bg-accent-muted');
+      expect(badge).toHaveClass('text-accent');
       expect(badge).toHaveClass('rounded-full');
       expect(badge).toHaveClass('px-3');
       expect(badge).toHaveClass('py-1');
@@ -371,7 +369,7 @@ describe('FilterPanel', () => {
       expect(input).toHaveClass('py-2');
       expect(input).toHaveClass('rounded-md');
       expect(input).toHaveClass('focus:ring-2');
-      expect(input).toHaveClass('focus:ring-blue-500');
+      expect(input).toHaveClass('focus:ring-accent');
     });
 
     it('has correct Clear All button styling', () => {
@@ -382,14 +380,14 @@ describe('FilterPanel', () => {
       expect(btn).toHaveClass('text-red-600');
       expect(btn).toHaveClass('hover:underline');
       expect(btn).toHaveClass('focus:ring-2');
-      expect(btn).toHaveClass('focus:ring-blue-500');
+      expect(btn).toHaveClass('focus:ring-accent');
     });
 
     it('has correct checkbox styling', () => {
       render(<FilterPanel {...defaultProps} />);
 
       const checkbox = screen.getByTestId('checkbox-severity-critical');
-      expect(checkbox).toHaveClass('accent-blue-600');
+      expect(checkbox).toHaveClass('accent-accent');
       expect(checkbox).toHaveClass('h-4');
       expect(checkbox).toHaveClass('w-4');
     });

@@ -21,6 +21,7 @@ export interface IBaseRecordSheetUnitConfig {
 }
 
 export interface IUnitConfig extends IBaseRecordSheetUnitConfig {
+  role?: string;
   configuration: string;
   engine: {
     type: string;

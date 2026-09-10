@@ -54,10 +54,10 @@ const styles = {
 
   // Text styles
   text: {
-    title: 'text-lg font-semibold text-white',
+    title: 'text-lg font-semibold text-text-theme-primary',
     subtitle: 'text-xs text-text-theme-secondary mt-0.5',
-    label: 'text-sm font-medium text-slate-200',
-    value: 'text-sm text-white',
+    label: 'text-sm font-medium text-text-theme-primary',
+    value: 'text-sm text-text-theme-primary',
     valueMuted: 'text-sm text-text-theme-secondary',
   },
 } as const;
@@ -306,7 +306,7 @@ export function TechBaseConfiguration({
       </div>
 
       {/* Column Headers */}
-      <div className="border-border-theme flex items-center justify-between border-b px-4 py-2 text-xs font-medium tracking-wider text-slate-500 uppercase">
+      <div className="border-border-theme text-text-theme-muted flex items-center justify-between border-b px-4 py-2 text-xs font-medium tracking-wider uppercase">
         <div className="w-24 flex-shrink-0">Component</div>
         <div className="flex-1 text-center">Selection</div>
         <div className="w-[88px] flex-shrink-0 text-center">Tech Base</div>

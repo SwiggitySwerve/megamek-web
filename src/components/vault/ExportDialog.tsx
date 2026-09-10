@@ -202,13 +202,13 @@ export function ExportDialog({
         footer={
           <button
             onClick={handleClose}
-            className="rounded bg-gray-600 px-4 py-2 text-white hover:bg-gray-500"
+            className="bg-surface-raised text-text-theme-primary hover:bg-surface-raised rounded px-4 py-2"
           >
             Close
           </button>
         }
       >
-        <p className="text-gray-300">
+        <p className="text-text-theme-secondary">
           You need to unlock your vault identity to export content.
         </p>
       </DialogTemplate>
@@ -226,26 +226,26 @@ export function ExportDialog({
         footer={
           <button
             onClick={handleClose}
-            className="rounded bg-gray-700 px-4 py-2 text-white hover:bg-gray-600"
+            className="bg-surface-raised text-text-theme-primary hover:bg-surface-raised rounded px-4 py-2"
           >
             Close
           </button>
         }
       >
-        <p className="mb-4 text-gray-300">
+        <p className="text-text-theme-secondary mb-4">
           Successfully exported {itemCount}{' '}
           {itemCount === 1 ? contentLabel : `${contentLabel}s`}.
         </p>
         <div className="flex flex-col gap-3">
           <button
             onClick={handleDownload}
-            className="w-full rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-500"
+            className="bg-accent text-on-accent hover:bg-accent-hover w-full rounded px-4 py-2"
           >
             Download File
           </button>
           <button
             onClick={handleCopy}
-            className="w-full rounded bg-gray-600 px-4 py-2 text-white hover:bg-gray-500"
+            className="bg-surface-raised text-text-theme-primary hover:bg-surface-raised w-full rounded px-4 py-2"
           >
             {copied ? 'Copied!' : 'Copy to Clipboard'}
           </button>
@@ -267,14 +267,14 @@ export function ExportDialog({
           <button
             onClick={handleClose}
             disabled={exporting}
-            className="rounded bg-gray-600 px-4 py-2 text-white hover:bg-gray-500 disabled:opacity-50"
+            className="bg-surface-raised text-text-theme-primary hover:bg-surface-raised rounded px-4 py-2 disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             onClick={handleExport}
             disabled={exporting || !password}
-            className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-500 disabled:opacity-50"
+            className="bg-accent text-on-accent hover:bg-accent-hover rounded px-4 py-2 disabled:opacity-50"
           >
             {exporting ? 'Exporting...' : 'Export'}
           </button>
@@ -285,20 +285,20 @@ export function ExportDialog({
 
       <div className="space-y-4">
         <div>
-          <label className="mb-1 block text-sm text-gray-400">
+          <label className="text-text-theme-secondary mb-1 block text-sm">
             Description (optional)
           </label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Add a description for this export..."
-            className="w-full resize-none rounded border border-gray-600 bg-gray-700 px-3 py-2 text-white placeholder-gray-500"
+            className="border-border-theme-strong bg-surface-raised text-text-theme-primary w-full resize-none rounded border px-3 py-2"
             rows={3}
           />
         </div>
 
         <div>
-          <label className="mb-1 block text-sm text-gray-400">
+          <label className="text-text-theme-secondary mb-1 block text-sm">
             Password (required to sign)
           </label>
           <input
@@ -306,13 +306,15 @@ export function ExportDialog({
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter your vault password"
-            className="w-full rounded border border-gray-600 bg-gray-700 px-3 py-2 text-white placeholder-gray-500"
+            className="border-border-theme-strong bg-surface-raised text-text-theme-primary w-full rounded border px-3 py-2"
           />
         </div>
 
-        <div className="text-sm text-gray-400">
+        <div className="text-text-theme-secondary text-sm">
           Signed by:{' '}
-          <span className="text-white">{publicIdentity.displayName}</span>
+          <span className="text-text-theme-primary">
+            {publicIdentity.displayName}
+          </span>
           <br />
           Friend code:{' '}
           <span className="font-mono text-xs">{publicIdentity.friendCode}</span>

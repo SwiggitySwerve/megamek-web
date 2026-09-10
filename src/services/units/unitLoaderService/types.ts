@@ -1,3 +1,4 @@
+import type { ISerializedFluff } from '@/types/unit/UnitSerialization';
 /**
  * Unit Loader Service - Type Definitions
  *
@@ -8,10 +9,12 @@
 
 import { UnitState } from '@/stores/unitState';
 
+import type { IUnitDefinitionReference } from './definitionTypes';
+
 /**
  * Source of a unit (canonical or custom)
  */
-export type UnitSource = 'canonical' | 'custom';
+export type { UnitSource } from './definitionTypes';
 
 /**
  * Serialized unit JSON format (from canonical JSON files)
@@ -58,6 +61,8 @@ export interface IRawSerializedUnit {
   readonly movement?: {
     readonly walk: number;
     readonly jump?: number;
+    readonly jumpJetType?: string;
+    readonly enhancements?: readonly string[];
   };
   readonly equipment?: ReadonlyArray<{
     readonly id: string;
@@ -65,6 +70,7 @@ export interface IRawSerializedUnit {
     readonly slots?: readonly number[];
     readonly isRearMounted?: boolean;
     readonly linkedAmmo?: string;
+    readonly isRemovable?: boolean;
     readonly isOmniPodMounted?: boolean;
   }>;
   /**
@@ -74,7 +80,12 @@ export interface IRawSerializedUnit {
   readonly criticalSlots?: Readonly<
     Record<string, ReadonlyArray<string | null>>
   >;
-  readonly mulId?: number;
+  readonly mulId?: number | string;
+  /** Originating definition retained across draft and library round trips. */
+  readonly sourceDefinition?: IUnitDefinitionReference;
+  readonly clanName?: string;
+  readonly role?: string;
+  readonly fluff?: ISerializedFluff;
   /** Whether this unit is an OmniMech */
   readonly isOmni?: boolean;
   /** Base chassis heat sinks for OmniMechs (-1 = auto-calculate) */
@@ -86,6 +97,14 @@ export interface IRawSerializedUnit {
  * Result of loading a unit
  */
 export interface ILoadUnitResult {
+  readonly errorCode?:
+    | 'not-found'
+    | 'read-failed'
+    | 'invalid-definition'
+    | 'unsupported-family'
+    | 'unsupported-configuration'
+    | 'session-failed';
+  readonly sourceDefinition?: IUnitDefinitionReference;
   readonly success: boolean;
   readonly state?: UnitState;
   readonly error?: string;

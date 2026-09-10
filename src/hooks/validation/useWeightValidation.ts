@@ -9,9 +9,9 @@
 
 import { useMemo } from 'react';
 
+import { useUnitCalculations } from '@/hooks/useUnitCalculations';
 import { useUnitStore } from '@/stores/useUnitStore';
-import { getTotalEquipmentWeight } from '@/types/equipment/MountedEquipment';
-import { calculateStructuralWeight } from '@/utils/validation/weightValidationUtils';
+import { getEquipmentPayloadWeight } from '@/utils/equipment/equipmentWeightAccounting';
 
 /**
  * Weight validation data
@@ -46,15 +46,16 @@ export function useWeightValidation(): WeightValidationData {
   const cockpitType = useUnitStore((s) => s.cockpitType);
   const heatSinkType = useUnitStore((s) => s.heatSinkType);
   const heatSinkCount = useUnitStore((s) => s.heatSinkCount);
+  const armorType = useUnitStore((s) => s.armorType);
   const armorTonnage = useUnitStore((s) => s.armorTonnage);
+  const configuration = useUnitStore((s) => s.configuration);
+  const jumpMP = useUnitStore((s) => s.jumpMP);
+  const jumpJetType = useUnitStore((s) => s.jumpJetType);
   const equipment = useUnitStore((s) => s.equipment);
 
-  return useMemo(() => {
-    const effectiveTonnage = tonnage || 20;
-
-    // Calculate structural weight
-    const structuralWeight = calculateStructuralWeight({
-      tonnage: effectiveTonnage,
+  const effectiveTonnage = tonnage || 20;
+  const componentSelections = useMemo(
+    () => ({
       engineType,
       engineRating,
       gyroType,
@@ -62,11 +63,36 @@ export function useWeightValidation(): WeightValidationData {
       cockpitType,
       heatSinkType,
       heatSinkCount,
-      armorTonnage,
-    });
+      armorType,
+      jumpMP,
+      jumpJetType,
+    }),
+    [
+      engineType,
+      engineRating,
+      gyroType,
+      internalStructureType,
+      cockpitType,
+      heatSinkType,
+      heatSinkCount,
+      armorType,
+      jumpMP,
+      jumpJetType,
+    ],
+  );
+  const calculations = useUnitCalculations(
+    effectiveTonnage,
+    componentSelections,
+    armorTonnage,
+    configuration,
+  );
+
+  return useMemo(() => {
+    // Calculate structural weight
+    const structuralWeight = calculations.totalStructuralWeight;
 
     // Calculate equipment weight
-    const equipmentWeight = getTotalEquipmentWeight(equipment);
+    const equipmentWeight = getEquipmentPayloadWeight(equipment);
 
     // Total allocated weight
     const allocatedWeight = structuralWeight + equipmentWeight;
@@ -82,16 +108,5 @@ export function useWeightValidation(): WeightValidationData {
       remainingWeight,
       isValid: allocatedWeight <= effectiveTonnage,
     };
-  }, [
-    tonnage,
-    engineType,
-    engineRating,
-    gyroType,
-    internalStructureType,
-    cockpitType,
-    heatSinkType,
-    heatSinkCount,
-    armorTonnage,
-    equipment,
-  ]);
+  }, [effectiveTonnage, calculations.totalStructuralWeight, equipment]);
 }

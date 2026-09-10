@@ -19,6 +19,7 @@ import {
   Badge,
   EmptyState,
 } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { usePilotSelector, useFilteredPilots } from '@/stores/usePilotStore';
 import { IPilot, PilotStatus, getPilotRating } from '@/types/pilot';
 
@@ -124,7 +125,8 @@ function PilotCard({ pilot }: PilotCardProps): React.ReactElement {
         {pilot.wounds > 0 && pilot.status !== PilotStatus.KIA && (
           <div className="border-border-theme-subtle/50 mt-3 border-t pt-3">
             <div className="flex items-center gap-1.5">
-              <svg
+              <SvgIcon
+                size="inline"
                 className="h-3.5 w-3.5 text-red-400"
                 fill="currentColor"
                 viewBox="0 0 20 20"
@@ -134,7 +136,7 @@ function PilotCard({ pilot }: PilotCardProps): React.ReactElement {
                   d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
                   clipRule="evenodd"
                 />
-              </svg>
+              </SvgIcon>
               <span className="text-xs font-medium text-red-400">
                 {pilot.wounds} wound{pilot.wounds !== 1 ? 's' : ''}
               </span>
@@ -152,7 +154,8 @@ function PilotCard({ pilot }: PilotCardProps): React.ReactElement {
 
         {/* Hover arrow indicator */}
         <div className="absolute right-4 bottom-4 opacity-0 transition-opacity group-hover:opacity-100">
-          <svg
+          <SvgIcon
+            size="control"
             className="text-accent h-5 w-5"
             fill="none"
             stroke="currentColor"
@@ -164,7 +167,7 @@ function PilotCard({ pilot }: PilotCardProps): React.ReactElement {
               strokeWidth={2}
               d="M9 5l7 7-7 7"
             />
-          </svg>
+          </SvgIcon>
         </div>
       </div>
     </Link>
@@ -270,7 +273,8 @@ export default function PilotRosterPage(): React.ReactElement {
           variant="primary"
           onClick={handleCreatePilot}
           leftIcon={
-            <svg
+            <SvgIcon
+              size="inline"
               className="h-4 w-4"
               fill="none"
               stroke="currentColor"
@@ -282,7 +286,7 @@ export default function PilotRosterPage(): React.ReactElement {
                 strokeWidth={2}
                 d="M12 4v16m8-8H4"
               />
-            </svg>
+            </SvgIcon>
           }
         >
           Create Pilot
@@ -316,7 +320,8 @@ export default function PilotRosterPage(): React.ReactElement {
               className={`flex h-5 w-5 items-center justify-center rounded border-2 transition-all ${showActiveOnly ? 'bg-accent border-accent' : 'border-current'} `}
             >
               {showActiveOnly && (
-                <svg
+                <SvgIcon
+                  size="inline"
                   className="text-surface-deep h-3 w-3"
                   fill="none"
                   stroke="currentColor"
@@ -328,7 +333,7 @@ export default function PilotRosterPage(): React.ReactElement {
                     strokeWidth={3}
                     d="M5 13l4 4L19 7"
                   />
-                </svg>
+                </SvgIcon>
               )}
             </div>
             <span className="text-sm font-medium whitespace-nowrap">
@@ -354,7 +359,8 @@ export default function PilotRosterPage(): React.ReactElement {
         <EmptyState
           icon={
             <div className="bg-surface-raised/50 mx-auto flex h-16 w-16 items-center justify-center rounded-full">
-              <svg
+              <SvgIcon
+                size="feature"
                 className="text-text-theme-muted h-8 w-8"
                 fill="none"
                 stroke="currentColor"
@@ -366,7 +372,7 @@ export default function PilotRosterPage(): React.ReactElement {
                   strokeWidth={1.5}
                   d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
                 />
-              </svg>
+              </SvgIcon>
             </div>
           }
           title={

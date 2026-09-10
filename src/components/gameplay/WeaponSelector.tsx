@@ -31,6 +31,7 @@ import type {
   WeaponFireMode,
 } from '@/types/gameplay';
 
+import { AppIcon } from '@/components/ui/AppIcon';
 import { getMinimumRangePenalty } from '@/utils/gameplay/range';
 import {
   previewAttackOutcome,
@@ -106,7 +107,7 @@ function RangeBadge({
   const base = 'rounded px-1.5 py-0.5 text-xs transition-colors border';
   const tone = active
     ? 'bg-blue-600 text-white border-blue-700 font-semibold shadow-sm'
-    : 'text-text-theme-muted bg-gray-100 border-transparent';
+    : 'text-text-theme-muted bg-surface-base border-transparent';
   return (
     <span
       className={`${base} ${tone}`}
@@ -289,7 +290,7 @@ function WeaponRow({
 
   return (
     <li
-      className={`bg-surface-base flex flex-col gap-1 rounded border border-gray-200 p-2 ${
+      className={`bg-surface-base border-border-theme-subtle flex flex-col gap-1 rounded border p-2 ${
         disabled ? 'opacity-60' : ''
       }`}
       data-testid={`weapon-row-${weapon.id}`}
@@ -329,7 +330,7 @@ function WeaponRow({
         />
         {ammoRemaining >= 0 && (
           <span
-            className="text-text-theme-muted rounded bg-gray-100 px-1.5 py-0.5 text-xs"
+            className="text-text-theme-muted bg-surface-base rounded px-1.5 py-0.5 text-xs"
             data-testid={`ammo-remaining-${weapon.id}`}
           >
             Ammo: {ammoRemaining}
@@ -480,7 +481,7 @@ export function WeaponSelector({
             aria-hidden="true"
             className={`inline-block transition-transform ${expanded ? 'rotate-90' : ''}`}
           >
-            ▶
+            <AppIcon name="chevron-right" size="inline" aria-hidden="true" />
           </span>
           <span>Weapons</span>
           <span
@@ -539,7 +540,7 @@ export function WeaponSelector({
         </p>
       )}
       <div
-        className="text-text-theme-secondary border-t border-gray-200 pt-2 text-xs"
+        className="text-text-theme-secondary border-border-theme-subtle border-t pt-2 text-xs"
         data-testid="weapon-selector-total-heat"
       >
         Total heat if fired: <span className="font-semibold">+{totalHeat}</span>

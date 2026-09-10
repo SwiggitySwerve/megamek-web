@@ -15,6 +15,7 @@ import React, {
   useEffect,
 } from 'react';
 
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { ICausalityChain, ICausalityNode } from '@/hooks/audit';
 
 import { CausalityEdge } from './CausalityEdge';
@@ -262,11 +263,11 @@ export function CausalityGraph({
         className={`bg-surface-deep/50 border-border-theme-subtle text-text-theme-muted flex items-center justify-center rounded-xl border ${className} `}
       >
         <div className="p-8 text-center">
-          <svg
+          <SvgIcon
+            size="hero"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            strokeWidth={1.5}
             stroke="currentColor"
             className="mx-auto mb-3 h-12 w-12 opacity-40"
           >
@@ -275,7 +276,7 @@ export function CausalityGraph({
               strokeLinejoin="round"
               d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"
             />
-          </svg>
+          </SvgIcon>
           <p className="text-sm">Select an event to view its causality chain</p>
         </div>
       </div>

@@ -21,7 +21,7 @@ export const RARITY_SORT_ORDER: Record<AwardRarity, number> = {
 export function getRarityBorder(rarity: AwardRarity): string {
   switch (rarity) {
     case AwardRarity.Common:
-      return 'border-slate-500/50 hover:border-slate-400';
+      return 'border-border-theme-strong/50 hover:border-border-theme-strong';
     case AwardRarity.Uncommon:
       return 'border-emerald-500/50 hover:border-emerald-400';
     case AwardRarity.Rare:
@@ -29,7 +29,7 @@ export function getRarityBorder(rarity: AwardRarity): string {
     case AwardRarity.Legendary:
       return 'border-amber-500/50 hover:border-amber-400';
     default:
-      return 'border-slate-500/50';
+      return 'border-border-theme-strong/50';
   }
 }
 
@@ -80,7 +80,7 @@ export function getRarityBadgeVariant(
 export function getRarityRingColor(rarity: AwardRarity): string {
   switch (rarity) {
     case AwardRarity.Common:
-      return 'ring-slate-500/30';
+      return 'ring-border-theme/30';
     case AwardRarity.Uncommon:
       return 'ring-emerald-500/30';
     case AwardRarity.Rare:
@@ -88,7 +88,7 @@ export function getRarityRingColor(rarity: AwardRarity): string {
     case AwardRarity.Legendary:
       return 'ring-amber-500/40';
     default:
-      return 'ring-slate-500/30';
+      return 'ring-border-theme/30';
   }
 }
 
@@ -118,7 +118,7 @@ export function getRarityGlowClass(rarity: AwardRarity): string {
 export function getRarityBorderClass(rarity: AwardRarity): string {
   switch (rarity) {
     case AwardRarity.Common:
-      return 'border-slate-500/30';
+      return 'border-border-theme-strong/30';
     case AwardRarity.Uncommon:
       return 'border-emerald-500/40';
     case AwardRarity.Rare:
@@ -126,7 +126,7 @@ export function getRarityBorderClass(rarity: AwardRarity): string {
     case AwardRarity.Legendary:
       return 'border-amber-500/60';
     default:
-      return 'border-slate-500/30';
+      return 'border-border-theme-strong/30';
   }
 }
 
@@ -137,7 +137,7 @@ export function getRarityBorderClass(rarity: AwardRarity): string {
 export function getRarityAccentBg(rarity: AwardRarity): string {
   switch (rarity) {
     case AwardRarity.Common:
-      return 'from-slate-500/10';
+      return 'from-surface-raised/10';
     case AwardRarity.Uncommon:
       return 'from-emerald-500/10';
     case AwardRarity.Rare:
@@ -145,6 +145,6 @@ export function getRarityAccentBg(rarity: AwardRarity): string {
     case AwardRarity.Legendary:
       return 'from-amber-500/15';
     default:
-      return 'from-slate-500/10';
+      return 'from-surface-raised/10';
   }
 }

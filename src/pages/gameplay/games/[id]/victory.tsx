@@ -91,7 +91,7 @@ export function VictoryScreen({
       ? 'text-emerald-400'
       : outcome === 'defeat'
         ? 'text-red-500'
-        : 'text-gray-300';
+        : 'text-text-theme-secondary';
 
   // victoryReasonLabel takes 'winner'|'loser' perspective. The loser
   // gets the personalized "You conceded" copy.
@@ -101,7 +101,7 @@ export function VictoryScreen({
 
   return (
     <div
-      className="min-h-screen bg-gray-900 px-6 py-10"
+      className="bg-surface-deep min-h-screen px-6 py-10"
       data-testid="victory-screen"
     >
       <div className="mx-auto max-w-5xl">
@@ -212,7 +212,7 @@ export function VictoryScreen({
               className={
                 reviewHref
                   ? 'text-text-theme-secondary inline-flex min-h-[44px] items-center px-3 py-2 text-sm hover:underline'
-                  : 'inline-flex min-h-[44px] items-center rounded-lg bg-blue-600 px-6 py-3 text-base font-medium text-white hover:bg-blue-700'
+                  : 'bg-accent text-on-accent hover:bg-accent-hover inline-flex min-h-[44px] items-center rounded-lg px-6 py-3 text-base font-medium'
               }
               data-testid="victory-back"
             >
@@ -247,10 +247,12 @@ export default function VictoryPage(): React.ReactElement {
   if (!isClient) {
     return (
       <div
-        className="flex h-screen items-center justify-center bg-gray-900"
+        className="bg-surface-deep flex h-screen items-center justify-center"
         data-testid="victory-loading"
       >
-        <p className="text-gray-400">Loading post-battle report...</p>
+        <p className="text-text-theme-secondary">
+          Loading post-battle report...
+        </p>
       </div>
     );
   }
@@ -261,7 +263,7 @@ export default function VictoryPage(): React.ReactElement {
   if (!session || (sessionId && session.id !== sessionId)) {
     return (
       <div
-        className="flex h-screen flex-col items-center justify-center gap-4 bg-gray-900 px-6 text-center"
+        className="bg-surface-deep flex h-screen flex-col items-center justify-center gap-4 px-6 text-center"
         data-testid="victory-no-session"
       >
         <h2 className="text-text-theme-primary text-xl font-semibold">
@@ -275,7 +277,7 @@ export default function VictoryPage(): React.ReactElement {
           href={
             sessionId ? `/gameplay/games/${sessionId}` : '/gameplay/encounters'
           }
-          className="inline-flex min-h-[44px] items-center rounded-lg bg-blue-600 px-5 py-3 text-sm font-medium text-white hover:bg-blue-700"
+          className="bg-accent text-on-accent hover:bg-accent-hover inline-flex min-h-[44px] items-center rounded-lg px-5 py-3 text-sm font-medium"
         >
           Back to game
         </Link>

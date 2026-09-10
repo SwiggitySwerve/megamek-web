@@ -150,38 +150,30 @@ describe('BottomNavBar', () => {
         replacePanel: jest.fn(),
       });
 
-      const { container } = render(<BottomNavBar tabs={sampleTabs} />);
+      render(<BottomNavBar tabs={sampleTabs} />);
 
-      const buttons = container.querySelectorAll('button');
-      const catalogButton = Array.from(buttons).find((btn) =>
-        btn.textContent?.includes('Catalog'),
-      );
-
-      expect(catalogButton).toHaveClass('text-blue-600');
+      const catalogTab = screen.getByRole('tab', { name: 'Catalog' });
+      expect(catalogTab).toHaveAttribute('aria-current', 'page');
+      expect(catalogTab).toHaveClass('text-accent');
     });
 
     it('should not highlight inactive tabs', () => {
-      const { container } = render(<BottomNavBar tabs={sampleTabs} />);
+      render(<BottomNavBar tabs={sampleTabs} />);
 
-      const buttons = container.querySelectorAll('button');
-      const editorButton = Array.from(buttons).find((btn) =>
-        btn.textContent?.includes('Editor'),
-      );
-
-      expect(editorButton).not.toHaveClass('text-blue-600');
-      expect(editorButton).toHaveClass('text-gray-600');
+      const editorTab = screen.getByRole('tab', { name: 'Editor' });
+      expect(editorTab).not.toHaveAttribute('aria-current');
+      expect(editorTab).toHaveAttribute('aria-selected', 'false');
+      expect(editorTab).toHaveClass('text-text-theme-secondary');
     });
 
     it('should update active tab when currentPanel changes', () => {
       const { rerender } = render(<BottomNavBar tabs={sampleTabs} />);
 
       // Initially catalog is active
-      let container = render(<BottomNavBar tabs={sampleTabs} />).container;
-      let buttons = container.querySelectorAll('button');
-      const catalogButton = Array.from(buttons).find((btn) =>
-        btn.textContent?.includes('Catalog'),
+      expect(screen.getByRole('tab', { name: 'Catalog' })).toHaveAttribute(
+        'aria-current',
+        'page',
       );
-      expect(catalogButton).toHaveClass('text-blue-600');
 
       // Change to editor
       mockUseNavigationStore.mockReturnValue({
@@ -198,13 +190,10 @@ describe('BottomNavBar', () => {
       });
 
       rerender(<BottomNavBar tabs={sampleTabs} />);
-      container = render(<BottomNavBar tabs={sampleTabs} />).container;
-      buttons = container.querySelectorAll('button');
-      const editorButton = Array.from(buttons).find((btn) =>
-        btn.textContent?.includes('Editor'),
+      expect(screen.getByRole('tab', { name: 'Editor' })).toHaveAttribute(
+        'aria-current',
+        'page',
       );
-
-      expect(editorButton).toHaveClass('text-blue-600');
     });
   });
 
@@ -280,11 +269,11 @@ describe('BottomNavBar', () => {
       expect(nav).toHaveClass('border-t');
     });
 
-    it('should have proper background colors for light/dark mode', () => {
+    it('should use the themed navigation surface', () => {
       const { container } = render(<BottomNavBar tabs={sampleTabs} />);
 
       const nav = container.querySelector('nav');
-      expect(nav).toHaveClass('bg-white', 'dark:bg-gray-900');
+      expect(nav).toHaveClass('bg-surface-deep', 'border-border-theme');
     });
 
     it('should have flex layout for tab distribution', () => {
@@ -444,7 +433,8 @@ describe('BottomNavBar', () => {
 
       const buttons = container.querySelectorAll('button');
       buttons.forEach((button) => {
-        expect(button).not.toHaveClass('text-blue-600');
+        expect(button).toHaveAttribute('aria-selected', 'false');
+        expect(button).not.toHaveClass('text-accent');
       });
     });
 

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Badge } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 
 import { CreationMode, MODE_INFO } from './WizardTypes';
 
@@ -39,7 +40,8 @@ function ModeCard({
         } `}
       >
         {isSelected && (
-          <svg
+          <SvgIcon
+            size="inline"
             className="text-surface-deep h-3 w-3"
             fill="none"
             stroke="currentColor"
@@ -51,7 +53,7 @@ function ModeCard({
               strokeWidth={3}
               d="M5 13l4 4L19 7"
             />
-          </svg>
+          </SvgIcon>
         )}
       </div>
 

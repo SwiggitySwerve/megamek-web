@@ -144,12 +144,12 @@ export function MatchBrowser({
     return (
       <section
         data-testid="match-browser"
-        className="rounded-lg border border-slate-700 bg-slate-900 p-6"
+        className="border-border-theme bg-surface-deep rounded-lg border p-6"
       >
         <h2 className="mb-2 text-lg font-semibold text-sky-300">
           Browse matches
         </h2>
-        <p className="text-sm text-slate-400">
+        <p className="text-text-theme-secondary text-sm">
           Unlock your vault to browse open lobbies.
         </p>
       </section>
@@ -159,7 +159,7 @@ export function MatchBrowser({
   return (
     <section
       data-testid="match-browser"
-      className="rounded-lg border border-slate-700 bg-slate-900 p-6"
+      className="border-border-theme bg-surface-deep rounded-lg border p-6"
     >
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-semibold text-sky-300">Browse matches</h2>
@@ -170,7 +170,7 @@ export function MatchBrowser({
             void refresh();
           }}
           disabled={state === 'loading'}
-          className="rounded border border-slate-700 px-2 py-1 text-xs font-medium text-slate-300 hover:bg-slate-800 disabled:cursor-not-allowed disabled:text-slate-600"
+          className="border-border-theme text-text-theme-secondary hover:bg-surface-base disabled:text-text-theme-muted rounded border px-2 py-1 text-xs font-medium disabled:cursor-not-allowed"
         >
           {state === 'loading' ? 'Refreshing…' : 'Refresh'}
         </button>
@@ -189,7 +189,7 @@ export function MatchBrowser({
       {state === 'ready' && lobbies.length === 0 && (
         <p
           data-testid="match-browser-empty"
-          className="rounded border border-slate-800 bg-slate-950/40 p-4 text-sm text-slate-400"
+          className="border-border-theme-subtle bg-surface-deep/40 text-text-theme-secondary rounded border p-4 text-sm"
         >
           No open lobbies right now. Create a match or refresh.
         </p>
@@ -198,7 +198,7 @@ export function MatchBrowser({
       {state === 'loading' && lobbies.length === 0 && (
         <p
           data-testid="match-browser-loading"
-          className="text-sm text-slate-400"
+          className="text-text-theme-secondary text-sm"
         >
           Loading open lobbies…
         </p>
@@ -210,11 +210,11 @@ export function MatchBrowser({
             <li
               key={lobby.matchId}
               data-testid="match-browser-row"
-              className="flex items-center justify-between gap-3 rounded border border-slate-700 bg-slate-950/50 p-3"
+              className="border-border-theme bg-surface-deep/50 flex items-center justify-between gap-3 rounded border p-3"
             >
               <div className="min-w-0">
-                <p className="flex items-center gap-2 text-sm font-medium text-slate-100">
-                  <span className="rounded bg-slate-800 px-1.5 py-0.5 font-mono text-xs text-sky-300 uppercase">
+                <p className="text-text-theme-primary flex items-center gap-2 text-sm font-medium">
+                  <span className="bg-surface-base rounded px-1.5 py-0.5 font-mono text-xs text-sky-300 uppercase">
                     {lobby.layout}
                   </span>
                   <span className="truncate">{lobby.hostDisplayName}</span>
@@ -224,7 +224,7 @@ export function MatchBrowser({
                     </span>
                   )}
                 </p>
-                <p className="mt-0.5 text-xs text-slate-400">
+                <p className="text-text-theme-secondary mt-0.5 text-xs">
                   {occupancyLabel(lobby)}
                 </p>
               </div>

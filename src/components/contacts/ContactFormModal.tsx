@@ -8,6 +8,8 @@
 import { useEffect, useState } from 'react';
 
 import { Button, Input } from '@/components/ui';
+import { AppIcon } from '@/components/ui/AppIcon';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 
 // =============================================================================
 // Types
@@ -29,13 +31,12 @@ export interface EditingContact {
 // Icons
 // =============================================================================
 
-function UserPlusIcon({ className = 'w-5 h-5' }: { className?: string }) {
+function UserPlusIcon({ className = '' }: { className?: string }) {
   return (
-    <svg
+    <SvgIcon
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
-      strokeWidth={1.5}
       stroke="currentColor"
       className={className}
     >
@@ -44,36 +45,20 @@ function UserPlusIcon({ className = 'w-5 h-5' }: { className?: string }) {
         strokeLinejoin="round"
         d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z"
       />
-    </svg>
+    </SvgIcon>
   );
 }
 
-function PencilIcon({ className = 'w-4 h-4' }: { className?: string }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={1.5}
-      stroke="currentColor"
-      className={className}
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-      />
-    </svg>
-  );
+function PencilIcon({ className = '' }: { className?: string }) {
+  return <AppIcon name="edit" className={className} />;
 }
 
-function XMarkIcon({ className = 'w-5 h-5' }: { className?: string }) {
+function XMarkIcon({ className = '' }: { className?: string }) {
   return (
-    <svg
+    <SvgIcon
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
-      strokeWidth={1.5}
       stroke="currentColor"
       className={className}
     >
@@ -82,7 +67,7 @@ function XMarkIcon({ className = 'w-5 h-5' }: { className?: string }) {
         strokeLinejoin="round"
         d="M6 18L18 6M6 6l12 12"
       />
-    </svg>
+    </SvgIcon>
   );
 }
 
@@ -206,7 +191,7 @@ export function AddContactDialog({
               }
               placeholder="Add notes about this contact..."
               rows={3}
-              className="bg-surface-raised/50 border-border-theme text-text-theme-primary placeholder-text-theme-secondary w-full resize-none rounded-lg border px-4 py-2 transition-colors focus:border-cyan-500 focus:outline-none"
+              className="bg-surface-raised/50 border-border-theme text-text-theme-primary placeholder-text-theme-secondary focus:border-accent w-full resize-none rounded-lg border px-4 py-2 transition-colors focus:outline-none"
             />
           </div>
 

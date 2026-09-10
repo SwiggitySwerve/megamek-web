@@ -144,6 +144,8 @@ function serializeEquipment(
     location: item.location ?? 'Unallocated',
     ...(item.slots ? { slots: [...item.slots] } : {}),
     isRearMounted: item.isRearMounted,
+    isRemovable: item.isRemovable,
+    isOmniPodMounted: item.isOmniPodMounted,
     ...(item.linkedAmmoId ? { linkedAmmo: item.linkedAmmoId } : {}),
   }));
 }
@@ -178,6 +180,11 @@ export function serializeCustomUnitState(
 ): ISerializedUnit {
   const walk =
     state.tonnage > 0 ? Math.floor(state.engineRating / state.tonnage) : 0;
+  const numericMulId = Number(state.mulId);
+  const mulId =
+    Number.isSafeInteger(numericMulId) && String(numericMulId) === state.mulId
+      ? numericMulId
+      : state.mulId;
 
   return {
     id: identity.id,
@@ -191,6 +198,10 @@ export function serializeCustomUnitState(
     era: identity.era,
     year: state.year,
     tonnage: state.tonnage,
+    mulId,
+    sourceDefinition: state.sourceDefinition,
+    role: state.role || undefined,
+    fluff: state.fluff,
     engine: {
       type: ENGINE_TYPE[state.engineType],
       rating: state.engineRating,

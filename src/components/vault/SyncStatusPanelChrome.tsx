@@ -24,17 +24,17 @@ export function SyncStatusHeader({
       {syncHeaderBackdropClasses.map((className) => (
         <div key={className} className={className} />
       ))}
-      <div className="relative border-b border-gray-700/50 p-5">
+      <div className="border-border-theme/50 relative border-b p-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500/30 to-blue-500/20 shadow-lg shadow-cyan-500/10">
               <SignalIcon className="h-5 w-5 text-cyan-400" />
             </div>
             <div>
-              <h2 className="text-lg font-bold tracking-tight text-white">
+              <h2 className="text-text-theme-primary text-lg font-bold tracking-tight">
                 Sync Status
               </h2>
-              <p className="text-sm text-gray-400">
+              <p className="text-text-theme-secondary text-sm">
                 Message queue & peer connections
               </p>
             </div>
@@ -42,7 +42,7 @@ export function SyncStatusHeader({
           <button
             onClick={onClose}
             aria-label="Close sync status"
-            className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-700/50 hover:text-white"
+            className="text-text-theme-secondary hover:bg-surface-raised/50 hover:text-text-theme-primary rounded-lg p-2 transition-colors"
           >
             <XMarkIcon className="h-5 w-5" />
           </button>
@@ -55,8 +55,8 @@ export function SyncStatusHeader({
 export function SyncLoadingState(): React.ReactElement {
   return (
     <div className="flex items-center justify-center py-16">
-      <SpinnerIcon className="h-8 w-8 text-cyan-400" />
-      <span className="ml-3 font-medium text-gray-400">
+      <SpinnerIcon size="feature" className="text-cyan-400" />
+      <span className="text-text-theme-secondary ml-3 font-medium">
         Loading sync status...
       </span>
     </div>

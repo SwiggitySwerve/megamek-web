@@ -33,9 +33,9 @@ export const SEVERITY_CLASSES: Record<IDerivedWarning['severity'], string> = {
 };
 
 export const SEVERITY_BADGE: Record<IDerivedWarning['severity'], string> = {
-  critical: 'bg-red-600 text-white',
-  warning: 'bg-amber-500 text-white',
-  info: 'bg-blue-500 text-white',
+  critical: 'bg-red-600 text-on-accent',
+  warning: 'bg-amber-500 text-on-accent',
+  info: 'bg-blue-500 text-on-accent',
 };
 
 export function formatCompactNumber(num: number): string {

@@ -80,8 +80,10 @@ describe('ValidationSummary', () => {
       const validation = createMockValidationState({ isValid: true });
       render(<ValidationSummary validation={validation} />);
 
-      expect(screen.getByText('✓')).toBeInTheDocument();
-      expect(screen.getByText('Valid')).toBeInTheDocument();
+      expect(screen.getByRole('status')).toHaveTextContent('Valid');
+      expect(
+        screen.getByRole('status').querySelector('[data-icon-name="check"]'),
+      ).toBeInTheDocument();
     });
   });
 
@@ -100,7 +102,9 @@ describe('ValidationSummary', () => {
 
       render(<ValidationSummary validation={validation} />);
 
-      expect(screen.getByText('❌')).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /\d+ errors?, show issues/ }),
+      ).toBeInTheDocument();
       expect(screen.getByText('3')).toBeInTheDocument();
     });
 
@@ -118,7 +122,7 @@ describe('ValidationSummary', () => {
       const button = screen.getByRole('button');
       fireEvent.click(button);
 
-      expect(screen.getByText('Validation Issues')).toBeInTheDocument();
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
       expect(screen.getByText('Test error message')).toBeInTheDocument();
     });
 
@@ -157,7 +161,9 @@ describe('ValidationSummary', () => {
       render(<ValidationSummary validation={validation} />);
 
       // Should show warning icon and count, not "Valid"
-      expect(screen.getByText('⚠️')).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /\d+ warnings?, show issues/ }),
+      ).toBeInTheDocument();
       expect(screen.getByText('2')).toBeInTheDocument();
       expect(screen.queryByText('Valid')).not.toBeInTheDocument();
     });
@@ -178,7 +184,7 @@ describe('ValidationSummary', () => {
       const button = screen.getByRole('button');
       fireEvent.click(button);
 
-      expect(screen.getByText('Validation Issues')).toBeInTheDocument();
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
       expect(screen.getByText('Warning message')).toBeInTheDocument();
     });
   });
@@ -221,12 +227,12 @@ describe('ValidationSummary', () => {
       );
 
       fireEvent.click(screen.getByRole('button'));
-      expect(screen.getByText('Validation Issues')).toBeInTheDocument();
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
 
       const errorItem = screen.getByText('Armor error').closest('button');
       fireEvent.click(errorItem!);
 
-      expect(screen.queryByText('Validation Issues')).not.toBeInTheDocument();
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
   });
 
@@ -296,5 +302,80 @@ describe('ValidationSummary', () => {
 
       expect(criticalIndex).toBeLessThan(regularIndex);
     });
+  });
+  it('preserves a warning location, guidance and issue identity when navigating', () => {
+    const result = createMockResult(
+      [],
+      [
+        {
+          message: 'ER PPC needs a location',
+          category: ValidationCategory.SLOTS,
+        },
+      ],
+    );
+    const issue = {
+      ...result.results[0].warnings[0],
+      field: 'criticalSlots.ppc-1',
+      suggestion: 'Choose a location with 3 free critical slots.',
+    };
+    const detailedResult = {
+      ...result,
+      results: [{ ...result.results[0], warnings: [issue] }],
+    };
+    const onIssueNavigate = jest.fn();
+    render(
+      <ValidationSummary
+        validation={createMockValidationState({
+          warningCount: 1,
+          result: detailedResult,
+        })}
+        unitName="Atlas"
+        section="criticals"
+        onIssueNavigate={onIssueNavigate}
+      />,
+    );
+    const trigger = screen.getByRole('button', {
+      name: /Atlas: 1 warning in Critical Slots/,
+    });
+    fireEvent.click(trigger);
+    expect(screen.getByRole('dialog')).toHaveAccessibleName(
+      /Atlas.*Warnings.*Critical Slots/,
+    );
+    expect(screen.getByText(issue.suggestion)).toBeInTheDocument();
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(trigger).toHaveFocus();
+    fireEvent.click(trigger);
+    fireEvent.click(screen.getByText(issue.message));
+    expect(onIssueNavigate).toHaveBeenCalledWith(issue);
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('shows every issue after expansion and keeps loading distinct from valid', () => {
+    const result = createMockResult(
+      Array.from({ length: 6 }, (_, i) => ({
+        message: `Issue ${i}`,
+        category: ValidationCategory.WEIGHT,
+      })),
+    );
+    const { rerender } = render(
+      <ValidationSummary
+        validation={createMockValidationState({ errorCount: 6, result })}
+        maxItems={2}
+      />,
+    );
+    fireEvent.click(
+      screen.getByRole('button', { name: /6 errors, show issues/ }),
+    );
+    expect(screen.queryByText('Issue 5')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /Show all/ }));
+    expect(screen.getByText('Issue 5')).toBeInTheDocument();
+    rerender(
+      <ValidationSummary
+        validation={createMockValidationState({ isLoading: true })}
+      />,
+    );
+    expect(screen.getByRole('status')).toHaveTextContent('Checking');
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 });

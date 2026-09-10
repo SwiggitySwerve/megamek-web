@@ -9,6 +9,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 
 import { Badge } from '@/components/ui/Badge';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { IDiffEntry, DiffChangeType } from '@/hooks/audit';
 
 import { DiffHighlight } from './DiffHighlight';
@@ -49,11 +50,11 @@ interface DiffTreeNode {
 
 function ChevronIcon({ expanded }: { expanded: boolean }): React.ReactElement {
   return (
-    <svg
+    <SvgIcon
+      size="control"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
-      strokeWidth={2}
       stroke="currentColor"
       className={`h-3.5 w-3.5 transition-transform duration-200 ${expanded ? 'rotate-90' : ''}`}
     >
@@ -62,17 +63,17 @@ function ChevronIcon({ expanded }: { expanded: boolean }): React.ReactElement {
         strokeLinejoin="round"
         d="m8.25 4.5 7.5 7.5-7.5 7.5"
       />
-    </svg>
+    </SvgIcon>
   );
 }
 
 function BranchIcon(): React.ReactElement {
   return (
-    <svg
+    <SvgIcon
+      size="inline"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
-      strokeWidth={1.5}
       stroke="currentColor"
       className="text-text-theme-muted h-3.5 w-3.5"
     >
@@ -81,7 +82,7 @@ function BranchIcon(): React.ReactElement {
         strokeLinejoin="round"
         d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5"
       />
-    </svg>
+    </SvgIcon>
   );
 }
 
@@ -445,11 +446,11 @@ export function NestedDiff({
       <div
         className={`text-text-theme-muted flex flex-col items-center justify-center py-8 ${className}`}
       >
-        <svg
+        <SvgIcon
+          size="hero"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
-          strokeWidth={1}
           stroke="currentColor"
           className="mb-3 h-12 w-12 opacity-50"
         >
@@ -458,7 +459,7 @@ export function NestedDiff({
             strokeLinejoin="round"
             d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
           />
-        </svg>
+        </SvgIcon>
         <p className="text-sm font-medium">No Changes</p>
         <p className="mt-1 text-xs">States are identical</p>
       </div>

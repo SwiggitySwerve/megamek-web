@@ -13,6 +13,7 @@ import {
   renderArmorLocationStates,
   useArmorVariantLayout,
 } from '../shared/ArmorVariantRenderHelpers';
+import { BipedArmorDiagram } from './BipedArmorDiagram';
 import {
   NeonLocation,
   getLocationsForConfig,
@@ -23,6 +24,16 @@ export interface NeonOperatorDiagramProps extends ConfigurableArmorDiagramProps 
 }
 
 export function NeonOperatorDiagram(
+  props: NeonOperatorDiagramProps,
+): React.ReactElement {
+  return (props.mechConfigType ?? 'biped') === 'biped' ? (
+    <BipedArmorDiagram {...props} variant="neon-operator" />
+  ) : (
+    <ConfiguredNeonOperatorDiagram {...props} />
+  );
+}
+
+function ConfiguredNeonOperatorDiagram(
   props: NeonOperatorDiagramProps,
 ): React.ReactElement {
   const { armorData, selectedLocation, unallocatedPoints } = props;

@@ -11,6 +11,7 @@ import type { IQuickGameUnit } from '@/types/quickgame/QuickGameInterfaces';
 import type { IKeyMoment } from '@/types/simulation-viewer/IKeyMoment';
 
 import { Card } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { useQuickGameSelector } from '@/stores/useQuickGameStore';
 import { GamePhase } from '@/types/gameplay';
 import { projectUnitPerformance } from '@/utils/gameplay/combatStatistics';
@@ -46,7 +47,8 @@ export function ResultBanner({
       color: 'from-emerald-600 to-emerald-800',
       textColor: 'text-emerald-100',
       icon: (
-        <svg
+        <SvgIcon
+          size="hero"
           className="h-12 w-12"
           fill="none"
           stroke="currentColor"
@@ -58,7 +60,7 @@ export function ResultBanner({
             strokeWidth={2}
             d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
           />
-        </svg>
+        </SvgIcon>
       ),
     },
     opponent: {
@@ -66,7 +68,8 @@ export function ResultBanner({
       color: 'from-red-600 to-red-800',
       textColor: 'text-red-100',
       icon: (
-        <svg
+        <SvgIcon
+          size="hero"
           className="h-12 w-12"
           fill="none"
           stroke="currentColor"
@@ -78,7 +81,7 @@ export function ResultBanner({
             strokeWidth={2}
             d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
           />
-        </svg>
+        </SvgIcon>
       ),
     },
     draw: {
@@ -86,7 +89,8 @@ export function ResultBanner({
       color: 'from-amber-600 to-amber-800',
       textColor: 'text-amber-100',
       icon: (
-        <svg
+        <SvgIcon
+          size="hero"
           className="h-12 w-12"
           fill="none"
           stroke="currentColor"
@@ -98,7 +102,7 @@ export function ResultBanner({
             strokeWidth={2}
             d="M8 12h.01M12 12h.01M16 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
           />
-        </svg>
+        </SvgIcon>
       ),
     },
   };
@@ -177,38 +181,42 @@ export function BattleSummary({
       <ResultExplanationCard explanation={resultExplanation} />
 
       <Card>
-        <div className="border-b border-gray-700 p-4">
-          <h3 className="font-medium text-white">Battle Statistics</h3>
+        <div className="border-border-theme border-b p-4">
+          <h3 className="text-text-theme-primary font-medium">
+            Battle Statistics
+          </h3>
         </div>
         <div className="p-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="mb-1 text-xs tracking-wide text-gray-500 uppercase">
+              <p className="text-text-theme-muted mb-1 text-xs tracking-wide uppercase">
                 Your Losses
               </p>
-              <p className="text-white">
+              <p className="text-text-theme-primary">
                 {outcome?.playerUnitsDestroyed ?? 0} destroyed
               </p>
             </div>
             <div>
-              <p className="mb-1 text-xs tracking-wide text-gray-500 uppercase">
+              <p className="text-text-theme-muted mb-1 text-xs tracking-wide uppercase">
                 Enemy Losses
               </p>
-              <p className="text-white">
+              <p className="text-text-theme-primary">
                 {outcome?.opponentUnitsDestroyed ?? 0} destroyed
               </p>
             </div>
             <div>
-              <p className="mb-1 text-xs tracking-wide text-gray-500 uppercase">
+              <p className="text-text-theme-muted mb-1 text-xs tracking-wide uppercase">
                 Turns Played
               </p>
-              <p className="text-white">{outcome?.turnsPlayed ?? game.turn}</p>
+              <p className="text-text-theme-primary">
+                {outcome?.turnsPlayed ?? game.turn}
+              </p>
             </div>
             <div>
-              <p className="mb-1 text-xs tracking-wide text-gray-500 uppercase">
+              <p className="text-text-theme-muted mb-1 text-xs tracking-wide uppercase">
                 Duration
               </p>
-              <p className="text-white">
+              <p className="text-text-theme-primary">
                 {outcome
                   ? `${Math.floor(outcome.durationMs / 60000)} min`
                   : '—'}
@@ -217,7 +225,7 @@ export function BattleSummary({
             {combatStats && (
               <>
                 <div>
-                  <p className="mb-1 text-xs tracking-wide text-gray-500 uppercase">
+                  <p className="text-text-theme-muted mb-1 text-xs tracking-wide uppercase">
                     Damage Dealt
                   </p>
                   <p className="text-cyan-400">
@@ -225,7 +233,7 @@ export function BattleSummary({
                   </p>
                 </div>
                 <div>
-                  <p className="mb-1 text-xs tracking-wide text-gray-500 uppercase">
+                  <p className="text-text-theme-muted mb-1 text-xs tracking-wide uppercase">
                     Damage Taken
                   </p>
                   <p className="text-red-400">
@@ -233,7 +241,7 @@ export function BattleSummary({
                   </p>
                 </div>
                 <div>
-                  <p className="mb-1 text-xs tracking-wide text-gray-500 uppercase">
+                  <p className="text-text-theme-muted mb-1 text-xs tracking-wide uppercase">
                     Critical Hits
                   </p>
                   <p className="text-amber-400">{combatStats.criticalHits}</p>
@@ -291,11 +299,13 @@ export function UnitStatusRow({
           : 'text-emerald-400';
 
   return (
-    <div className="border-b border-gray-700/50 px-4 py-3 transition-colors last:border-b-0 hover:bg-gray-800/30">
+    <div className="border-border-theme/50 hover:bg-surface-base/30 border-b px-4 py-3 transition-colors last:border-b-0">
       <div className="flex items-center justify-between">
         <div className="min-w-0 flex-1">
-          <p className="truncate font-medium text-white">{unit.name}</p>
-          <div className="flex items-center gap-2 text-xs text-gray-400">
+          <p className="text-text-theme-primary truncate font-medium">
+            {unit.name}
+          </p>
+          <div className="text-text-theme-muted flex items-center gap-2 text-xs">
             {unit.pilotName && (
               <span className="truncate">{unit.pilotName}</span>
             )}
@@ -309,7 +319,7 @@ export function UnitStatusRow({
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <div className="text-right text-xs text-gray-400">
+          <div className="text-text-theme-muted text-right text-xs">
             <p>{performance.damageDealt} dmg dealt</p>
             <p>{performance.kills} kills</p>
           </div>
@@ -323,12 +333,12 @@ export function UnitStatusRow({
         <div className="mt-2 flex gap-4">
           <div className="flex-1">
             <div className="mb-1 flex items-center justify-between text-xs">
-              <span className="text-gray-500">Armor</span>
-              <span className="text-gray-400">
+              <span className="text-text-theme-muted">Armor</span>
+              <span className="text-text-theme-muted">
                 {Math.round(100 - damageAssessment.armorDamagePercent)}%
               </span>
             </div>
-            <div className="h-1.5 overflow-hidden rounded-full bg-gray-700">
+            <div className="bg-surface-raised h-1.5 overflow-hidden rounded-full">
               <div
                 className="h-full rounded-full bg-cyan-500 transition-all"
                 style={{
@@ -339,12 +349,12 @@ export function UnitStatusRow({
           </div>
           <div className="flex-1">
             <div className="mb-1 flex items-center justify-between text-xs">
-              <span className="text-gray-500">Structure</span>
-              <span className="text-gray-400">
+              <span className="text-text-theme-muted">Structure</span>
+              <span className="text-text-theme-muted">
                 {Math.round(100 - damageAssessment.structureDamagePercent)}%
               </span>
             </div>
-            <div className="h-1.5 overflow-hidden rounded-full bg-gray-700">
+            <div className="bg-surface-raised h-1.5 overflow-hidden rounded-full">
               <div
                 className="h-full rounded-full bg-amber-500 transition-all"
                 style={{
@@ -382,16 +392,16 @@ export function TimelineEventRow({
 
   return (
     <div className="flex items-start gap-3 px-3 py-2 text-sm">
-      <span className="w-8 flex-shrink-0 font-mono text-gray-500">
+      <span className="text-text-theme-muted w-8 flex-shrink-0 font-mono">
         #{index + 1}
       </span>
       <div className="min-w-0 flex-1">
-        <span className="text-white">{label}</span>
+        <span className="text-text-theme-primary">{label}</span>
         {event.actorId && (
           <span className="ml-2 truncate text-cyan-400">({event.actorId})</span>
         )}
       </div>
-      <div className="flex-shrink-0 text-right text-xs text-gray-400">
+      <div className="text-text-theme-muted flex-shrink-0 text-right text-xs">
         <p>Turn {event.turn}</p>
         <p>{phaseLabel}</p>
       </div>

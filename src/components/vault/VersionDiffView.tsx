@@ -71,29 +71,29 @@ function VersionDiffHeader({
   return (
     <div className="relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-violet-500/20 via-fuchsia-500/10 to-transparent" />
-      <div className="relative border-b border-gray-700/50 p-5">
+      <div className="border-border-theme/50 relative border-b p-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500/30 to-fuchsia-500/20 shadow-lg shadow-violet-500/10">
               <ArrowsRightLeftIcon className="h-5 w-5 text-violet-400" />
             </div>
             <div>
-              <h3 className="text-lg font-bold tracking-tight text-white">
+              <h3 className="text-text-theme-primary text-lg font-bold tracking-tight">
                 Compare Versions
               </h3>
-              <p className="text-sm text-gray-400">
+              <p className="text-text-theme-secondary text-sm">
                 View changes between versions
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-1 rounded-lg bg-gray-700/50 p-1">
+          <div className="bg-surface-raised/50 flex items-center gap-1 rounded-lg p-1">
             <button
               onClick={() => onViewModeChange('unified')}
               className={`rounded px-3 py-1.5 text-sm font-medium transition-colors ${
                 viewMode === 'unified'
                   ? 'bg-violet-500/30 text-violet-300'
-                  : 'text-gray-400 hover:text-white'
+                  : 'text-text-theme-secondary hover:text-text-theme-primary'
               }`}
             >
               Unified
@@ -103,7 +103,7 @@ function VersionDiffHeader({
               className={`rounded px-3 py-1.5 text-sm font-medium transition-colors ${
                 viewMode === 'side-by-side'
                   ? 'bg-violet-500/30 text-violet-300'
-                  : 'text-gray-400 hover:text-white'
+                  : 'text-text-theme-secondary hover:text-text-theme-primary'
               }`}
             >
               Side by Side
@@ -123,7 +123,7 @@ function VersionDiffSelectors({
   onToVersionChange,
 }: VersionDiffSelectorsProps): React.ReactElement {
   return (
-    <div className="border-b border-gray-700/50 bg-gray-800/50 p-4">
+    <div className="border-border-theme/50 bg-surface-base/50 border-b p-4">
       <div className="flex items-center gap-4">
         <div className="flex-1">
           <Select
@@ -135,8 +135,8 @@ function VersionDiffSelectors({
           />
         </div>
         <div className="mt-5 flex h-12 w-12 items-center justify-center">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-700/50">
-            <ArrowsRightLeftIcon className="h-4 w-4 text-gray-400" />
+          <div className="bg-surface-raised/50 flex h-8 w-8 items-center justify-center rounded-full">
+            <ArrowsRightLeftIcon className="text-text-theme-secondary h-4 w-4" />
           </div>
         </div>
         <div className="flex-1">

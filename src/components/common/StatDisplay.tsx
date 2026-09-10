@@ -52,7 +52,7 @@ export interface CapacityStatProps {
 // =============================================================================
 
 const statusColors: Record<StatStatus, string> = {
-  normal: 'text-white',
+  normal: 'text-text-theme-primary',
   warning: 'text-amber-400',
   error: 'text-red-400',
   success: 'text-green-400',
@@ -134,8 +134,8 @@ export function CapacityStat({
           {current}
           {unit}
         </span>
-        <span className={`${styles.divider} text-slate-500`}>/</span>
-        <span className={`${styles.secondary} text-slate-500`}>
+        <span className={`${styles.divider} text-text-theme-muted`}>/</span>
+        <span className={`${styles.secondary} text-text-theme-muted`}>
           {max}
           {unit}
         </span>
@@ -182,8 +182,8 @@ export function CompactStat({
         </span>
         {max !== undefined && (
           <>
-            <span className="text-[9px] text-slate-500">/</span>
-            <span className="text-[9px] text-slate-500">{max}</span>
+            <span className="text-text-theme-muted text-[9px]">/</span>
+            <span className="text-text-theme-muted text-[9px]">{max}</span>
           </>
         )}
       </div>

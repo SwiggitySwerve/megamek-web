@@ -7,8 +7,9 @@
  * @spec openspec/specs/customizer-toolbar/spec.md
  */
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useId } from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
 import { IUnitIndexEntry } from '@/services/common/types';
 import { getCanonicalUnitService } from '@/services/units/CanonicalUnitService';
 import { customUnitApiService } from '@/services/units/CustomUnitApiService';
@@ -35,6 +36,10 @@ export type LoadUnitSource = 'canonical' | 'custom';
 export interface UnitLoadDialogProps {
   /** Whether dialog is open */
   isOpen: boolean;
+  isLoadingUnit?: boolean;
+  onSelectionChange?: () => void;
+  onCreateBlankUnit?: () => void;
+  onConfigureNewUnit?: () => void;
   /** Called when a unit is selected for loading */
   onLoadUnit: (unit: IUnitIndexEntry, source: LoadUnitSource) => void;
   /** Called when dialog is cancelled */
@@ -145,19 +150,12 @@ function UnitSearchFilters({
   return (
     <div className="border-border-theme-subtle space-y-3 border-b p-4">
       <div className="relative">
-        <svg
-          className="text-text-theme-secondary absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-          />
-        </svg>
+        <AppIcon
+          name="search"
+          size="inline"
+          aria-hidden="true"
+          className="text-text-theme-secondary absolute top-1/2 left-3 -translate-y-1/2"
+        />
         <input
           type="text"
           value={searchQuery}
@@ -216,9 +214,15 @@ function UnitSearchFilters({
 
 export function UnitLoadDialog({
   isOpen,
+  isLoadingUnit = false,
+  onSelectionChange,
+  onCreateBlankUnit,
+  onConfigureNewUnit,
   onLoadUnit,
   onCancel,
 }: UnitLoadDialogProps): React.ReactElement {
+  const titleId = useId();
+
   // Search and filter state
   const [searchQuery, setSearchQuery] = useState('');
   const [techBaseFilter, setTechBaseFilter] = useState<TechBase | 'all'>('all');
@@ -231,30 +235,44 @@ export function UnitLoadDialog({
   const [canonicalUnits, setCanonicalUnits] = useState<IUnitIndexEntry[]>([]);
   const [customUnits, setCustomUnits] = useState<ICustomUnitIndexEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   const [selectedUnit, setSelectedUnit] = useState<UnitWithSource | null>(null);
 
   // Load units when dialog opens
   useEffect(() => {
     if (!isOpen) return;
 
+    let active = true;
     setIsLoading(true);
+    setLoadError(null);
     setSelectedUnit(null);
     setSearchQuery('');
 
     Promise.all([
-      getCanonicalUnitService().getIndex(),
+      getCanonicalUnitService().getIndex({ strict: true }),
       customUnitApiService.list(),
     ])
       .then(([canonical, custom]) => {
+        if (!active) return;
         setCanonicalUnits([...canonical]);
         setCustomUnits([...custom]);
         setIsLoading(false);
       })
       .catch((error) => {
+        if (!active) return;
+        setCanonicalUnits([]);
+        setCustomUnits([]);
+        setLoadError(
+          'Could not load the library. Check your connection and try again.',
+        );
         logger.error('Failed to load units:', error);
         setIsLoading(false);
       });
-  }, [isOpen]);
+    return () => {
+      active = false;
+    };
+  }, [isOpen, retryCount]);
 
   // Combine and filter units
   const filteredUnits = useMemo(() => {
@@ -281,12 +299,38 @@ export function UnitLoadDialog({
     sourceFilter,
   ]);
 
+  useEffect(() => {
+    if (
+      selectedUnit &&
+      !filteredUnits.some(
+        (unit) =>
+          unit.id === selectedUnit.id && unit.source === selectedUnit.source,
+      )
+    ) {
+      setSelectedUnit(null);
+      onSelectionChange?.();
+    }
+  }, [filteredUnits, selectedUnit, onSelectionChange]);
+
+  const handleSelection = useCallback(
+    (unit: UnitWithSource) => {
+      if (
+        unit.id !== selectedUnit?.id ||
+        unit.source !== selectedUnit?.source
+      ) {
+        onSelectionChange?.();
+      }
+      setSelectedUnit(unit);
+    },
+    [selectedUnit, onSelectionChange],
+  );
+
   // Handle load
   const handleLoad = useCallback(() => {
-    if (selectedUnit) {
+    if (selectedUnit && !isLoadingUnit) {
       onLoadUnit(selectedUnit, selectedUnit.source);
     }
-  }, [selectedUnit, onLoadUnit]);
+  }, [selectedUnit, onLoadUnit, isLoadingUnit]);
 
   // Handle double-click to load immediately
   const handleDoubleClick = useCallback(
@@ -299,14 +343,49 @@ export function UnitLoadDialog({
   return (
     <ModalOverlay
       isOpen={isOpen}
+      ariaLabelledBy={titleId}
       onClose={onCancel}
       className="mx-4 flex max-h-[80vh] w-full max-w-6xl flex-col"
     >
       {/* Header */}
       <div className={cs.dialog.header}>
-        <h3 className={cs.dialog.headerTitle}>Load Unit from Library</h3>
+        <h3 id={titleId} className={cs.dialog.headerTitle}>
+          {onCreateBlankUnit ? 'Add unit' : 'Load Unit from Library'}
+        </h3>
         <DialogCloseButton onClose={onCancel} />
       </div>
+
+      {onCreateBlankUnit && (
+        <div className="bg-surface-raised border-border-theme-subtle flex shrink-0 flex-wrap items-center justify-between gap-3 border-b p-4">
+          <div>
+            <button
+              type="button"
+              onClick={onCreateBlankUnit}
+              className={`${cs.dialog.btnPrimary} min-h-11`}
+            >
+              New blank unit
+            </button>
+            <p className="text-text-theme-secondary mt-2 text-sm">
+              50-ton Inner Sphere BattleMech. Change settings in the editor.
+            </p>
+          </div>
+          {onConfigureNewUnit && (
+            <button
+              type="button"
+              onClick={onConfigureNewUnit}
+              className={`${cs.dialog.btnGhost} min-h-11`}
+            >
+              Choose starting settings
+            </button>
+          )}
+        </div>
+      )}
+      {onCreateBlankUnit && (
+        <p className="text-text-theme-secondary shrink-0 px-4 pt-3 text-sm">
+          Or start from a catalog unit. Official units and saved designs open as
+          editable copies.
+        </p>
+      )}
 
       {/* Search and filters */}
       <UnitSearchFilters
@@ -322,13 +401,25 @@ export function UnitLoadDialog({
 
       {/* Unit table */}
       <div className="min-h-0 flex-1 overflow-auto">
-        <UnitTableState
-          filteredUnits={filteredUnits}
-          handleDoubleClick={handleDoubleClick}
-          isLoading={isLoading}
-          selectedUnit={selectedUnit}
-          setSelectedUnit={setSelectedUnit}
-        />
+        {loadError ? (
+          <div className="space-y-3 p-4" role="alert">
+            <p>{loadError}</p>
+            <button
+              className={cs.dialog.btnPrimary}
+              onClick={() => setRetryCount((count) => count + 1)}
+            >
+              Retry loading library
+            </button>
+          </div>
+        ) : (
+          <UnitTableState
+            filteredUnits={filteredUnits}
+            handleDoubleClick={handleDoubleClick}
+            isLoading={isLoading}
+            selectedUnit={selectedUnit}
+            setSelectedUnit={handleSelection}
+          />
+        )}
       </div>
 
       {/* Footer */}
@@ -343,10 +434,11 @@ export function UnitLoadDialog({
           </button>
           <button
             onClick={handleLoad}
-            disabled={!selectedUnit}
+            disabled={!selectedUnit || isLoadingUnit}
+            aria-busy={isLoadingUnit}
             className={cs.dialog.btnPrimary}
           >
-            Load Unit
+            {isLoadingUnit ? 'Loading Unit…' : 'Load Unit'}
           </button>
         </div>
       </div>

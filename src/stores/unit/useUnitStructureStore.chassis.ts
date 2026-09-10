@@ -10,7 +10,13 @@ import type {
   QuadVeeMode,
 } from '@/types/construction/MechConfigurationSystem';
 
-import { MechConfiguration } from '@/types/construction/MechConfigurationSystem';
+import { MechLocation } from '@/types/construction';
+import { CockpitType } from '@/types/construction/CockpitType';
+import { GyroType } from '@/types/construction/GyroType';
+import {
+  MechConfiguration,
+  getLocationsForConfig,
+} from '@/types/construction/MechConfigurationSystem';
 
 import type { UnitSliceSetFn } from './unitSliceTypes';
 
@@ -42,6 +48,18 @@ export function createChassisActions(set: UnitSliceSetFn): ChassisActions {
 
         return {
           tonnage,
+          cockpitType:
+            tonnage > 100
+              ? CockpitType.SUPER_HEAVY
+              : state.cockpitType === CockpitType.SUPER_HEAVY
+                ? CockpitType.STANDARD
+                : state.cockpitType,
+          gyroType:
+            tonnage > 100
+              ? GyroType.SUPERHEAVY
+              : state.gyroType === GyroType.SUPERHEAVY
+                ? GyroType.STANDARD
+                : state.gyroType,
           engineRating,
           equipment,
           isModified: true,
@@ -50,10 +68,23 @@ export function createChassisActions(set: UnitSliceSetFn): ChassisActions {
       }),
 
     setConfiguration: (configuration) =>
-      set({
-        configuration,
-        isModified: true,
-        lastModifiedAt: Date.now(),
+      set((state) => {
+        const locations = new Set(getLocationsForConfig(configuration));
+        const armorAllocation = { ...state.armorAllocation };
+        for (const location of getLocationsForConfig(state.configuration)) {
+          if (!locations.has(location)) armorAllocation[location] = 0;
+        }
+        return {
+          configuration,
+          armorAllocation,
+          equipment: state.equipment.map((item) =>
+            item.location && !locations.has(item.location as MechLocation)
+              ? { ...item, location: undefined, slots: [] }
+              : item,
+          ),
+          isModified: true,
+          lastModifiedAt: Date.now(),
+        };
       }),
 
     setIsOmni: (isOmni) =>

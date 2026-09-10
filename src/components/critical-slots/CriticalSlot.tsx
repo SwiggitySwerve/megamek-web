@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
+
 export interface CriticalSlotData {
   id: string;
   index: number;
@@ -43,10 +45,10 @@ export function CriticalSlot({
 
   return (
     <div
-      className={`critical-slot relative min-h-[88px] rounded-lg border-2 bg-gray-50 transition-colors dark:bg-gray-800 ${
+      className={`critical-slot bg-surface-base relative min-h-[88px] rounded-lg border-2 transition-colors ${
         isHighlighted
           ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-          : 'border-gray-200 dark:border-gray-700'
+          : 'border-border-theme'
       } ${className}`.trim()}
       onClick={handleTap}
       role="button"
@@ -60,7 +62,7 @@ export function CriticalSlot({
       }}
     >
       {/* Slot number */}
-      <div className="absolute top-1 left-2 text-xs text-gray-400 dark:text-gray-500">
+      <div className="text-text-theme-muted absolute top-1 left-2 text-xs">
         #{slot.index + 1}
       </div>
 
@@ -78,30 +80,22 @@ export function CriticalSlot({
               />
             ) : (
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30">
-                <svg
-                  className="h-6 w-6 text-blue-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+                <AppIcon
+                  name="impact"
+                  size="toolbar"
+                  className="text-blue-500"
                   aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 10V3L4 14h7v7l9-11h-7z"
-                  />
-                </svg>
+                />
               </div>
             )}
           </div>
 
           {/* Equipment name */}
           <div className="px-2 text-center">
-            <p className="line-clamp-2 text-xs font-medium text-gray-900 dark:text-white">
+            <p className="text-text-theme-primary line-clamp-2 text-xs font-medium">
               {slot.equipment.name}
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+            <p className="text-text-theme-muted text-xs">
               {slot.equipment.type}
             </p>
           </div>
@@ -111,23 +105,15 @@ export function CriticalSlot({
             <button
               type="button"
               onClick={handleRemove}
-              className="absolute top-1 right-1 flex min-h-[32px] min-w-[32px] items-center justify-center rounded-full bg-red-500 p-1 transition-colors hover:bg-red-600"
+              className="absolute top-1 right-1 flex min-h-11 min-w-11 items-center justify-center rounded-full bg-red-500 p-1 transition-colors hover:bg-red-600"
               aria-label={`Remove ${slot.equipment.name} from slot ${slot.index + 1}`}
             >
-              <svg
-                className="h-4 w-4 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+              <AppIcon
+                name="close"
+                size="inline"
+                className="text-text-theme-primary"
                 aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
+              />
             </button>
           )}
         </>
@@ -135,23 +121,15 @@ export function CriticalSlot({
         <>
           {/* Empty slot state */}
           <div className="flex h-full flex-col items-center justify-center px-2 py-4">
-            <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
-              <svg
-                className="h-6 w-6 text-gray-400 dark:text-gray-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+            <div className="border-border-theme-strong mb-2 flex h-12 w-12 items-center justify-center rounded-lg border-2 border-dashed">
+              <AppIcon
+                name="add"
+                size="toolbar"
+                className="text-text-theme-muted"
                 aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
+              />
             </div>
-            <p className="text-center text-xs text-gray-500 dark:text-gray-400">
+            <p className="text-text-theme-muted text-center text-xs">
               {onAssign ? 'Tap to assign' : 'Empty slot'}
             </p>
           </div>

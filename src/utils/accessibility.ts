@@ -177,13 +177,13 @@ export function createKeyboardClickHandler(
  * Provides visible focus rings that meet WCAG 2.1 AA requirements.
  */
 export const FOCUS_RING_CLASSES =
-  'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900';
+  'focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-surface-base';
 
 /**
  * Inset focus ring variant (for elements where offset would break layout).
  */
 export const FOCUS_RING_INSET_CLASSES =
-  'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset';
+  'focus:outline-none focus:ring-2 focus:ring-accent focus:ring-inset';
 
 /**
  * Screen-reader-only utility class string.

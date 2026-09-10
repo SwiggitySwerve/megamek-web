@@ -8,6 +8,7 @@
 import React, { useCallback } from 'react';
 
 import { Button } from '@/components/ui/Button';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { ITimelineFilters } from '@/hooks/audit';
 import { EventCategory } from '@/types/events';
 
@@ -172,11 +173,11 @@ export function TimelineFilters({
                 onClick={() => handleCategoryChange(undefined)}
                 className="hover:text-text-theme-primary"
               >
-                <svg
+                <SvgIcon
+                  size="inline"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  strokeWidth={2}
                   stroke="currentColor"
                   className="h-3 w-3"
                 >
@@ -185,7 +186,7 @@ export function TimelineFilters({
                     strokeLinejoin="round"
                     d="M6 18L18 6M6 6l12 12"
                   />
-                </svg>
+                </SvgIcon>
               </button>
             </span>
           )}
@@ -197,11 +198,11 @@ export function TimelineFilters({
                 onClick={handleRootEventsToggle}
                 className="hover:text-text-theme-primary"
               >
-                <svg
+                <SvgIcon
+                  size="inline"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  strokeWidth={2}
                   stroke="currentColor"
                   className="h-3 w-3"
                 >
@@ -210,7 +211,7 @@ export function TimelineFilters({
                     strokeLinejoin="round"
                     d="M6 18L18 6M6 6l12 12"
                   />
-                </svg>
+                </SvgIcon>
               </button>
             </span>
           )}

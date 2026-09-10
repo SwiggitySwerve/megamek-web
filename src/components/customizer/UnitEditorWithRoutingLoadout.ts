@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type {
   AvailableLocation,
@@ -6,20 +6,23 @@ import type {
 } from '@/components/customizer/equipment/GlobalLoadoutTray';
 import type { IMountedEquipmentInstance } from '@/types/equipment/MountedEquipment';
 
-import { LOCATION_SLOT_COUNTS, MechLocation } from '@/types/construction';
+import { MechLocation } from '@/types/construction';
+import { EngineType } from '@/types/construction/EngineType';
+import { GyroType } from '@/types/construction/GyroType';
 import {
-  EngineType,
-  getEngineDefinition,
-} from '@/types/construction/EngineType';
-import { GyroType, getGyroDefinition } from '@/types/construction/GyroType';
+  MechConfiguration,
+  getLocationsForConfig,
+} from '@/types/construction/MechConfigurationSystem';
 import { EquipmentCategory } from '@/types/equipment';
 import { isValidLocationForEquipment } from '@/types/equipment/EquipmentPlacement';
 import { JUMP_JETS } from '@/types/equipment/MiscEquipmentTypes';
+import { hasAssignedCriticalSlots } from '@/utils/construction/slotOperations/placement';
+import { getAvailableSlotIndices } from '@/utils/construction/slotOperations/queries';
+import { findContiguousSlotStarts } from '@/utils/construction/slotOperations/topology';
 import {
   getWeaponById,
   isDirectFireWeaponById,
 } from '@/utils/equipment/weapons/utilities';
-import { logger } from '@/utils/logger';
 
 const JUMP_JET_IDS = new Set(JUMP_JETS.map((jj) => jj.id));
 
@@ -34,14 +37,9 @@ const LOCATION_LABELS: Partial<Record<MechLocation, string>> = {
   [MechLocation.RIGHT_LEG]: 'Right Leg',
 };
 
-interface FixedSlotContext {
-  engineType: EngineType;
-  gyroType: GyroType;
-}
-
-type FixedSlotResolver = (context: FixedSlotContext) => number[];
-
 interface UseUnitEditorLoadoutOptions {
+  unitId: string;
+  configuration?: MechConfiguration;
   equipment: readonly IMountedEquipmentInstance[];
   engineType: EngineType;
   gyroType: GyroType;
@@ -67,146 +65,6 @@ interface UseUnitEditorLoadoutResult {
   getAvailableLocationsForEquipment: (
     equipmentInstanceId: string,
   ) => AvailableLocation[];
-}
-
-function getCenterTorsoFixedSlots({
-  engineType,
-  gyroType,
-}: FixedSlotContext): number[] {
-  const fixed: number[] = [];
-  const engineDef = getEngineDefinition(engineType);
-  const gyroDef = getGyroDefinition(gyroType);
-  const engineSlots = engineDef?.ctSlots ?? 6;
-  const gyroSlots = gyroDef?.criticalSlots ?? 4;
-
-  for (let i = 0; i < Math.min(3, engineSlots); i++) {
-    fixed.push(i);
-  }
-  for (let i = 0; i < gyroSlots; i++) {
-    fixed.push(3 + i);
-  }
-  for (let i = 3; i < engineSlots; i++) {
-    fixed.push(3 + gyroSlots + (i - 3));
-  }
-
-  return fixed;
-}
-
-function getSideTorsoFixedSlots({ engineType }: FixedSlotContext): number[] {
-  const engineDef = getEngineDefinition(engineType);
-  const sideTorsoSlots = engineDef?.sideTorsoSlots ?? 0;
-  const fixed: number[] = [];
-
-  for (let i = 0; i < sideTorsoSlots; i++) {
-    fixed.push(i);
-  }
-
-  return fixed;
-}
-
-function fixedSlots(...slots: number[]): FixedSlotResolver {
-  return () => slots;
-}
-
-const FIXED_SLOT_RESOLVERS: Partial<Record<MechLocation, FixedSlotResolver>> = {
-  [MechLocation.HEAD]: fixedSlots(0, 1, 2, 4, 5),
-  [MechLocation.CENTER_TORSO]: getCenterTorsoFixedSlots,
-  [MechLocation.LEFT_ARM]: fixedSlots(0, 1, 2, 3),
-  [MechLocation.RIGHT_ARM]: fixedSlots(0, 1, 2, 3),
-  [MechLocation.LEFT_LEG]: fixedSlots(0, 1, 2, 3),
-  [MechLocation.RIGHT_LEG]: fixedSlots(0, 1, 2, 3),
-  [MechLocation.LEFT_TORSO]: getSideTorsoFixedSlots,
-  [MechLocation.RIGHT_TORSO]: getSideTorsoFixedSlots,
-};
-
-function getFixedSlotIndices(
-  location: MechLocation,
-  engineType: EngineType,
-  gyroType: GyroType,
-): Set<number> {
-  const resolver = FIXED_SLOT_RESOLVERS[location];
-  const fixedSlotsForLocation = resolver?.({ engineType, gyroType }) ?? [];
-  return new Set(fixedSlotsForLocation);
-}
-
-function getUsedSlotIndices(
-  equipment: readonly IMountedEquipmentInstance[],
-  location: MechLocation,
-): Set<number> {
-  const usedSlotIndices = new Set<number>();
-
-  for (const eq of equipment) {
-    if (eq.location === location && eq.slots) {
-      for (const slot of eq.slots) {
-        usedSlotIndices.add(slot);
-      }
-    }
-  }
-
-  return usedSlotIndices;
-}
-
-function countAvailableSlots(
-  totalSlots: number,
-  fixedSlots: ReadonlySet<number>,
-  usedSlots: ReadonlySet<number>,
-): number {
-  let available = 0;
-  for (let i = 0; i < totalSlots; i++) {
-    if (!fixedSlots.has(i) && !usedSlots.has(i)) {
-      available++;
-    }
-  }
-  return available;
-}
-
-function getMaxContiguousSlots(
-  totalSlots: number,
-  fixedSlots: ReadonlySet<number>,
-  usedSlots: ReadonlySet<number>,
-): number {
-  let maxContiguous = 0;
-  let currentContiguous = 0;
-
-  for (let i = 0; i < totalSlots; i++) {
-    if (!fixedSlots.has(i) && !usedSlots.has(i)) {
-      currentContiguous++;
-      maxContiguous = Math.max(maxContiguous, currentContiguous);
-    } else {
-      currentContiguous = 0;
-    }
-  }
-
-  return maxContiguous;
-}
-
-function findFirstContiguousSlots(
-  totalSlots: number,
-  slotsNeeded: number,
-  fixedSlots: ReadonlySet<number>,
-  usedSlots: ReadonlySet<number>,
-): number[] | null {
-  for (let start = 0; start <= totalSlots - slotsNeeded; start++) {
-    let canFit = true;
-
-    for (let i = 0; i < slotsNeeded; i++) {
-      const slotIdx = start + i;
-      if (fixedSlots.has(slotIdx) || usedSlots.has(slotIdx)) {
-        canFit = false;
-        break;
-      }
-    }
-
-    if (canFit) {
-      const slots: number[] = [];
-      for (let i = 0; i < slotsNeeded; i++) {
-        slots.push(start + i);
-      }
-      return slots;
-    }
-  }
-
-  return null;
 }
 
 function toLoadoutEquipmentItem(
@@ -237,7 +95,7 @@ function toLoadoutEquipmentItem(
             long: weapon.ranges.long,
           }
         : undefined,
-    isAllocated: !!item.location,
+    isAllocated: hasAssignedCriticalSlots(item),
     location: item.location,
     isRemovable: item.isRemovable,
     isOmniPodMounted: item.isOmniPodMounted,
@@ -246,6 +104,8 @@ function toLoadoutEquipmentItem(
 }
 
 export function useUnitEditorLoadout({
+  unitId,
+  configuration = MechConfiguration.BIPED,
   equipment,
   engineType,
   gyroType,
@@ -257,6 +117,18 @@ export function useUnitEditorLoadout({
   const [selectedEquipmentId, setSelectedEquipmentId] = useState<string | null>(
     null,
   );
+
+  useEffect(() => {
+    setSelectedEquipmentId(null);
+  }, [unitId]);
+
+  useEffect(() => {
+    if (
+      selectedEquipmentId &&
+      !equipment.some((item) => item.instanceId === selectedEquipmentId)
+    )
+      setSelectedEquipmentId(null);
+  }, [equipment, selectedEquipmentId]);
 
   const loadoutEquipment = useMemo(
     () => equipment.map((item) => toLoadoutEquipmentItem(item)),
@@ -286,95 +158,80 @@ export function useUnitEditorLoadout({
   );
 
   const getAvailableLocationsForEquipment = useCallback(
-    (equipmentInstanceId: string): AvailableLocation[] => {
-      const item = equipment.find((e) => e.instanceId === equipmentInstanceId);
-      if (!item) {
-        return [];
-      }
-
-      const slotsNeeded = item.criticalSlots;
-      const locations: AvailableLocation[] = [];
-
-      const allLocations = Object.values(MechLocation) as MechLocation[];
-      for (const location of allLocations) {
-        if (!isValidLocationForEquipment(item.equipmentId, location)) {
-          locations.push({
-            location,
-            label: LOCATION_LABELS[location] ?? location,
-            availableSlots: 0,
-            canFit: false,
-          });
-          continue;
-        }
-
-        const totalSlots = LOCATION_SLOT_COUNTS[location] || 0;
-        const fixedSlots = getFixedSlotIndices(location, engineType, gyroType);
-        const usedSlotIndices = getUsedSlotIndices(equipment, location);
-        const availableSlots = countAvailableSlots(
-          totalSlots,
-          fixedSlots,
-          usedSlotIndices,
+    (instanceId: string): AvailableLocation[] => {
+      const item = equipment.find(
+        (candidate) => candidate.instanceId === instanceId,
+      );
+      if (!item) return [];
+      return getLocationsForConfig(configuration).map((location) => {
+        const free = getAvailableSlotIndices(
+          location,
+          engineType,
+          gyroType,
+          equipment.filter((candidate) => candidate.instanceId !== instanceId),
         );
-        const maxContiguous = getMaxContiguousSlots(
-          totalSlots,
-          fixedSlots,
-          usedSlotIndices,
-        );
-
-        locations.push({
+        const allowed = isValidLocationForEquipment(item.equipmentId, location);
+        const fits =
+          item.criticalSlots === 0 ||
+          findContiguousSlotStarts(free, item.criticalSlots).length > 0;
+        return {
           location,
           label: LOCATION_LABELS[location] ?? location,
-          availableSlots,
-          canFit: maxContiguous >= slotsNeeded,
-        });
-      }
-
-      return locations;
+          availableSlots: free.length,
+          canFit: allowed && fits,
+          reason: !allowed
+            ? 'Equipment is restricted from this location.'
+            : !fits
+              ? `Needs ${item.criticalSlots} contiguous slots; ${free.length} free.`
+              : undefined,
+        };
+      });
     },
-    [equipment, engineType, gyroType],
+    [equipment, engineType, gyroType, configuration],
   );
 
-  const availableLocations = useMemo(() => {
-    if (!selectedEquipmentId) {
-      return [];
-    }
-    return getAvailableLocationsForEquipment(selectedEquipmentId);
-  }, [selectedEquipmentId, getAvailableLocationsForEquipment]);
+  const availableLocations = useMemo(
+    () =>
+      selectedEquipmentId
+        ? getAvailableLocationsForEquipment(selectedEquipmentId)
+        : [],
+    [selectedEquipmentId, getAvailableLocationsForEquipment],
+  );
 
   const handleQuickAssign = useCallback(
     (instanceId: string, location: MechLocation) => {
-      const item = equipment.find((e) => e.instanceId === instanceId);
-      if (!item) {
-        return;
-      }
-
-      if (!isValidLocationForEquipment(item.equipmentId, location)) {
-        logger.warn(
-          `Cannot assign ${item.name} to ${location} - location restriction`,
-        );
-        return;
-      }
-
-      const totalSlots = LOCATION_SLOT_COUNTS[location] || 0;
-      const slotsNeeded = item.criticalSlots;
-      const fixedSlots = getFixedSlotIndices(location, engineType, gyroType);
-      const usedSlotIndices = getUsedSlotIndices(equipment, location);
-      const slots = findFirstContiguousSlots(
-        totalSlots,
-        slotsNeeded,
-        fixedSlots,
-        usedSlotIndices,
+      const item = equipment.find(
+        (candidate) => candidate.instanceId === instanceId,
       );
-
-      if (slots) {
-        updateEquipmentLocation(instanceId, location, slots);
-        setSelectedEquipmentId(null);
+      if (
+        !item ||
+        !getAvailableLocationsForEquipment(instanceId).some(
+          (candidate) => candidate.location === location && candidate.canFit,
+        )
+      )
         return;
-      }
-
-      logger.warn('No contiguous slots found for quick assign');
+      const free = getAvailableSlotIndices(
+        location,
+        engineType,
+        gyroType,
+        equipment.filter((candidate) => candidate.instanceId !== instanceId),
+      );
+      const start = findContiguousSlotStarts(free, item.criticalSlots)[0];
+      if (item.criticalSlots > 0 && start === undefined) return;
+      updateEquipmentLocation(
+        instanceId,
+        location,
+        Array.from({ length: item.criticalSlots }, (_, index) => start + index),
+      );
+      setSelectedEquipmentId(null);
     },
-    [equipment, engineType, gyroType, updateEquipmentLocation],
+    [
+      equipment,
+      engineType,
+      gyroType,
+      getAvailableLocationsForEquipment,
+      updateEquipmentLocation,
+    ],
   );
 
   return {

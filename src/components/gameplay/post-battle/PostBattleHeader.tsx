@@ -77,7 +77,7 @@ export function PostBattleHeader({
       ? 'text-emerald-400'
       : outcomeKey === 'defeat'
         ? 'text-red-500'
-        : 'text-gray-300';
+        : 'text-text-theme-secondary';
 
   return (
     <div

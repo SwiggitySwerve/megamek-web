@@ -10,6 +10,7 @@ import React, { useMemo } from 'react';
 
 import { Badge } from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { IStateDiff } from '@/hooks/audit';
 
 import { NestedDiff } from './NestedDiff';
@@ -33,7 +34,8 @@ export interface StateDiffPanelProps {
 
 function LoadingSpinner(): React.ReactElement {
   return (
-    <svg
+    <SvgIcon
+      size="feature"
       className="text-accent h-8 w-8 animate-spin"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
@@ -52,17 +54,17 @@ function LoadingSpinner(): React.ReactElement {
         fill="currentColor"
         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
       />
-    </svg>
+    </SvgIcon>
   );
 }
 
 function EmptyStateIcon(): React.ReactElement {
   return (
-    <svg
+    <SvgIcon
+      size="hero"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
-      strokeWidth={1}
       stroke="currentColor"
       className="mb-4 h-16 w-16 opacity-30"
     >
@@ -71,7 +73,7 @@ function EmptyStateIcon(): React.ReactElement {
         strokeLinejoin="round"
         d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"
       />
-    </svg>
+    </SvgIcon>
   );
 }
 
@@ -241,11 +243,11 @@ export function StateDiffPanel({
           </div>
         ) : (
           <div className="text-text-theme-muted flex flex-col items-center justify-center py-12">
-            <svg
+            <SvgIcon
+              size="feature"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
-              strokeWidth={1}
               stroke="currentColor"
               className="mb-3 h-10 w-10 opacity-50"
             >
@@ -254,7 +256,7 @@ export function StateDiffPanel({
                 strokeLinejoin="round"
                 d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
               />
-            </svg>
+            </SvgIcon>
             <p className="text-sm font-medium">States are Identical</p>
             <p className="mt-1 text-xs">
               No differences found between sequence #{diff.sequenceA} and #

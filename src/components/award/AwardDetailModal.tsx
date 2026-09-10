@@ -7,6 +7,7 @@
 import React, { useEffect, useCallback } from 'react';
 
 import { Badge, Button } from '@/components/ui';
+import { AppIcon } from '@/components/ui/AppIcon';
 import { useAwardStore } from '@/stores/useAwardStore';
 import {
   IAward,
@@ -121,19 +122,7 @@ export function AwardDetailModal({
           onClick={onClose}
           className="text-text-theme-muted hover:text-text-theme-primary hover:bg-surface-raised absolute top-4 right-4 z-10 flex h-8 w-8 items-center justify-center rounded-full transition-colors"
         >
-          <svg
-            className="h-5 w-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          <AppIcon name="close" size="control" />
         </button>
 
         {/* Header with Icon */}
@@ -147,23 +136,7 @@ export function AwardDetailModal({
           <div
             className={`relative inline-flex h-24 w-24 items-center justify-center rounded-full border-2 ${rarityBg} ${isEarned ? `${rarityColor} ring-4 ${rarityRing}` : 'text-text-theme-muted opacity-50'} mb-4 text-3xl font-bold uppercase`}
           >
-            {isEarned ? (
-              iconLetter
-            ) : (
-              <svg
-                className="h-10 w-10"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                />
-              </svg>
-            )}
+            {isEarned ? iconLetter : <AppIcon name="lock" size="feature" />}
           </div>
 
           {/* Award Name */}
@@ -243,19 +216,11 @@ export function AwardDetailModal({
             <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-4">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/20">
-                  <svg
-                    className="h-5 w-5 text-emerald-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
+                  <AppIcon
+                    name="check"
+                    size="control"
+                    className="text-emerald-400"
+                  />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-emerald-400">
@@ -279,19 +244,11 @@ export function AwardDetailModal({
             <div className="bg-surface-deep border-border-theme-subtle rounded-lg border p-4">
               <div className="flex items-center gap-3">
                 <div className="bg-surface-raised flex h-10 w-10 items-center justify-center rounded-full">
-                  <svg
-                    className="text-text-theme-muted h-5 w-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
+                  <AppIcon
+                    name="info"
+                    size="control"
+                    className="text-text-theme-muted"
+                  />
                 </div>
                 <div>
                   <p className="text-text-theme-secondary text-sm font-medium">

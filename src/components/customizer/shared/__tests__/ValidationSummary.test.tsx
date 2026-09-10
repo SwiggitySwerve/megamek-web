@@ -109,8 +109,11 @@ describe('ValidationSummary', () => {
 
       render(<ValidationSummary validation={validation} />);
 
-      expect(screen.getByText('Valid')).toBeInTheDocument();
-      expect(screen.getByText('✓')).toBeInTheDocument();
+      expect(screen.getByRole('status')).toBeInTheDocument();
+      expect(screen.getByRole('status')).toHaveTextContent('Valid');
+      expect(
+        screen.getByRole('status').querySelector('[data-icon-name="check"]'),
+      ).toBeInTheDocument();
     });
   });
 
@@ -129,7 +132,9 @@ describe('ValidationSummary', () => {
 
       render(<ValidationSummary validation={validation} />);
 
-      expect(screen.getByText('❌')).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /\d+ errors?, show issues/ }),
+      ).toBeInTheDocument();
       expect(screen.getByText('3')).toBeInTheDocument();
     });
 
@@ -149,7 +154,7 @@ describe('ValidationSummary', () => {
 
       // Should show the error message
       expect(screen.getByText('Weight exceeds maximum')).toBeInTheDocument();
-      expect(screen.getByText('Validation Issues')).toBeInTheDocument();
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
     });
   });
 
@@ -167,7 +172,9 @@ describe('ValidationSummary', () => {
 
       render(<ValidationSummary validation={validation} />);
 
-      expect(screen.getByText('⚠️')).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /\d+ warnings?, show issues/ }),
+      ).toBeInTheDocument();
       expect(screen.getByText('2')).toBeInTheDocument();
     });
 
@@ -207,7 +214,9 @@ describe('ValidationSummary', () => {
 
       render(<ValidationSummary validation={validation} />);
 
-      expect(screen.getByText('ℹ️')).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /\d+ infos?, show issues/ }),
+      ).toBeInTheDocument();
       expect(screen.getByText('1')).toBeInTheDocument();
     });
   });
@@ -229,12 +238,18 @@ describe('ValidationSummary', () => {
 
       render(<ValidationSummary validation={validation} />);
 
-      expect(screen.getByText('❌')).toBeInTheDocument();
-      expect(screen.getByText('⚠️')).toBeInTheDocument();
-      expect(screen.getByText('ℹ️')).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /\d+ errors?, show issues/ }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /\d+ warnings?, show issues/ }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /\d+ infos?, show issues/ }),
+      ).toBeInTheDocument();
     });
 
-    it('should sort by severity (errors first)', () => {
+    it('keeps error and warning messages in their own severity groups', () => {
       const validation = createValidationState({
         status: 'error',
         isValid: false,
@@ -245,18 +260,23 @@ describe('ValidationSummary', () => {
           [{ message: 'This is a warning' }],
         ),
       });
-
       render(<ValidationSummary validation={validation} />);
-      fireEvent.click(screen.getByRole('button'));
-
-      // Error should appear before warning in the list
-      const errorElement = screen.getByText('This is an error');
-      const warningElement = screen.getByText('This is a warning');
-
+      const errors = screen.getByRole('button', {
+        name: /1 error, show issues/,
+      });
+      const warnings = screen.getByRole('button', {
+        name: /1 warning, show issues/,
+      });
       expect(
-        errorElement.compareDocumentPosition(warningElement) &
+        errors.compareDocumentPosition(warnings) &
           Node.DOCUMENT_POSITION_FOLLOWING,
       ).toBeTruthy();
+      fireEvent.click(errors);
+      expect(screen.getByText('This is an error')).toBeInTheDocument();
+      expect(screen.queryByText('This is a warning')).not.toBeInTheDocument();
+      fireEvent.click(warnings);
+      expect(screen.getByText('This is a warning')).toBeInTheDocument();
+      expect(screen.queryByText('This is an error')).not.toBeInTheDocument();
     });
   });
 

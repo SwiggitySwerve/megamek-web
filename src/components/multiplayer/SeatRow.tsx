@@ -49,7 +49,7 @@ function getSeatStatus(seat: IMatchSeat, isAi: boolean): ISeatStatus {
   if (!seat.occupant) {
     return {
       label: 'Empty',
-      badgeClassName: 'bg-slate-700 text-slate-300',
+      badgeClassName: 'bg-surface-raised text-text-theme-secondary',
     };
   }
 
@@ -136,7 +136,7 @@ function SeatActions({
       {props.canHostManage && isAi && (
         <button
           type="button"
-          className="rounded bg-slate-600 px-2 py-1 text-xs font-medium text-white hover:bg-slate-500"
+          className="bg-surface-raised hover:bg-surface-raised rounded px-2 py-1 text-xs font-medium text-white"
           onClick={props.onSetHuman}
         >
           Set human
@@ -164,13 +164,13 @@ export function SeatRow(props: ISeatRowProps): React.ReactElement {
   return (
     <div
       data-slot-id={seat.slotId}
-      className="flex items-center justify-between gap-3 rounded-md border border-slate-700 bg-slate-800/50 px-3 py-2"
+      className="border-border-theme bg-surface-base/50 flex items-center justify-between gap-3 rounded-md border px-3 py-2"
     >
       <div className="flex flex-col">
-        <span className="text-xs tracking-wide text-slate-400 uppercase">
+        <span className="text-text-theme-secondary text-xs tracking-wide uppercase">
           {seat.side} #{seat.seatNumber}
         </span>
-        <span className="text-sm font-medium text-slate-100">
+        <span className="text-text-theme-primary text-sm font-medium">
           {seat.occupant?.displayName ?? (isAi ? 'AI bot' : '—')}
         </span>
       </div>

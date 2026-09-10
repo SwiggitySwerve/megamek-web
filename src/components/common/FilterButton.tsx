@@ -88,7 +88,7 @@ export function FilterButton({
 
   // Inactive styles (same for all variants)
   const inactiveStyles =
-    'bg-surface-raised/60 text-text-theme-secondary hover:text-white hover:bg-surface-raised';
+    'bg-surface-raised/60 text-text-theme-secondary hover:text-text-theme-primary hover:bg-surface-raised';
 
   // Active styles by variant
   const getActiveStyles = (): string => {
@@ -106,7 +106,7 @@ export function FilterButton({
 
       case 'control':
         // Accent theme for control buttons
-        return 'bg-accent text-white ring-1 ring-accent shadow-sm';
+        return 'bg-accent text-on-accent ring-1 ring-accent shadow-sm';
 
       default:
         return `${activeBg || 'bg-accent/20'} ${activeText || 'text-accent'}`;

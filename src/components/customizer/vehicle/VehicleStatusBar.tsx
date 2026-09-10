@@ -325,7 +325,7 @@ export function VehicleStatusBar({
       <div
         className={`bg-surface-base border-border-theme-subtle flex items-center justify-between gap-2 border-b px-3 py-1.5 text-xs ${className}`}
       >
-        <span className="font-medium text-white">
+        <span className="text-text-theme-primary font-medium">
           {tonnage}t {viewState.motionLabel}
         </span>
         <span className="text-text-theme-secondary">
@@ -338,7 +338,10 @@ export function VehicleStatusBar({
           {weightBreakdown.remaining.toFixed(1)}t free
         </span>
         {bvBreakdown && (
-          <span className="font-medium text-white" title="Battle Value">
+          <span
+            className="text-text-theme-primary font-medium"
+            title="Battle Value"
+          >
             BV {bvBreakdown.final}
           </span>
         )}

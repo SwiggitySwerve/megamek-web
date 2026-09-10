@@ -87,7 +87,7 @@ export function ForceCard({
       className={`border-${accentColor}-500/30`}
       data-testid={`${side}-force-card`}
     >
-      <div className="border-b border-gray-700 p-4">
+      <div className="border-border-theme border-b p-4">
         <div className="flex items-center justify-between">
           <h3
             className={`font-medium ${isOpponent ? 'text-red-400' : 'text-cyan-400'}`}
@@ -173,7 +173,7 @@ export function BVComparison({
         <h3 className="text-text-theme-secondary mb-3 text-sm font-medium">
           Force Balance
         </h3>
-        <div className="relative h-4 overflow-hidden rounded-full bg-gray-700">
+        <div className="bg-surface-raised relative h-4 overflow-hidden rounded-full">
           <div
             className="absolute inset-y-0 left-0 bg-cyan-500 transition-all duration-500"
             style={{ width: `${playerPercent}%` }}

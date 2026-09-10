@@ -14,6 +14,7 @@
 
 import React from 'react';
 
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { Facing } from '@/types/gameplay';
 
 export interface FacingPickerProps {
@@ -28,10 +29,25 @@ export interface FacingPickerProps {
 interface FacingButtonProps {
   facing: Facing;
   label: string;
-  arrow: string;
+  arrow:
+    | 'north'
+    | 'northwest'
+    | 'northeast'
+    | 'southwest'
+    | 'southeast'
+    | 'south';
   selected: boolean;
   onClick: () => void;
 }
+
+const FACING_ARROW_PATHS = {
+  north: 'M12 19V5m-5 5 5-5 5 5',
+  northwest: 'M18 18 6 6m0 6V6h6',
+  northeast: 'M6 18 18 6M12 6h6v6',
+  southwest: 'M18 6 6 18m6 0H6v-6',
+  southeast: 'M6 6 18 18h-6m6 0v-6',
+  south: 'M12 5v14m5-5-5 5-5-5',
+} as const;
 
 function FacingButton({
   facing,
@@ -55,7 +71,9 @@ function FacingButton({
       data-testid={`facing-${facing}`}
       className={`${baseClasses} ${stateClasses}`}
     >
-      <span className="text-lg leading-none">{arrow}</span>
+      <SvgIcon size="control" aria-hidden="true">
+        <path d={FACING_ARROW_PATHS[arrow]} />
+      </SvgIcon>
       <span className="text-xs">{label}</span>
     </button>
   );
@@ -81,7 +99,7 @@ export function FacingPicker({
       <FacingButton
         facing={Facing.North}
         label="N"
-        arrow="↑"
+        arrow="north"
         selected={selected === Facing.North}
         onClick={() => onSelect(Facing.North)}
       />
@@ -89,7 +107,7 @@ export function FacingPicker({
       <FacingButton
         facing={Facing.Northwest}
         label="NW"
-        arrow="↖"
+        arrow="northwest"
         selected={selected === Facing.Northwest}
         onClick={() => onSelect(Facing.Northwest)}
       />
@@ -97,14 +115,14 @@ export function FacingPicker({
       <FacingButton
         facing={Facing.Northeast}
         label="NE"
-        arrow="↗"
+        arrow="northeast"
         selected={selected === Facing.Northeast}
         onClick={() => onSelect(Facing.Northeast)}
       />
       <FacingButton
         facing={Facing.Southwest}
         label="SW"
-        arrow="↙"
+        arrow="southwest"
         selected={selected === Facing.Southwest}
         onClick={() => onSelect(Facing.Southwest)}
       />
@@ -112,7 +130,7 @@ export function FacingPicker({
       <FacingButton
         facing={Facing.Southeast}
         label="SE"
-        arrow="↘"
+        arrow="southeast"
         selected={selected === Facing.Southeast}
         onClick={() => onSelect(Facing.Southeast)}
       />
@@ -120,7 +138,7 @@ export function FacingPicker({
       <FacingButton
         facing={Facing.South}
         label="S"
-        arrow="↓"
+        arrow="south"
         selected={selected === Facing.South}
         onClick={() => onSelect(Facing.South)}
       />

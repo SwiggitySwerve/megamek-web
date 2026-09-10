@@ -18,7 +18,7 @@ export function SaveUnitDialogConstructionStatus({
   if (isLoading || isValidating) {
     return (
       <div className="text-text-theme-secondary flex items-center gap-2">
-        <SpinnerIcon className="h-4 w-4 animate-spin" />
+        <SpinnerIcon size="inline" />
         <span className="text-sm">Checking construction readiness...</span>
       </div>
     );

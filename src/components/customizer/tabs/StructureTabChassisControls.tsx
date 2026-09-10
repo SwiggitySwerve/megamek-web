@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
 import { BATTLEMECH_TONNAGE } from '@/services/construction/constructionConstants';
 
 import type {
@@ -41,18 +42,24 @@ export function TonnageControl({
   readonly onChange: (newTonnage: number) => void;
 }): React.ReactElement {
   return (
-    <div className={cs.layout.field}>
-      <label className={cs.text.label}>Tonnage</label>
-      <div className={cs.layout.rowGap}>
+    <div className="grid grid-cols-[minmax(6rem,1fr)_auto_minmax(5rem,0.8fr)] items-center gap-3">
+      <label className={`${cs.text.label} font-medium`} htmlFor="tonnage">
+        Tonnage
+      </label>
+      <div className="flex items-center justify-self-start">
         <button
+          type="button"
           onClick={() => onChange(tonnage - BATTLEMECH_TONNAGE.step)}
           disabled={readOnly || tonnage <= BATTLEMECH_TONNAGE.min}
-          className={cs.button.stepperMd}
+          className={cs.button.stepperLeft}
+          aria-label="Decrease tonnage"
         >
-          -
+          <AppIcon name="remove" size="inline" aria-hidden="true" />{' '}
         </button>
         <input
+          id="tonnage"
           type="number"
+          aria-label="Tonnage"
           value={tonnage}
           onChange={(e) =>
             onChange(parseInt(e.target.value, 10) || BATTLEMECH_TONNAGE.min)
@@ -61,18 +68,24 @@ export function TonnageControl({
           min={BATTLEMECH_TONNAGE.min}
           max={BATTLEMECH_TONNAGE.max}
           step={BATTLEMECH_TONNAGE.step}
-          className={`w-20 ${cs.input.base} text-center ${cs.input.noSpinners}`}
+          className={`w-12 ${cs.input.number} border-y ${cs.input.noSpinners}`}
         />
         <button
+          type="button"
           onClick={() => onChange(tonnage + BATTLEMECH_TONNAGE.step)}
           disabled={readOnly || tonnage >= BATTLEMECH_TONNAGE.max}
-          className={cs.button.stepperMd}
+          className={cs.button.stepperRight}
+          aria-label="Increase tonnage"
         >
-          +
+          {' '}
+          <AppIcon name="add" size="inline" aria-hidden="true" />
         </button>
       </div>
+      <span className={`${cs.text.secondary} text-right tabular-nums`}>
+        {BATTLEMECH_TONNAGE.min}–{BATTLEMECH_TONNAGE.max}t
+      </span>
       {isSuperheavy && (
-        <div className="mt-1 rounded border border-amber-600/40 bg-amber-900/20 px-2 py-1 text-xs text-amber-300">
+        <div className="col-span-full rounded border border-amber-600/40 bg-amber-900/20 px-3 py-2 text-xs text-amber-300">
           Superheavy: double-slot crits, SUPERHEAVY cockpit/gyro required
         </div>
       )}
@@ -102,40 +115,62 @@ export function SystemSelects({
   readonly cockpitType: string;
 } & ChassisSelectHandlers): React.ReactElement {
   return (
-    <>
-      <LabeledSelect
-        label="Engine"
-        meta={`${calculations.engineWeight}t / ${calculations.engineSlots} slots`}
-        disabled={readOnly}
-        value={engineType}
-        options={filteredOptions.engines}
-        onChange={handleEngineTypeChange}
-      />
-      <LabeledSelect
-        label="Gyro"
-        meta={`${calculations.gyroWeight}t / ${calculations.gyroSlots} slots`}
-        disabled={readOnly}
-        value={gyroType}
-        options={filteredOptions.gyros}
-        onChange={handleGyroTypeChange}
-      />
-      <LabeledSelect
-        label="Structure"
-        meta={`${calculations.structureWeight}t / ${calculations.structureSlots} slots`}
-        disabled={readOnly}
-        value={internalStructureType}
-        options={filteredOptions.structures}
-        onChange={handleStructureTypeChange}
-      />
-      <LabeledSelect
-        label="Cockpit"
-        meta={`${calculations.cockpitWeight}t / ${calculations.cockpitSlots} slots`}
-        disabled={readOnly}
-        value={cockpitType}
-        options={filteredOptions.cockpits}
-        onChange={handleCockpitTypeChange}
-      />
-    </>
+    <div className="space-y-4">
+      <section aria-labelledby="drive-system-heading">
+        <div className="mb-2 flex items-baseline justify-between gap-3">
+          <h4
+            id="drive-system-heading"
+            className="text-text-theme-secondary text-xs font-semibold tracking-[0.16em] uppercase"
+          >
+            Drive system
+          </h4>
+          <span className={cs.text.secondary}>Engine output and balance</span>
+        </div>
+        <LabeledSelect
+          label="Engine"
+          meta={`${calculations.engineWeight}t / ${calculations.engineSlots} slots`}
+          disabled={readOnly}
+          value={engineType}
+          options={filteredOptions.engines}
+          onChange={handleEngineTypeChange}
+        />
+      </section>
+
+      <section aria-labelledby="chassis-systems-heading">
+        <h4
+          id="chassis-systems-heading"
+          className="text-text-theme-secondary mb-2 text-xs font-semibold tracking-[0.16em] uppercase"
+        >
+          Chassis systems
+        </h4>
+        <div className="space-y-2">
+          <LabeledSelect
+            label="Gyro"
+            meta={`${calculations.gyroWeight}t / ${calculations.gyroSlots} slots`}
+            disabled={readOnly}
+            value={gyroType}
+            options={filteredOptions.gyros}
+            onChange={handleGyroTypeChange}
+          />
+          <LabeledSelect
+            label="Structure"
+            meta={`${calculations.structureWeight}t / ${calculations.structureSlots} slots`}
+            disabled={readOnly}
+            value={internalStructureType}
+            options={filteredOptions.structures}
+            onChange={handleStructureTypeChange}
+          />
+          <LabeledSelect
+            label="Cockpit"
+            meta={`${calculations.cockpitWeight}t / ${calculations.cockpitSlots} slots`}
+            disabled={readOnly}
+            value={cockpitType}
+            options={filteredOptions.cockpits}
+            onChange={handleCockpitTypeChange}
+          />
+        </div>
+      </section>
+    </div>
   );
 }
 
@@ -154,15 +189,18 @@ function LabeledSelect({
   readonly options: readonly StructureOption[];
   readonly onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }): React.ReactElement {
+  const id = `${label.toLowerCase()}-select`;
+
   return (
-    <div className={cs.layout.field}>
-      <div className={cs.layout.rowBetween}>
-        <label className={cs.text.label}>{label}</label>
-        <span className={cs.text.secondary}>{meta}</span>
-      </div>
+    <div className="grid grid-cols-[minmax(6rem,1fr)_minmax(0,1.35fr)_minmax(5rem,0.8fr)] items-center gap-3">
+      <label className={`${cs.text.label} font-medium`} htmlFor={id}>
+        {label}
+      </label>
       <select
-        className={cs.select.compact}
+        id={id}
+        className={cs.select.full}
         disabled={disabled}
+        aria-label={label}
         value={value}
         onChange={onChange}
       >
@@ -172,6 +210,9 @@ function LabeledSelect({
           </option>
         ))}
       </select>
+      <span className={`${cs.text.secondary} text-right tabular-nums`}>
+        {meta}
+      </span>
     </div>
   );
 }
@@ -184,18 +225,18 @@ export function EngineRatingSummary({
   readonly isAtMaxEngineRating: boolean;
 }): React.ReactElement {
   return (
-    <div className={cs.layout.divider}>
-      <div className={cs.layout.rowBetween}>
-        <span className={`text-sm ${cs.text.label}`}>Engine Rating</span>
-        <span
-          className={`text-sm ${isAtMaxEngineRating ? 'text-accent font-bold' : cs.text.valueHighlight}`}
-        >
-          {engineRating}
-          {isAtMaxEngineRating && ' (MAX)'}
-        </span>
-      </div>
+    <div className="border-border-theme-subtle grid grid-cols-[minmax(6rem,1fr)_minmax(0,1.35fr)_minmax(5rem,0.8fr)] items-center gap-3 border-t pt-3">
+      <span className={`text-sm ${cs.text.label}`}>Engine Rating</span>
+      <span
+        className={`text-sm tabular-nums ${isAtMaxEngineRating ? 'text-accent font-bold' : cs.text.valueHighlight}`}
+      >
+        {engineRating}
+      </span>
+      <span className={`${cs.text.secondary} text-right`}>
+        {isAtMaxEngineRating ? 'Maximum' : 'Derived'}
+      </span>
       {isAtMaxEngineRating && (
-        <p className="text-accent mt-1 text-xs">
+        <p className="text-accent col-span-full text-xs">
           Warning: Maximum engine rating reached. Cannot increase Walk MP
           further.
         </p>

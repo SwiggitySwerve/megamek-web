@@ -18,6 +18,7 @@ import {
   Textarea,
   Badge,
 } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { useForceSelector } from '@/stores/useForceStore';
 import { ForceType } from '@/types/force';
 
@@ -305,7 +306,8 @@ export default function CreateForcePage(): React.ReactElement {
             isLoading={isLoading}
             data-testid="submit-force-btn"
             leftIcon={
-              <svg
+              <SvgIcon
+                size="inline"
                 className="h-4 w-4"
                 fill="none"
                 stroke="currentColor"
@@ -317,7 +319,7 @@ export default function CreateForcePage(): React.ReactElement {
                   strokeWidth={2}
                   d="M12 4v16m8-8H4"
                 />
-              </svg>
+              </SvgIcon>
             }
           >
             Create Force

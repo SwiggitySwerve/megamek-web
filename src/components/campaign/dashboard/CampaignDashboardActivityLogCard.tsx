@@ -64,14 +64,17 @@ export function ActivityLogCard({
       }
     >
       {notice ? (
-        <p data-testid={notice.testid} className="text-xs text-slate-400">
+        <p
+          data-testid={notice.testid}
+          className="text-text-theme-secondary text-xs"
+        >
           {notice.message}
         </p>
       ) : (
         <>
           <nav
             role="tablist"
-            className="-mb-px flex flex-wrap gap-1 border-b border-slate-700"
+            className="border-border-theme -mb-px flex flex-wrap gap-1 border-b"
           >
             {ACTIVITY_LOG_CATEGORIES.map((cat) => (
               <button
@@ -84,7 +87,7 @@ export function ActivityLogCard({
                 className={
                   cat === activeCategory
                     ? 'border-b-2 border-sky-400 px-2 py-1 text-xs text-sky-200'
-                    : 'px-2 py-1 text-xs text-slate-400 hover:text-slate-200'
+                    : 'text-text-theme-secondary hover:text-text-theme-primary px-2 py-1 text-xs'
                 }
               >
                 {CATEGORY_LABELS[cat]}
@@ -94,12 +97,12 @@ export function ActivityLogCard({
           {filtered.length === 0 ? (
             <p
               data-testid="activity-log-empty"
-              className="mt-3 text-xs text-slate-500"
+              className="text-text-theme-muted mt-3 text-xs"
             >
               No {CATEGORY_LABELS[activeCategory].toLowerCase()} entries yet.
             </p>
           ) : (
-            <ul className="mt-3 space-y-1 text-xs text-slate-200">
+            <ul className="text-text-theme-primary mt-3 space-y-1 text-xs">
               {filtered.map((entry) => (
                 <li
                   key={entry.id}
@@ -107,7 +110,7 @@ export function ActivityLogCard({
                   className="flex justify-between gap-2"
                 >
                   <span className="truncate">{entry.message}</span>
-                  <span className="shrink-0 font-mono text-slate-500">
+                  <span className="text-text-theme-muted shrink-0 font-mono">
                     Day {entry.campaignDay}
                   </span>
                 </li>

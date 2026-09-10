@@ -176,7 +176,7 @@ export function SkirmishLauncher({
                 ? 'Launching…'
                 : 'Launch the skirmish'
           }
-          className="rounded-lg bg-cyan-600 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-cyan-500 disabled:cursor-not-allowed disabled:bg-gray-600 disabled:text-gray-400"
+          className="bg-accent text-on-accent hover:bg-accent-hover disabled:bg-surface-raised disabled:text-text-theme-secondary rounded-lg px-6 py-3 text-sm font-medium transition-colors disabled:cursor-not-allowed"
           data-testid="launch-skirmish-btn"
           aria-disabled={validationError !== null || isLaunching}
         >

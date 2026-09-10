@@ -154,12 +154,12 @@ export const AnalysisBugs: React.FC<IAnalysisBugsProps> = ({
 
   return (
     <main
-      className="min-h-screen bg-gray-50 p-4 md:p-6 lg:p-8 dark:bg-gray-900"
+      className="bg-surface-deep min-h-screen p-4 md:p-6 lg:p-8"
       data-testid="analysis-bugs-page"
       data-campaign-id={campaignId}
     >
       <h1
-        className="mb-6 text-2xl font-bold text-gray-900 md:text-3xl dark:text-gray-100"
+        className="text-text-theme-primary mb-6 text-2xl font-bold md:text-3xl"
         data-testid="page-title"
       >
         Analysis & Bugs

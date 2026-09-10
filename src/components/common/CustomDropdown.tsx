@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 
+import { SvgIcon } from '@/components/ui/SvgIcon';
+
 interface CustomDropdownProps {
   value: string;
   options: string[];
@@ -49,7 +51,8 @@ export default function CustomDropdown({
         className={`bg-surface-raised border-border-theme text-text-theme-primary flex w-full items-center justify-between rounded border px-2 py-1 text-sm ${disabled ? 'cursor-not-allowed opacity-50' : 'hover:border-border-theme-strong cursor-pointer'} ${isOpen ? 'border-accent' : ''} ${className} `}
       >
         <span>{value || placeholder}</span>
-        <svg
+        <SvgIcon
+          size="control"
           className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
           stroke="currentColor"
@@ -61,7 +64,7 @@ export default function CustomDropdown({
             strokeWidth={2}
             d="M19 9l-7 7-7-7"
           />
-        </svg>
+        </SvgIcon>
       </button>
 
       {isOpen && (
@@ -73,7 +76,7 @@ export default function CustomDropdown({
               onClick={() => handleSelect(option)}
               className={`w-full px-3 py-2 text-left text-sm ${
                 option === value
-                  ? 'bg-accent text-white'
+                  ? 'bg-accent text-on-accent'
                   : 'text-text-theme-primary hover:bg-surface-raised'
               } `}
             >

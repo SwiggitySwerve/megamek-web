@@ -14,6 +14,8 @@ import React from 'react';
 
 import type { IVehicleBVBreakdown } from '@/utils/construction/vehicle/vehicleBV';
 
+import { AppIcon } from '@/components/ui/AppIcon';
+
 import { BreakdownDialogShell } from '../tabs/BreakdownDialogShell';
 
 // =============================================================================
@@ -56,7 +58,7 @@ function BreakdownRow({
 }: BreakdownRowProps): React.ReactElement {
   return (
     <div
-      className={`flex items-baseline justify-between ${highlight ? 'font-semibold text-white' : 'text-text-theme-secondary'}`}
+      className={`flex items-baseline justify-between ${highlight ? 'text-text-theme-primary font-semibold' : 'text-text-theme-secondary'}`}
     >
       <span>
         {label}
@@ -82,24 +84,25 @@ export function VehicleBVBreakdownDialog({
   return (
     <BreakdownDialogShell
       onClose={onClose}
-      overlayClassName="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+      overlayClassName="fixed inset-0 z-50 flex items-center justify-center bg-surface-deep/80"
       panelClassName="bg-surface-base border-border-theme-subtle max-h-[80vh] w-[480px] max-w-[90vw] overflow-auto rounded-lg border p-6 shadow-2xl"
       labelledBy="vehicle-bv-dialog-title"
     >
       <div className="mb-4 flex items-start justify-between">
         <h2
           id="vehicle-bv-dialog-title"
-          className="text-xl font-semibold text-white"
+          className="text-text-theme-primary text-xl font-semibold"
         >
           Battle Value Breakdown
         </h2>
         <button
           type="button"
           onClick={onClose}
-          className="text-text-theme-secondary hover:text-white"
+          className="text-text-theme-secondary hover:text-text-theme-primary"
           aria-label="Close"
         >
-          ×
+          {' '}
+          <AppIcon name="close" size="control" aria-hidden="true" />
         </button>
       </div>
 

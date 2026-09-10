@@ -129,7 +129,7 @@ function PilotRow({
               className={
                 i < wounds
                   ? 'inline-block h-2 w-2 rounded-full bg-red-500'
-                  : 'inline-block h-2 w-2 rounded-full bg-slate-600/60'
+                  : 'bg-surface-raised/60 inline-block h-2 w-2 rounded-full'
               }
             />
           ))}

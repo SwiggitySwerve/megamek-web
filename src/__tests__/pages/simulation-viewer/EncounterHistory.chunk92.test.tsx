@@ -300,15 +300,15 @@ function selectBattle(battleId: string) {
 
 describe('EncounterHistory', () => {
   // ===========================================================================
-  // 7. Dark Mode Tests (5 tests)
+  // 7. Semantic Palette Tests (5 tests)
   // ===========================================================================
-  describe('Dark Mode Tests', () => {
-    it('section headings have dark mode text color', () => {
+  describe('Semantic Palette Tests', () => {
+    it('use the semantic primary-text token for section headings', () => {
       renderPage();
       selectBattle('b1');
       const headings = screen.getAllByTestId('section-heading');
       headings.forEach((h) => {
-        expect(h).toHaveClass('dark:text-gray-200');
+        expect(h).toHaveClass('text-text-theme-primary');
       });
     });
   });

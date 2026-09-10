@@ -23,6 +23,8 @@ import type {
   IMatchPausedInfo,
 } from '@/hooks/useMultiplayerSession';
 
+import { AppIcon } from '@/components/ui/AppIcon';
+
 // =============================================================================
 // Loading state
 // =============================================================================
@@ -36,16 +38,16 @@ export function MatchLoadingState(): React.ReactElement {
   return (
     <section
       data-testid="networked-game-loading"
-      className="flex min-h-[480px] flex-col items-center justify-center rounded-lg border border-slate-700 bg-slate-900/40 p-8 text-center"
+      className="border-border-theme bg-surface-deep/40 flex min-h-[480px] flex-col items-center justify-center rounded-lg border p-8 text-center"
     >
       <div
         className="h-8 w-8 animate-spin rounded-full border-2 border-emerald-500 border-t-transparent"
         aria-hidden="true"
       />
-      <h2 className="mt-4 text-lg font-semibold text-slate-200">
+      <h2 className="text-text-theme-primary mt-4 text-lg font-semibold">
         Loading match…
       </h2>
-      <p className="mt-1 text-xs text-slate-400">
+      <p className="text-text-theme-secondary mt-1 text-xs">
         Rebuilding the board from the match event stream.
       </p>
     </section>
@@ -150,10 +152,10 @@ export function MatchPauseOverlay({
       role="alertdialog"
       aria-modal="true"
       aria-label="Match paused"
-      className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-950/80 p-8 text-center backdrop-blur-sm"
+      className="bg-surface-deep/80 absolute inset-0 z-20 flex flex-col items-center justify-center p-8 text-center backdrop-blur-sm"
     >
       <h2 className="text-xl font-semibold text-amber-200">Match paused</h2>
-      <p className="mt-2 max-w-sm text-sm text-slate-300">
+      <p className="text-text-theme-secondary mt-2 max-w-sm text-sm">
         Waiting for{' '}
         <span className="font-mono text-amber-300">{slotLabel}</span> to
         reconnect.
@@ -164,7 +166,7 @@ export function MatchPauseOverlay({
       >
         {seconds}s
       </p>
-      <p className="mt-2 text-xs text-slate-500">
+      <p className="text-text-theme-muted mt-2 text-xs">
         Controls are disabled until the match resumes.
       </p>
     </div>
@@ -190,10 +192,12 @@ export function MatchClosedPanel({
   return (
     <section
       data-testid="match-closed-panel"
-      className="flex min-h-[480px] flex-col items-center justify-center rounded-lg border border-slate-700 bg-slate-900/60 p-8 text-center"
+      className="border-border-theme bg-surface-deep/60 flex min-h-[480px] flex-col items-center justify-center rounded-lg border p-8 text-center"
     >
-      <h2 className="text-xl font-semibold text-slate-100">Match ended</h2>
-      <p className="mt-2 max-w-sm text-sm text-slate-400">
+      <h2 className="text-text-theme-primary text-xl font-semibold">
+        Match ended
+      </h2>
+      <p className="text-text-theme-secondary mt-2 max-w-sm text-sm">
         {info.reason ?? 'The match has been closed by the server.'}
         {info.code ? ` (${info.code})` : ''}
       </p>
@@ -245,7 +249,7 @@ export function IntentErrorToast({
         aria-label="Dismiss"
         className="shrink-0 rounded px-1 text-rose-300 hover:text-rose-100"
       >
-        ✕
+        <AppIcon name="close" size="inline" />
       </button>
     </div>
   );

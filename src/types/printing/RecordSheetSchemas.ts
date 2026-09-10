@@ -15,6 +15,7 @@ export const RecordSheetHeaderSchema = z.object({
   rulesLevel: z.string(),
   era: z.string(),
   role: z.string().optional(),
+  engineDescription: z.string().optional(),
   battleValue: z.number(),
   cost: z.number(),
 });

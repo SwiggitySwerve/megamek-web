@@ -144,17 +144,23 @@ describe('AnomalyAlertCard', () => {
   describe('Severity Icons', () => {
     it('shows 🔴 for critical', () => {
       render(<AnomalyAlertCard anomaly={criticalAnomaly} />);
-      expect(screen.getByTestId('anomaly-icon')).toHaveTextContent('🔴');
+      expect(
+        screen.getByTestId('anomaly-icon').firstElementChild,
+      ).toHaveAttribute('data-icon-name', 'warning');
     });
 
     it('shows ⚠️ for warning', () => {
       render(<AnomalyAlertCard anomaly={warningAnomaly} />);
-      expect(screen.getByTestId('anomaly-icon')).toHaveTextContent('⚠️');
+      expect(
+        screen.getByTestId('anomaly-icon').firstElementChild,
+      ).toHaveAttribute('data-icon-name', 'warning');
     });
 
     it('shows ℹ️ for info', () => {
       render(<AnomalyAlertCard anomaly={infoAnomaly} />);
-      expect(screen.getByTestId('anomaly-icon')).toHaveTextContent('ℹ️');
+      expect(
+        screen.getByTestId('anomaly-icon').firstElementChild,
+      ).toHaveAttribute('data-icon-name', 'info');
     });
 
     it('icon has aria-hidden for screen readers', () => {

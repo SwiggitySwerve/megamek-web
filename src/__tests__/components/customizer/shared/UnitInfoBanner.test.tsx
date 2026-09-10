@@ -60,7 +60,10 @@ describe('UnitInfoBanner', () => {
     };
     render(<UnitInfoBanner stats={stats} validation={mockValidation} />);
 
-    expect(screen.getByText('✓')).toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveTextContent('Valid');
+    expect(
+      screen.getByRole('status').querySelector('[data-icon-name="check"]'),
+    ).toBeInTheDocument();
   });
 
   it('should display movement stats as separate boxes', () => {
@@ -149,5 +152,32 @@ describe('UnitInfoBanner', () => {
     render(<UnitInfoBanner stats={stats} />);
 
     expect(screen.getByText('-')).toBeInTheDocument();
+  });
+  it('keeps all ten metrics and conditional Run+ in the compact workbench', () => {
+    const { rerender } = render(
+      <UnitInfoBanner stats={createStats()} compact />,
+    );
+    for (const name of [
+      'Walk',
+      'Run',
+      'Jump',
+      'Engine',
+      'Tonnage',
+      'Weight',
+      'Slots',
+      'Armor',
+      'Heat',
+      'BV',
+    ]) {
+      expect(screen.getByText(name)).toBeInTheDocument();
+    }
+    expect(screen.queryByText('Atlas AS7-D')).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /Show readouts/ }),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText('Run+')).not.toBeInTheDocument();
+    rerender(<UnitInfoBanner stats={createStats({ maxRunMP: 8 })} compact />);
+    expect(screen.getByText('Run+')).toBeInTheDocument();
+    expect(screen.getByText('8')).toBeInTheDocument();
   });
 });

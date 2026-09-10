@@ -97,7 +97,7 @@ describe('Accessibility Tests', () => {
       render(<KPICard label="Win Rate" value="80%" onClick={() => {}} />);
       const card = screen.getByRole('button');
       expect(card.className).toContain('focus:ring-2');
-      expect(card.className).toContain('focus:ring-blue-500');
+      expect(card.className).toContain('focus:ring-accent');
     });
   });
 
@@ -298,9 +298,9 @@ describe('Accessibility Utilities', () => {
   describe('CSS class constants', () => {
     it('FOCUS_RING_CLASSES should include ring and offset', () => {
       expect(FOCUS_RING_CLASSES).toContain('focus:ring-2');
-      expect(FOCUS_RING_CLASSES).toContain('focus:ring-blue-500');
+      expect(FOCUS_RING_CLASSES).toContain('focus:ring-accent');
       expect(FOCUS_RING_CLASSES).toContain('focus:ring-offset-2');
-      expect(FOCUS_RING_CLASSES).toContain('dark:focus:ring-offset-gray-900');
+      expect(FOCUS_RING_CLASSES).toContain('focus:ring-offset-surface-base');
     });
 
     it('FOCUS_RING_INSET_CLASSES should use inset variant', () => {

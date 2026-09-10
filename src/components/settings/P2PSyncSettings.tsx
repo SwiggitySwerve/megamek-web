@@ -6,6 +6,7 @@ import {
   RoomCodeDialog,
 } from '@/components/sync';
 import { Input } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { ConnectionState } from '@/lib/p2p/types';
 import {
   useSyncRoomSelector,
@@ -83,7 +84,7 @@ export function P2PSyncSettings({
             <button
               onClick={() => setShowRoomDialog(true)}
               disabled={isConnecting}
-              className="bg-accent hover:bg-accent-hover rounded-md px-3 py-1.5 text-sm font-medium text-white transition-colors disabled:opacity-50"
+              className="bg-accent hover:bg-accent-hover text-on-accent rounded-md px-3 py-1.5 text-sm font-medium transition-colors disabled:opacity-50"
             >
               {isConnecting ? 'Connecting...' : 'Connect'}
             </button>
@@ -94,7 +95,8 @@ export function P2PSyncSettings({
       {error && (
         <div className="flex items-center justify-between rounded-lg border border-red-500/30 bg-red-500/10 p-3">
           <div className="flex items-center gap-2 text-red-400">
-            <svg
+            <SvgIcon
+              size="control"
               className="h-5 w-5"
               fill="none"
               stroke="currentColor"
@@ -106,14 +108,15 @@ export function P2PSyncSettings({
                 strokeWidth={2}
                 d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
-            </svg>
+            </SvgIcon>
             <span className="text-sm">{error}</span>
           </div>
           <button
             onClick={clearError}
             className="text-red-400 hover:text-red-300"
           >
-            <svg
+            <SvgIcon
+              size="inline"
               className="h-4 w-4"
               fill="none"
               stroke="currentColor"
@@ -125,7 +128,7 @@ export function P2PSyncSettings({
                 strokeWidth={2}
                 d="M6 18L18 6M6 6l12 12"
               />
-            </svg>
+            </SvgIcon>
           </button>
         </div>
       )}
@@ -148,7 +151,7 @@ export function P2PSyncSettings({
           <button
             onClick={handleSavePeerName}
             disabled={!peerNameInput.trim() || peerNameInput === localPeerName}
-            className="bg-accent hover:bg-accent-hover rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            className="bg-accent hover:bg-accent-hover text-on-accent rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
           >
             Save
           </button>
@@ -198,7 +201,8 @@ export function P2PSyncSettings({
         </ul>
         <div className="mt-3 rounded-lg border border-amber-500/20 bg-amber-500/10 p-3">
           <div className="flex items-start gap-2">
-            <svg
+            <SvgIcon
+              size="inline"
               className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-400"
               fill="none"
               stroke="currentColor"
@@ -210,7 +214,7 @@ export function P2PSyncSettings({
                 strokeWidth={2}
                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
               />
-            </svg>
+            </SvgIcon>
             <span className="text-xs text-amber-200">
               P2P sync uses WebRTC for direct peer connections. All data stays
               between you and your peers - no server storage.

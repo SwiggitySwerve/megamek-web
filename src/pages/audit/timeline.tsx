@@ -15,6 +15,7 @@ import {
   TimelineDatePicker,
 } from '@/components/audit/timeline';
 import { PageLayout, Card } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { useEventTimeline } from '@/hooks/audit';
 import { IBaseEvent, EventCategory } from '@/types/events';
 
@@ -91,7 +92,8 @@ export default function AuditTimelinePage(): React.ReactElement {
             className="bg-surface-raised border-border-theme-subtle hover:border-border-theme rounded-lg border p-2 transition-colors disabled:opacity-50"
             aria-label="Refresh timeline"
           >
-            <svg
+            <SvgIcon
+              size="control"
               className={`text-text-theme-secondary h-5 w-5 ${isLoading ? 'animate-spin' : ''}`}
               fill="none"
               stroke="currentColor"
@@ -103,7 +105,7 @@ export default function AuditTimelinePage(): React.ReactElement {
                 strokeWidth={2}
                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
               />
-            </svg>
+            </SvgIcon>
           </button>
         </div>
       }
@@ -133,7 +135,8 @@ export default function AuditTimelinePage(): React.ReactElement {
               }`}
             >
               <span className="flex items-center gap-2">
-                <svg
+                <SvgIcon
+                  size="inline"
                   className="h-4 w-4"
                   fill="none"
                   stroke="currentColor"
@@ -145,7 +148,7 @@ export default function AuditTimelinePage(): React.ReactElement {
                     strokeWidth={2}
                     d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
                   />
-                </svg>
+                </SvgIcon>
                 Advanced
               </span>
             </button>
@@ -209,7 +212,8 @@ export default function AuditTimelinePage(): React.ReactElement {
       {error && (
         <Card className="mb-6 border-red-500/50 bg-red-500/10">
           <div className="flex items-center gap-3 text-red-400">
-            <svg
+            <SvgIcon
+              size="control"
               className="h-5 w-5"
               fill="none"
               stroke="currentColor"
@@ -221,7 +225,7 @@ export default function AuditTimelinePage(): React.ReactElement {
                 strokeWidth={2}
                 d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
-            </svg>
+            </SvgIcon>
             <span>{error.message}</span>
           </div>
         </Card>
@@ -232,7 +236,8 @@ export default function AuditTimelinePage(): React.ReactElement {
         <div className="text-text-theme-secondary">
           {isLoading ? (
             <span className="flex items-center gap-2">
-              <svg
+              <SvgIcon
+                size="inline"
                 className="h-4 w-4 animate-spin"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -250,7 +255,7 @@ export default function AuditTimelinePage(): React.ReactElement {
                   fill="currentColor"
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 />
-              </svg>
+              </SvgIcon>
               Loading...
             </span>
           ) : (

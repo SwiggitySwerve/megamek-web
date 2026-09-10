@@ -1,4 +1,5 @@
 import { Button, Card, Input, Select } from '@/components/ui';
+import { AppIcon } from '@/components/ui/AppIcon';
 
 import {
   TECH_BASE_OPTIONS,
@@ -82,7 +83,12 @@ export function UnitsFilters({
             onClick={onToggleAdvancedFilters}
             className={`flex-1 text-xs ${hasAdvancedFilters ? 'text-accent' : ''}`}
           >
-            {showAdvancedFilters ? '▼' : '▶'} Filters
+            {showAdvancedFilters ? (
+              <AppIcon name="chevron-down" size="inline" aria-hidden="true" />
+            ) : (
+              <AppIcon name="chevron-right" size="inline" aria-hidden="true" />
+            )}{' '}
+            Filters
             {hasAdvancedFilters && ' •'}
           </Button>
           <Button

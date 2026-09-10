@@ -7,6 +7,8 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 
+import { SvgIcon } from '@/components/ui/SvgIcon';
+
 // =============================================================================
 // Types
 // =============================================================================
@@ -96,11 +98,11 @@ export function TimelineSearch({
     <div className={`relative ${className}`}>
       {/* Search Icon */}
       <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-        <svg
+        <SvgIcon
+          size="control"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
-          strokeWidth={1.5}
           stroke="currentColor"
           className="text-text-theme-muted h-5 w-5"
         >
@@ -109,7 +111,7 @@ export function TimelineSearch({
             strokeLinejoin="round"
             d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
           />
-        </svg>
+        </SvgIcon>
       </div>
 
       {/* Input Field */}
@@ -130,11 +132,11 @@ export function TimelineSearch({
           onClick={handleClear}
           className="text-text-theme-muted hover:text-text-theme-primary absolute inset-y-0 right-0 flex items-center pr-3 transition-colors"
         >
-          <svg
+          <SvgIcon
+            size="control"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            strokeWidth={1.5}
             stroke="currentColor"
             className="h-5 w-5"
           >
@@ -143,7 +145,7 @@ export function TimelineSearch({
               strokeLinejoin="round"
               d="M6 18L18 6M6 6l12 12"
             />
-          </svg>
+          </SvgIcon>
         </button>
       )}
 

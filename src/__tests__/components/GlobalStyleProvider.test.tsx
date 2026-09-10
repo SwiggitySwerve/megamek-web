@@ -44,6 +44,10 @@ describe('GlobalStyleProvider', () => {
       );
 
       expect(document.body.classList.contains('theme-default')).toBe(true);
+      expect(document.documentElement.classList.contains('theme-default')).toBe(
+        true,
+      );
+      expect(document.documentElement.dataset.colorScheme).toBe('dark');
     });
 
     it('should apply neon theme class when uiTheme is neon', () => {
@@ -87,6 +91,25 @@ describe('GlobalStyleProvider', () => {
       );
 
       expect(document.body.classList.contains('theme-minimal')).toBe(true);
+    });
+
+    it('clears palette classes when previewing, saving and reverting', () => {
+      render(
+        <GlobalStyleProvider>
+          <div>Test</div>
+        </GlobalStyleProvider>,
+      );
+      act(() => useAppearanceStore.getState().setDraftUITheme('petrol'));
+      expect(document.body.className).toBe('theme-petrol');
+      act(() => useAppearanceStore.getState().saveUITheme());
+      act(() => useAppearanceStore.getState().setDraftUITheme('field'));
+      expect(document.body.className).toBe('theme-field');
+      act(() => useAppearanceStore.getState().revertAppearance());
+      expect(document.body.className).toBe('theme-petrol');
+      act(() => useAppearanceStore.getState().setUITheme('slate'));
+      expect(document.body.className).toBe('theme-slate');
+      act(() => useAppearanceStore.getState().resetToDefaults());
+      expect(document.body.className).toBe('theme-default');
     });
 
     it('should remove old theme class when switching themes', () => {

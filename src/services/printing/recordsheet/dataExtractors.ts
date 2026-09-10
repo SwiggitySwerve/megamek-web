@@ -40,6 +40,7 @@ export interface IRecordSheetHeaderSource {
   readonly techBase: string;
   readonly rulesLevel: string;
   readonly era: string;
+  readonly role?: string;
   readonly battleValue?: number;
   readonly cost?: number;
 }
@@ -55,6 +56,7 @@ export function extractHeader(
     techBase: unit.techBase,
     rulesLevel: unit.rulesLevel,
     era: unit.era,
+    role: unit.role,
     battleValue: unit.battleValue || 0,
     cost: unit.cost || 0,
   };

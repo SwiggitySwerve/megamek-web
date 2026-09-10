@@ -43,7 +43,7 @@ export function QuickSimLoadingState(): React.ReactElement {
   return (
     <PageLayout title="Quick Sim" backLink="/gameplay/encounters">
       <div
-        className="rounded-lg border border-slate-700 bg-slate-900/30 p-6 text-sm text-slate-400"
+        className="border-border-theme bg-surface-deep/30 text-text-theme-secondary rounded-lg border p-6 text-sm"
         data-testid="quick-sim-page-loading"
       >
         Loading encounter...
@@ -56,7 +56,7 @@ export function QuickSimNotFoundState(): React.ReactElement {
   return (
     <PageLayout title="Quick Sim" backLink="/gameplay/encounters">
       <div
-        className="rounded-lg border border-slate-700 bg-slate-900/30 p-6 text-sm text-slate-400"
+        className="border-border-theme bg-surface-deep/30 text-text-theme-secondary rounded-lg border p-6 text-sm"
         data-testid="quick-sim-page-not-found"
       >
         Encounter not found.
@@ -104,7 +104,7 @@ export function QuickSimControls({
 }): React.ReactElement {
   return (
     <section
-      className="mb-6 flex flex-wrap items-end justify-between gap-3 rounded-lg border border-slate-700 bg-slate-900/40 p-4"
+      className="border-border-theme bg-surface-deep/40 mb-6 flex flex-wrap items-end justify-between gap-3 rounded-lg border p-4"
       aria-labelledby="qsim-controls-heading"
     >
       <fieldset
@@ -113,7 +113,7 @@ export function QuickSimControls({
       >
         <legend
           id="qsim-controls-heading"
-          className="text-sm font-semibold text-slate-300"
+          className="text-text-theme-secondary text-sm font-semibold"
         >
           Batch size
         </legend>
@@ -126,7 +126,7 @@ export function QuickSimControls({
               className={
                 runCount === count
                   ? 'rounded-md border border-blue-500 bg-blue-600/30 px-4 py-2 text-sm font-medium text-white'
-                  : 'rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700'
+                  : 'border-border-theme bg-surface-base text-text-theme-secondary hover:bg-surface-raised rounded-md border px-4 py-2 text-sm font-medium'
               }
               data-testid={`quick-sim-runs-${count}`}
             >
@@ -183,10 +183,10 @@ export function QuickSimProgress({
 
   return (
     <section
-      className="mb-6 flex flex-col gap-2 rounded-lg border border-slate-700 bg-slate-900/40 p-4"
+      className="border-border-theme bg-surface-deep/40 mb-6 flex flex-col gap-2 rounded-lg border p-4"
       data-testid="quick-sim-progress-surface"
     >
-      <div className="flex items-center justify-between text-sm text-slate-300">
+      <div className="text-text-theme-secondary flex items-center justify-between text-sm">
         <span>
           {runsCompleted} / {totalRuns} runs
         </span>
@@ -198,7 +198,7 @@ export function QuickSimProgress({
         aria-valuemin={0}
         aria-valuemax={totalRuns}
         aria-label="Quick Sim batch progress"
-        className="h-2 overflow-hidden rounded-full bg-slate-800"
+        className="bg-surface-base h-2 overflow-hidden rounded-full"
         data-testid="quick-sim-progress-bar"
       >
         <div
@@ -259,7 +259,7 @@ export function QuickSimResult({
 export function QuickSimPreDispatch(): React.ReactElement {
   return (
     <div
-      className="rounded-lg border border-dashed border-slate-700 bg-slate-900/20 p-8 text-center text-sm text-slate-400"
+      className="border-border-theme bg-surface-deep/20 text-text-theme-secondary rounded-lg border border-dashed p-8 text-center text-sm"
       data-testid="quick-sim-pre-dispatch"
     >
       Choose a batch size and press Start to estimate outcome probabilities.

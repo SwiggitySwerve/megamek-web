@@ -10,9 +10,11 @@ import React, { useState, useMemo } from 'react';
 import type { MechConfigType } from '@/types/construction/MechConfigType';
 
 import { SchematicDiagram } from '@/components/armor/schematic';
+import { AppIcon } from '@/components/ui/AppIcon';
 import {
   ArmorDiagramVariant,
   ArmorDiagramMode,
+  resolveArmorDiagramVariant,
 } from '@/stores/useCustomizerSettingsStore';
 import { MechLocation } from '@/types/construction';
 import {
@@ -52,7 +54,7 @@ export const DIAGRAM_VARIANT_INFO: Record<
     description: VARIANT_DESCRIPTIONS[VARIANT_IDS.STANDARD],
     features: [
       'Realistic mech silhouette',
-      'Solid gradient fills',
+      'Bottom-up capacity fills',
       'Plain bold numbers',
       'Stacked front/rear',
     ],
@@ -73,7 +75,7 @@ export const DIAGRAM_VARIANT_INFO: Record<
     features: [
       'Geometric shapes',
       'LED number display',
-      'Tank-fill gauges',
+      'Scanline capacity fill',
       'Stacked front/rear',
     ],
   },
@@ -82,7 +84,7 @@ export const DIAGRAM_VARIANT_INFO: Record<
     description: VARIANT_DESCRIPTIONS[VARIANT_IDS.CHROMATIC],
     features: [
       'Realistic contour',
-      'Metallic textures',
+      'Beveled capacity fills',
       'Circular badges',
       'Stacked front/rear',
     ],
@@ -152,8 +154,10 @@ export function ArmorDiagramPreview({
     mechConfigType,
   };
 
+  const effectiveVariant = resolveArmorDiagramVariant(variant);
+
   const renderDiagram = () => {
-    switch (variant) {
+    switch (effectiveVariant) {
       case 'clean-tech':
         return <CleanTechDiagram {...diagramProps} />;
       case 'neon-operator':
@@ -169,11 +173,13 @@ export function ArmorDiagramPreview({
     }
   };
 
-  const info = DIAGRAM_VARIANT_INFO[variant];
+  const info = DIAGRAM_VARIANT_INFO[effectiveVariant];
 
   return (
     <div
       className={`${className} ${onClick ? 'cursor-pointer' : ''}`}
+      data-armor-preview={effectiveVariant}
+      data-mech-configuration={mechConfigType}
       onClick={onClick}
     >
       {showLabel && (
@@ -239,17 +245,12 @@ export function ArmorDiagramGridPreview({
             </div>
             {selectedVariant === variant && (
               <div className="bg-accent flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full">
-                <svg
+                <AppIcon
+                  name="check"
+                  size="inline"
                   className="h-3 w-3 text-white"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                  aria-hidden="true"
+                />
               </div>
             )}
           </div>
@@ -372,17 +373,12 @@ export function ArmorDiagramModePreview({
               </div>
               {isSelected && (
                 <div className="bg-accent flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full">
-                  <svg
+                  <AppIcon
+                    name="check"
+                    size="inline"
                     className="h-3 w-3 text-white"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
+                    aria-hidden="true"
+                  />
                 </div>
               )}
             </div>

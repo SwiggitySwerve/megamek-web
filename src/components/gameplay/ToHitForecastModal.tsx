@@ -25,6 +25,7 @@ import React, { useState } from 'react';
 import type { IWeapon } from '@/simulation/ai/types';
 import type { IAttackerState, ITargetState } from '@/types/gameplay';
 
+import { AppIcon } from '@/components/ui/AppIcon';
 import {
   buildToHitForecast,
   expectedHitsTotal,
@@ -106,7 +107,7 @@ function PreviewSubRow({
 }: PreviewSubRowProps): React.ReactElement {
   return (
     <div
-      className="text-text-theme-secondary mt-1 grid grid-cols-3 gap-2 border-t border-dashed border-gray-300 pt-1 text-xs"
+      className="text-text-theme-secondary border-border-theme-subtle mt-1 grid grid-cols-3 gap-2 border-t border-dashed pt-1 text-xs"
       data-testid={`forecast-preview-${weaponId}`}
     >
       <div className="flex flex-col">
@@ -178,7 +179,7 @@ function ForecastRow({
 
   return (
     <li
-      className="bg-surface-base flex flex-col gap-1 rounded border border-gray-200 p-2"
+      className="bg-surface-base border-border-theme-subtle flex flex-col gap-1 rounded border p-2"
       data-testid={`forecast-row-${row.weaponId}`}
       data-expanded={expanded}
     >
@@ -187,7 +188,7 @@ function ForecastRow({
         onClick={() => setExpanded((v) => !v)}
         aria-expanded={expanded}
         aria-controls={`forecast-modifiers-${row.weaponId}`}
-        className="flex items-center justify-between gap-2 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none"
+        className="focus:ring-accent flex items-center justify-between gap-2 rounded focus:ring-2 focus:ring-offset-1 focus:outline-none"
         data-testid={`forecast-row-toggle-${row.weaponId}`}
       >
         <span className="flex items-center gap-1.5">
@@ -195,7 +196,7 @@ function ForecastRow({
             aria-hidden="true"
             className={`inline-block text-xs transition-transform ${expanded ? 'rotate-90' : ''}`}
           >
-            ▶
+            <AppIcon name="chevron-right" size="inline" aria-hidden="true" />
           </span>
           <span className="text-text-theme-primary font-medium">
             {row.weaponName}
@@ -340,7 +341,7 @@ export function ToHitForecastModal({
             />
           ))}
         </ul>
-        <footer className="flex items-center justify-between border-t border-gray-200 pt-3">
+        <footer className="border-border-theme-subtle flex items-center justify-between border-t pt-3">
           <span
             className="text-text-theme-secondary text-sm"
             data-testid="expected-hits-total"
@@ -360,7 +361,7 @@ export function ToHitForecastModal({
             <button
               type="button"
               onClick={onConfirm}
-              className="min-h-[44px] rounded bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+              className="bg-accent text-on-accent hover:bg-accent-hover focus:ring-accent min-h-[44px] rounded px-4 py-2 font-medium focus:ring-2 focus:ring-offset-2 focus:outline-none"
               data-testid="forecast-confirm-button"
             >
               Confirm Fire

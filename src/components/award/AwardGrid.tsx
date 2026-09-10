@@ -8,6 +8,7 @@
 import React, { useMemo, useState } from 'react';
 
 import { Card } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { useAwardStore } from '@/stores/useAwardStore';
 import {
   IAward,
@@ -191,19 +192,12 @@ export function AwardGrid({
         {/* Empty State */}
         {displayAwards.length === 0 && (
           <div className="py-12 text-center">
-            <svg
-              className="text-text-theme-muted mx-auto mb-4 h-16 w-16 opacity-30"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+            <SvgIcon
+              size="hero"
+              className="text-text-theme-muted mx-auto mb-4 opacity-30"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
-              />
-            </svg>
+              <path d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+            </SvgIcon>
             <p className="text-text-theme-muted">No awards to display</p>
           </div>
         )}

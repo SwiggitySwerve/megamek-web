@@ -191,6 +191,11 @@ function parseCustomizerSlugFromPath(
   const path = (asPath ?? browserAsPath())?.split('?')[0] ?? '';
   const segments = path.split('/').filter(Boolean).map(decodePathSegment);
   if (segments[0] !== 'customizer') return null;
+  if (
+    segments.some((segment) => segment.startsWith('[') && segment.endsWith(']'))
+  ) {
+    return null;
+  }
   return segments.slice(1);
 }
 
@@ -223,13 +228,20 @@ export function useCustomizerRouter(
   const router = useRouter();
   const isNavigatingRef = useRef(false);
 
+  const currentBrowserPath = browserAsPath();
+
   // Parse route parameters
   const params = useMemo((): CustomizerRouteParams => {
     // Handle catch-all route: /customizer/[[...slug]]
-    const parsedPathSlug = parseCustomizerSlugFromPath(router.asPath);
+    const parsedPathSlug =
+      parseCustomizerSlugFromPath(router.asPath) ??
+      parseCustomizerSlugFromPath(currentBrowserPath ?? undefined);
     const { slug } = router.query;
     const routeSlug =
-      slug && Array.isArray(slug) ? slug : (parsedPathSlug ?? []);
+      Array.isArray(slug) &&
+      !slug.some((segment) => segment.startsWith('[') && segment.endsWith(']'))
+        ? slug
+        : (parsedPathSlug ?? []);
     const isReady = router.isReady || parsedPathSlug !== null;
 
     if (routeSlug.length === 0) {
@@ -269,7 +281,7 @@ export function useCustomizerRouter(
       isIndex: false,
       isReady,
     };
-  }, [router.asPath, router.query, router.isReady]);
+  }, [router.asPath, router.query, router.isReady, currentBrowserPath]);
 
   // ==========================================================================
   // Navigation Actions

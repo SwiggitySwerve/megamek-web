@@ -2,6 +2,7 @@ import React, { useState, useCallback, memo } from 'react';
 
 import type { TurnoverDepartureEvent } from '@/lib/campaign/dayAdvancement';
 
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { Money } from '@/types/campaign/Money';
 
 interface TurnoverReportPanelProps {
@@ -103,7 +104,8 @@ const DepartureCard = memo(function DepartureCard({
               <div className="text-amber-400">{payout.format()}</div>
             )}
           </div>
-          <svg
+          <SvgIcon
+            size="control"
             className={`text-text-theme-muted h-4 w-4 transition-transform ${expanded ? 'rotate-180' : ''}`}
             fill="none"
             stroke="currentColor"
@@ -115,7 +117,7 @@ const DepartureCard = memo(function DepartureCard({
               strokeWidth={2}
               d="M19 9l-7 7-7-7"
             />
-          </svg>
+          </SvgIcon>
         </div>
       </button>
 
@@ -159,7 +161,8 @@ export const TurnoverReportPanel = memo(function TurnoverReportPanel({
   return (
     <div className="mb-3" data-testid="turnover-report-panel">
       <h4 className="text-text-theme-secondary mb-1 flex items-center gap-2 text-sm font-medium">
-        <svg
+        <SvgIcon
+          size="inline"
           className="h-4 w-4 text-amber-400"
           fill="none"
           stroke="currentColor"
@@ -171,7 +174,7 @@ export const TurnoverReportPanel = memo(function TurnoverReportPanel({
             strokeWidth={2}
             d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
           />
-        </svg>
+        </SvgIcon>
         Personnel Departures ({departures.length})
       </h4>
 

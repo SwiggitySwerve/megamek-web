@@ -55,13 +55,15 @@ function grantRow(
     <li
       key={grant.grantId}
       data-testid={`share-grant-${grant.grantId}`}
-      className="flex items-center justify-between gap-3 rounded border border-slate-700 bg-slate-800/60 px-3 py-2"
+      className="border-border-theme bg-surface-base/60 flex items-center justify-between gap-3 rounded border px-3 py-2"
     >
       <div className="min-w-0">
-        <p className="truncate text-sm text-slate-200">{grant.participantId}</p>
+        <p className="text-text-theme-primary truncate text-sm">
+          {grant.participantId}
+        </p>
         <p
           data-testid={`share-grant-scopes-${grant.grantId}`}
-          className="truncate font-mono text-xs text-slate-400"
+          className="text-text-theme-secondary truncate font-mono text-xs"
         >
           {grant.scopes.join(', ')}
         </p>
@@ -69,7 +71,7 @@ function grantRow(
       {revoked ? (
         <span
           data-testid={`share-grant-revoked-${grant.grantId}`}
-          className="rounded bg-slate-700/60 px-2 py-0.5 text-xs text-slate-300"
+          className="bg-surface-raised/60 text-text-theme-secondary rounded px-2 py-0.5 text-xs"
         >
           revoked
         </span>
@@ -139,13 +141,13 @@ export function CampaignSharePanel(
 
   return (
     <section data-testid="campaign-share-panel" className="mt-4">
-      <h3 className="mb-2 text-xs font-semibold tracking-wide text-slate-400 uppercase">
+      <h3 className="text-text-theme-secondary mb-2 text-xs font-semibold tracking-wide uppercase">
         Shared access
       </h3>
       {grants.length === 0 ? (
         <p
           data-testid="campaign-share-empty"
-          className="text-sm text-slate-500"
+          className="text-text-theme-muted text-sm"
         >
           This campaign has not been shared.
         </p>

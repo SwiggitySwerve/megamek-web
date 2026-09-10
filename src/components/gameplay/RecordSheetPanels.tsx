@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
 import {
   MAX_HEAT,
   HEAT_THRESHOLDS,
@@ -249,7 +250,7 @@ export function SimpleHeatDisplay({
                   <span
                     key={tick.value}
                     aria-hidden="true"
-                    className="pointer-events-none absolute inset-y-0 w-px bg-gray-600/70"
+                    className="bg-surface-raised/70 pointer-events-none absolute inset-y-0 w-px"
                     style={{ left: `${left}%` }}
                     data-testid={`heat-tick-${tick.value}`}
                   />
@@ -384,7 +385,7 @@ export function PilotStatus({
           data-testid="pilot-unconscious-banner"
           role="alert"
         >
-          <span aria-hidden="true">⚠</span>
+          <AppIcon name="warning" size="inline" aria-hidden="true" />
           <span>Pilot unconscious — cannot act this turn</span>
         </div>
       )}

@@ -93,7 +93,9 @@ export function BattleArmorPipGrid({
     >
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h4 className="text-sm font-semibold text-white">Armor Pips</h4>
+        <h4 className="text-text-theme-primary text-sm font-semibold">
+          Armor Pips
+        </h4>
         <span className="text-text-theme-secondary text-xs">
           {chassisType} • {squadSize} troopers
         </span>

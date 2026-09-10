@@ -8,6 +8,8 @@
 
 import React from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
+
 interface SearchInputProps {
   value: string;
   onChange: (next: string) => void;
@@ -49,19 +51,7 @@ export function SearchInput({
             aria-label="Clear search"
             className="text-text-theme-muted hover:text-text-theme-primary absolute top-1/2 right-1 -translate-y-1/2 rounded p-1"
           >
-            <svg
-              className="h-4 w-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <AppIcon name="close" size="inline" />
           </button>
         )}
       </div>

@@ -1,19 +1,73 @@
-import React from 'react';
+import React, { useId } from 'react';
 
 import { MechLocation } from '@/types/construction';
 
 import { hasRearArmor, LOCATION_SHORT_LABELS } from '../shared/types';
 
-/**
- * Get status color based on armor percentage
- */
-function getStatusColor(current: number, maximum: number): string {
-  if (maximum === 0) return 'bg-gray-500';
-  const percentage = (current / maximum) * 100;
-  if (percentage >= 75) return 'bg-green-500';
-  if (percentage >= 50) return 'bg-amber-500';
-  if (percentage >= 25) return 'bg-orange-500';
-  return 'bg-red-500';
+interface SchematicFill {
+  color: string;
+  emptyColor: string;
+  ratio: number;
+}
+
+function getSchematicFill(current: number, maximum: number): SchematicFill {
+  const ratio = maximum > 0 ? Math.min(1, Math.max(0, current / maximum)) : 0;
+
+  if (maximum === 0) {
+    return { color: '#64748b', emptyColor: '#334155', ratio };
+  }
+  if (ratio >= 0.75) {
+    return { color: '#22c55e', emptyColor: '#14532d', ratio };
+  }
+  if (ratio >= 0.5) {
+    return { color: '#f59e0b', emptyColor: '#78350f', ratio };
+  }
+  if (ratio >= 0.25) {
+    return { color: '#f97316', emptyColor: '#7c2d12', ratio };
+  }
+  return { color: '#ef4444', emptyColor: '#7f1d1d', ratio };
+}
+
+function SchematicCapacityBar({
+  fill,
+  marker,
+  height,
+  section,
+}: {
+  fill: SchematicFill;
+  marker: string;
+  height: number;
+  section: 'front' | 'rear';
+}): React.ReactElement {
+  const id = useId();
+  const boundary = 1 - fill.ratio;
+
+  return (
+    <svg
+      className="h-full w-2 shrink-0"
+      viewBox={`0 0 8 ${height}`}
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor={fill.emptyColor} />
+          <stop offset={boundary} stopColor={fill.emptyColor} />
+          <stop offset={boundary} stopColor={fill.color} />
+          <stop offset="1" stopColor={fill.color} />
+        </linearGradient>
+      </defs>
+      <rect
+        data-armor-fill={marker}
+        data-armor-fill-ratio={fill.ratio}
+        data-armor-fill-section={section}
+        width="8"
+        height={height}
+        rx="4"
+        fill={`url(#${id})`}
+      />
+    </svg>
+  );
 }
 
 export interface SchematicLocationProps {
@@ -37,8 +91,8 @@ export function SchematicLocation({
 }: SchematicLocationProps): React.ReactElement {
   const label = LOCATION_SHORT_LABELS[location];
   const showRear = hasRearArmor(location) && rear !== undefined;
-  const frontColor = getStatusColor(current, maximum);
-  const rearColor = showRear ? getStatusColor(rear!, rearMaximum ?? 1) : '';
+  const frontFill = getSchematicFill(current, maximum);
+  const rearFill = showRear ? getSchematicFill(rear!, rearMaximum ?? 0) : null;
 
   const ariaLabel = showRear
     ? `${location} armor: Front ${current} of ${maximum}, Rear ${rear} of ${rearMaximum}`
@@ -52,30 +106,37 @@ export function SchematicLocation({
       onClick={() => onClick(location)}
       className={`bg-surface-base hover:bg-surface-raised relative rounded-lg border p-3 transition-all duration-150 ${isSelected ? 'border-blue-500 ring-2 ring-blue-500' : 'border-border-theme-subtle'} min-h-[44px] min-w-[44px] focus:ring-2 focus:ring-blue-500 focus:outline-none`}
     >
-      {/* Location Label */}
       <div className="text-text-theme-secondary mb-1 text-xs font-semibold">
         {label}
       </div>
 
-      {/* Front Armor Section */}
-      <div className="flex items-center gap-2">
-        <div className={`h-8 w-2 rounded ${frontColor}`} />
+      <div className="flex h-8 items-center gap-2">
+        <SchematicCapacityBar
+          fill={frontFill}
+          marker={`${location}-front`}
+          height={32}
+          section="front"
+        />
         <div className="flex flex-col">
-          <span className="text-lg font-bold text-white tabular-nums">
+          <span className="text-text-theme-primary text-lg font-bold tabular-nums">
             {current}
           </span>
           <span className="text-text-theme-secondary text-xs">/ {maximum}</span>
         </div>
       </div>
 
-      {/* Rear Armor Section (torso only) */}
-      {showRear && (
+      {showRear && rearFill && (
         <div className="border-border-theme-subtle mt-2 border-t pt-2">
           <div className="text-text-theme-secondary mb-1 text-xs">Rear</div>
-          <div className="flex items-center gap-2">
-            <div className={`h-6 w-2 rounded ${rearColor}`} />
+          <div className="flex h-6 items-center gap-2">
+            <SchematicCapacityBar
+              fill={rearFill}
+              marker={`${location}-rear`}
+              height={24}
+              section="rear"
+            />
             <div className="flex flex-col">
-              <span className="text-sm font-bold text-white tabular-nums">
+              <span className="text-text-theme-primary text-sm font-bold tabular-nums">
                 {rear}
               </span>
               <span className="text-text-theme-secondary text-xs">

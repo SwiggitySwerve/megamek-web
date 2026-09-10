@@ -49,7 +49,7 @@ describe('PremiumMaterialDiagram', () => {
 
   it('should render the diagram with title', () => {
     render(<PremiumMaterialDiagram {...defaultProps} />);
-    expect(screen.getByText('Armor Configuration')).toBeInTheDocument();
+    expect(screen.getByText('Armor Allocation')).toBeInTheDocument();
   });
 
   // Note: Auto-allocate button was moved to ArmorTab.tsx
@@ -71,7 +71,7 @@ describe('PremiumMaterialDiagram', () => {
     render(<PremiumMaterialDiagram {...defaultProps} />);
 
     expect(
-      screen.getByText('Tap any plate to adjust armor values'),
+      screen.getByText('Click a location to edit armor values'),
     ).toBeInTheDocument();
   });
 
@@ -113,7 +113,7 @@ describe('PremiumMaterialDiagram', () => {
     render(<PremiumMaterialDiagram {...defaultProps} />);
 
     // Check for rear labels (3 torso locations have "R" labels)
-    const rearLabels = screen.getAllByText('R');
+    const rearLabels = screen.getAllByText('REAR');
     expect(rearLabels.length).toBe(3);
   });
 });

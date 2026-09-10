@@ -132,6 +132,7 @@ export function StructureTab({
       jumpJetType,
     },
     armorTonnage,
+    configuration,
   );
 
   // Movement calculations - extracted to useMovementCalculations hook
@@ -176,14 +177,8 @@ export function StructureTab({
       }
 
       setTonnage(rounded);
-
-      // Auto-set cockpit and gyro when crossing into superheavy range
-      if (rounded > 100) {
-        setCockpitType(CockpitType.SUPER_HEAVY);
-        setGyroType(GyroType.SUPERHEAVY);
-      }
     },
-    [setTonnage, setCockpitType, setGyroType, tonnage],
+    [setTonnage, tonnage],
   );
 
   const handleConfigurationChange = useCallback(
@@ -324,7 +319,7 @@ export function StructureTab({
             )}
           </div>
           <div
-            className={`${cs.layout.statRow} sm:${cs.layout.dividerV} border-border-theme-subtle border-t pt-2 sm:border-t-0 sm:pt-0`}
+            className={`${cs.layout.statRow} border-border-theme-subtle border-t pt-2 sm:border-t-0 sm:border-l sm:pt-0 sm:pl-4`}
           >
             <span className={`text-sm ${cs.text.label}`}>Total:</span>
             <span className="text-accent text-lg font-bold">

@@ -11,6 +11,7 @@ import { useMemo } from 'react';
 import type { IGameEvent } from '@/types/gameplay';
 import type { IQuickGameUnit } from '@/types/quickgame/QuickGameInterfaces';
 
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { projectDamageMatrix } from '@/utils/gameplay/combatStatistics';
 
 export interface DamageMatrixProps {
@@ -69,8 +70,9 @@ export function DamageMatrix({
 
   if (matrix.size === 0) {
     return (
-      <div className="py-8 text-center text-gray-500">
-        <svg
+      <div className="text-text-theme-muted py-8 text-center">
+        <SvgIcon
+          size="hero"
           className="mx-auto mb-3 h-12 w-12 opacity-50"
           fill="none"
           stroke="currentColor"
@@ -82,9 +84,9 @@ export function DamageMatrix({
             strokeWidth={1.5}
             d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
           />
-        </svg>
+        </SvgIcon>
         <p className="text-lg font-medium">No damage dealt</p>
-        <p className="mt-1 text-sm text-gray-600">
+        <p className="text-text-theme-secondary mt-1 text-sm">
           No combat damage was recorded in this battle.
         </p>
       </div>
@@ -96,19 +98,19 @@ export function DamageMatrix({
       <table className="w-full border-collapse text-sm">
         <thead>
           <tr>
-            <th className="sticky left-0 z-10 border border-gray-700 bg-gray-800 p-2 text-left font-semibold text-gray-300">
+            <th className="border-border-theme bg-surface-base text-text-theme-secondary sticky left-0 z-10 border p-2 text-left font-semibold">
               Attacker ↓ / Target →
             </th>
             {targetIds.map((targetId) => (
               <th
                 key={targetId}
-                className="min-w-[80px] border border-gray-700 bg-gray-800 p-2 text-center font-semibold text-gray-300"
+                className="border-border-theme bg-surface-base text-text-theme-secondary min-w-[80px] border p-2 text-center font-semibold"
                 title={getUnitName(targetId, unitMap)}
               >
                 {truncateName(getUnitName(targetId, unitMap))}
               </th>
             ))}
-            <th className="min-w-[80px] border border-gray-700 bg-gray-900 p-2 text-center font-bold text-amber-400">
+            <th className="border-border-theme bg-surface-deep min-w-[80px] border p-2 text-center font-bold text-amber-400">
               Total Dealt
             </th>
           </tr>
@@ -121,7 +123,7 @@ export function DamageMatrix({
             return (
               <tr key={attackerId}>
                 <th
-                  className="sticky left-0 z-10 border border-gray-700 bg-gray-800 p-2 text-left font-semibold text-gray-300"
+                  className="border-border-theme bg-surface-base text-text-theme-secondary sticky left-0 z-10 border p-2 text-left font-semibold"
                   title={getUnitName(attackerId, unitMap)}
                 >
                   {truncateName(getUnitName(attackerId, unitMap))}
@@ -133,12 +135,12 @@ export function DamageMatrix({
                   return (
                     <td
                       key={targetId}
-                      className={`border border-gray-700 p-2 text-center font-mono ${
+                      className={`border-border-theme border p-2 text-center font-mono ${
                         isSelfDamage
-                          ? 'bg-gray-700 text-gray-400'
+                          ? 'bg-surface-raised text-text-theme-muted'
                           : damage > 0
-                            ? 'bg-gray-800/50 text-white'
-                            : 'bg-gray-800/30 text-gray-600'
+                            ? 'bg-surface-base/50 text-text-theme-primary'
+                            : 'bg-surface-base/30 text-text-theme-secondary'
                       }`}
                       data-testid={
                         isSelfDamage ? 'self-damage-cell' : undefined
@@ -148,7 +150,7 @@ export function DamageMatrix({
                     </td>
                   );
                 })}
-                <td className="border border-gray-700 bg-gray-900 p-2 text-center font-mono font-bold text-amber-400">
+                <td className="border-border-theme bg-surface-deep border p-2 text-center font-mono font-bold text-amber-400">
                   {attackerDealt}
                 </td>
               </tr>
@@ -157,7 +159,7 @@ export function DamageMatrix({
         </tbody>
         <tfoot>
           <tr>
-            <th className="sticky left-0 z-10 border border-gray-700 bg-gray-900 p-2 text-left font-bold text-cyan-400">
+            <th className="border-border-theme bg-surface-deep sticky left-0 z-10 border p-2 text-left font-bold text-cyan-400">
               Total Received
             </th>
             {targetIds.map((targetId) => {
@@ -165,13 +167,13 @@ export function DamageMatrix({
               return (
                 <td
                   key={targetId}
-                  className="border border-gray-700 bg-gray-900 p-2 text-center font-mono font-bold text-cyan-400"
+                  className="border-border-theme bg-surface-deep border p-2 text-center font-mono font-bold text-cyan-400"
                 >
                   {received}
                 </td>
               );
             })}
-            <td className="border border-gray-700 bg-gray-950 p-2 text-center font-mono font-bold text-white">
+            <td className="border-border-theme bg-surface-deep text-text-theme-primary border p-2 text-center font-mono font-bold">
               {grandTotal}
             </td>
           </tr>

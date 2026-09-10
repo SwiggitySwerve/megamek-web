@@ -125,7 +125,7 @@ function WinProbabilityBar({
       role="img"
       aria-label={buildBarAriaLabel(result)}
       data-testid="win-probability-bar"
-      className="flex h-10 w-full overflow-hidden rounded-md border border-slate-700"
+      className="border-border-theme flex h-10 w-full overflow-hidden rounded-md border"
     >
       <div
         className="flex items-center justify-center bg-blue-600 text-xs font-semibold text-white"
@@ -142,7 +142,7 @@ function WinProbabilityBar({
         {opponentWidth >= 10 && pct(result.winProbability.opponent)}
       </div>
       <div
-        className="flex items-center justify-center bg-slate-500 text-xs font-semibold text-white"
+        className="bg-surface-raised flex items-center justify-center text-xs font-semibold text-white"
         style={{ width: `${drawWidth}%` }}
         data-testid="win-probability-draw"
       >
@@ -222,31 +222,31 @@ function CasualtyColumn({
 }: CasualtyColumnProps): React.ReactElement {
   return (
     <div
-      className="flex flex-col gap-3 rounded-md border border-slate-700 bg-slate-900/30 p-4"
+      className="border-border-theme bg-surface-deep/30 flex flex-col gap-3 rounded-md border p-4"
       data-testid={testId}
     >
-      <h4 className="text-sm font-semibold text-slate-200">{title}</h4>
-      <div className="grid grid-cols-2 gap-2 text-xs text-slate-300">
+      <h4 className="text-text-theme-primary text-sm font-semibold">{title}</h4>
+      <div className="text-text-theme-secondary grid grid-cols-2 gap-2 text-xs">
         <div className="flex flex-col">
-          <span className="text-slate-500">Mech Destroyed</span>
-          <span className="text-base font-semibold text-slate-100">
+          <span className="text-text-theme-muted">Mech Destroyed</span>
+          <span className="text-text-theme-primary text-base font-semibold">
             {pct(destroyedFreq)}
           </span>
         </div>
         <div className="flex flex-col">
-          <span className="text-slate-500">Heat Shutdown</span>
-          <span className="text-base font-semibold text-slate-100">
+          <span className="text-text-theme-muted">Heat Shutdown</span>
+          <span className="text-text-theme-primary text-base font-semibold">
             {pct(shutdownFreq)}
           </span>
         </div>
       </div>
 
       <div className="flex flex-col gap-2">
-        <span className="text-xs font-semibold text-slate-400">
+        <span className="text-text-theme-secondary text-xs font-semibold">
           Per-unit survival
         </span>
         {rows.length === 0 ? (
-          <span className="text-xs text-slate-500">No unit data</span>
+          <span className="text-text-theme-muted text-xs">No unit data</span>
         ) : (
           <ul className="flex flex-col gap-1.5">
             {rows.map((row) => (
@@ -256,10 +256,14 @@ function CasualtyColumn({
                 data-testid={`survival-row-${row.unitId}`}
               >
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-200">{row.designation}</span>
-                  <span className="text-slate-300">{pct(row.survival)}</span>
+                  <span className="text-text-theme-primary">
+                    {row.designation}
+                  </span>
+                  <span className="text-text-theme-secondary">
+                    {pct(row.survival)}
+                  </span>
                 </div>
-                <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-800">
+                <div className="bg-surface-base h-1.5 w-full overflow-hidden rounded-full">
                   <div
                     className="h-full bg-emerald-500"
                     style={{ width: `${row.survival * 100}%` }}
@@ -298,37 +302,37 @@ function RawDataSection({ result }: RawDataSectionProps): React.ReactElement {
 
   return (
     <details
-      className="rounded-md border border-slate-700 bg-slate-900/30"
+      className="border-border-theme bg-surface-deep/30 rounded-md border"
       open={open}
       onToggle={(e) => setOpen((e.target as HTMLDetailsElement).open)}
       data-testid="raw-data-section"
     >
-      <summary className="cursor-pointer px-4 py-2 text-sm font-semibold text-slate-200">
+      <summary className="text-text-theme-primary cursor-pointer px-4 py-2 text-sm font-semibold">
         Raw Data
       </summary>
-      <div className="grid grid-cols-1 gap-3 px-4 py-3 text-xs text-slate-300 sm:grid-cols-3">
+      <div className="text-text-theme-secondary grid grid-cols-1 gap-3 px-4 py-3 text-xs sm:grid-cols-3">
         <div>
-          <div className="text-slate-500">Total runs</div>
-          <div className="text-base font-semibold text-slate-100">
+          <div className="text-text-theme-muted">Total runs</div>
+          <div className="text-text-theme-primary text-base font-semibold">
             {result.totalRuns}
           </div>
         </div>
         <div>
-          <div className="text-slate-500">Errored runs</div>
-          <div className="text-base font-semibold text-slate-100">
+          <div className="text-text-theme-muted">Errored runs</div>
+          <div className="text-text-theme-primary text-base font-semibold">
             {result.erroredRuns}
           </div>
         </div>
         <div className="flex flex-col gap-1">
-          <span className="text-slate-500">Base seed</span>
+          <span className="text-text-theme-muted">Base seed</span>
           <div className="flex items-center gap-2">
-            <code className="rounded bg-slate-800 px-2 py-0.5 font-mono text-sm text-slate-100">
+            <code className="bg-surface-base text-text-theme-primary rounded px-2 py-0.5 font-mono text-sm">
               {result.baseSeed}
             </code>
             <button
               type="button"
               onClick={handleCopy}
-              className="rounded border border-slate-600 px-2 py-0.5 text-xs text-slate-200 hover:bg-slate-700"
+              className="border-border-theme text-text-theme-primary hover:bg-surface-raised rounded border px-2 py-0.5 text-xs"
               data-testid="copy-seed-btn"
             >
               {copied ? 'Copied' : 'Copy seed'}
@@ -366,10 +370,10 @@ export function QuickSimResultPanel({
   if (result.totalRuns === 0) {
     return (
       <div
-        className={`flex flex-col items-center gap-4 rounded-lg border border-dashed border-slate-700 bg-slate-900/20 p-8 text-center ${className}`}
+        className={`border-border-theme bg-surface-deep/20 flex flex-col items-center gap-4 rounded-lg border border-dashed p-8 text-center ${className}`}
         data-testid="quick-sim-result-panel-empty"
       >
-        <p className="text-sm text-slate-400">
+        <p className="text-text-theme-secondary text-sm">
           Run a batch to see outcome distribution
         </p>
         {onRunBatch && (
@@ -390,13 +394,13 @@ export function QuickSimResultPanel({
 
   return (
     <section
-      className={`flex flex-col gap-6 rounded-lg border border-slate-700 bg-slate-900/40 p-6 ${className}`}
+      className={`border-border-theme bg-surface-deep/40 flex flex-col gap-6 rounded-lg border p-6 ${className}`}
       data-testid="quick-sim-result-panel"
     >
       {/* Header */}
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex flex-col gap-1">
-          <h2 className="text-lg font-semibold text-slate-100">
+          <h2 className="text-text-theme-primary text-lg font-semibold">
             Quick Resolve: {result.totalRuns} runs
           </h2>
           {result.erroredRuns > 0 && (
@@ -435,16 +439,16 @@ export function QuickSimResultPanel({
       >
         <h3
           id="qsr-win-prob-heading"
-          className="text-base font-semibold text-slate-100"
+          className="text-text-theme-primary text-base font-semibold"
           data-testid="quick-sim-headline"
         >
           {headline}
         </h3>
-        <div className="text-xs tracking-wider text-slate-400 uppercase">
+        <div className="text-text-theme-secondary text-xs tracking-wider uppercase">
           Win Probability
         </div>
         <WinProbabilityBar result={result} />
-        <div className="flex justify-between text-xs text-slate-400">
+        <div className="text-text-theme-secondary flex justify-between text-xs">
           <span>Player {pct(result.winProbability.player)}</span>
           <span>Draw {pct(result.winProbability.draw)}</span>
           <span>Opponent {pct(result.winProbability.opponent)}</span>
@@ -458,7 +462,7 @@ export function QuickSimResultPanel({
       >
         <h3
           id="qsr-turn-count-heading"
-          className="text-base font-semibold text-slate-100"
+          className="text-text-theme-primary text-base font-semibold"
         >
           Turn Count
         </h3>
@@ -475,7 +479,7 @@ export function QuickSimResultPanel({
       >
         <h3
           id="qsr-casualties-heading"
-          className="text-base font-semibold text-slate-100"
+          className="text-text-theme-primary text-base font-semibold"
         >
           Casualties
         </h3>

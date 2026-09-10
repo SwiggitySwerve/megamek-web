@@ -5,6 +5,7 @@ import {
   SkeletonFormSection,
 } from '@/components/common/SkeletonLoader';
 import { PageLayout, Card } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import {
   CampaignStatus,
   CampaignMissionStatus,
@@ -273,7 +274,8 @@ export function MissionHistory({
                 }`}
               >
                 {mission.status === CampaignMissionStatus.Victory ? (
-                  <svg
+                  <SvgIcon
+                    size="inline"
                     className="h-4 w-4"
                     fill="none"
                     stroke="currentColor"
@@ -285,9 +287,10 @@ export function MissionHistory({
                       strokeWidth={2}
                       d="M5 13l4 4L19 7"
                     />
-                  </svg>
+                  </SvgIcon>
                 ) : (
-                  <svg
+                  <SvgIcon
+                    size="inline"
                     className="h-4 w-4"
                     fill="none"
                     stroke="currentColor"
@@ -299,7 +302,7 @@ export function MissionHistory({
                       strokeWidth={2}
                       d="M6 18L18 6M6 6l12 12"
                     />
-                  </svg>
+                  </SvgIcon>
                 )}
               </div>
               <div>
