@@ -218,6 +218,14 @@ export interface UnitState {
   /** Originating definition retained across draft and library round trips. */
   readonly sourceDefinition?: IUnitDefinitionReference;
 
+  /** Last confirmed library save/load, independent of original provenance. */
+  librarySave?: {
+    readonly id: string;
+    readonly version: number;
+    readonly fingerprint: string;
+    readonly draftFingerprint?: string;
+  };
+
   /** Combat role metadata carried by canonical/custom unit payloads. */
   role?: string;
 

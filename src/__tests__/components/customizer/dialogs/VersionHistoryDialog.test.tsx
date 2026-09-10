@@ -5,7 +5,6 @@ import React from 'react';
 import { VersionHistoryDialog } from '@/components/customizer/dialogs/VersionHistoryDialog';
 import { customUnitApiService } from '@/services/units/CustomUnitApiService';
 
-// Mock ModalOverlay
 jest.mock('@/components/customizer/dialogs/ModalOverlay', () => ({
   ModalOverlay: ({
     children,
@@ -16,7 +15,6 @@ jest.mock('@/components/customizer/dialogs/ModalOverlay', () => ({
   }) => (isOpen ? <div data-testid="modal-overlay">{children}</div> : null),
 }));
 
-// Mock CustomUnitApiService
 jest.mock('@/services/units/CustomUnitApiService', () => ({
   customUnitApiService: {
     getVersionHistory: jest.fn(),
@@ -36,22 +34,54 @@ describe('VersionHistoryDialog', () => {
   };
 
   const mockVersions = [
-    { version: 1, createdAt: '2024-01-01', createdBy: 'user1' },
-    { version: 2, createdAt: '2024-01-02', createdBy: 'user1' },
-    { version: 3, createdAt: '2024-01-03', createdBy: 'user1' },
+    {
+      version: 1,
+      savedAt: '2024-01-01T00:00:00.000Z',
+      notes: null,
+      revertSource: null,
+    },
+    {
+      version: 2,
+      savedAt: '2024-01-02T00:00:00.000Z',
+      notes: null,
+      revertSource: null,
+    },
+    {
+      version: 3,
+      savedAt: '2024-01-03T00:00:00.000Z',
+      notes: null,
+      revertSource: null,
+    },
   ];
+
+  function versionPayload(version: number, chassis: string) {
+    return {
+      version,
+      savedAt: '2024-01-01T00:00:00.000Z',
+      notes: null,
+      revertSource: null,
+      data: {
+        chassis,
+        variant: 'AS7-D',
+        tonnage: 100,
+        techBase: 'INNER_SPHERE',
+        era: 'Succession Wars',
+      },
+    };
+  }
 
   beforeEach(() => {
     jest.clearAllMocks();
     (customUnitApiService.getVersionHistory as jest.Mock).mockResolvedValue(
       mockVersions,
     );
-    (customUnitApiService.getVersion as jest.Mock).mockResolvedValue({
-      version: 1,
-      data: { chassis: 'Atlas', variant: 'AS7-D' },
-    });
+    (customUnitApiService.getVersion as jest.Mock).mockImplementation(
+      (_id: string, version: number) =>
+        Promise.resolve(versionPayload(version, `Chassis-${version}`)),
+    );
     (customUnitApiService.revert as jest.Mock).mockResolvedValue({
       success: true,
+      data: { id: 'unit-1', version: 4 },
     });
   });
 
@@ -79,7 +109,7 @@ describe('VersionHistoryDialog', () => {
 
   it('should display loading state', () => {
     (customUnitApiService.getVersionHistory as jest.Mock).mockImplementation(
-      () => new Promise(() => {}), // Never resolves
+      () => new Promise(() => {}),
     );
 
     render(<VersionHistoryDialog {...defaultProps} />);
@@ -103,7 +133,6 @@ describe('VersionHistoryDialog', () => {
     const user = userEvent.setup();
     render(<VersionHistoryDialog {...defaultProps} />);
 
-    // Wait for loading to complete then click Close button
     await waitFor(() => {
       expect(customUnitApiService.getVersionHistory).toHaveBeenCalled();
     });
@@ -114,5 +143,123 @@ describe('VersionHistoryDialog', () => {
     await user.click(closeButton);
 
     expect(defaultProps.onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('ignores a stale preview once a newer version is selected', async () => {
+    const user = userEvent.setup();
+    let resolveV1!: (value: ReturnType<typeof versionPayload>) => void;
+    (customUnitApiService.getVersion as jest.Mock).mockImplementation(
+      (_id: string, version: number) => {
+        if (version === 1) {
+          return new Promise((resolve) => {
+            resolveV1 = resolve;
+          });
+        }
+        return Promise.resolve(versionPayload(version, 'Locust'));
+      },
+    );
+    render(<VersionHistoryDialog {...defaultProps} />);
+    await screen.findByRole('button', { name: /v1/i });
+    await user.click(screen.getByRole('button', { name: /v1/i }));
+    await user.click(screen.getByRole('button', { name: /v2/i }));
+    await screen.findByText(/Version 2 Details/i);
+    resolveV1(versionPayload(1, 'Atlas'));
+    await waitFor(() => {
+      expect(screen.getByText(/Version 2 Details/i)).toBeInTheDocument();
+    });
+    expect(screen.queryByText(/Version 1 Details/i)).not.toBeInTheDocument();
+  });
+
+  it('restores into the draft without calling the library revert API', async () => {
+    const user = userEvent.setup();
+    const onRestoreDraft = jest.fn().mockResolvedValue(undefined);
+    render(
+      <VersionHistoryDialog
+        {...defaultProps}
+        onRestoreDraft={onRestoreDraft}
+      />,
+    );
+    await screen.findByRole('button', { name: /v1/i });
+    await user.click(screen.getByRole('button', { name: /v1/i }));
+    await user.click(
+      screen.getByRole('button', { name: /Restore v1 into draft/i }),
+    );
+    await waitFor(() => {
+      expect(onRestoreDraft).toHaveBeenCalledWith(1);
+    });
+    expect(customUnitApiService.revert).not.toHaveBeenCalled();
+    expect(defaultProps.onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('allows restoring the last saved version when using draft restore', async () => {
+    const user = userEvent.setup();
+    const onRestoreDraft = jest.fn().mockResolvedValue(undefined);
+    render(
+      <VersionHistoryDialog
+        {...defaultProps}
+        onRestoreDraft={onRestoreDraft}
+      />,
+    );
+    await screen.findByRole('button', { name: /v3/i });
+    await user.click(screen.getByRole('button', { name: /v3/i }));
+    await user.click(
+      screen.getByRole('button', { name: /Restore v3 into draft/i }),
+    );
+    await waitFor(() => {
+      expect(onRestoreDraft).toHaveBeenCalledWith(3);
+    });
+    expect(customUnitApiService.revert).not.toHaveBeenCalled();
+  });
+
+  it('shows a restore failure and stays open', async () => {
+    const user = userEvent.setup();
+    const onRestoreDraft = jest
+      .fn()
+      .mockRejectedValue(new Error('Draft changed while loading'));
+    render(
+      <VersionHistoryDialog
+        {...defaultProps}
+        onRestoreDraft={onRestoreDraft}
+      />,
+    );
+    await screen.findByRole('button', { name: /v1/i });
+    await user.click(screen.getByRole('button', { name: /v1/i }));
+    await user.click(
+      screen.getByRole('button', { name: /Restore v1 into draft/i }),
+    );
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Draft changed while loading',
+    );
+    expect(defaultProps.onClose).not.toHaveBeenCalled();
+    expect(screen.getByTestId('modal-overlay')).toBeInTheDocument();
+  });
+
+  it('ignores a second restore submission while the first is in flight', async () => {
+    const user = userEvent.setup();
+    let resolveRestore!: () => void;
+    const onRestoreDraft = jest.fn(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveRestore = resolve;
+        }),
+    );
+    render(
+      <VersionHistoryDialog
+        {...defaultProps}
+        onRestoreDraft={onRestoreDraft}
+      />,
+    );
+    await screen.findByRole('button', { name: /v1/i });
+    await user.click(screen.getByRole('button', { name: /v1/i }));
+    const restoreButton = await screen.findByRole('button', {
+      name: /Restore v1 into draft/i,
+    });
+    await user.click(restoreButton);
+    await user.click(restoreButton);
+    expect(onRestoreDraft).toHaveBeenCalledTimes(1);
+    resolveRestore();
+    await waitFor(() => {
+      expect(defaultProps.onClose).toHaveBeenCalledTimes(1);
+    });
   });
 });

@@ -6,15 +6,11 @@
  * @spec openspec/specs/unit-versioning/spec.md
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React from 'react';
 
 import { AppIcon } from '@/components/ui/AppIcon';
-import {
-  customUnitApiService,
-  IVersionWithData,
-} from '@/services/units/CustomUnitApiService';
+import { IVersionWithData } from '@/services/units/CustomUnitApiService';
 import { IVersionMetadata } from '@/types/persistence/UnitPersistence';
-import { logger } from '@/utils/logger';
 
 import { customizerStyles as cs } from '../styles';
 import {
@@ -23,10 +19,7 @@ import {
   SpinnerIcon,
 } from './dialogPresentation';
 import { ModalOverlay } from './ModalOverlay';
-
-// =============================================================================
-// Types
-// =============================================================================
+import { useVersionHistoryDialog } from './useVersionHistoryDialog';
 
 export interface VersionHistoryDialogProps {
   /** Whether dialog is open */
@@ -41,6 +34,8 @@ export interface VersionHistoryDialogProps {
   onRevert: (version: number) => void;
   /** Called when dialog is closed */
   onClose: () => void;
+  /** Restore into the bound draft instead of calling the library revert API. */
+  onRestoreDraft?: (version: number) => Promise<void>;
 }
 
 function formatDate(isoString: string) {
@@ -68,6 +63,7 @@ function getPreviewSummary(previewData: IVersionWithData) {
 }
 
 function VersionList({
+  currentLabel,
   currentVersion,
   error,
   isLoading,
@@ -75,6 +71,7 @@ function VersionList({
   setSelectedVersion,
   versions,
 }: {
+  currentLabel: string;
   currentVersion: number;
   error: string | null;
   isLoading: boolean;
@@ -112,6 +109,7 @@ function VersionList({
     <div className="divide-border-theme-subtle divide-y">
       {versions.map((version) => (
         <VersionListItem
+          currentLabel={currentLabel}
           currentVersion={currentVersion}
           isSelected={selectedVersion === version.version}
           key={version.version}
@@ -124,11 +122,13 @@ function VersionList({
 }
 
 function VersionListItem({
+  currentLabel,
   currentVersion,
   isSelected,
   onSelect,
   version,
 }: {
+  currentLabel: string;
   currentVersion: number;
   isSelected: boolean;
   onSelect: (version: number) => void;
@@ -136,8 +136,9 @@ function VersionListItem({
 }) {
   return (
     <button
+      type="button"
       onClick={() => onSelect(version.version)}
-      className={`w-full border-l-2 p-3 text-left transition-colors ${
+      className={`min-h-11 w-full border-l-2 p-3 text-left transition-colors ${
         isSelected
           ? 'border-blue-500 bg-blue-600/20'
           : 'hover:bg-surface-raised/50 border-transparent'
@@ -150,7 +151,7 @@ function VersionListItem({
           </span>
           {version.version === currentVersion && (
             <span className="rounded bg-green-500/20 px-1.5 py-0.5 text-xs text-green-400">
-              Current
+              {currentLabel}
             </span>
           )}
           {version.revertSource && (
@@ -175,10 +176,12 @@ function VersionListItem({
 function VersionPreview({
   isLoadingPreview,
   previewData,
+  previewError,
   selectedVersion,
 }: {
   isLoadingPreview: boolean;
   previewData: IVersionWithData | null;
+  previewError: string | null;
   selectedVersion: number | null;
 }) {
   if (selectedVersion === null) {
@@ -194,9 +197,11 @@ function VersionPreview({
     );
   }
 
-  if (!previewData) {
+  if (previewError || !previewData) {
     return (
-      <div className={`${cs.dialog.empty} h-full`}>Failed to load preview</div>
+      <div className={`${cs.dialog.empty} h-full`}>
+        {previewError ?? 'Failed to load preview'}
+      </div>
     );
   }
 
@@ -281,45 +286,48 @@ function PreviewSummaryItem({
   );
 }
 
-function RevertButton({
+function ConfirmVersionButton({
   currentVersion,
-  isReverting,
-  onRevert,
+  isRestoring,
+  onConfirm,
+  restoreMode,
   selectedVersion,
 }: {
   currentVersion: number;
-  isReverting: boolean;
-  onRevert: () => void;
+  isRestoring: boolean;
+  onConfirm: () => void;
+  restoreMode: boolean;
   selectedVersion: number | null;
 }) {
-  const canRevert =
-    Boolean(selectedVersion) &&
-    selectedVersion !== currentVersion &&
-    !isReverting;
+  const canConfirm = restoreMode
+    ? Boolean(selectedVersion) && !isRestoring
+    : Boolean(selectedVersion) &&
+      selectedVersion !== currentVersion &&
+      !isRestoring;
+  const actionLabel = restoreMode
+    ? `Restore v${selectedVersion || '?'} into draft`
+    : `Revert to v${selectedVersion || '?'}`;
 
   return (
     <button
-      onClick={onRevert}
-      disabled={!canRevert}
+      type="button"
+      onClick={onConfirm}
+      disabled={!canConfirm}
       className={`min-w-[120px] ${
-        canRevert ? cs.dialog.btnWarning : cs.dialog.btnPrimary
+        canConfirm ? cs.dialog.btnWarning : cs.dialog.btnPrimary
       }`}
     >
-      {isReverting ? (
+      {isRestoring ? (
         <span className="flex items-center gap-2">
           <SpinnerIcon size="inline" />
-          Reverting...
+          {restoreMode ? 'Restoring...' : 'Reverting...'}
         </span>
       ) : (
-        `Revert to v${selectedVersion || '?'}`
+        actionLabel
       )}
     </button>
   );
 }
-
-// =============================================================================
-// Component
-// =============================================================================
 
 export function VersionHistoryDialog({
   isOpen,
@@ -328,83 +336,36 @@ export function VersionHistoryDialog({
   currentVersion,
   onRevert,
   onClose,
+  onRestoreDraft,
 }: VersionHistoryDialogProps): React.ReactElement {
-  // State
-  const [versions, setVersions] = useState<readonly IVersionMetadata[]>([]);
-  const [selectedVersion, setSelectedVersion] = useState<number | null>(null);
-  const [previewData, setPreviewData] = useState<IVersionWithData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isLoadingPreview, setIsLoadingPreview] = useState(false);
-  const [isReverting, setIsReverting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  // Load version history when dialog opens
-  useEffect(() => {
-    if (!isOpen || !unitId) return;
-
-    setIsLoading(true);
-    setError(null);
-    setSelectedVersion(null);
-    setPreviewData(null);
-
-    customUnitApiService
-      .getVersionHistory(unitId)
-      .then(setVersions)
-      .catch((err) => {
-        logger.error('Failed to load version history:', err);
-        setError('Failed to load version history');
-      })
-      .finally(() => setIsLoading(false));
-  }, [isOpen, unitId]);
-
-  // Load version preview when selection changes
-  useEffect(() => {
-    if (!selectedVersion || !unitId) {
-      setPreviewData(null);
-      return;
-    }
-
-    setIsLoadingPreview(true);
-
-    customUnitApiService
-      .getVersion(unitId, selectedVersion)
-      .then(setPreviewData)
-      .catch((err) => {
-        logger.error('Failed to load version preview:', err);
-        setPreviewData(null);
-      })
-      .finally(() => setIsLoadingPreview(false));
-  }, [unitId, selectedVersion]);
-
-  // Handle revert
-  const handleRevert = useCallback(async () => {
-    if (!selectedVersion || selectedVersion === currentVersion) return;
-
-    setIsReverting(true);
-    try {
-      const result = await customUnitApiService.revert(unitId, selectedVersion);
-
-      if (result.success) {
-        onRevert(selectedVersion);
-        onClose();
-      } else {
-        setError(result.error.message || 'Failed to revert');
-      }
-    } catch (err) {
-      logger.error('Revert error:', err);
-      setError('Failed to revert to selected version');
-    } finally {
-      setIsReverting(false);
-    }
-  }, [unitId, selectedVersion, currentVersion, onRevert, onClose]);
+  const {
+    versions,
+    selectedVersion,
+    setSelectedVersion,
+    previewData,
+    previewError,
+    isLoading,
+    isLoadingPreview,
+    isReverting,
+    error,
+    confirmError,
+    handleConfirm,
+  } = useVersionHistoryDialog({
+    isOpen,
+    unitId,
+    currentVersion,
+    onRevert,
+    onClose,
+    onRestoreDraft,
+  });
 
   return (
     <ModalOverlay
       isOpen={isOpen}
       onClose={onClose}
-      className="mx-4 flex max-h-[80vh] w-full max-w-4xl flex-col"
+      preventClose={isReverting && !onRestoreDraft}
+      className="mx-4 flex max-h-[80vh] w-full max-w-4xl min-w-0 flex-col"
     >
-      {/* Header */}
       <div className={cs.dialog.header}>
         <div>
           <h3 className={cs.dialog.headerTitle}>Version History</h3>
@@ -413,11 +374,10 @@ export function VersionHistoryDialog({
         <DialogCloseButton onClose={onClose} />
       </div>
 
-      {/* Content */}
-      <div className="flex min-h-0 flex-1 overflow-hidden">
-        {/* Version list */}
-        <div className="border-border-theme-subtle w-1/3 overflow-auto border-r">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden sm:flex-row">
+        <div className="border-border-theme-subtle max-h-48 overflow-auto border-b sm:max-h-none sm:w-1/3 sm:border-r sm:border-b-0">
           <VersionList
+            currentLabel={onRestoreDraft ? 'Last saved' : 'Current'}
             currentVersion={currentVersion}
             error={error}
             isLoading={isLoading}
@@ -427,29 +387,50 @@ export function VersionHistoryDialog({
           />
         </div>
 
-        {/* Preview panel */}
-        <div className="flex-1 overflow-auto p-4">
+        <div className="min-h-0 min-w-0 flex-1 overflow-auto p-4">
           <VersionPreview
             isLoadingPreview={isLoadingPreview}
             previewData={previewData}
+            previewError={previewError}
             selectedVersion={selectedVersion}
           />
         </div>
       </div>
 
-      {/* Footer */}
-      <div className={cs.dialog.footerBetween}>
-        <span className="text-text-theme-secondary text-sm">
-          {versions.length} version{versions.length !== 1 ? 's' : ''} available
-        </span>
-        <div className="flex items-center gap-2">
-          <button onClick={onClose} className={cs.dialog.btnGhost}>
+      <div className={`${cs.dialog.footerBetween} flex-wrap gap-2`}>
+        <div className="min-w-0">
+          <span className="text-text-theme-secondary text-sm">
+            {versions.length} version{versions.length !== 1 ? 's' : ''}{' '}
+            available
+          </span>
+          {onRestoreDraft && (
+            <p className="text-text-theme-muted text-xs">
+              Restore changes this draft. Save to library to create a new
+              version.
+            </p>
+          )}
+          {confirmError && (
+            <p className="text-sm text-red-400" role="alert">
+              {confirmError}
+            </p>
+          )}
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={onClose}
+            className={cs.dialog.btnGhost}
+            disabled={isReverting && !onRestoreDraft}
+          >
             Close
           </button>
-          <RevertButton
+          <ConfirmVersionButton
             currentVersion={currentVersion}
-            isReverting={isReverting}
-            onRevert={handleRevert}
+            isRestoring={isReverting}
+            onConfirm={() => {
+              void handleConfirm();
+            }}
+            restoreMode={Boolean(onRestoreDraft)}
             selectedVersion={selectedVersion}
           />
         </div>

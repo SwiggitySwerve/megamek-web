@@ -35,6 +35,7 @@ import {
 } from '@/lib/multiplayer/server/history/matchStoreBranchSegmentReader';
 import { foldMatchSession } from '@/lib/multiplayer/server/MatchSessionProjector';
 import { getSQLiteService } from '@/services/persistence/SQLiteService';
+import { readServerCustomCombatDefinition } from '@/services/units/serverCustomCombatDefinition';
 import { isGameEvent } from '@/types/gameplay/GameSessionInterfaces';
 import { nowIso } from '@/types/multiplayer/Protocol';
 
@@ -173,7 +174,10 @@ export async function rebuildHostFromActivatedBranch(
       ...folded,
       config: { ...folded.config, seed: host.journalRandomSeed },
     };
-    const session = await InteractiveSession.fromSessionAsync(seeded);
+    const session = await InteractiveSession.fromSessionAsync(
+      seeded,
+      readServerCustomCombatDefinition,
+    );
     host.replaceSession(session);
     // Claim only after replaceSession returns — a throw above must
     // leave servedBranchId on the previous identity.

@@ -11,6 +11,8 @@ interface UnitActionsMenuProps {
   onImport?: () => void;
   onExport?: () => void;
   canExport: boolean;
+  onOpenSavedHistory?: () => void;
+  savedHistoryDisabledReason?: string | null;
 }
 
 export function UnitActionsMenu({
@@ -20,12 +22,15 @@ export function UnitActionsMenu({
   onImport,
   onExport,
   canExport,
+  onOpenSavedHistory,
+  savedHistoryDisabledReason = null,
 }: UnitActionsMenuProps): React.ReactElement {
   const [open, setOpen] = useState(false);
   const root = useRef<HTMLDivElement>(null);
   const button = useRef<HTMLButtonElement>(null);
   const panel = useRef<HTMLDivElement>(null);
   const id = useId();
+  const historyDisabledId = `${id}-history-disabled`;
   useEffect(() => {
     if (!open) return;
     panel.current?.querySelector<HTMLElement>('select,button')?.focus();
@@ -109,6 +114,30 @@ export function UnitActionsMenu({
             >
               Export active unit
             </button>
+          )}
+          {onOpenSavedHistory && (
+            <>
+              <button
+                type="button"
+                onClick={() => run(onOpenSavedHistory)}
+                disabled={savedHistoryDisabledReason !== null}
+                className={itemClass}
+                title={
+                  savedHistoryDisabledReason ??
+                  'View saved library history for this unit'
+                }
+                aria-describedby={
+                  savedHistoryDisabledReason ? historyDisabledId : undefined
+                }
+              >
+                Saved history
+              </button>
+              {savedHistoryDisabledReason && (
+                <span id={historyDisabledId} className="sr-only">
+                  {savedHistoryDisabledReason}
+                </span>
+              )}
+            </>
           )}
         </div>
       )}

@@ -12,6 +12,7 @@ import type { UnitState } from '@/stores/unitState';
 
 import { getEquipmentLookupService } from '@/services/equipment/EquipmentLookupService';
 import { getEquipmentRegistry } from '@/services/equipment/EquipmentRegistry';
+import { createLibrarySaveReceipt } from '@/stores/unit/unitEditSnapshot';
 import { UnitType } from '@/types/unit/BattleMechInterfaces';
 
 import type { IUnitDefinitionReference } from './definitionTypes';
@@ -28,6 +29,29 @@ import { IRawSerializedUnit, UnitSource, ILoadUnitResult } from './types';
 
 function unitLoadErrorMessage(error: unknown, fallback: string): string {
   return error instanceof Error ? error.message : fallback;
+}
+
+function withLoadedLibrarySave(
+  state: UnitState,
+  source: UnitSource,
+  reference: IUnitDefinitionReference,
+): UnitState {
+  if (source !== 'custom') return state;
+  const version = reference.version;
+  if (
+    typeof version !== 'number' ||
+    !Number.isSafeInteger(version) ||
+    version < 1
+  ) {
+    return state;
+  }
+  return {
+    ...state,
+    librarySave: createLibrarySaveReceipt(state, {
+      id: reference.id,
+      version,
+    }),
+  };
 }
 
 /**
@@ -93,7 +117,11 @@ export class UnitLoaderService {
         source === 'canonical',
         loaded.definition.sourceDefinition ?? loaded.reference,
       );
-      return { success: true, state, sourceDefinition: loaded.reference };
+      return {
+        success: true,
+        state: withLoadedLibrarySave(state, source, loaded.reference),
+        sourceDefinition: loaded.reference,
+      };
     } catch (error) {
       return {
         success: false,

@@ -1,6 +1,8 @@
+import type { ICustomUnitIndexEntry } from '@/types/persistence/UnitPersistence';
+
 import { IUnitIndexEntry } from '@/services/common/types';
 import { getCanonicalUnitService } from '@/services/units/CanonicalUnitService';
-import { getCustomUnitService } from '@/services/units/CustomUnitService';
+import { customUnitApiService } from '@/services/units/CustomUnitApiService';
 import { unitNameValidator } from '@/services/units/UnitNameValidator';
 
 // Mock dependencies
@@ -12,7 +14,7 @@ jest.mock('@/services/units/CanonicalUnitService', () => {
   };
   return { getCanonicalUnitService: () => _mock_canonicalUnitService };
 });
-jest.mock('@/services/units/CustomUnitService', () => {
+jest.mock('@/services/units/CustomUnitApiService', () => {
   const _mock_customUnitService = {
     list: jest.fn(),
     create: jest.fn(),
@@ -20,14 +22,14 @@ jest.mock('@/services/units/CustomUnitService', () => {
     deleteUnit: jest.fn(),
     getUnit: jest.fn(),
   };
-  return { getCustomUnitService: () => _mock_customUnitService };
+  return { customUnitApiService: _mock_customUnitService };
 });
 
 const mockCanonicalUnitService = getCanonicalUnitService() as jest.Mocked<
   ReturnType<typeof getCanonicalUnitService>
 >;
-const mockCustomUnitService = getCustomUnitService() as jest.Mocked<
-  ReturnType<typeof getCustomUnitService>
+const mockCustomUnitService = customUnitApiService as jest.Mocked<
+  typeof customUnitApiService
 >;
 
 // Helper to create partial IUnitIndexEntry mocks for testing
@@ -36,8 +38,8 @@ function mockUnit(data: {
   chassis: string;
   variant: string;
   name: string;
-}): IUnitIndexEntry {
-  return data as IUnitIndexEntry;
+}): IUnitIndexEntry & ICustomUnitIndexEntry {
+  return data as IUnitIndexEntry & ICustomUnitIndexEntry;
 }
 
 describe('UnitNameValidator', () => {

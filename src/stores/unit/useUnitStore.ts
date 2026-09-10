@@ -22,6 +22,7 @@ import {
   CreateUnitOptions,
   createDefaultUnitState,
 } from '../unitState';
+import { wrapUnitEditActions } from './unitEditHistory';
 import { createArmorSlice } from './useUnitArmorStore';
 import { createEquipmentSlice } from './useUnitEquipmentStore';
 import { createFluffSlice } from './useUnitFluffStore';
@@ -34,6 +35,7 @@ function pickPersistedUnitState(state: UnitStore) {
   return {
     ...pickPersistedUnitIdentityWithClanName(state),
     sourceDefinition: state.sourceDefinition,
+    librarySave: state.librarySave,
     role: state.role,
     fluff: state.fluff,
     tonnage: state.tonnage,
@@ -86,22 +88,28 @@ function unitStorePersistOptions(initialState: UnitState) {
  * - Tech Base: mode switching, component tech bases, selection memory
  */
 export function createUnitStore(initialState: UnitState): StoreApi<UnitStore> {
-  return create<UnitStore>()(
+  const store: StoreApi<UnitStore> = create<UnitStore>()(
     persist(
       (set, get) => ({
         // Spread initial state
         ...initialState,
 
         // Compose action slices
-        ...createArmorSlice(set, get),
-        ...createEquipmentSlice(set, get),
-        ...createFluffSlice(set),
-        ...createStructureSlice(set, get),
-        ...createTechBaseSlice(set, get),
+        ...wrapUnitEditActions(
+          {
+            ...createArmorSlice(set, get),
+            ...createEquipmentSlice(set, get),
+            ...createFluffSlice(set),
+            ...createStructureSlice(set, get),
+            ...createTechBaseSlice(set, get),
+          },
+          () => store,
+        ),
       }),
       unitStorePersistOptions(initialState),
     ),
   );
+  return store;
 }
 
 export function createNewUnitStore(

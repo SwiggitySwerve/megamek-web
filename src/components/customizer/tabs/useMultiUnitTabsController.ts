@@ -25,6 +25,7 @@ import {
   isTabModified,
   subscribeToTabDisplayState,
 } from './MultiUnitTabsUnitState';
+import { getSavedHistoryDisabledReason } from './savedHistoryAccess';
 import {
   useDialogHandlers,
   type CloseDialogState,
@@ -35,8 +36,12 @@ import {
   createUnitImportHandlers,
   loadUnitIntoTab,
 } from './useMultiUnitTabsController.helpers';
+import {
+  useSavedHistoryDialog,
+  type HistoryDialogState,
+} from './useSavedHistoryDialog';
 
-export type { CloseDialogState, SaveDialogState };
+export type { CloseDialogState, SaveDialogState, HistoryDialogState };
 
 interface UseMultiUnitTabsControllerResult {
   tabs: ReturnType<typeof useTabManagerStore.getState>['tabs'];
@@ -46,6 +51,7 @@ interface UseMultiUnitTabsControllerResult {
   closeDialog: CloseDialogState;
   saveDialog: SaveDialogState;
   librarySaveDisabledReason: string | null;
+  savedHistoryDisabledReason: string | null;
   isLoadDialogOpen: boolean;
   isLoadingUnit: boolean;
   cancelPendingLoad: () => void;
@@ -66,6 +72,7 @@ interface UseMultiUnitTabsControllerResult {
   openImportDialog: () => void;
   closeImportDialog: () => void;
   openSaveDialog: () => void;
+  openSavedHistory: () => void;
   createNewUnit: (
     tonnage: number,
     techBase?: TechBase,
@@ -85,6 +92,9 @@ interface UseMultiUnitTabsControllerResult {
     overwriteId?: string,
   ) => Promise<void>;
   handleImportComplete: (count: number) => void;
+  historyDialog: HistoryDialogState;
+  closeHistoryDialog: () => void;
+  restoreHistoryVersion: (version: number) => Promise<void>;
 }
 
 export function useMultiUnitTabsController(): UseMultiUnitTabsControllerResult {
@@ -187,16 +197,32 @@ export function useMultiUnitTabsController(): UseMultiUnitTabsControllerResult {
     openSaveDialog: openSaveDialogForTab,
   } = useDialogHandlers(performCloseTab, renameTab, getTabById);
 
+  const {
+    historyDialog,
+    openHistoryDialog,
+    closeHistoryDialog,
+    restoreHistoryVersion,
+  } = useSavedHistoryDialog(getTabById, activeTabId);
+  useEffect(() => {
+    closeHistoryDialog();
+  }, [activeTabId, closeHistoryDialog]);
+
   const activeTab = useMemo(
     () => tabs.find((tab) => tab.id === activeTabId),
     [tabs, activeTabId],
   );
   const librarySaveDisabledReason = getLibrarySaveDisabledReason(activeTab);
+  const savedHistoryDisabledReason = getSavedHistoryDisabledReason(activeTab);
   const openSaveDialog = useCallback(() => {
     if (activeTabId) {
       openSaveDialogForTab(activeTabId);
     }
   }, [activeTabId, openSaveDialogForTab]);
+  const openSavedHistory = useCallback(() => {
+    if (activeTabId) {
+      openHistoryDialog(activeTabId);
+    }
+  }, [activeTabId, openHistoryDialog]);
 
   const closeTab = useCallback(
     (tabId: string) => {
@@ -337,6 +363,7 @@ export function useMultiUnitTabsController(): UseMultiUnitTabsControllerResult {
     closeDialog,
     saveDialog,
     librarySaveDisabledReason,
+    savedHistoryDisabledReason,
     isLoadDialogOpen,
     isLoadingUnit,
     cancelPendingLoad,
@@ -357,6 +384,7 @@ export function useMultiUnitTabsController(): UseMultiUnitTabsControllerResult {
     openImportDialog,
     closeImportDialog,
     openSaveDialog,
+    openSavedHistory,
     createNewUnit,
     handleLoadUnit,
     handleCloseDialogCancel,
@@ -365,5 +393,8 @@ export function useMultiUnitTabsController(): UseMultiUnitTabsControllerResult {
     handleSaveDialogCancel,
     handleSaveDialogSave,
     handleImportComplete,
+    historyDialog,
+    closeHistoryDialog,
+    restoreHistoryVersion,
   };
 }

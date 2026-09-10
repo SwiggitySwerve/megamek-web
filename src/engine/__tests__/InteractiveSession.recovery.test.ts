@@ -278,11 +278,13 @@ describe('InteractiveSession.fromSessionAsync — gap #2 recovery parity', () =>
       1,
       'atlas-as7-d',
       expect.objectContaining({ side: GameSide.Player }),
+      undefined,
     );
     expect(mockAdaptUnit).toHaveBeenNthCalledWith(
       2,
       'atlas-as7-d',
       expect.objectContaining({ side: GameSide.Opponent }),
+      undefined,
     );
     expect(
       recovered.getMovementCapability('player-1-atlas-as7-d'),

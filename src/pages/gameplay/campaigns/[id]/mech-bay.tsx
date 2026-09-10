@@ -16,8 +16,9 @@ import { MechBay } from '@/components/campaign/bays/MechBay';
 import { resolveMechBayLoadout } from '@/lib/campaign/bays/resolveMechBayUnit';
 import { buildCampaignCustomizerHref } from '@/lib/campaign/customizer/campaignCustomizerRoute';
 import { buildMissionReadinessProjection } from '@/lib/campaign/readiness/missionReadinessProjection';
+import { useCombatCatalog } from '@/lib/campaign/readiness/useCombatCatalog';
 import * as CampaignShell from '@/pages-modules/gameplay/campaigns/campaignPageShell';
-import { getCustomUnitService } from '@/services/units/CustomUnitService';
+import { listCampaignSavedDesigns } from '@/services/units/listCampaignSavedDesigns';
 import { selectRepairBay } from '@/stores/campaign/campaignBaySelectors';
 import { useCampaignRosterStore } from '@/stores/campaign/useCampaignRosterStore';
 import { RulesLevel } from '@/types/enums/RulesLevel';
@@ -92,6 +93,7 @@ export function buildMechBayUnitLoadoutMaps({
 
 export default function MechBayPage(): React.ReactElement {
   const shell = CampaignShell.useCampaignPageShell('Mech Bay');
+  const catalog = useCombatCatalog(shell.routeCampaignId ?? undefined);
   const units = useCampaignRosterStore((state) => state.units);
   const pilots = useCampaignRosterStore((state) => state.pilots);
   const activeMissionRecord = useCampaignRosterStore((state) =>
@@ -109,14 +111,14 @@ export default function MechBayPage(): React.ReactElement {
     let cancelled = false;
     const loadIndexes = async () => {
       const index = await loadCanonicalIndexWithBV();
-      const custom = await getCustomUnitService()
-        .list()
+      const custom = await listCampaignSavedDesigns()
         .then((rows) =>
-          rows.flatMap((row) =>
-            row.id && row.tonnage > 0
-              ? [{ id: row.id, tonnage: row.tonnage, battleValue: row.bv }]
-              : [],
-          ),
+          rows.flatMap((row) => {
+            if (!row.id || row.tonnage <= 0) return [];
+            const battleValue =
+              'bv' in row && typeof row.bv === 'number' ? row.bv : undefined;
+            return [{ id: row.id, tonnage: row.tonnage, battleValue }];
+          }),
         )
         .catch(() => []);
       if (!cancelled) {
@@ -142,6 +144,7 @@ export default function MechBayPage(): React.ReactElement {
     ? campaign.missions.get(activeMissionRecord.id)
     : undefined;
   const readinessProjection = buildMissionReadinessProjection({
+    catalog,
     campaignId: campaign.id,
     mission: activeMission,
     units,

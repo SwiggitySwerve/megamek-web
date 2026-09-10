@@ -1,6 +1,11 @@
 import { expect, test, type Page } from '@playwright/test';
 
 test.use({ serviceWorkers: 'block' });
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() =>
+    Reflect.deleteProperty(Navigator.prototype, 'serviceWorker'),
+  );
+});
 
 async function readDraft(page: Page) {
   return page.evaluate(() => {

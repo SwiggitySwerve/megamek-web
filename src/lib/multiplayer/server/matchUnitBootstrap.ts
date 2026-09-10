@@ -5,6 +5,8 @@ import type { TeamLayout } from '@/types/multiplayer/Lobby';
 
 import { adaptUnit } from '@/engine/adapters/CompendiumAdapter';
 import { createMinimalGrid } from '@/engine/GameEngine.helpers';
+import { detachCustomCombatSnapshot } from '@/engine/InteractiveSession.recovery';
+import { readServerCustomCombatDefinition } from '@/services/units/serverCustomCombatDefinition';
 import { SeededRandom } from '@/simulation/core/SeededRandom';
 import { GameSide } from '@/types/gameplay/GameSessionInterfaces';
 import { Facing } from '@/types/gameplay/HexGridInterfaces';
@@ -108,6 +110,13 @@ function gameUnitFromAdapted(
     tonnage: adapted.tonnage,
     initiativeEquipment: adapted.initiativeEquipment,
     c3Equipment: adapted.c3Equipment,
+    ...(adapted.customUnitDefinition
+      ? {
+          customUnitDefinition: detachCustomCombatSnapshot(
+            adapted.customUnitDefinition,
+          ),
+        }
+      : {}),
   };
 }
 
@@ -115,13 +124,17 @@ async function adaptBootstrapUnit(
   entry: IMatchUnitBootstrapEntry,
 ): Promise<{ readonly adapted: IAdaptedUnit; readonly gameUnit: IGameUnit }> {
   const side = gameSideFromBootstrap(entry.side);
-  const adapted = await adaptUnit(entry.unitRef, {
-    side,
-    position: entry.startHex,
-    facing: side === GameSide.Player ? Facing.North : Facing.South,
-    gunnery: entry.gunnery,
-    piloting: entry.piloting,
-  });
+  const adapted = await adaptUnit(
+    entry.unitRef,
+    {
+      side,
+      position: entry.startHex,
+      facing: side === GameSide.Player ? Facing.North : Facing.South,
+      gunnery: entry.gunnery,
+      piloting: entry.piloting,
+    },
+    readServerCustomCombatDefinition,
+  );
   if (!adapted) {
     throw new Error(`Unit bootstrap failed: unknown unitRef ${entry.unitRef}`);
   }

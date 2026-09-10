@@ -4,12 +4,22 @@
  */
 
 import type { IWeapon } from '@/simulation/ai/types';
+import type { CustomCombatSnapshot } from '@/types/contracts/CustomCombatSnapshot';
 import type { IUnitGameState } from '@/types/gameplay/GameSessionInterfaces';
 import type {
   IHexCoordinate,
   IHexGrid,
   IMovementCapability,
 } from '@/types/gameplay/HexGridInterfaces';
+
+/**
+ * Injected reader for persisted custom construction. Server callers pass
+ * `readServerCustomCombatDefinition`; browser/tests may omit it to use the
+ * custom-unit HTTP API.
+ */
+export type CustomUnitDefinitionReader = (
+  id: string,
+) => unknown | Promise<unknown>;
 
 // =============================================================================
 // Engine Configuration
@@ -45,6 +55,8 @@ export interface IGameEngineConfig {
  * Carries weapon and movement capability info alongside the base state.
  */
 export interface IAdaptedUnit extends IUnitGameState {
+  /** Validated detached construction; present only for launched custom units. */
+  readonly customUnitDefinition?: CustomCombatSnapshot;
   /** Weapons equipped on this unit */
   readonly weapons: readonly IWeapon[];
   /** Walking movement points */

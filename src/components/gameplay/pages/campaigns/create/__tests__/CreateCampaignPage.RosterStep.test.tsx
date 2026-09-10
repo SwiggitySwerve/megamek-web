@@ -2,13 +2,84 @@ import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 
+import { listCampaignSavedDesigns } from '@/services/units/listCampaignSavedDesigns';
 import { UnitType } from '@/types/unit/BattleMechInterfaces';
 
 import { RosterStep } from '../CreateCampaignPage.RosterStep';
 
+jest.mock(
+  '@/services/units/listCampaignSavedDesigns',
+  () => ({
+    listCampaignSavedDesigns: jest.fn(),
+  }),
+  { virtual: true },
+);
+
+const listSavedDesignsMock = listCampaignSavedDesigns as jest.MockedFunction<
+  typeof listCampaignSavedDesigns
+>;
+
 const noop = (): void => {};
 
 describe('CreateCampaignPage RosterStep', () => {
+  beforeEach(() => {
+    listSavedDesignsMock.mockReset();
+    listSavedDesignsMock.mockResolvedValue([]);
+  });
+
+  it('selects durable saved metadata from listCampaignSavedDesigns without replacing roster ids', async () => {
+    const onAddTemplateUnit = jest.fn();
+    listSavedDesignsMock.mockResolvedValue([
+      {
+        id: 'custom-whm-6r-saved',
+        name: 'Warhammer WHM-6R Custom',
+        tonnage: 70,
+        unitType: UnitType.BATTLEMECH,
+        currentVersion: 3,
+      },
+    ]);
+
+    render(
+      <RosterStep
+        selectedUnits={[
+          {
+            id: 'unit-existing',
+            name: 'Existing Roster Mech',
+            tonnage: 70,
+            unitRef: 'custom-whm-6r-saved',
+            unitSource: 'custom',
+            sourceVersion: 3,
+          },
+        ]}
+        selectedPilots={[]}
+        pilotAssignments={{}}
+        onAddTemplateUnit={onAddTemplateUnit}
+        onRemoveUnit={noop}
+        onAddPilot={noop}
+        onRemovePilot={noop}
+        onAssignPilot={noop}
+      />,
+    );
+
+    fireEvent.click(
+      await screen.findByRole('button', {
+        name: 'Add saved design Warhammer WHM-6R Custom',
+      }),
+    );
+    expect(onAddTemplateUnit).toHaveBeenCalledWith(
+      'Warhammer WHM-6R Custom',
+      70,
+      'custom-whm-6r-saved',
+      'custom',
+      3,
+    );
+    expect(screen.getByTestId('roster-unit-unit-existing')).toHaveAttribute(
+      'data-unit-ref',
+      'custom-whm-6r-saved',
+    );
+    expect(listSavedDesignsMock).toHaveBeenCalledWith();
+  });
+
   it('shows representative unit names and passes unitRef when adding a template unit', async () => {
     const onAddTemplateUnit = jest.fn();
 

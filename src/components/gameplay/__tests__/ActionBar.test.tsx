@@ -74,4 +74,31 @@ describe('ActionBar', () => {
     render(<ActionBar {...defaultProps} />);
     expect(screen.getByRole('toolbar')).toBeInTheDocument();
   });
+
+  it('preserves Enter on a focused map button while keeping the map shortcut available', () => {
+    const onAction = jest.fn();
+    render(
+      <>
+        <button type="button">Use 2D map</button>
+        <ActionBar
+          phase={GamePhase.Movement}
+          canUndo={false}
+          canAct
+          onAction={onAction}
+        />
+      </>,
+    );
+    const button = screen.getByRole('button', { name: 'Use 2D map' });
+    button.focus();
+    const event = new KeyboardEvent('keydown', {
+      key: 'Enter',
+      bubbles: true,
+      cancelable: true,
+    });
+    fireEvent(button, event);
+    expect(event.defaultPrevented).toBe(false);
+    expect(onAction).not.toHaveBeenCalled();
+    fireEvent.keyDown(window, { key: 'Enter' });
+    expect(onAction).toHaveBeenCalledWith('lock');
+  });
 });

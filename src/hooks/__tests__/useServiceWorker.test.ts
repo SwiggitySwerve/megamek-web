@@ -58,6 +58,15 @@ describe('useServiceWorker', () => {
 
       expect(mockNavigator.serviceWorker.register).toHaveBeenCalledTimes(1);
     });
+
+    it('keeps registration stable after asynchronous state updates and rerenders', async () => {
+      const { rerender, unmount } = renderHook(() => useServiceWorker());
+      await act(async () => undefined);
+      rerender();
+      await act(async () => undefined);
+      expect(mockNavigator.serviceWorker.register).toHaveBeenCalledTimes(1);
+      unmount();
+    });
   });
 
   describe('Hook Interface', () => {

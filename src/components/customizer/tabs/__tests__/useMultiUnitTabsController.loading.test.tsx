@@ -25,6 +25,7 @@ jest.mock('@/stores/unitStoreRegistry', () => ({
 }));
 jest.mock('../MultiUnitTabsUnitState', () => ({
   getLibrarySaveDisabledReason: () => null,
+  isLibrarySaveSupported: () => true,
   getTabDisplayState: (tab: unknown) => tab,
   isTabModified: () => false,
   subscribeToTabDisplayState: () => () => undefined,

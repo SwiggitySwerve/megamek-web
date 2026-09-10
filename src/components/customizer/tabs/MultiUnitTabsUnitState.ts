@@ -17,6 +17,7 @@ interface UnitStoreStateLike {
   isModified?: boolean;
   techBaseMode?: TechBaseMode;
   techBase?: TechBase;
+  librarySave?: { id: string; version: number };
 }
 
 export function isLibrarySaveSupported(unitType?: UnitType): boolean {
@@ -95,14 +96,25 @@ export function subscribeToTabDisplayState(
   const store = getTabStore(tab.id, tab.unitType);
   if (!store) return () => undefined;
   let previous = getTabDisplayState(tab);
+  let previousLibrarySave = getUnitStoreState(
+    tab.id,
+    tab.unitType,
+  )?.librarySave;
   return store.subscribe(() => {
     const next = getTabDisplayState(tab);
+    const nextLibrarySave = getUnitStoreState(
+      tab.id,
+      tab.unitType,
+    )?.librarySave;
     if (
       previous.name !== next.name ||
       previous.isModified !== next.isModified ||
-      previous.techBaseMode !== next.techBaseMode
+      previous.techBaseMode !== next.techBaseMode ||
+      previousLibrarySave?.id !== nextLibrarySave?.id ||
+      previousLibrarySave?.version !== nextLibrarySave?.version
     ) {
       previous = next;
+      previousLibrarySave = nextLibrarySave;
       onChange();
     }
   });

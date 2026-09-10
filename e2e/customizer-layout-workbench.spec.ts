@@ -64,7 +64,13 @@ test('workbench preserves readable metrics and a stable scrolling workspace @cus
 }, testInfo) => {
   await page.goto('/customizer');
   await loadUnit(page);
-  await page.getByRole('tab', { name: 'Equipment', exact: true }).click();
+  const equipmentTab = page.getByRole('tab', {
+    name: 'Equipment',
+    exact: true,
+  });
+  await equipmentTab.click();
+  await expect(equipmentTab).toHaveAttribute('aria-selected', 'true');
+  await expect(page.getByTestId('equipment-catalog-scroll')).toBeVisible();
   const measured = [];
   for (const viewport of [
     { width: 1378, height: 912 },
@@ -74,9 +80,15 @@ test('workbench preserves readable metrics and a stable scrolling workspace @cus
     await page.setViewportSize(viewport);
     const before = await bounds(page);
     expect(before.metrics.height).toBe(48);
-    expect(before.workspace.height).toBeGreaterThanOrEqual(
-      viewport.height - 154,
+    const editControls = await page
+      .getByRole('group', { name: 'Edit history', exact: true })
+      .boundingBox();
+    expect(editControls?.height).toBe(44);
+    expect(before.metrics.y).toBeGreaterThanOrEqual(
+      editControls!.y + editControls!.height,
     );
+    expect(before.workspace.y).toBe(before.section.y + before.section.height);
+    expect(before.workspace.height).toBe(viewport.height - before.workspace.y);
     expect(before.documentOverflow).toBe(0);
     const readouts = page.locator('[data-testid^="unit-info-stat-"]');
     await expect(readouts).toHaveCount(10);
@@ -184,7 +196,10 @@ test('unit commands preserve live tech identity, rename and unit isolation @cust
       .getByText('IS', { exact: true }),
   ).toBeVisible();
   await page.getByRole('tab', { name: 'Layout Atlas', exact: true }).click();
-  expect((await readDraft(page)).id).toBe(atlasId);
+  await expect(
+    page.getByRole('tab', { name: 'Layout Atlas', exact: true }),
+  ).toHaveAttribute('aria-selected', 'true');
+  await expect.poll(async () => (await readDraft(page)).id).toBe(atlasId);
   expect((await readDraft(page)).tonnage).toBe(100);
   await page.reload();
   await expect(
@@ -384,7 +399,9 @@ test('unit switching never attributes another draft validation to the selected u
   ).toBe(true);
   await page.keyboard.press('Escape');
   const baselineDraft = await readDraft(page);
-  await page.getByRole('tab', { name: 'Atlas AS7-D', exact: true }).click();
+  const atlasTab = page.getByRole('tab', { name: 'Atlas AS7-D', exact: true });
+  await atlasTab.click();
+  await expect(atlasTab).toHaveAttribute('aria-selected', 'true');
   await page.getByRole('tab', { name: 'Equipment', exact: true }).click();
   await page
     .getByRole('textbox', { name: 'Search equipment', exact: true })

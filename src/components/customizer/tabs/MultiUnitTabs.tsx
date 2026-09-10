@@ -20,6 +20,8 @@ import { UnitStoreContext } from '@/stores/useUnitStore';
 
 import { CustomizerCommandBar } from '../CustomizerCommandBar';
 import { BrowserDraftStatus } from '../shared/BrowserDraftStatus';
+import { UnitEditControls } from '../shared/UnitEditControls';
+import { UnitSaveStatus } from '../shared/UnitSaveStatus';
 
 // Lazy-load the two heaviest vault dialogs (~360 + ~300 LOC pulling
 // CSV/JSON parsers, Zod, and Toast plumbing). They only mount when
@@ -47,6 +49,7 @@ const ImportDialog: ComponentType<ImportDialogProps<IExportableUnit>> = dynamic(
 
 import { MultiUnitTabsEmptyState } from './MultiUnitTabsEmptyState';
 import { NewTabModal } from './NewTabModal';
+import { SavedHistoryDialog } from './SavedHistoryDialog';
 import { TabBar } from './TabBar';
 import { useMultiUnitTabsController } from './useMultiUnitTabsController';
 
@@ -113,6 +116,7 @@ export function MultiUnitTabs({
     closeDialog,
     saveDialog,
     librarySaveDisabledReason,
+    savedHistoryDisabledReason,
     isLoadDialogOpen,
     isLoadingUnit,
     cancelPendingLoad,
@@ -133,6 +137,7 @@ export function MultiUnitTabs({
     openImportDialog,
     closeImportDialog,
     openSaveDialog,
+    openSavedHistory,
     createNewUnit,
     handleLoadUnit,
     handleCloseDialogCancel,
@@ -141,6 +146,9 @@ export function MultiUnitTabs({
     handleSaveDialogCancel,
     handleSaveDialogSave,
     handleImportComplete,
+    historyDialog,
+    closeHistoryDialog,
+    restoreHistoryVersion,
   } = useMultiUnitTabsController();
 
   const createBlankUnit = (): void => {
@@ -193,6 +201,8 @@ export function MultiUnitTabs({
           onExport={openExportDialog}
           onImport={openImportDialog}
           canExport={!!activeUnitExportData}
+          onOpenSavedHistory={openSavedHistory}
+          savedHistoryDisabledReason={savedHistoryDisabledReason}
         />
         <div className="bg-surface-base flex shrink-0 items-center px-1">
           <Button
@@ -207,15 +217,10 @@ export function MultiUnitTabs({
             }
             title={librarySaveDisabledReason ?? 'Save active unit to library'}
             disabled={librarySaveDisabledReason !== null}
-            className="!text-text-theme-primary relative !h-11 !w-11 shrink-0 !p-0"
+            className="!text-text-theme-primary !h-11 !w-11 shrink-0 !p-0"
             onClick={openSaveDialog}
           >
             <AppIcon name="save" size="toolbar" />
-            {activeTabId && (
-              <span className="absolute right-1 bottom-1 flex">
-                <BrowserDraftStatus unitId={activeTabId} compact />
-              </span>
-            )}
           </Button>
           {librarySaveDisabledReason && (
             <span id="library-save-disabled-reason" className="sr-only">
@@ -224,6 +229,14 @@ export function MultiUnitTabs({
           )}
         </div>
       </CustomizerCommandBar>
+
+      {activeTabId && (
+        <div className="border-border-theme-subtle bg-surface-base flex min-h-11 min-w-0 flex-wrap items-center gap-x-3 gap-y-1 border-b px-2 py-1">
+          <UnitEditControls unitId={activeTabId} />
+          <BrowserDraftStatus unitId={activeTabId} />
+          <UnitSaveStatus unitId={activeTabId} />
+        </div>
+      )}
 
       <div className="min-h-0 flex-1 overflow-hidden">{children}</div>
 
@@ -248,6 +261,15 @@ export function MultiUnitTabs({
         currentUnitId={saveDialog.tabId ?? undefined}
         onSave={handleSaveDialogSave}
         onCancel={handleSaveDialogCancel}
+      />
+
+      <SavedHistoryDialog
+        isOpen={historyDialog.isOpen}
+        libraryId={historyDialog.libraryId}
+        unitName={historyDialog.unitName}
+        currentVersion={historyDialog.currentVersion}
+        onClose={closeHistoryDialog}
+        onRestoreDraft={restoreHistoryVersion}
       />
 
       <UnitLoadDialog

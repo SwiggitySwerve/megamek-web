@@ -30,6 +30,7 @@ test('catalog copies mount, move and persist independently @customizer', async (
   await page.getByText('AS7-D', { exact: true }).click();
   await page.getByRole('button', { name: 'Load Unit', exact: true }).click();
   await page.getByRole('dialog').waitFor({ state: 'hidden' });
+  const atlasId = new URL(page.url()).pathname.split('/')[2];
   await page.getByRole('tab', { name: 'Equipment', exact: true }).click();
   const search = page.getByRole('textbox', {
     name: 'Search equipment',
@@ -85,7 +86,12 @@ test('catalog copies mount, move and persist independently @customizer', async (
       copies.some((copy) => copy.instanceId === e.instanceId),
     ),
   ).toBe(false);
-  await page.getByText('Atlas AS7-D', { exact: true }).first().click();
+  const atlasTab = page.getByRole('tab', { name: 'Atlas AS7-D', exact: true });
+  await atlasTab.click();
+  await expect(atlasTab).toHaveAttribute('aria-selected', 'true');
+  await expect
+    .poll(() => new URL(page.url()).pathname.split('/')[2])
+    .toBe(atlasId);
   await page.getByRole('tab', { name: 'Equipment', exact: true }).click();
   await expect(search).toHaveValue('Small Laser');
   expect(

@@ -71,7 +71,7 @@ const styles = {
     bv: 'text-text-theme-primary',
   },
   muted: 'text-text-theme-secondary',
-  box: 'flex min-w-0 flex-col gap-0.5 tabular-nums',
+  box: 'flex min-w-0 flex-col items-center gap-0.5 text-center tabular-nums',
 } as const;
 
 function statTestId(label: string): string {
@@ -224,7 +224,7 @@ export function UnitInfoBanner({
       )}
       <div
         id={readoutsId}
-        className={`${workbenchStyles.readouts} ${showReadouts || compact ? workbenchStyles.readoutsExpanded : ''}`}
+        className={`${workbenchStyles.readouts} ${hasRunPlus ? workbenchStyles.readoutsWithRunPlus : ''} ${showReadouts || compact ? workbenchStyles.readoutsExpanded : ''}`}
       >
         <div
           role="group"

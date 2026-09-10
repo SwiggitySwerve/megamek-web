@@ -95,6 +95,7 @@ import {
 import {
   createRecoveredGridFromSession,
   deriveAdaptedUnitsFromSession,
+  type ReadCustomCombatDefinition,
 } from './InteractiveSession.recovery';
 import {
   appendAndPersistInteractiveSessionEvent,
@@ -115,7 +116,10 @@ import {
  * outcome resolves.
  */
 export type { IInteractiveSessionLinkage } from './InteractiveSession.types';
-export { deriveAdaptedUnitsFromSession } from './InteractiveSession.recovery';
+export {
+  deriveAdaptedUnitsFromSession,
+  type ReadCustomCombatDefinition,
+} from './InteractiveSession.recovery';
 
 type InteractiveSessionConstructorArgs = [
   mapRadius: number,
@@ -390,14 +394,17 @@ export class InteractiveSession {
    * (terminal-outcome derivation, replay streaming) — those paths
    * don't need adapted-units maps.
    *
-   * Throws nothing — units whose `unitRef` is not in the catalog are
-   * skipped with a console.warn (the recovered host still has the
-   * other units' adapted state, which is better than a hard failure).
+   * Canonical units whose `unitRef` is not in the catalog are skipped
+   * with a console.warn. Custom units never skip: a present invalid
+   * snapshot refuses without live lookup, and a missing snapshot may
+   * resolve only through `readCustom` (server callers inject
+   * `readServerCustomCombatDefinition`).
    */
   static async fromSessionAsync(
     session: IGameSession,
+    readCustom?: ReadCustomCombatDefinition,
   ): Promise<InteractiveSession> {
-    const adapted = await deriveAdaptedUnitsFromSession(session);
+    const adapted = await deriveAdaptedUnitsFromSession(session, readCustom);
     const playerAdapted = adapted.filter((u) => u.side === GameSide.Player);
     const opponentAdapted = adapted.filter((u) => u.side === GameSide.Opponent);
 
@@ -763,7 +770,8 @@ export class InteractiveSession {
 export async function recoverInteractiveSession(
   matchId: string,
   storage: MatchLogHydrationStorage = matchLogStorage,
+  readCustom?: ReadCustomCombatDefinition,
 ): Promise<InteractiveSession> {
   const session = await hydrateRecoverableSessionFromMatchLog(matchId, storage);
-  return InteractiveSession.fromSessionAsync(session);
+  return InteractiveSession.fromSessionAsync(session, readCustom);
 }
