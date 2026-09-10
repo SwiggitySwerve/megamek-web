@@ -65,19 +65,19 @@ test('fixed Omni mounts cannot be unassigned through the inline inspector @custo
     .getByRole('gridcell', { name: /Medium Laser/ })
     .first()
     .click();
-  await expect(
-    page.getByRole('button', { name: 'Unassign Medium Laser', exact: true }),
-  ).toBeDisabled();
   const inspector = page.getByRole('region', {
     name: 'Equipment placement',
     exact: true,
   });
-  const locations = inspector
-    .getByRole('button')
-    .filter({ hasText: 'Fixed OmniMech equipment' });
-  await expect(locations).toHaveCount(8);
-  for (const button of await locations.all())
-    await expect(button).toBeDisabled();
+  await expect(
+    inspector.getByRole('combobox', { name: 'Place selected equipment' }),
+  ).toBeDisabled();
+  await expect(
+    inspector.getByRole('button', {
+      name: 'Unassign selected equipment',
+      exact: true,
+    }),
+  ).toBeDisabled();
   expect((await readDraft(page)).equipment).toEqual(before.equipment);
   await page.reload();
   expect((await readDraft(page)).equipment).toEqual(before.equipment);

@@ -5,8 +5,14 @@ import {
 
 export type CanonicalCombatCatalogSnapshot =
   | { readonly status: 'loading' }
-  | { readonly status: 'ready'; readonly unitRefs: ReadonlySet<string> }
+  | {
+      readonly status: 'ready';
+      readonly unitRefs: ReadonlySet<string>;
+      readonly customCombatRefs?: ReadonlySet<string>;
+    }
   | { readonly status: 'unavailable'; readonly retryable: true };
+
+const CUSTOM_COMBAT_REF_PREFIX = 'custom-';
 
 export const UNAVAILABLE_CANONICAL_CATALOG: CanonicalCombatCatalogSnapshot = {
   status: 'unavailable',
@@ -27,8 +33,15 @@ export type CanonicalAdmissionResult =
 
 export function readyCanonicalCatalog(
   unitRefs: readonly string[],
+  customCombatRefs?: readonly string[],
 ): CanonicalCombatCatalogSnapshot {
-  return { status: 'ready', unitRefs: new Set(unitRefs) };
+  return customCombatRefs === undefined
+    ? { status: 'ready', unitRefs: new Set(unitRefs) }
+    : {
+        status: 'ready',
+        unitRefs: new Set(unitRefs),
+        customCombatRefs: new Set(customCombatRefs),
+      };
 }
 
 export function snapshotFromUnitsApiPayload(
@@ -63,8 +76,21 @@ export function admitCanonicalExactReference(input: {
   const { parsed, unitRef, catalog, unitId, unitName } = input;
   // oxfmt-ignore
   if (parsed.kind === 'invalid') return deny(unitId, 'roster_source_invalid', `${unitName} has an invalid roster source and cannot launch.`);
-  // oxfmt-ignore
-  if (parsed.source === 'custom') return deny(unitId, 'roster_source_custom', `${unitName} is a saved custom design and cannot launch yet.`);
+  if (parsed.source === 'custom') {
+    if (
+      catalog?.status === 'ready' &&
+      isExactCustomCombatRef(unitRef) &&
+      catalog.customCombatRefs?.has(unitRef)
+    ) {
+      return { admitted: true };
+    }
+    // oxfmt-ignore
+    return deny(unitId, 'roster_source_custom', `${unitName} is a saved custom design and cannot launch yet.`);
+  }
+  if (isExactCustomCombatRef(unitRef)) {
+    // oxfmt-ignore
+    return deny(unitId, 'source_ref_mismatch', `${unitName} has a custom catalog reference under a canonical source and cannot launch.`);
+  }
   if (catalog !== undefined) {
     switch (catalog.status) {
       case 'loading':
@@ -131,9 +157,22 @@ export async function fetchCanonicalCatalogSnapshot(
 ): Promise<CanonicalCombatCatalogSnapshot> {
   try {
     const response = await fetchImpl('/api/units');
-    return response.ok
+    const catalog = response.ok
       ? snapshotFromUnitsApiPayload(await response.json())
       : UNAVAILABLE_CANONICAL_CATALOG;
+    if (catalog.status !== 'ready') return catalog;
+    try {
+      const custom = await fetchImpl('/api/units/custom/combat-catalog');
+      if (!custom.ok) return catalog;
+      const customCombatRefs = parseCustomCombatRefsPayload(
+        await custom.json(),
+      );
+      return customCombatRefs === undefined
+        ? catalog
+        : { ...catalog, customCombatRefs };
+    } catch {
+      return catalog;
+    }
   } catch {
     return UNAVAILABLE_CANONICAL_CATALOG;
   }
@@ -171,6 +210,27 @@ export function admitCampaignLaunch(input: {
     if (!admission.admitted) return admission;
   }
   return { admitted: true };
+}
+
+function isExactCustomCombatRef(id: string | undefined): id is string {
+  return (
+    typeof id === 'string' &&
+    id.startsWith(CUSTOM_COMBAT_REF_PREFIX) &&
+    id.length > CUSTOM_COMBAT_REF_PREFIX.length
+  );
+}
+
+function parseCustomCombatRefsPayload(
+  payload: unknown,
+): ReadonlySet<string> | undefined {
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+    return undefined;
+  }
+  const refs = (payload as { customCombatRefs?: unknown }).customCombatRefs;
+  if (!Array.isArray(refs) || !refs.every(isExactCustomCombatRef)) {
+    return undefined;
+  }
+  return new Set(refs);
 }
 
 function snapshotFromIndexEntries(

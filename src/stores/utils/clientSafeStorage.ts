@@ -21,6 +21,17 @@ export type StorageWriteReceipt =
 type StorageWriteReceiptListener = (receipt: StorageWriteReceipt) => void;
 
 const storageWriteReceiptListeners = new Set<StorageWriteReceiptListener>();
+const latestStorageWriteReceipts = new Map<string, StorageWriteReceipt>();
+
+/**
+ * Latest completed write for a storage key in this session, or null if none.
+ * Initial and read-only states must not invent a successful write.
+ */
+export function getLatestStorageWriteReceipt(
+  key: string,
+): StorageWriteReceipt | null {
+  return latestStorageWriteReceipts.get(key) ?? null;
+}
 
 /**
  * Observe completed browser-storage writes. Observers run only after setItem
@@ -34,6 +45,7 @@ export function subscribeToStorageWriteReceipts(
 }
 
 function publishStorageWriteReceipt(receipt: StorageWriteReceipt): void {
+  latestStorageWriteReceipts.set(receipt.key, receipt);
   storageWriteReceiptListeners.forEach((listener) => {
     try {
       listener(receipt);
@@ -68,6 +80,7 @@ export const clientSafeStorage: StateStorage = {
   removeItem: (name: string): void => {
     if (typeof window === 'undefined') return;
     localStorage.removeItem(name);
+    latestStorageWriteReceipts.delete(name);
   },
 };
 
@@ -100,4 +113,5 @@ export function safeSetItem(key: string, value: string): void {
 export function safeRemoveItem(key: string): void {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(key);
+  latestStorageWriteReceipts.delete(key);
 }

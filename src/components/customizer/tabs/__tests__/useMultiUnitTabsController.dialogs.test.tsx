@@ -39,6 +39,9 @@ const mockGetUnitStore = getUnitStore as jest.MockedFunction<
 const mockCreate = customUnitApiService.create as jest.MockedFunction<
   typeof customUnitApiService.create
 >;
+const mockSave = customUnitApiService.save as jest.MockedFunction<
+  typeof customUnitApiService.save
+>;
 
 function tab(unitType: UnitType): TabInfo {
   return {
@@ -161,7 +164,11 @@ describe('useDialogHandlers library save', () => {
       model: 'NEW-2',
       name: 'New Chassis NEW-2',
       isModified: false,
+      librarySave: { id: UNIT_ID, version: 1 },
     });
+    expect(store.getState().librarySave?.fingerprint).toEqual(
+      expect.any(String),
+    );
     expect(renameTab).toHaveBeenCalledWith(UNIT_ID, 'New Chassis NEW-2');
     expect(result.current.saveDialog.isOpen).toBe(false);
     expect(performCloseTab).not.toHaveBeenCalled();
@@ -210,6 +217,7 @@ describe('useDialogHandlers library save', () => {
     expect(store.getState()).toMatchObject({
       name: 'Newer Browser Draft',
       isModified: true,
+      librarySave: { id: UNIT_ID, version: 1 },
     });
     expect(renameTab).not.toHaveBeenCalled();
     expect(performCloseTab).not.toHaveBeenCalled();
@@ -248,5 +256,86 @@ describe('useDialogHandlers library save', () => {
     });
 
     expect(performCloseTab).toHaveBeenCalledWith(UNIT_ID);
+  });
+
+  it('does not invent a library receipt when the API omits identity', async () => {
+    const store = makeStore();
+    mockGetUnitStore.mockReturnValue(store);
+    mockCreate.mockResolvedValue({ success: true });
+    const getTabById = jest.fn(() => tab(UnitType.BATTLEMECH));
+    const { result } = renderHook(() =>
+      useDialogHandlers(performCloseTab, renameTab, getTabById),
+    );
+
+    act(() => result.current.openSaveDialog(UNIT_ID));
+    await act(async () => {
+      await result.current.handleSaveDialogSave('New Chassis', 'NEW-2');
+    });
+
+    expect(store.getState().librarySave).toBeUndefined();
+    expect(store.getState().isModified).toBe(true);
+    expect(store.getState().chassis).toBe('Old Chassis');
+    expect(renameTab).not.toHaveBeenCalled();
+    expect(result.current.saveDialog.isOpen).toBe(true);
+    expect(showToastMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: expect.stringMatching(/did not return a saved identity/i),
+        variant: 'error',
+      }),
+    );
+  });
+
+  it('records the returned library id even when it differs from the draft id', async () => {
+    const store = makeStore();
+    mockGetUnitStore.mockReturnValue(store);
+    mockCreate.mockResolvedValue({
+      success: true,
+      id: 'server-library-id',
+      version: 2,
+    });
+    const getTabById = jest.fn(() => tab(UnitType.BATTLEMECH));
+    const { result } = renderHook(() =>
+      useDialogHandlers(performCloseTab, renameTab, getTabById),
+    );
+
+    act(() => result.current.openSaveDialog(UNIT_ID));
+    await act(async () => {
+      await result.current.handleSaveDialogSave('New Chassis', 'NEW-2');
+    });
+
+    expect(store.getState().librarySave).toMatchObject({
+      id: 'server-library-id',
+      version: 2,
+    });
+    expect(store.getState().id).toBe(UNIT_ID);
+  });
+
+  it('records overwrite save identity from the API response', async () => {
+    const store = makeStore();
+    mockGetUnitStore.mockReturnValue(store);
+    mockSave.mockResolvedValue({
+      success: true,
+      id: 'existing-library',
+      version: 4,
+    });
+    const getTabById = jest.fn(() => tab(UnitType.BATTLEMECH));
+    const { result } = renderHook(() =>
+      useDialogHandlers(performCloseTab, renameTab, getTabById),
+    );
+
+    act(() => result.current.openSaveDialog(UNIT_ID));
+    await act(async () => {
+      await result.current.handleSaveDialogSave(
+        'New Chassis',
+        'NEW-2',
+        'existing-library',
+      );
+    });
+
+    expect(mockSave).toHaveBeenCalled();
+    expect(store.getState().librarySave).toMatchObject({
+      id: 'existing-library',
+      version: 4,
+    });
   });
 });

@@ -32,6 +32,39 @@ function admit(
 }
 
 describe('RosterUnitSource and catalog admission', () => {
+  it('admits only an exact custom-* combat ref and keeps source mismatches blocked', () => {
+    const dual = readyCanonicalCatalog(
+      ['atlas-as7-d'],
+      ['custom-workbench-atlas'],
+    );
+    expect(
+      admitCanonicalExactReference({
+        parsed: parseRosterUnitSource('custom'),
+        unitRef: 'custom-workbench-atlas',
+        catalog: dual,
+        unitId: 'u-custom',
+        unitName: 'Custom Atlas',
+      }),
+    ).toEqual({ admitted: true });
+    expect(
+      admit(parseRosterUnitSource('custom'), {
+        unitRef: 'custom-workbench-atlas',
+      }).admitted,
+    ).toBe(false);
+    expect(
+      admitCanonicalExactReference({
+        parsed: parseRosterUnitSource('canonical'),
+        unitRef: 'custom-workbench-atlas',
+        catalog: dual,
+        unitId: 'u-mismatch',
+        unitName: 'Atlas',
+      }),
+    ).toMatchObject({
+      admitted: false,
+      blocker: { code: 'source_ref_mismatch' },
+    });
+  });
+
   it('parses legacy/valid/invalid sources and fail-closed catalogs', () => {
     const persisted = { unitSource: 'stock' as unknown };
     expect(parseRosterUnitSource(undefined)).toEqual({

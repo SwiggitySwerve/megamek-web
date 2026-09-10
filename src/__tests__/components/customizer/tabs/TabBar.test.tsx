@@ -155,4 +155,36 @@ describe('TabBar', () => {
       screen.getByRole('button', { name: 'Unit actions' }),
     ).toBeInTheDocument();
   });
+
+  it('explains why saved history is unavailable and keeps it disabled', async () => {
+    const user = userEvent.setup();
+    render(
+      <TabBar
+        {...defaultProps}
+        onOpenSavedHistory={jest.fn()}
+        savedHistoryDisabledReason="Save this unit to the library before viewing history."
+      />,
+    );
+    await user.click(screen.getByRole('button', { name: 'Unit actions' }));
+    const historyButton = screen.getByRole('button', { name: 'Saved history' });
+    expect(historyButton).toBeDisabled();
+    expect(historyButton).toHaveAccessibleDescription(
+      /save this unit to the library/i,
+    );
+  });
+
+  it('opens saved history from unit actions when a library identity exists', async () => {
+    const user = userEvent.setup();
+    const onOpenSavedHistory = jest.fn();
+    render(
+      <TabBar
+        {...defaultProps}
+        onOpenSavedHistory={onOpenSavedHistory}
+        savedHistoryDisabledReason={null}
+      />,
+    );
+    await user.click(screen.getByRole('button', { name: 'Unit actions' }));
+    await user.click(screen.getByRole('button', { name: 'Saved history' }));
+    expect(onOpenSavedHistory).toHaveBeenCalledTimes(1);
+  });
 });

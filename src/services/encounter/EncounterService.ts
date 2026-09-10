@@ -7,7 +7,13 @@
  * @spec openspec/changes/add-encounter-system/specs/encounter-system/spec.md
  */
 
+import type { IGameUnit } from '@/types/gameplay/GameSessionUnitTypes';
+
 import { deriveCombatSeededGameUnits } from '@/engine/combatSeedDerivation';
+import {
+  attachRecordedCustomCombatSnapshots,
+  type ReadCustomCombatDefinition,
+} from '@/engine/InteractiveSession.recovery';
 import {
   IEncounter,
   ICreateEncounterInput,
@@ -58,10 +64,31 @@ export interface ILaunchEncounterOptions {
   readonly campaignId?: string | null;
   readonly contractId?: string | null;
   readonly scenarioId?: string | null;
+  /**
+   * Server launches inject `readServerCustomCombatDefinition`. Browser
+   * callers may omit this so Core's adapter can use its API reader.
+   */
+  readonly readCustom?: ReadCustomCombatDefinition;
 }
 
 function hasLaunchId(value: string | null | undefined): value is string {
   return typeof value === 'string' && value.trim().length > 0;
+}
+
+const deriveSeededGameUnits = deriveCombatSeededGameUnits;
+
+async function resolveEncounterCustomCombatReader(
+  explicit?: ReadCustomCombatDefinition,
+): Promise<ReadCustomCombatDefinition | undefined> {
+  if (explicit) {
+    return explicit;
+  }
+  if (typeof window !== 'undefined') {
+    return undefined;
+  }
+  const { readServerCustomCombatDefinition } =
+    await import('@/services/units/serverCustomCombatDefinition');
+  return readServerCustomCombatDefinition;
 }
 
 function normalizeLaunchId(value: string | null | undefined): string | null {
@@ -389,16 +416,31 @@ export class EncounterService implements IEncounterService {
       withRawIds?.rawForceIds,
     );
 
-    // Per `extend-combat-seed-to-all-session-producers`
-    // (game-session-management "Combat State Seeding at Session Creation"):
-    // adapt each unit's catalog data and splice per-location armor/structure
-    // /heat-sink seeds onto the units before the GameCreated payload forms.
-    // The raw path previously produced 0-armor derived state (pre-#998 bug
-    // shape). Units missing from the catalog launch unseeded with a console
-    // warning rather than failing the launch.
-    const seededUnits = await deriveCombatSeededGameUnits(units);
+    // Adapt catalog/custom construction and record a detached snapshot
+    // on each custom unit before GameCreated. Canonical units missing
+    // from the catalog may still launch unseeded; custom units never
+    // skip — missing or invalid construction fails the launch.
+    let recordedUnits: readonly IGameUnit[];
+    try {
+      const readCustom = await resolveEncounterCustomCombatReader(
+        options.readCustom,
+      );
+      const seededUnits = await deriveSeededGameUnits(units, readCustom);
+      recordedUnits = await attachRecordedCustomCombatSnapshots(
+        seededUnits,
+        readCustom,
+      );
+    } catch (error) {
+      return {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Cannot launch: custom construction is unavailable',
+      };
+    }
 
-    const session = createGameSession(config, seededUnits, { encounterMeta });
+    const session = createGameSession(config, recordedUnits, { encounterMeta });
     return this.repository.linkGameSession(id, session.id);
   };
 

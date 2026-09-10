@@ -139,6 +139,7 @@ describe('UnitLoaderService', () => {
       expect(result.state).toBeDefined();
       expect(result.state?.chassis).toBe('Atlas');
       expect(result.state?.model).toBe('AS7-D');
+      expect(result.state?.librarySave).toBeUndefined();
       expect(result.error).toBeUndefined();
     });
 
@@ -246,8 +247,13 @@ describe('UnitLoaderService', () => {
     expect(result).toMatchObject({
       success: true,
       sourceDefinition: { source: 'custom', id: 'saved-atlas', version: 4 },
-      state: { sourceDefinition },
+      state: {
+        sourceDefinition,
+        librarySave: { id: 'saved-atlas', version: 4 },
+      },
     });
+    expect(result.state?.librarySave?.fingerprint).toEqual(expect.any(String));
+    expect(result.state?.librarySave?.fingerprint.length).toBeGreaterThan(0);
   });
 
   it('rejects a valid non-mech definition at the BattleMech session boundary', async () => {

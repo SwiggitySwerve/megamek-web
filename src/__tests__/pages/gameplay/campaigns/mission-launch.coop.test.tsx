@@ -50,6 +50,18 @@ jest.mock('next/router', () => ({
   }),
 }));
 
+jest.mock('@/lib/campaign/readiness/canonicalCatalogAdmission', () => {
+  const actual = jest.requireActual<
+    typeof import('@/lib/campaign/readiness/canonicalCatalogAdmission')
+  >('@/lib/campaign/readiness/canonicalCatalogAdmission');
+  return {
+    ...actual,
+    fetchCanonicalCatalogSnapshot: jest.fn(async () =>
+      actual.readyCanonicalCatalog(['atlas-as7-d']),
+    ),
+  };
+});
+
 jest.mock('@/components/campaign/CampaignNavigation', () => ({
   CampaignNavigation: () => <nav data-testid="campaign-navigation" />,
 }));

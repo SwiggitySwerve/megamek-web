@@ -53,6 +53,18 @@
       "status": "proposed",
       "reason": "Owner ruling 2026-09-04 on the 2026-09-03 inventory-and-sync council: GM combat rewind is withdrawn from harden-gm-two-player-campaign-sessions because the combat match stream is never journaled in production (finding #48) and the umbrella delta would otherwise merge SHALLs the code violates on archive. This successor owns the six match-stream journal cutover seams, the moved gm-combat-interventions requirements (preview/commit phases, replacement-branch creation and activation, STALE_BRANCH rejection, per-viewer fog rebuild), the closes of umbrella boxes 14.1/14.2/14.4/14.5 by receipt, the 80-scenario reconcile, and the un-gate of rows E2E-40 to 44 and E2E-76, which run in the umbrella as strict expected failures tagged @until-journal-cutover. Unfunded until scheduled; its box 0.1 is the first deliverable when it opens.",
       "lastReviewed": "2026-09-04"
+    },
+    {
+      "name": "enable-saved-custom-unit-combat",
+      "status": "in-progress",
+      "reason": "User-requested recovery of deferred non-3D saved-custom-unit combat work: exact authoritative admission, immutable construction snapshots, replay/recovery and fog proof, and campaign picker/readiness integration. Excludes model and tactical presentation work.",
+      "lastReviewed": "2026-09-09"
+    },
+    {
+      "name": "add-customizer-edit-recovery",
+      "status": "in-progress",
+      "reason": "User-requested next customizer improvements: visible draft/library state, saved history and per-unit editing recovery. Excludes model and combat work.",
+      "lastReviewed": "2026-09-10"
     }
   ]
 }

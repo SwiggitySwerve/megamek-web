@@ -1,4 +1,10 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 
@@ -46,6 +52,9 @@ describe('SaveUnitDialog', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest
+      .mocked(unitNameValidator.validateUnitName)
+      .mockImplementation(() => new Promise(() => undefined));
   });
 
   it('should render when open', () => {
@@ -103,8 +112,6 @@ describe('SaveUnitDialog', () => {
     const chassisInput = screen.getByDisplayValue('Atlas');
     await user.clear(chassisInput);
     await user.type(chassisInput, 'New');
-
-    jest.advanceTimersByTime(350);
 
     await waitFor(
       () => {
@@ -340,5 +347,94 @@ describe('SaveUnitDialog', () => {
 
     // The generateUniqueName function should be available and mockable
     expect(unitNameValidator.generateUniqueName).toBeDefined();
+  });
+  it('validates the existing designation whenever the dialog opens', async () => {
+    jest.mocked(unitNameValidator.validateUnitName).mockResolvedValue({
+      isValid: false,
+      isCanonicalConflict: false,
+      isCustomConflict: true,
+      conflictingUnitId: 'existing-library-unit',
+    });
+    const { rerender } = render(<SaveUnitDialog {...defaultProps} />);
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Overwrite' })).toBeEnabled(),
+    );
+    expect(unitNameValidator.validateUnitName).toHaveBeenCalledWith(
+      'Atlas',
+      'AS7-D',
+      undefined,
+    );
+    rerender(<SaveUnitDialog {...defaultProps} isOpen={false} />);
+    rerender(<SaveUnitDialog {...defaultProps} />);
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Overwrite' })).toBeEnabled(),
+    );
+    expect(unitNameValidator.validateUnitName).toHaveBeenCalledTimes(2);
+  });
+  it('ignores the initial name response after the user changes the designation', async () => {
+    let finishInitial!: (
+      value: Awaited<ReturnType<typeof unitNameValidator.validateUnitName>>,
+    ) => void;
+    jest
+      .mocked(unitNameValidator.validateUnitName)
+      .mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            finishInitial = resolve;
+          }),
+      )
+      .mockResolvedValue({
+        isValid: true,
+        isCanonicalConflict: false,
+        isCustomConflict: false,
+      });
+    render(<SaveUnitDialog {...defaultProps} />);
+    fireEvent.change(screen.getByDisplayValue('AS7-D'), {
+      target: { value: 'NEW-1' },
+    });
+    expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled();
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Save' })).toBeEnabled(),
+    );
+    await act(async () => {
+      finishInitial({
+        isValid: false,
+        isCanonicalConflict: true,
+        isCustomConflict: false,
+      });
+    });
+    expect(screen.getByRole('button', { name: 'Save' })).toBeEnabled();
+    expect(
+      screen.queryByText(/Conflicts with official unit/),
+    ).not.toBeInTheDocument();
+  });
+  it('keeps Save disabled on the first visible paint when reopening', async () => {
+    const painted: boolean[] = [];
+    function PaintProbe({ open }: { open: boolean }) {
+      React.useLayoutEffect(() => {
+        if (open)
+          painted.push(
+            screen
+              .getByRole('button', { name: 'Save' })
+              .hasAttribute('disabled'),
+          );
+      }, [open]);
+      return <SaveUnitDialog {...defaultProps} isOpen={open} />;
+    }
+    jest.mocked(unitNameValidator.validateUnitName).mockResolvedValue({
+      isValid: true,
+      isCanonicalConflict: false,
+      isCustomConflict: false,
+    });
+    const { rerender } = render(<PaintProbe open />);
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Save' })).toBeEnabled(),
+    );
+    rerender(<PaintProbe open={false} />);
+    jest
+      .mocked(unitNameValidator.validateUnitName)
+      .mockImplementation(() => new Promise(() => undefined));
+    rerender(<PaintProbe open />);
+    expect(painted.at(-1)).toBe(true);
   });
 });

@@ -3,10 +3,14 @@
  * Converts compendium unit data to IUnitGameState for the game engine.
  */
 
+import type { CustomCombatSnapshot } from '@/types/contracts/CustomCombatSnapshot';
+
 import {
   type IFullUnit,
   getCanonicalUnitService,
 } from '@/services/units/CanonicalUnitService';
+import { parseCustomCombatDefinition } from '@/services/units/customCombatDefinition';
+import { customUnitApiService } from '@/services/units/CustomUnitApiService';
 import {
   hydrateC3EquipmentFromFullUnit,
   hydrateHeatSinksFromFullUnit,
@@ -15,7 +19,11 @@ import {
 import { GameSide, LockState } from '@/types/gameplay/GameSessionInterfaces';
 import { Facing, MovementType } from '@/types/gameplay/HexGridInterfaces';
 
-import type { IAdaptedUnit, IAdaptUnitOptions } from '../types';
+import type {
+  CustomUnitDefinitionReader,
+  IAdaptedUnit,
+  IAdaptUnitOptions,
+} from '../types';
 
 import {
   applyInitialDamageToArmor,
@@ -154,14 +162,45 @@ function gyroTypeFromUnitData(
 
 /**
  * Asynchronously load a unit by ID from the compendium and adapt it.
- * Returns null if the unit is not found.
+ * Canonical misses return null. Unsupported custom-* refs throw.
  */
 export async function adaptUnit(
   unitId: string,
   options: IAdaptUnitOptions = {},
+  readCustom?: CustomUnitDefinitionReader,
 ): Promise<IAdaptedUnit | null> {
+  if (unitId.startsWith('custom-')) {
+    const read = readCustom ?? defaultReadCustom;
+    const definition = parseCustomCombatDefinition(await read(unitId), unitId);
+    if (!definition) {
+      throw new Error(
+        'Saved custom unit ' +
+          unitId +
+          ' is missing, invalid or unsupported for combat.',
+      );
+    }
+    return {
+      ...adaptUnitFromData(fullUnitFromCustomSnapshot(definition), options),
+      customUnitDefinition: definition,
+    };
+  }
   const service = getCanonicalUnitService();
   const fullUnit = await service.getById(unitId);
   if (!fullUnit) return null;
   return adaptUnitFromData(fullUnit, options);
+}
+
+function defaultReadCustom(id: string): Promise<unknown> {
+  return customUnitApiService.getById(id);
+}
+
+/**
+ * Single custom-boundary conversion into the catalog adapter view.
+ * `IFullUnit.armor` is a legacy flat map; nested snapshot armor/movement stay
+ * on the object and are read by `adaptUnitFromData` via its record view.
+ */
+function fullUnitFromCustomSnapshot(
+  definition: CustomCombatSnapshot,
+): IFullUnit {
+  return definition as unknown as IFullUnit;
 }

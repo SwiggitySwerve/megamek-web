@@ -28,6 +28,7 @@ import type { IInteractiveSessionLinkage } from './InteractiveSession.types';
 import type { IAdaptedUnit } from './types';
 
 import { toMovementCapability } from './GameEngine.helpers';
+import { recordedCustomCombatSnapshotPatch } from './InteractiveSession.recovery';
 
 type MutableGameUnitPatch = {
   -readonly [K in keyof IGameUnit]?: IGameUnit[K];
@@ -133,8 +134,21 @@ function adaptedCombatSeedPatch(
   appendAdaptedArmorSeeds(patch, unit, adapted);
   appendAdaptedHeatSinkSeeds(patch, unit, adapted);
   appendVehicleCriticalAvailabilitySeed(patch, unit, adapted);
+  appendRecordedCustomCombatSnapshot(patch, unit, adapted);
 
   return Object.keys(patch).length > 0 ? patch : null;
+}
+
+function appendRecordedCustomCombatSnapshot(
+  patch: MutableGameUnitPatch,
+  unit: IGameUnit,
+  adapted: IAdaptedUnit,
+): void {
+  const recorded = recordedCustomCombatSnapshotPatch(unit, adapted);
+  if (recorded === null) {
+    return;
+  }
+  patch.customUnitDefinition = recorded.customUnitDefinition;
 }
 
 function appendAdaptedArmorSeeds(

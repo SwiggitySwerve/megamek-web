@@ -84,9 +84,11 @@ test('existing biped armor edits preserve caps, draft and unit isolation @custom
   await expect.poll(async () => (await readDraft(page)).tonnage).toBe(20);
   const locust = await readDraft(page);
   expect(locust.id).not.toBe(atlas.id);
-  await page.getByText('Atlas AS7-D', { exact: true }).first().click();
-  await page.getByRole('tab', { name: 'Armor', exact: true }).click();
+  const atlasTab = page.getByRole('tab', { name: 'Atlas AS7-D', exact: true });
+  await atlasTab.click();
+  await expect(atlasTab).toHaveAttribute('aria-selected', 'true');
   await expect.poll(async () => (await readDraft(page)).id).toBe(atlas.id);
+  await page.getByRole('tab', { name: 'Armor', exact: true }).click();
   expect((await readDraft(page)).armor['Center Torso']).toBe(46);
   await page.reload();
   await expect(torso).toHaveAttribute(

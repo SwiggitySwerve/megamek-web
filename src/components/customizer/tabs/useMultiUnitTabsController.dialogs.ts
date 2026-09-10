@@ -4,6 +4,7 @@ import type { TabInfo } from '@/stores/useTabManagerStore';
 
 import { useToast } from '@/components/shared/Toast';
 import { customUnitApiService } from '@/services/units/CustomUnitApiService';
+import { recordUnitLibrarySave } from '@/stores/unit/unitEditSnapshot';
 import { getUnitStore } from '@/stores/unitStoreRegistry';
 import { Era } from '@/types/temporal/Era';
 import { logger } from '@/utils/logger';
@@ -41,6 +42,24 @@ const INITIAL_SAVE_DIALOG: SaveDialogState = {
 };
 
 type GetTabById = (tabId: string) => TabInfo | undefined;
+
+function readLibrarySaveReference(result: {
+  success: boolean;
+  id?: string;
+  version?: number;
+}): { id: string; version: number } | null {
+  if (!result.success) return null;
+  const { id, version } = result;
+  if (typeof id !== 'string' || id.length === 0) return null;
+  if (
+    typeof version !== 'number' ||
+    !Number.isSafeInteger(version) ||
+    version < 1
+  ) {
+    return null;
+  }
+  return { id, version };
+}
 
 export function useDialogHandlers(
   performCloseTab: (tabId: string) => void,
@@ -188,8 +207,79 @@ export function useDialogHandlers(
           return;
         }
 
+        const reference = readLibrarySaveReference(result);
+        if (!reference) {
+          logger.error(
+            'Failed to save unit: library response omitted id/version',
+          );
+          showToast({
+            message:
+              'The library did not return a saved identity. The draft was not marked as a library save.',
+            variant: 'error',
+          });
+          return;
+        }
+
         const unitName = [chassis, variant].filter(Boolean).join(' ');
-        if (!getTabById(saveDialog.tabId)) {
+        const savedState = {
+          ...state,
+          chassis,
+          model: variant,
+          name: unitName,
+        };
+        const storeStillOpen = getUnitStore(saveDialog.tabId) === unitStore;
+        const stillCurrent = unitStore.getState() === state;
+        const tabStillOpen = Boolean(getTabById(saveDialog.tabId));
+
+        let browserSaveFailed = false;
+        if (storeStillOpen) {
+          if (stillCurrent && tabStillOpen) {
+            try {
+              unitStore.setState({
+                chassis,
+                model: variant,
+                name: unitName,
+                lastModifiedAt: Date.now(),
+              });
+            } catch (error) {
+              browserSaveFailed = true;
+              logger.error(
+                'Library saved but browser draft write failed:',
+                error,
+              );
+            }
+          }
+          try {
+            recordUnitLibrarySave(unitStore, reference, savedState);
+          } catch (error) {
+            browserSaveFailed = true;
+            logger.error(
+              'Library saved but browser receipt write failed:',
+              error,
+            );
+          }
+          if (stillCurrent && tabStillOpen) {
+            try {
+              renameTab(saveDialog.tabId, unitName);
+            } catch (error) {
+              browserSaveFailed = true;
+              logger.error(
+                'Library saved but browser tab write failed:',
+                error,
+              );
+            }
+          }
+        }
+        if (browserSaveFailed) {
+          showToast({
+            message: `Unit "${unitName}" saved to the library as v${reference.version}, but the browser draft save failed. Keep this tab open and retry the browser draft.`,
+            variant: 'warning',
+          });
+          setSaveDialog(INITIAL_SAVE_DIALOG);
+          return;
+        }
+
+        if (!tabStillOpen || !storeStillOpen) {
           showToast({
             message: `Unit "${unitName}" saved, but its source tab is no longer open.`,
             variant: 'warning',
@@ -198,7 +288,7 @@ export function useDialogHandlers(
           return;
         }
 
-        if (unitStore.getState() !== state) {
+        if (!stillCurrent) {
           showToast({
             message: `Unit "${unitName}" saved, but newer browser draft changes remain.`,
             variant: 'warning',
@@ -206,15 +296,6 @@ export function useDialogHandlers(
           setSaveDialog(INITIAL_SAVE_DIALOG);
           return;
         }
-
-        unitStore.setState({
-          chassis,
-          model: variant,
-          name: unitName,
-          isModified: false,
-          lastModifiedAt: Date.now(),
-        });
-        renameTab(saveDialog.tabId, unitName);
 
         showToast({
           message: `Unit "${unitName}" saved successfully!`,

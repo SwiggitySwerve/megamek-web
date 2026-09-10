@@ -38,6 +38,7 @@ import {
   referenceRecoveryPort,
 } from '@/lib/events/checkpoints/AuthorityRecoveryPort';
 import { getSQLiteService } from '@/services/persistence/SQLiteService';
+import { readServerCustomCombatDefinition } from '@/services/units/serverCustomCombatDefinition';
 import { hydrateGameSessionFromEvents } from '@/utils/gameplay/gameSession';
 
 import type { IMatchMeta, IMatchStore } from './IMatchStore';
@@ -115,7 +116,10 @@ export async function rebuildSessionFromEvents(
   events: readonly IGameEvent[],
 ): Promise<InteractiveSession> {
   const session = hydrateGameSessionFromEvents(matchId, events);
-  return InteractiveSession.fromSessionAsync(session);
+  return InteractiveSession.fromSessionAsync(
+    session,
+    readServerCustomCombatDefinition,
+  );
 }
 
 /**
@@ -163,6 +167,7 @@ export async function recoverActiveMatches(
       if (rewound !== null) {
         const session = await InteractiveSession.fromSessionAsync(
           rewound.session,
+          readServerCustomCombatDefinition,
         );
         const host = await ServerMatchHost.recover(
           meta.matchId,
@@ -280,7 +285,10 @@ export async function recoverActiveMatches(
           );
         }
       }
-      const session = await InteractiveSession.fromSessionAsync(verdict.state);
+      const session = await InteractiveSession.fromSessionAsync(
+        verdict.state,
+        readServerCustomCombatDefinition,
+      );
       const host = await ServerMatchHost.recover(meta.matchId, store, session);
       await host.restorePersistedViewerDeliveries();
       // Drain publications the dead process committed but never sent

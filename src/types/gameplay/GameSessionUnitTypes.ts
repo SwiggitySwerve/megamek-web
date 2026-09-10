@@ -3,6 +3,7 @@
  * Extracted from GameSessionInterfaces.ts to keep focused type modules under the lint line cap.
  */
 
+import type { CustomCombatSnapshot } from '@/types/contracts/CustomCombatSnapshot';
 import type { IC3EquipmentMountState } from '@/utils/gameplay/c3Network';
 import type { CriticalSlotManifest } from '@/utils/gameplay/criticalHitResolution';
 
@@ -148,6 +149,15 @@ export interface IGameUnit {
   readonly side: GameSide;
   /** Unit reference (ID from unit database) */
   readonly unitRef: string;
+  /**
+   * Detached, validated custom construction recorded at launch.
+   * Recovery and rewind prefer this snapshot over the mutable library.
+   * Omitted for canonical units and legacy histories that never recorded
+   * construction. Present invalid snapshots must refuse recovery.
+   * `id` on the snapshot is the source `unitRef`, not this game-instance
+   * `id`.
+   */
+  readonly customUnitDefinition?: CustomCombatSnapshot;
   /** Pilot reference (ID from pilot database, or inline statblock) */
   readonly pilotRef: string;
   /** Pilot skills */

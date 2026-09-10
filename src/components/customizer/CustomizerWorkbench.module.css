@@ -79,11 +79,15 @@
 
 .compactMetrics .readouts {
   display: grid;
-  grid-template-columns: 1.3fr 1fr 1fr;
+  grid-template-columns: minmax(0, 4fr) repeat(2, minmax(0, 3fr));
   align-items: center;
   min-height: 48px;
   padding: 0;
-  gap: 12px;
+  gap: 0;
+}
+
+.compactMetrics .readoutsWithRunPlus {
+  grid-template-columns: minmax(0, 5fr) repeat(2, minmax(0, 3fr));
 }
 
 .compactMetrics .readoutGroup {
@@ -92,7 +96,7 @@
 
 .compactMetrics .readoutGroup + .readoutGroup {
   border-left: 1px solid var(--border-default);
-  padding-left: 12px;
+  padding-left: 0;
 }
 
 .compactMetrics .readoutHeading {
@@ -114,7 +118,8 @@
 }
 
 .compactMetrics .readoutGroup > div {
-  gap: 8px;
+  grid-auto-columns: minmax(min-content, 1fr);
+  gap: 0;
 }
 
 @media (max-width: 767px) {

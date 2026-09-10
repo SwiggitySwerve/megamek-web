@@ -133,6 +133,9 @@ test('mobile keeps identity and tab navigation available across all surfaces @cu
       page.getByRole('region', { name: 'Unit status', exact: true }),
     ).toBeVisible();
     await expect(
+      page.getByRole('group', { name: 'Movement', exact: true }),
+    ).toBeVisible();
+    await expect(
       page.getByRole('button', {
         name: 'Save active unit to library',
         exact: true,
@@ -151,13 +154,4 @@ test('mobile keeps identity and tab navigation available across all surfaces @cu
       ),
     });
   }
-  const readouts = page.getByRole('button', { name: /Show readouts/ });
-  await readouts.click();
-  await expect(
-    page.getByRole('group', { name: 'Movement', exact: true }),
-  ).toBeVisible();
-  await page.getByRole('button', { name: /Hide readouts/ }).click();
-  await expect(
-    page.getByRole('group', { name: 'Movement', exact: true }),
-  ).not.toBeVisible();
 });

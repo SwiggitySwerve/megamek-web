@@ -4,7 +4,7 @@ import { Button, Card, Badge } from '@/components/ui';
 import { SvgIcon } from '@/components/ui/SvgIcon';
 import { WIZARD_REPRESENTATIVE_UNITS } from '@/lib/campaign/wizard/representativeUnits';
 import { CANONICAL_LIBRARY_SOURCE_VERSION } from '@/lib/kernelPlugin/mekstation/mekstationGamePlugin';
-import { getCustomUnitService } from '@/services/units/CustomUnitService';
+import { listCampaignSavedDesigns } from '@/services/units/listCampaignSavedDesigns';
 import { UNIT_TEMPLATES } from '@/simulation/generator';
 
 import type { RosterStepProps } from './CreateCampaignPage.types';
@@ -35,7 +35,7 @@ function getWizardTemplateOptions() {
 const WIZARD_TEMPLATE_OPTIONS = getWizardTemplateOptions();
 
 const listSavedDesignIndex = (): Promise<readonly unknown[]> =>
-  getCustomUnitService().list();
+  listCampaignSavedDesigns();
 
 function SavedDesignsGroup({
   loadSavedDesignIndex,

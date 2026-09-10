@@ -11,18 +11,21 @@ describe('BrowserDraftStatus', () => {
   });
 
   it('reports only successful writes for the active draft', () => {
-    const { rerender } = render(<BrowserDraftStatus unitId="first" />);
+    const { rerender } = render(<BrowserDraftStatus unitId="visible-first" />);
     expect(screen.getByRole('status')).toHaveTextContent('Browser draft');
+    expect(screen.getByRole('status')).toHaveAttribute('aria-live', 'off');
     act(() => clientSafeStorage.setItem('megamek-unit-other', '{}'));
     expect(screen.getByRole('status')).toHaveTextContent('Browser draft');
-    act(() => clientSafeStorage.setItem('megamek-unit-first', '{}'));
+    act(() => clientSafeStorage.setItem('megamek-unit-visible-first', '{}'));
     expect(screen.getByRole('status')).toHaveTextContent('Draft saved');
-    rerender(<BrowserDraftStatus unitId="second" />);
+    rerender(<BrowserDraftStatus unitId="visible-second" />);
     expect(screen.getByRole('status')).toHaveTextContent('Browser draft');
+    rerender(<BrowserDraftStatus unitId="visible-first" />);
+    expect(screen.getByRole('status')).toHaveTextContent('Draft saved');
   });
 
   it('retains the failed state until the draft is successfully written', () => {
-    render(<BrowserDraftStatus unitId="first" />);
+    render(<BrowserDraftStatus unitId="visible-failed" />);
     const storage = jest
       .spyOn(Storage.prototype, 'setItem')
       .mockImplementationOnce(() => {
@@ -30,12 +33,14 @@ describe('BrowserDraftStatus', () => {
       });
     act(() => {
       expect(() =>
-        clientSafeStorage.setItem('megamek-unit-first', '{}'),
+        clientSafeStorage.setItem('megamek-unit-visible-failed', '{}'),
       ).toThrow('full');
     });
+    expect(screen.getByRole('status')).toHaveAttribute('aria-live', 'polite');
     expect(screen.getByRole('status')).toHaveTextContent('Draft save failed');
     storage.mockRestore();
-    act(() => clientSafeStorage.setItem('megamek-unit-first', '{}'));
+    act(() => clientSafeStorage.setItem('megamek-unit-visible-failed', '{}'));
     expect(screen.getByRole('status')).toHaveTextContent('Draft saved');
+    expect(screen.getByRole('status')).toHaveAttribute('aria-live', 'off');
   });
 });

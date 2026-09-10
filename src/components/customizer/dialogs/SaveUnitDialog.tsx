@@ -10,7 +10,7 @@
  * @spec openspec/specs/unit-services/spec.md
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 
 import { DialogTemplate } from '@/components/ui/DialogTemplate';
 import {
@@ -297,22 +297,13 @@ export function SaveUnitDialog({
   const [status, setStatus] = useState<ValidationStatus>('idle');
   const [validationResult, setValidationResult] =
     useState<INameValidationResult | null>(null);
-  const [validationDebounce, setValidationDebounce] =
-    useState<NodeJS.Timeout | null>(null);
-
-  // Reset form when dialog opens
-  useEffect(() => {
-    if (isOpen) {
-      setChassis(initialChassis);
-      setVariant(initialVariant);
-      setStatus('idle');
-      setValidationResult(null);
-    }
-  }, [isOpen, initialChassis, initialVariant]);
+  const validationDebounce = useRef<NodeJS.Timeout | null>(null);
+  const validationRequest = useRef(0);
 
   // Validate name with debounce
   const validateName = useCallback(
     async (chassisValue: string, variantValue: string) => {
+      const request = ++validationRequest.current;
       if (!chassisValue.trim() || !variantValue.trim()) {
         setStatus('idle');
         setValidationResult(null);
@@ -328,9 +319,11 @@ export function SaveUnitDialog({
           currentUnitId,
         );
 
+        if (request !== validationRequest.current) return;
         setValidationResult(result);
         setStatus(statusFromValidationResult(result));
       } catch (error) {
+        if (request !== validationRequest.current) return;
         logger.error('Validation error:', error);
         setStatus('error');
         setValidationResult({
@@ -344,25 +337,44 @@ export function SaveUnitDialog({
     [currentUnitId],
   );
 
-  // Handle input changes with debounced validation
-  const handleChassisChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setChassis(value);
-    setValidationDebounce(
-      scheduleValidation(validationDebounce, () =>
-        validateName(value, variant),
-      ),
+  const cancelValidation = useCallback(() => {
+    validationRequest.current++;
+    if (validationDebounce.current) clearTimeout(validationDebounce.current);
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      setChassis(initialChassis);
+      setVariant(initialVariant);
+      setValidationResult(null);
+      void validateName(initialChassis, initialVariant);
+    } else {
+      setStatus('idle');
+      setValidationResult(null);
+    }
+    return cancelValidation;
+  }, [isOpen, initialChassis, initialVariant, validateName, cancelValidation]);
+
+  const queueValidation = (nextChassis: string, nextVariant: string): void => {
+    validationRequest.current++;
+    setValidationResult(null);
+    setStatus('validating');
+    validationDebounce.current = scheduleValidation(
+      validationDebounce.current,
+      () => {
+        void validateName(nextChassis, nextVariant);
+      },
     );
   };
-
-  const handleVariantChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+  const handleChassisChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setChassis(value);
+    queueValidation(value, variant);
+  };
+  const handleVariantChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
     setVariant(value);
-    setValidationDebounce(
-      scheduleValidation(validationDebounce, () =>
-        validateName(chassis, value),
-      ),
-    );
+    queueValidation(chassis, value);
   };
 
   // Handle save action

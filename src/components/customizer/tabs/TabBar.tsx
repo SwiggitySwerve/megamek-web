@@ -36,6 +36,10 @@ interface TabBarProps {
   onImport?: () => void;
   /** Whether export is available (has active unit) */
   canExport?: boolean;
+  /** Open saved library history for the active unit */
+  onOpenSavedHistory?: () => void;
+  /** Why saved history is unavailable, if it is */
+  savedHistoryDisabledReason?: string | null;
   /** Additional CSS classes */
   className?: string;
 }
@@ -53,6 +57,8 @@ export function TabBar({
   onExport,
   onImport,
   canExport = false,
+  onOpenSavedHistory,
+  savedHistoryDisabledReason = null,
   className = '',
 }: TabBarProps): React.ReactElement {
   const tabList = useRef<HTMLDivElement>(null);
@@ -113,6 +119,8 @@ export function TabBar({
           onImport={onImport}
           onExport={onExport}
           canExport={canExport}
+          onOpenSavedHistory={onOpenSavedHistory}
+          savedHistoryDisabledReason={savedHistoryDisabledReason}
         />
       </div>
     </div>

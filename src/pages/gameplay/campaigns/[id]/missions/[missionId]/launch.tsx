@@ -32,6 +32,7 @@ import {
   subscribeCoopParticipation,
 } from '@/lib/campaign/coop/coopRuntimeSession';
 import { buildMissionReadinessProjection } from '@/lib/campaign/readiness/missionReadinessProjection';
+import { useCombatCatalog } from '@/lib/campaign/readiness/useCombatCatalog';
 import {
   getLoadedCampaign,
   renderPendingCampaignPage,
@@ -59,6 +60,7 @@ import { useCampaignRosterStore } from '@/stores/campaign/useCampaignRosterStore
 
 export default function CoopMissionLaunchPage(): React.ReactElement {
   const router = useRouter();
+  const catalog = useCombatCatalog(router.asPath);
   const shell = useCampaignPageShell('Mission Launch');
   const campaignKey = shell.routeCampaignId;
   const missionKey = missionKeyFromRouter(router);
@@ -82,6 +84,7 @@ export default function CoopMissionLaunchPage(): React.ReactElement {
   const readinessProjection = useMemo(
     () =>
       buildMissionReadinessProjection({
+        catalog,
         campaignId: campaign?.id ?? campaignKey ?? 'campaign-pending',
         mission,
         units: rosterUnits,
@@ -96,6 +99,7 @@ export default function CoopMissionLaunchPage(): React.ReactElement {
     [
       campaign,
       campaignKey,
+      catalog,
       mission,
       rosterPilots,
       rosterUnits,

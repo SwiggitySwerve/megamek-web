@@ -15,20 +15,12 @@ export interface ServiceWorkerReturn extends ServiceWorkerState {
   cacheUrls: (urls: string[]) => void;
 }
 
-/**
- * Default page-reload action — module-level constant so the effect
- * dependency stays referentially stable when no override is injected.
- */
-const defaultReloadPage = (): void => {
-  window.location.reload();
-};
-
 export function useServiceWorker(
   /**
    * Injectable reload action (tests pass a spy; production uses the
    * default `window.location.reload`).
    */
-  reloadPage: () => void = defaultReloadPage,
+  reloadPage?: () => void,
 ): ServiceWorkerReturn {
   const [state, setState] = useState<ServiceWorkerState>({
     isSupported: typeof window !== 'undefined' && 'serviceWorker' in navigator,
@@ -58,7 +50,11 @@ export function useServiceWorker(
         hadController = true;
         return;
       }
-      reloadPage();
+      if (reloadPage) {
+        reloadPage();
+      } else {
+        window.location.reload();
+      }
     };
 
     navigator.serviceWorker.addEventListener(

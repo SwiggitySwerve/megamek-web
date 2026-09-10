@@ -107,6 +107,11 @@ export const EventTimelineSection: React.FC<IEventTimelineSectionProps> = ({
     [onTurnChange],
   );
 
+  const handleResolveUnitName = useCallback(
+    (unitId: string) => resolveUnitName(battle, unitId),
+    [battle],
+  );
+
   return (
     <ViewerSection
       ariaLabel="Event timeline"
@@ -187,7 +192,7 @@ export const EventTimelineSection: React.FC<IEventTimelineSectionProps> = ({
             height={384}
             itemHeight={52}
             onEventClick={handleEventClick}
-            resolveUnitName={(unitId) => resolveUnitName(battle, unitId)}
+            resolveUnitName={handleResolveUnitName}
           />
         </div>
       )}

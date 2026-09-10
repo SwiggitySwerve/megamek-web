@@ -10,11 +10,12 @@
  * @spec openspec/specs/unit-services/spec.md
  */
 
+import type { ICustomUnitIndexEntry } from '@/types/persistence/UnitPersistence';
+
 import { logger } from '@/utils/logger';
 
-import { IUnitIndexEntry } from '../common/types';
 import { getCanonicalUnitService } from './CanonicalUnitService';
-import { getCustomUnitService } from './CustomUnitService';
+import { customUnitApiService } from './CustomUnitApiService';
 
 // =============================================================================
 // Types
@@ -232,9 +233,9 @@ class UnitNameValidatorService implements IUnitNameValidator {
     variant: string,
     normalizedFullName: string,
     excludeUnitId?: string,
-  ): Promise<IUnitIndexEntry | null> {
+  ): Promise<ICustomUnitIndexEntry | null> {
     try {
-      const customUnits = await getCustomUnitService().list();
+      const customUnits = await customUnitApiService.list();
 
       const conflict = customUnits.find((entry) => {
         // Skip the unit we're updating
@@ -250,7 +251,7 @@ class UnitNameValidatorService implements IUnitNameValidator {
       return conflict || null;
     } catch (error) {
       logger.warn('Failed to check custom units:', error);
-      return null;
+      throw error;
     }
   }
 

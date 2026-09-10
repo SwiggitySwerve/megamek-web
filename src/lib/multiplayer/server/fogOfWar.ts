@@ -6,6 +6,7 @@ import {
   type GameEventVisibility,
   type IAttackResolvedPayload,
   type IDamageAppliedPayload,
+  type IGameCreatedPayload,
   type IGameEvent,
   type IGameState,
   type IRedactedAttackResolvedPayload,
@@ -117,6 +118,23 @@ export function filterEventForPlayer(
 ): IGameEvent | null {
   if (!isFogEnabled(options)) {
     return event;
+  }
+
+  if (event.type === GameEventType.GameCreated) {
+    const payload = event.payload as IGameCreatedPayload;
+    if (payload.units.some((unit) => unit.customUnitDefinition !== undefined)) {
+      return {
+        ...event,
+        payload: {
+          ...payload,
+          units: payload.units.map((unit) => {
+            if (isUnitOwnedByPlayer(playerId, unit.id, state)) return unit;
+            const { customUnitDefinition: _snapshot, ...publicUnit } = unit;
+            return publicUnit;
+          }),
+        },
+      };
+    }
   }
 
   const cache = options.cache ?? getStateCache(state);

@@ -32,7 +32,7 @@ import {
   startGame,
 } from '@/utils/gameplay/gameSession';
 
-import type { IAdaptedUnit } from './types';
+import type { CustomUnitDefinitionReader, IAdaptedUnit } from './types';
 
 import { adaptUnit } from './adapters/CompendiumAdapter';
 import { gameUnitsWithAdaptedCombatSeeds } from './InteractiveSession.setup';
@@ -44,16 +44,22 @@ import { gameUnitsWithAdaptedCombatSeeds } from './InteractiveSession.setup';
  * the splice matches by `unit.id`). Units whose `unitRef` is not in the
  * catalog are left unseeded with a console warning — a partially seeded
  * session beats a hard launch failure, matching the recovery path's
- * missing-unit policy.
+ * missing-unit policy. Missing or unsupported custom-* refs throw inside
+ * `adaptUnit` instead of substituting a stock unit.
  */
 export async function deriveCombatSeededGameUnits(
   units: readonly IGameUnit[],
+  readCustom?: CustomUnitDefinitionReader,
 ): Promise<readonly IGameUnit[]> {
   const adapted: IAdaptedUnit[] = [];
   for (const gameUnit of units) {
-    const adaptedUnit = await adaptUnit(gameUnit.unitRef, {
-      side: gameUnit.side,
-    });
+    const adaptedUnit = await adaptUnit(
+      gameUnit.unitRef,
+      {
+        side: gameUnit.side,
+      },
+      readCustom,
+    );
     if (adaptedUnit === null) {
       // eslint-disable-next-line no-console
       console.warn(
