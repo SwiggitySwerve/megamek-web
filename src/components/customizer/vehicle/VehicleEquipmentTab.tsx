@@ -10,6 +10,7 @@
 
 import React, { useCallback, useMemo } from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
 import { useVehicleStore } from '@/stores/useVehicleStore';
 import {
   VehicleLocation,
@@ -71,6 +72,7 @@ export function VehicleEquipmentTab({
   className = '',
 }: VehicleEquipmentTabProps): React.ReactElement {
   // Get state from store
+  const unitId = useVehicleStore((s) => s.id);
   const motionType = useVehicleStore((s) => s.motionType);
   const turret = useVehicleStore((s) => s.turret);
   const equipment = useVehicleStore((s) => s.equipment);
@@ -150,6 +152,9 @@ export function VehicleEquipmentTab({
       {/* Equipment Browser Section */}
       <div className="min-h-0 flex-1" data-testid="vehicle-equipment-browser">
         <EquipmentBrowser
+          key={unitId}
+          readOnly={readOnly}
+          addHint="Added to Body. Choose a mounting location in the loadout."
           onAddEquipment={handleAddEquipment}
           className="h-full"
         />
@@ -235,7 +240,9 @@ function MountedEquipmentRow({
     <div className="bg-surface-raised/50 border-border-theme-subtle flex items-center gap-2 rounded border p-2">
       {/* Equipment Name */}
       <div className="min-w-0 flex-1">
-        <span className="block truncate text-sm text-white">{item.name}</span>
+        <span className="text-text-theme-primary block truncate text-sm">
+          {item.name}
+        </span>
         <div className="text-text-theme-secondary flex items-center gap-2 text-xs">
           {item.isTurretMounted && hasTurret && (
             <span className="text-amber-400">Turret</span>
@@ -284,19 +291,7 @@ function MountedEquipmentRow({
         className="rounded p-1 text-red-400 transition-colors hover:bg-red-900/30 hover:text-red-300 disabled:opacity-50"
         title="Remove"
       >
-        <svg
-          className="h-4 w-4"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
+        <AppIcon name="trash" size="inline" aria-hidden="true" />
       </button>
     </div>
   );

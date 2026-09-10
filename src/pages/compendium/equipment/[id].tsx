@@ -18,6 +18,7 @@ import {
   StatCard,
   StatGrid,
 } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { TechBase } from '@/types/enums/TechBase';
 
 interface EquipmentData {
@@ -310,11 +311,11 @@ export default function EquipmentDetailPage(): React.ReactElement {
 // Icon Components
 function CubeIcon() {
   return (
-    <svg
+    <SvgIcon
+      size="control"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
-      strokeWidth={1.5}
       stroke="currentColor"
       className="h-5 w-5"
     >
@@ -323,17 +324,17 @@ function CubeIcon() {
         strokeLinejoin="round"
         d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3"
       />
-    </svg>
+    </SvgIcon>
   );
 }
 
 function CalendarIcon() {
   return (
-    <svg
+    <SvgIcon
+      size="control"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
-      strokeWidth={1.5}
       stroke="currentColor"
       className="h-5 w-5"
     >
@@ -342,17 +343,17 @@ function CalendarIcon() {
         strokeLinejoin="round"
         d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"
       />
-    </svg>
+    </SvgIcon>
   );
 }
 
 function FlameIcon() {
   return (
-    <svg
+    <SvgIcon
+      size="control"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
-      strokeWidth={1.5}
       stroke="currentColor"
       className="h-5 w-5"
     >
@@ -361,17 +362,17 @@ function FlameIcon() {
         strokeLinejoin="round"
         d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z"
       />
-    </svg>
+    </SvgIcon>
   );
 }
 
 function TargetIcon() {
   return (
-    <svg
+    <SvgIcon
+      size="control"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
-      strokeWidth={1.5}
       stroke="currentColor"
       className="h-5 w-5"
     >
@@ -380,6 +381,6 @@ function TargetIcon() {
         strokeLinejoin="round"
         d="M7.5 3.75H6A2.25 2.25 0 003.75 6v1.5M16.5 3.75H18A2.25 2.25 0 0120.25 6v1.5m0 9V18A2.25 2.25 0 0118 20.25h-1.5m-9 0H6A2.25 2.25 0 013.75 18v-1.5M15 12a3 3 0 11-6 0 3 3 0 016 0z"
       />
-    </svg>
+    </SvgIcon>
   );
 }

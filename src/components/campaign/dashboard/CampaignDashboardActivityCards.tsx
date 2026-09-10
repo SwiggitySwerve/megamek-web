@@ -30,7 +30,7 @@ const OPERATION_PRIORITY_STYLES: Record<
   },
   routine: {
     label: 'Review',
-    className: 'border-slate-600 bg-slate-800 text-slate-200',
+    className: 'border-border-theme bg-surface-base text-text-theme-primary',
   },
 };
 
@@ -61,13 +61,13 @@ export function OperationsQueueCard({
       <div className="mb-3 flex items-center justify-between gap-3">
         <p
           data-testid="operations-queue-status"
-          className="text-sm font-semibold text-slate-100"
+          className="text-text-theme-primary text-sm font-semibold"
         >
           {summary.statusLabel}
         </p>
         <span
           data-testid="operations-queue-count"
-          className="rounded border border-slate-700 px-2 py-1 font-mono text-xs text-slate-300"
+          className="border-border-theme text-text-theme-secondary rounded border px-2 py-1 font-mono text-xs"
         >
           {summary.unresolvedCount}
         </span>
@@ -76,7 +76,7 @@ export function OperationsQueueCard({
       {visibleItems.length === 0 ? (
         <p
           data-testid="operations-queue-empty"
-          className="text-sm text-slate-500"
+          className="text-text-theme-muted text-sm"
         >
           No operational items are waiting.
         </p>
@@ -88,14 +88,16 @@ export function OperationsQueueCard({
               <li
                 key={item.id}
                 data-testid={`operations-queue-item-${item.id}`}
-                className="rounded border border-slate-700 bg-slate-950/40 p-3"
+                className="border-border-theme bg-surface-deep/40 rounded border p-3"
               >
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <p className="text-sm font-semibold text-slate-100">
+                    <p className="text-text-theme-primary text-sm font-semibold">
                       {item.title}
                     </p>
-                    <p className="mt-1 text-xs text-slate-400">{item.detail}</p>
+                    <p className="text-text-theme-secondary mt-1 text-xs">
+                      {item.detail}
+                    </p>
                   </div>
                   <span
                     data-testid={`operations-queue-priority-${item.id}`}
@@ -136,7 +138,7 @@ export function DayAdvanceCard({
     <DashboardCard title="Day Advance" testid="dashboard-card-day-advance">
       <p
         data-testid="day-advance-current-date"
-        className="font-mono text-base text-slate-100"
+        className="text-text-theme-primary font-mono text-base"
       >
         {dateLabel}
       </p>
@@ -153,7 +155,7 @@ export function DayAdvanceCard({
           type="button"
           data-testid="day-advance-one-week"
           onClick={onAdvanceWeek}
-          className="rounded border border-slate-600 px-3 py-1 text-sm text-slate-200 hover:bg-slate-800"
+          className="border-border-theme text-text-theme-primary hover:bg-surface-base rounded border px-3 py-1 text-sm"
         >
           Advance one week
         </button>
@@ -168,7 +170,7 @@ export function DayAdvanceCard({
       ) : (
         <p
           data-testid="day-advance-no-pending"
-          className="mt-2 text-xs text-slate-500"
+          className="text-text-theme-muted mt-2 text-xs"
         >
           No events upcoming.
         </p>
@@ -190,28 +192,28 @@ export function QuickActionsCard({
         <Link
           data-testid="quick-action-hire-pilot"
           href={`/gameplay/campaigns/${campaignId}/hiring`}
-          className="rounded border border-slate-600 px-2 py-2 text-xs text-slate-200 hover:bg-slate-800"
+          className="border-border-theme text-text-theme-primary hover:bg-surface-base rounded border px-2 py-2 text-xs"
         >
           Hire a pilot
         </Link>
         <Link
           data-testid="quick-action-browse-contracts"
           href={`/gameplay/campaigns/${campaignId}/contract-market`}
-          className="rounded border border-slate-600 px-2 py-2 text-xs text-slate-200 hover:bg-slate-800"
+          className="border-border-theme text-text-theme-primary hover:bg-surface-base rounded border px-2 py-2 text-xs"
         >
           Browse contracts
         </Link>
         <Link
           data-testid="quick-action-refit-mech"
           href={`/gameplay/campaigns/${campaignId}/mech-bay`}
-          className="rounded border border-slate-600 px-2 py-2 text-xs text-slate-200 hover:bg-slate-800"
+          className="border-border-theme text-text-theme-primary hover:bg-surface-base rounded border px-2 py-2 text-xs"
         >
           Refit a mech
         </Link>
         <Link
           data-testid="quick-action-open-salvage"
           href={`/gameplay/campaigns/${campaignId}/salvage`}
-          className="rounded border border-slate-600 px-2 py-2 text-xs text-slate-200 hover:bg-slate-800"
+          className="border-border-theme text-text-theme-primary hover:bg-surface-base rounded border px-2 py-2 text-xs"
         >
           Open salvage
         </Link>

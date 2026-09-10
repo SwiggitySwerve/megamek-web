@@ -22,6 +22,7 @@ import { logger } from '@/utils/logger';
 import { customizerStyles as cs } from '../styles';
 import {
   CheckIcon,
+  CloseIcon,
   ErrorIcon,
   SpinnerIcon,
   WarningIcon,
@@ -97,7 +98,7 @@ function ValidationStatusIndicator({
   const messages: Partial<Record<ValidationStatus, React.ReactElement>> = {
     validating: (
       <div className="text-text-theme-secondary flex items-center gap-2">
-        <SpinnerIcon className="h-4 w-4 animate-spin" />
+        <SpinnerIcon size="inline" />
         <span className="text-sm">Checking availability...</span>
       </div>
     ),
@@ -109,19 +110,7 @@ function ValidationStatusIndicator({
     ),
     'canonical-conflict': (
       <div className="flex items-center gap-2 text-red-400">
-        <svg
-          className="h-4 w-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
+        <CloseIcon size="inline" />
         <span className="text-sm">
           {result?.errorMessage || 'Conflicts with official unit'}
         </span>
@@ -242,7 +231,7 @@ function SaveDialogFields({
       <div>
         <label
           htmlFor="chassis"
-          className="mb-1 block text-sm font-medium text-slate-300"
+          className="text-text-theme-secondary mb-1 block text-sm font-medium"
         >
           Chassis Name
         </label>
@@ -259,7 +248,7 @@ function SaveDialogFields({
       <div>
         <label
           htmlFor="variant"
-          className="mb-1 block text-sm font-medium text-slate-300"
+          className="text-text-theme-secondary mb-1 block text-sm font-medium"
         >
           Variant Designation
         </label>

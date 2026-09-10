@@ -8,6 +8,7 @@
 
 import React, { memo, useMemo } from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
 import { getEquipmentLookupService } from '@/services/equipment/EquipmentLookupService';
 import { IEquipmentItem, EquipmentCategory, IWeapon } from '@/types/equipment';
 import { getCategoryColorsLegacy } from '@/utils/colors/equipmentColors';
@@ -129,7 +130,10 @@ export const EquipmentRow = memo(function EquipmentRow({
         <td className="px-1.5 py-0.5">
           <div className="flex items-center gap-1">
             <span className={`h-1 w-1 flex-shrink-0 rounded-sm ${colors.bg}`} />
-            <span className="truncate text-white" title={equipment.name}>
+            <span
+              className="text-text-theme-primary truncate"
+              title={equipment.name}
+            >
               {equipment.name}
             </span>
           </div>
@@ -137,25 +141,25 @@ export const EquipmentRow = memo(function EquipmentRow({
         <td className="text-text-theme-secondary w-20 px-1 py-0.5 text-center text-[10px] tabular-nums sm:w-24">
           {formatRange(weaponData)}
         </td>
-        <td className="w-10 px-1 py-0.5 text-center text-slate-300 sm:w-12">
+        <td className="text-text-theme-secondary w-10 px-1 py-0.5 text-center sm:w-12">
           {formatDamage(weaponData)}
         </td>
-        <td className="w-8 px-1 py-0.5 text-center text-slate-300 sm:w-10">
+        <td className="text-text-theme-secondary w-8 px-1 py-0.5 text-center sm:w-10">
           {formatHeat(weaponData)}
         </td>
-        <td className="w-12 px-1 py-0.5 text-center text-slate-300 tabular-nums">
+        <td className="text-text-theme-secondary w-12 px-1 py-0.5 text-center tabular-nums">
           {equipment.weight}
         </td>
-        <td className="w-10 px-1 py-0.5 text-center text-slate-300 tabular-nums">
+        <td className="text-text-theme-secondary w-10 px-1 py-0.5 text-center tabular-nums">
           {equipment.criticalSlots}
         </td>
         <td className="w-10 px-1 py-0.5">
           <button
             onClick={onAdd}
-            className="bg-accent hover:bg-accent/80 w-full rounded px-1 py-0.5 text-[10px] font-medium text-white transition-colors"
+            className="bg-accent hover:bg-accent-hover text-on-accent w-full rounded px-1 py-0.5 text-[10px] font-medium transition-colors"
             title={`Add ${equipment.name}`}
           >
-            +
+            <AppIcon name="add" size="inline" aria-hidden="true" />
           </button>
         </td>
       </tr>
@@ -169,7 +173,7 @@ export const EquipmentRow = memo(function EquipmentRow({
       <td className="px-3 py-2">
         <div className="flex items-center gap-2">
           <span className={`h-2 w-2 rounded-sm ${colors.bg}`} />
-          <span className="text-white">{equipment.name}</span>
+          <span className="text-text-theme-primary">{equipment.name}</span>
         </div>
       </td>
 
@@ -179,22 +183,22 @@ export const EquipmentRow = memo(function EquipmentRow({
       </td>
 
       {/* Damage */}
-      <td className="px-3 py-2 text-center text-slate-300">
+      <td className="text-text-theme-secondary px-3 py-2 text-center">
         {formatDamage(weaponData)}
       </td>
 
       {/* Heat */}
-      <td className="px-3 py-2 text-center text-slate-300">
+      <td className="text-text-theme-secondary px-3 py-2 text-center">
         {formatHeat(weaponData)}
       </td>
 
       {/* Weight */}
-      <td className="px-3 py-2 text-center text-slate-300">
+      <td className="text-text-theme-secondary px-3 py-2 text-center">
         {equipment.weight}t
       </td>
 
       {/* Critical Slots */}
-      <td className="px-3 py-2 text-center text-slate-300">
+      <td className="text-text-theme-secondary px-3 py-2 text-center">
         {equipment.criticalSlots}
       </td>
 
@@ -202,7 +206,7 @@ export const EquipmentRow = memo(function EquipmentRow({
       <td className="px-3 py-2">
         <button
           onClick={onAdd}
-          className="bg-accent hover:bg-accent/80 rounded px-2 py-1 text-xs text-white transition-colors"
+          className="bg-accent hover:bg-accent-hover text-on-accent rounded px-2 py-1 text-xs transition-colors"
         >
           Add
         </button>

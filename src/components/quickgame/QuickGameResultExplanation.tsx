@@ -24,11 +24,15 @@ export function ResultExplanationCard({
 }): React.ReactElement {
   return (
     <Card>
-      <div className="border-b border-gray-700 p-4">
-        <h3 className="font-medium text-white">Result Explanation</h3>
+      <div className="border-border-theme border-b p-4">
+        <h3 className="text-text-theme-primary font-medium">
+          Result Explanation
+        </h3>
       </div>
       <div className="space-y-4 p-4">
-        <p className="text-sm text-gray-300">{explanation.summary}</p>
+        <p className="text-text-theme-secondary text-sm">
+          {explanation.summary}
+        </p>
         <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <ExplanationMetric label="Outcome" value={explanation.outcomeLabel} />
           <ExplanationMetric
@@ -58,10 +62,10 @@ function ExplanationMetric({
 }): React.ReactElement {
   return (
     <div>
-      <dt className="mb-1 text-xs tracking-wide text-gray-500 uppercase">
+      <dt className="text-text-theme-muted mb-1 text-xs tracking-wide uppercase">
         {label}
       </dt>
-      <dd className="text-white">{value}</dd>
+      <dd className="text-text-theme-primary">{value}</dd>
     </div>
   );
 }

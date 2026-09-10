@@ -4,6 +4,8 @@
  */
 import React from 'react';
 
+import { SvgIcon } from '@/components/ui/SvgIcon';
+
 type InputAccent = 'amber' | 'cyan' | 'emerald' | 'violet';
 type InputVariant = 'default' | 'large';
 
@@ -161,11 +163,11 @@ export function SearchInput({
   return (
     <div className="relative">
       <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-        <svg
+        <SvgIcon
+          size="control"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
-          strokeWidth={1.5}
           stroke="currentColor"
           className="text-text-theme-secondary h-5 w-5"
         >
@@ -174,7 +176,7 @@ export function SearchInput({
             strokeLinejoin="round"
             d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
           />
-        </svg>
+        </SvgIcon>
       </div>
       <Input type="text" value={value} className="pr-10 pl-10" {...props} />
       {value && onClear && (
@@ -183,11 +185,11 @@ export function SearchInput({
           onClick={onClear}
           className="text-text-theme-secondary hover:text-text-theme-primary absolute inset-y-0 right-0 flex items-center pr-3"
         >
-          <svg
+          <SvgIcon
+            size="control"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            strokeWidth={1.5}
             stroke="currentColor"
             className="h-5 w-5"
           >
@@ -196,7 +198,7 @@ export function SearchInput({
               strokeLinejoin="round"
               d="M6 18L18 6M6 6l12 12"
             />
-          </svg>
+          </SvgIcon>
         </button>
       )}
     </div>

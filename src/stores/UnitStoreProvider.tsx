@@ -91,7 +91,7 @@ export function UnitStoreProvider({
   if (!currentStore) {
     return (
       <div className="flex flex-1 items-center justify-center">
-        <div className="text-slate-400">Loading unit...</div>
+        <div className="text-text-theme-secondary">Loading unit...</div>
       </div>
     );
   }

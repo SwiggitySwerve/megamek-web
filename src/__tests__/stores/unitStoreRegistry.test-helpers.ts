@@ -71,6 +71,26 @@ describe('unitStoreRegistry', () => {
       expect(hasUnitStore(state.id)).toBe(true);
     });
 
+    it('persists a blank draft immediately without an editor change', () => {
+      const store = createAndRegisterUnit({
+        name: 'Blank',
+        tonnage: 50,
+        techBase: TechBase.INNER_SPHERE,
+      });
+      const state = store.getState();
+      const persisted = JSON.parse(
+        localStorage.getItem(`megamek-unit-${state.id}`)!,
+      );
+      expect(persisted.state).toMatchObject({
+        id: state.id,
+        name: 'Blank',
+        tonnage: 50,
+        techBase: TechBase.INNER_SPHERE,
+        equipment: [],
+        lastModifiedAt: state.lastModifiedAt,
+      });
+    });
+
     it('should generate unique IDs for each unit', () => {
       const store1 = createAndRegisterUnit(
         createTestUnitOptions({ name: 'Unit 1' }),

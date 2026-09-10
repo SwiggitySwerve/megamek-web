@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
 import { IUnitIndexEntry } from '@/services/common/types';
 import { TechBase } from '@/types/enums/TechBase';
 
@@ -35,7 +36,7 @@ export function UnitTableState({
   if (isLoading) {
     return (
       <div className={cs.dialog.loading}>
-        <SpinnerIcon className="mr-2 h-6 w-6 animate-spin" />
+        <SpinnerIcon size="toolbar" className="mr-2" />
         Loading units...
       </div>
     );
@@ -59,19 +60,12 @@ function NoUnitsFound() {
   return (
     <div className={cs.dialog.empty}>
       <div className="text-center">
-        <svg
+        <AppIcon
+          name="info"
+          size="feature"
           className={cs.dialog.emptyIcon}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={1.5}
-            d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
+          aria-hidden="true"
+        />
         <p>No units found</p>
         <p className="mt-1 text-sm">Try adjusting your search or filters</p>
       </div>
@@ -140,8 +134,8 @@ function UnitTableRow({
         isSelected ? cs.dialog.tableRowSelected : ''
       }`}
     >
-      <td className="px-3 py-1.5 text-white">{unit.chassis}</td>
-      <td className="px-3 py-1.5 text-slate-300">
+      <td className="text-text-theme-primary px-3 py-1.5">{unit.chassis}</td>
+      <td className="text-text-theme-secondary px-3 py-1.5">
         <UnitVariantLabel unit={unit} />
       </td>
       <td className="text-text-theme-secondary px-3 py-1.5 text-right tabular-nums">
@@ -160,9 +154,7 @@ function UnitTableRow({
         <UnitSourceLabel unit={unit} />
       </td>
       <td className="px-2 py-1.5 text-right">
-        {isSelected && (
-          <CheckIcon className="inline-block h-4 w-4 text-blue-400" />
-        )}
+        {isSelected && <CheckIcon className="inline-block text-blue-400" />}
       </td>
     </tr>
   );

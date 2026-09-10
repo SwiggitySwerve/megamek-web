@@ -18,8 +18,8 @@ export function PreviewToggle({
       data-testid="weapon-selector-preview-toggle"
       className={`min-h-[32px] rounded px-3 py-1 text-xs font-semibold transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none ${
         enabled
-          ? 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500'
-          : 'text-text-theme-secondary bg-gray-200 hover:bg-gray-300 focus:ring-gray-400'
+          ? 'bg-accent text-on-accent hover:bg-accent-hover focus:ring-accent'
+          : 'text-text-theme-secondary bg-surface-raised hover:bg-surface-raised focus:ring-border-theme'
       }`}
     >
       Preview Damage: {enabled ? 'ON' : 'OFF'}

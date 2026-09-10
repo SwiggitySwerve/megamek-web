@@ -6,6 +6,7 @@ import { ErrorBoundary } from '@/components/common';
 import { ArmorTab } from '@/components/customizer/tabs/ArmorTab';
 import { CriticalSlotsTab } from '@/components/customizer/tabs/CriticalSlotsTab';
 import { EquipmentTab } from '@/components/customizer/tabs/EquipmentTab';
+import { MechFluffTab } from '@/components/customizer/tabs/MechFluffTab';
 import { OverviewTab } from '@/components/customizer/tabs/OverviewTab';
 import { PreviewTab } from '@/components/customizer/tabs/PreviewTab';
 import { StructureTab } from '@/components/customizer/tabs/StructureTab';
@@ -14,15 +15,23 @@ interface UnitEditorWithRoutingTabContentProps {
   activeTabId: CustomizerTabId;
   selectedEquipmentId: string | null;
   onSelectEquipment: (id: string | null) => void;
+  workbench?: boolean;
 }
 
 export function UnitEditorWithRoutingTabContent({
   activeTabId,
   selectedEquipmentId,
   onSelectEquipment,
+  workbench = false,
 }: UnitEditorWithRoutingTabContentProps): React.ReactElement {
   return (
-    <>
+    <div
+      id={`tabpanel-${activeTabId}`}
+      role="tabpanel"
+      aria-labelledby={`customizer-tab-${activeTabId}`}
+      tabIndex={-1}
+      className="focus:outline-accent h-full min-h-0 focus:outline-2 focus:outline-offset-[-2px]"
+    >
       {activeTabId === 'overview' && (
         <ErrorBoundary componentName="OverviewTab">
           <OverviewTab />
@@ -47,18 +56,23 @@ export function UnitEditorWithRoutingTabContent({
       {activeTabId === 'criticals' && (
         <ErrorBoundary componentName="CriticalSlotsTab">
           <CriticalSlotsTab
+            hideLoadoutTray={!workbench}
             selectedEquipmentId={selectedEquipmentId}
             onSelectEquipment={onSelectEquipment}
           />
         </ErrorBoundary>
       )}
-      {activeTabId === 'fluff' && <PlaceholderTab name="Fluff" />}
+      {activeTabId === 'fluff' && (
+        <ErrorBoundary componentName="MechFluffTab">
+          <MechFluffTab />
+        </ErrorBoundary>
+      )}
       {activeTabId === 'preview' && (
         <ErrorBoundary componentName="PreviewTab">
           <PreviewTab />
         </ErrorBoundary>
       )}
-    </>
+    </div>
   );
 }
 

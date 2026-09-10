@@ -16,6 +16,7 @@ import {
   QuickGameResults,
 } from '@/components/quickgame';
 import { Button, Card } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { useQuickGameSelector } from '@/stores/useQuickGameStore';
 import { QuickGameStep } from '@/types/quickgame';
 
@@ -50,7 +51,7 @@ function StepIndicator({
             {index > 0 && (
               <div
                 className={`h-0.5 w-12 ${
-                  isCompleted ? 'bg-cyan-500' : 'bg-gray-600'
+                  isCompleted ? 'bg-cyan-500' : 'bg-surface-raised'
                 }`}
               />
             )}
@@ -61,11 +62,12 @@ function StepIndicator({
                     ? 'bg-cyan-500 text-white'
                     : isCompleted
                       ? 'border border-cyan-500 bg-cyan-500/20 text-cyan-400'
-                      : 'bg-gray-700 text-gray-400'
+                      : 'bg-surface-raised text-text-theme-secondary'
                 }`}
               >
                 {isCompleted ? (
-                  <svg
+                  <SvgIcon
+                    size="inline"
                     className="h-4 w-4"
                     fill="none"
                     stroke="currentColor"
@@ -77,7 +79,7 @@ function StepIndicator({
                       strokeWidth={2}
                       d="M5 13l4 4L19 7"
                     />
-                  </svg>
+                  </SvgIcon>
                 ) : (
                   index + 1
                 )}
@@ -87,8 +89,8 @@ function StepIndicator({
                   isActive
                     ? 'text-cyan-400'
                     : isPending
-                      ? 'text-gray-500'
-                      : 'text-gray-400'
+                      ? 'text-text-theme-muted'
+                      : 'text-text-theme-secondary'
                 }`}
               >
                 {stepInfo.label}
@@ -111,11 +113,12 @@ interface WelcomeScreenProps {
 
 function WelcomeScreen({ onStart }: WelcomeScreenProps): React.ReactElement {
   return (
-    <div className="flex min-h-full items-center justify-center bg-gray-900 p-4">
+    <div className="bg-surface-deep flex min-h-full items-center justify-center p-4">
       <Card className="w-full max-w-lg p-8 text-center">
         <div className="mb-6">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-cyan-500/20">
-            <svg
+            <SvgIcon
+              size="feature"
               className="h-8 w-8 text-cyan-400"
               fill="none"
               stroke="currentColor"
@@ -127,10 +130,10 @@ function WelcomeScreen({ onStart }: WelcomeScreenProps): React.ReactElement {
                 strokeWidth={2}
                 d="M13 10V3L4 14h7v7l9-11h-7z"
               />
-            </svg>
+            </SvgIcon>
           </div>
           <h1 className="mb-2 text-2xl font-bold text-white">Quick Game</h1>
-          <p className="text-gray-400">
+          <p className="text-text-theme-secondary">
             Play a standalone skirmish without campaign setup. Perfect for
             testing units, learning mechanics, or a quick battle.
           </p>
@@ -139,7 +142,8 @@ function WelcomeScreen({ onStart }: WelcomeScreenProps): React.ReactElement {
         <div className="mb-8 space-y-3 text-left">
           <div className="flex items-start gap-3">
             <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded bg-emerald-500/20">
-              <svg
+              <SvgIcon
+                size="inline"
                 className="h-4 w-4 text-emerald-400"
                 fill="none"
                 stroke="currentColor"
@@ -151,20 +155,21 @@ function WelcomeScreen({ onStart }: WelcomeScreenProps): React.ReactElement {
                   strokeWidth={2}
                   d="M5 13l4 4L19 7"
                 />
-              </svg>
+              </SvgIcon>
             </div>
             <div>
               <p className="text-sm font-medium text-white">
                 No persistence required
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-text-theme-muted text-xs">
                 Units exist only for this session
               </p>
             </div>
           </div>
           <div className="flex items-start gap-3">
             <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded bg-emerald-500/20">
-              <svg
+              <SvgIcon
+                size="inline"
                 className="h-4 w-4 text-emerald-400"
                 fill="none"
                 stroke="currentColor"
@@ -176,20 +181,21 @@ function WelcomeScreen({ onStart }: WelcomeScreenProps): React.ReactElement {
                   strokeWidth={2}
                   d="M5 13l4 4L19 7"
                 />
-              </svg>
+              </SvgIcon>
             </div>
             <div>
               <p className="text-sm font-medium text-white">
                 Auto-generated opponents
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-text-theme-muted text-xs">
                 Balanced forces created for auto-resolve or skirmish play
               </p>
             </div>
           </div>
           <div className="flex items-start gap-3">
             <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded bg-emerald-500/20">
-              <svg
+              <SvgIcon
+                size="inline"
                 className="h-4 w-4 text-emerald-400"
                 fill="none"
                 stroke="currentColor"
@@ -201,11 +207,11 @@ function WelcomeScreen({ onStart }: WelcomeScreenProps): React.ReactElement {
                   strokeWidth={2}
                   d="M5 13l4 4L19 7"
                 />
-              </svg>
+              </SvgIcon>
             </div>
             <div>
               <p className="text-sm font-medium text-white">Session replay</p>
-              <p className="text-xs text-gray-500">
+              <p className="text-text-theme-muted text-xs">
                 Review the battle after completion
               </p>
             </div>
@@ -319,17 +325,18 @@ export default function QuickGamePage(): React.ReactElement {
     <>
       <QuickGameHead />
 
-      <div className="min-h-screen bg-gray-900">
+      <div className="bg-surface-deep min-h-screen">
         {/* Header */}
-        <header className="border-b border-gray-700 bg-gray-800 px-4 py-3">
+        <header className="border-border-theme bg-surface-base border-b px-4 py-3">
           <div className="mx-auto flex max-w-6xl items-center justify-between">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => router.push('/gameplay/games')}
-                className="text-gray-400 transition-colors hover:text-white"
+                className="text-text-theme-secondary transition-colors hover:text-white"
                 aria-label="Back to games"
               >
-                <svg
+                <SvgIcon
+                  size="control"
                   className="h-5 w-5"
                   fill="none"
                   stroke="currentColor"
@@ -341,7 +348,7 @@ export default function QuickGamePage(): React.ReactElement {
                     strokeWidth={2}
                     d="M10 19l-7-7m0 0l7-7m-7 7h18"
                   />
-                </svg>
+                </SvgIcon>
               </button>
               <h1 className="text-lg font-semibold text-white">Quick Game</h1>
             </div>
@@ -363,7 +370,8 @@ export default function QuickGamePage(): React.ReactElement {
                 className="text-red-400 hover:text-red-300"
                 aria-label="Dismiss error"
               >
-                <svg
+                <SvgIcon
+                  size="inline"
                   className="h-4 w-4"
                   fill="none"
                   stroke="currentColor"
@@ -375,7 +383,7 @@ export default function QuickGamePage(): React.ReactElement {
                     strokeWidth={2}
                     d="M6 18L18 6M6 6l12 12"
                   />
-                </svg>
+                </SvgIcon>
               </button>
             </div>
           </div>

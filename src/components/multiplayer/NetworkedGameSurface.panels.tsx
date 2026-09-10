@@ -23,16 +23,18 @@ export function NetworkedCommandResultFeed({
   return (
     <ul
       data-testid="network-command-result-feed"
-      className="space-y-2 rounded-lg border border-slate-700 bg-slate-900/50 p-3 text-xs text-slate-200"
+      className="border-border-theme bg-surface-deep/50 text-text-theme-primary space-y-2 rounded-lg border p-3 text-xs"
     >
       {results.map((entry, index) => (
         <li
           key={`${entry.result.commandId}-${entry.result.previewId ?? index}`}
           data-testid="network-command-result-entry"
-          className="rounded border border-slate-700 bg-slate-950/40 px-3 py-2"
+          className="border-border-theme bg-surface-deep/40 rounded border px-3 py-2"
         >
           <span className="font-medium">{entry.publicSummary}</span>
-          <span className="ml-2 text-slate-400">{entry.result.status}</span>
+          <span className="text-text-theme-secondary ml-2">
+            {entry.result.status}
+          </span>
         </li>
       ))}
     </ul>
@@ -63,18 +65,18 @@ export function SelectionSummary({
   return (
     <div
       data-testid="selection-summary"
-      className="shrink-0 text-right text-xs text-slate-400"
+      className="text-text-theme-secondary shrink-0 text-right text-xs"
     >
       <p>
         Unit:{' '}
-        <span className="font-mono text-slate-200">
+        <span className="text-text-theme-primary font-mono">
           {selectedUnitId ?? '—'}
         </span>
       </p>
       {isAttackPhase && (
         <p>
           Target:{' '}
-          <span className="font-mono text-slate-200">
+          <span className="text-text-theme-primary font-mono">
             {targetUnitId ?? '—'}
           </span>
         </p>

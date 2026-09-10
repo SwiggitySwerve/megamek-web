@@ -32,6 +32,7 @@ import {
   PageLayout,
   PageLoading,
 } from '@/components/ui';
+import { AppIcon } from '@/components/ui/AppIcon';
 import { IGameEvent } from '@/types/gameplay';
 import { logger } from '@/utils/logger';
 
@@ -243,7 +244,8 @@ function ReplayViewerLayout({
           onClick={onBackToList}
           data-testid="back-to-library"
         >
-          ← Back to library
+          <AppIcon name="arrow-left" size="inline" />
+          Back to library
         </Button>
       </div>
 

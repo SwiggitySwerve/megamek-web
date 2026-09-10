@@ -7,6 +7,7 @@
  */
 import React from 'react';
 
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { ConnectionState } from '@/lib/p2p/types';
 
 // =============================================================================
@@ -67,8 +68,8 @@ function getStatusConfig(
     case ConnectionState.Disconnected:
     default:
       return {
-        dotColor: 'bg-slate-500',
-        pulseColor: 'bg-slate-400',
+        dotColor: 'bg-surface-raised',
+        pulseColor: 'bg-surface-raised',
         label: 'Offline',
         showPulse: false,
       };
@@ -114,20 +115,13 @@ export function SyncStatusIndicator({
       </span>
 
       {/* Connection icon */}
-      <svg
-        className="text-text-theme-muted h-4 w-4"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
+      <SvgIcon
+        size="inline"
+        className="text-text-theme-muted"
         aria-hidden="true"
       >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={1.5}
-          d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z"
-        />
-      </svg>
+        <path d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z" />
+      </SvgIcon>
     </button>
   );
 }

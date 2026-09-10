@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 import { Card, TechBaseBadge, WeightClassBadge } from '@/components/ui';
+import { AppIcon } from '@/components/ui/AppIcon';
 import { IUnitEntry } from '@/types/pages';
 
 import { RULES_LEVEL_LABELS } from './units.constants';
@@ -229,7 +230,11 @@ function SortableHeader({
         {label}
         {isActive && (
           <span className="text-accent text-[10px]">
-            {direction === 'asc' ? '▲' : '▼'}
+            {direction === 'asc' ? (
+              <AppIcon name="arrow-up" size="inline" aria-hidden="true" />
+            ) : (
+              <AppIcon name="arrow-down" size="inline" aria-hidden="true" />
+            )}
           </span>
         )}
       </span>

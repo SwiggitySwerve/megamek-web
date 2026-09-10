@@ -44,13 +44,13 @@ export function InfantryFieldGunsSection({
               key={gun.equipmentId}
               className="bg-surface-raised border-border-theme flex items-center gap-3 rounded border px-3 py-2"
             >
-              <span className="flex-1 text-sm text-white">
+              <span className="text-text-theme-primary flex-1 text-sm">
                 {gun.name}
-                <span className="ml-2 text-xs text-gray-400">
+                <span className="text-text-theme-secondary ml-2 text-xs">
                   (crew: {gun.crewCount})
                 </span>
               </span>
-              <label className="flex items-center gap-1 text-xs text-gray-400">
+              <label className="text-text-theme-secondary flex items-center gap-1 text-xs">
                 Ammo:
                 <input
                   type="number"
@@ -58,7 +58,7 @@ export function InfantryFieldGunsSection({
                   onChange={(event) => onFieldGunAmmo(idx, event)}
                   disabled={readOnly}
                   min={0}
-                  className="bg-surface-base border-border-theme ml-1 w-16 rounded border px-1 py-0.5 text-sm text-white"
+                  className="bg-surface-base border-border-theme text-text-theme-primary ml-1 w-16 rounded border px-1 py-0.5 text-sm"
                 />
               </label>
               {!readOnly && (
@@ -74,7 +74,9 @@ export function InfantryFieldGunsSection({
           ))}
         </div>
       ) : (
-        <p className="mb-4 text-xs text-gray-400">No field guns assigned.</p>
+        <p className="text-text-theme-secondary mb-4 text-xs">
+          No field guns assigned.
+        </p>
       )}
 
       {!readOnly && (

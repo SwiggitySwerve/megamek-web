@@ -7,6 +7,8 @@
 
 import React from 'react';
 
+import { SvgIcon } from '@/components/ui/SvgIcon';
+
 export interface ErrorFallbackProps {
   /** The error that was caught */
   error: Error;
@@ -33,7 +35,8 @@ export function ErrorFallback({
         {/* Error Icon */}
         <div className="flex items-center justify-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-500/10">
-            <svg
+            <SvgIcon
+              size="feature"
               className="h-8 w-8 text-red-500"
               fill="none"
               viewBox="0 0 24 24"
@@ -45,7 +48,7 @@ export function ErrorFallback({
                 strokeWidth={2}
                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
               />
-            </svg>
+            </SvgIcon>
           </div>
         </div>
 
@@ -112,7 +115,8 @@ export function CompactErrorFallback({
     <div className="bg-surface-raised border-border-theme rounded-lg border p-4">
       <div className="flex items-start gap-3">
         <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded bg-red-500/10">
-          <svg
+          <SvgIcon
+            size="control"
             className="h-5 w-5 text-red-500"
             fill="none"
             viewBox="0 0 24 24"
@@ -124,7 +128,7 @@ export function CompactErrorFallback({
               strokeWidth={2}
               d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
             />
-          </svg>
+          </SvgIcon>
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-text-theme-primary mb-1 text-sm font-medium">

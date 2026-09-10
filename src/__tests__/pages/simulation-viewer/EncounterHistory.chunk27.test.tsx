@@ -309,9 +309,11 @@ describe('EncounterHistory', () => {
         'aria-pressed',
         'true',
       );
-      expect(screen.getByTestId('sort-direction-indicator')).toHaveTextContent(
-        '↑',
-      );
+      const indicator = screen.getByTestId('sort-direction-indicator');
+      expect(indicator).toHaveAccessibleName('Ascending');
+      expect(
+        indicator.querySelector('[data-icon-name="arrow-up"]'),
+      ).toBeInTheDocument();
     });
   });
 });

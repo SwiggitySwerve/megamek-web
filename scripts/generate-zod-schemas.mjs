@@ -28,6 +28,8 @@ import { tmpdir } from 'node:os';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { expandUnitTypeRequirements } from './expand-unit-type-requirements.mjs';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const REPO_ROOT = resolve(__dirname, '..');
@@ -84,7 +86,9 @@ function generateOne(shape) {
   const sourceRel = `public/data/equipment/_schema/${shape.file}`;
   const json = JSON.parse(readFileSync(sourcePath, 'utf-8'));
   // Use ESM module output and emit a named export plus an inferred type.
-  const body = jsonSchemaToZod(json, {
+  const schema =
+    shape.stem === 'unit' ? expandUnitTypeRequirements(json) : json;
+  const body = jsonSchemaToZod(schema, {
     module: 'esm',
     name: shape.exportName,
     type: true,

@@ -107,7 +107,7 @@ function AerospaceCustomizerInner({
           className="border-border-theme bg-surface-base hidden w-64 overflow-auto border-l p-4 lg:block"
           data-testid="aerospace-diagram-sidebar"
         >
-          <h3 className="mb-3 text-sm font-semibold text-white">
+          <h3 className="text-text-theme-primary mb-3 text-sm font-semibold">
             Fighter Overview
           </h3>
           <AerospaceDiagram />

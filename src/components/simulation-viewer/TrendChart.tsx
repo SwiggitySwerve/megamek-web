@@ -49,8 +49,8 @@ const EmptyState: React.FC = () => (
     data-testid="trend-chart-empty"
   >
     <div className="mb-4 text-4xl">📊</div>
-    <p className="mb-2 text-gray-500 dark:text-gray-400">No data available</p>
-    <p className="text-sm text-gray-400 dark:text-gray-500">
+    <p className="text-text-theme-muted mb-2">No data available</p>
+    <p className="text-text-theme-muted text-sm">
       Data will appear after first simulation
     </p>
   </div>
@@ -114,7 +114,7 @@ export const TrendChart = memo<ITrendChartProps>(
     const handleMouseLeave = useCallback(() => setTooltip(null), []);
 
     const containerClasses = [
-      'relative w-full bg-white dark:bg-gray-800 rounded-lg p-4',
+      'relative w-full bg-surface-base  rounded-lg p-4',
       className,
     ]
       .filter(Boolean)
@@ -136,7 +136,7 @@ export const TrendChart = memo<ITrendChartProps>(
             <select
               value={timeRange}
               onChange={(e) => onTimeRangeChange(e.target.value)}
-              className={`min-h-[44px] rounded-md border border-gray-300 bg-white p-2 text-sm text-gray-900 md:min-h-0 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 ${FOCUS_RING_CLASSES}`}
+              className={`border-border-theme-subtle bg-surface-base text-text-theme-primary min-h-[44px] rounded-md border p-2 text-sm md:min-h-0 ${FOCUS_RING_CLASSES}`}
               aria-label="Time range"
               data-testid="time-range-select"
             >
@@ -266,7 +266,7 @@ const ChartSVG: React.FC<ChartSVGProps> = ({
           y1={toY(tick)}
           x2={plotLeft + plotWidth}
           y2={toY(tick)}
-          className="stroke-gray-200 dark:stroke-gray-700"
+          className="stroke-border-theme-subtle"
           strokeWidth="1"
           data-testid="grid-line"
         />
@@ -278,7 +278,7 @@ const ChartSVG: React.FC<ChartSVGProps> = ({
           x={plotLeft - 8}
           y={toY(tick) + 4}
           textAnchor="end"
-          className="fill-gray-500 text-[11px] dark:fill-gray-400"
+          className="fill-text-theme-muted text-[11px]"
           data-testid="y-label"
         >
           {formatValue(tick)}
@@ -291,7 +291,7 @@ const ChartSVG: React.FC<ChartSVGProps> = ({
           x={toX(i)}
           y={plotTop + plotHeight + 24}
           textAnchor="middle"
-          className="fill-gray-500 text-[11px] dark:fill-gray-400"
+          className="fill-text-theme-muted text-[11px]"
           data-testid="x-label"
         >
           {formatDateLabel(data[i].date)}
@@ -351,7 +351,7 @@ const ChartSVG: React.FC<ChartSVGProps> = ({
             cx={tooltip.x}
             cy={tooltip.y}
             r="5"
-            className="fill-blue-600 stroke-white dark:fill-blue-400 dark:stroke-gray-900"
+            className="stroke-border-theme-strong fill-blue-600 dark:fill-blue-400"
             strokeWidth="2"
             data-testid="tooltip-dot"
           />
@@ -363,7 +363,7 @@ const ChartSVG: React.FC<ChartSVGProps> = ({
             style={{ overflow: 'visible', pointerEvents: 'none' }}
           >
             <div
-              className="pointer-events-none rounded-md bg-gray-900/90 px-3 py-2 text-sm whitespace-nowrap text-white"
+              className="bg-surface-deep/90 text-text-theme-primary pointer-events-none rounded-md px-3 py-2 text-sm whitespace-nowrap"
               data-testid="tooltip"
             >
               <div className="font-medium">

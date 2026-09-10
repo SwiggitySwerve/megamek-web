@@ -10,6 +10,7 @@
 import React from 'react';
 
 import { Card, Badge } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import {
   IForce,
   IForceSummary,
@@ -194,7 +195,8 @@ export function ForceCard({
         {/* Arrow indicator */}
         {onClick && (
           <div className="flex-shrink-0 opacity-0 transition-opacity group-hover:opacity-100">
-            <svg
+            <SvgIcon
+              size="control"
               className="text-text-theme-muted h-5 w-5"
               fill="none"
               stroke="currentColor"
@@ -206,7 +208,7 @@ export function ForceCard({
                 strokeWidth={2}
                 d="M9 5l7 7-7 7"
               />
-            </svg>
+            </SvgIcon>
           </div>
         )}
       </div>

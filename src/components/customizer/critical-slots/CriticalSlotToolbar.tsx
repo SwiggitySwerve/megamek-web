@@ -38,7 +38,7 @@ export function CriticalSlotToolbar({
     <div className={`flex items-center justify-between px-3 py-2 ${className}`}>
       {/* Auto-mode toggles */}
       <div className="flex items-center gap-4">
-        <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-300">
+        <label className="text-text-theme-secondary flex cursor-pointer items-center gap-2 text-sm">
           <input
             type="checkbox"
             checked={autoFillUnhittables}
@@ -48,7 +48,7 @@ export function CriticalSlotToolbar({
           <span>Auto Fill</span>
         </label>
 
-        <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-300">
+        <label className="text-text-theme-secondary flex cursor-pointer items-center gap-2 text-sm">
           <input
             type="checkbox"
             checked={showPlacementPreview}

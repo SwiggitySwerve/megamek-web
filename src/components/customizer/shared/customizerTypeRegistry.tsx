@@ -237,6 +237,7 @@ function MechShell({
         }
       >
         <UnitEditorWithRouting
+          key={activeTab.id}
           activeTabId={activeTabId}
           onTabChange={onTabChange}
         />

@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { LoadUnitSource } from '@/components/customizer/dialogs/UnitLoadDialog';
 import type { IExportableUnit, IImportHandlers } from '@/types/vault';
@@ -13,12 +13,18 @@ import {
   type CustomizerTabId,
 } from '@/hooks/useCustomizerRouter';
 import { IUnitIndexEntry } from '@/services/common/types';
+import { LoadRequestCoordinator } from '@/services/units/unitLoaderService/LoadRequestCoordinator';
 import { useTabManagerStore } from '@/stores/useTabManagerStore';
 import { TechBase } from '@/types/enums/TechBase';
 import { UnitType } from '@/types/unit/BattleMechInterfaces';
 
 import { createNewUnitWithRouting } from './MultiUnitTabsCreateUnit';
-import { getTabDisplayState, isTabModified } from './MultiUnitTabsUnitState';
+import {
+  getLibrarySaveDisabledReason,
+  getTabDisplayState,
+  isTabModified,
+  subscribeToTabDisplayState,
+} from './MultiUnitTabsUnitState';
 import {
   useDialogHandlers,
   type CloseDialogState,
@@ -39,10 +45,13 @@ interface UseMultiUnitTabsControllerResult {
   isNewTabModalOpen: boolean;
   closeDialog: CloseDialogState;
   saveDialog: SaveDialogState;
+  librarySaveDisabledReason: string | null;
   isLoadDialogOpen: boolean;
+  isLoadingUnit: boolean;
+  cancelPendingLoad: () => void;
   isExportDialogOpen: boolean;
   isImportDialogOpen: boolean;
-  tabBarTabs: Array<{ id: string; name: string; isModified: boolean }>;
+  tabBarTabs: Array<ReturnType<typeof getTabDisplayState>>;
   activeUnitExportData: IExportableUnit | null;
   unitImportHandlers: IImportHandlers<IExportableUnit>;
   selectTab: (tabId: string) => void;
@@ -56,6 +65,7 @@ interface UseMultiUnitTabsControllerResult {
   closeExportDialog: () => void;
   openImportDialog: () => void;
   closeImportDialog: () => void;
+  openSaveDialog: () => void;
   createNewUnit: (
     tonnage: number,
     techBase?: TechBase,
@@ -82,7 +92,16 @@ export function useMultiUnitTabsController(): UseMultiUnitTabsControllerResult {
   const { showToast } = useToast();
 
   const [isLoadDialogOpen, setIsLoadDialogOpen] = useState(false);
-  const [, setIsLoadingUnit] = useState(false);
+  const [isLoadingUnit, setIsLoadingUnit] = useState(false);
+  const loadRequests = useRef(new LoadRequestCoordinator());
+  const cancelPendingLoad = useCallback(() => {
+    loadRequests.current.cancel();
+    setIsLoadingUnit(false);
+  }, []);
+  useEffect(() => {
+    const requests = loadRequests.current;
+    return () => requests.cancel();
+  }, []);
   const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
 
@@ -91,7 +110,6 @@ export function useMultiUnitTabsController(): UseMultiUnitTabsControllerResult {
   const isLoading = useTabManagerStore((s) => s.isLoading);
   const isNewTabModalOpen = useTabManagerStore((s) => s.isNewTabModalOpen);
 
-  const storeSelectTab = useTabManagerStore((s) => s.selectTab);
   const storeCloseTab = useTabManagerStore((s) => s.closeTab);
   const renameTab = useTabManagerStore((s) => s.renameTab);
   const createTab = useTabManagerStore((s) => s.createTab);
@@ -115,7 +133,6 @@ export function useMultiUnitTabsController(): UseMultiUnitTabsControllerResult {
 
   const selectTab = useCallback(
     (tabId: string) => {
-      storeSelectTab(tabId);
       const lastSubTab = getLastSubTab(tabId);
       const tabToNavigate: CustomizerTabId =
         lastSubTab && isValidTabId(lastSubTab) ? lastSubTab : DEFAULT_TAB;
@@ -127,7 +144,7 @@ export function useMultiUnitTabsController(): UseMultiUnitTabsControllerResult {
         },
       );
     },
-    [storeSelectTab, router, getLastSubTab],
+    [router, getLastSubTab],
   );
 
   const performCloseTab = useCallback(
@@ -152,6 +169,12 @@ export function useMultiUnitTabsController(): UseMultiUnitTabsControllerResult {
     [storeCloseTab, router],
   );
 
+  const getTabById = useCallback(
+    (tabId: string) =>
+      useTabManagerStore.getState().tabs.find((tab) => tab.id === tabId),
+    [],
+  );
+
   const {
     closeDialog,
     saveDialog,
@@ -161,7 +184,19 @@ export function useMultiUnitTabsController(): UseMultiUnitTabsControllerResult {
     handleSaveDialogCancel,
     handleSaveDialogSave,
     openCloseDialog,
-  } = useDialogHandlers(performCloseTab, renameTab);
+    openSaveDialog: openSaveDialogForTab,
+  } = useDialogHandlers(performCloseTab, renameTab, getTabById);
+
+  const activeTab = useMemo(
+    () => tabs.find((tab) => tab.id === activeTabId),
+    [tabs, activeTabId],
+  );
+  const librarySaveDisabledReason = getLibrarySaveDisabledReason(activeTab);
+  const openSaveDialog = useCallback(() => {
+    if (activeTabId) {
+      openSaveDialogForTab(activeTabId);
+    }
+  }, [activeTabId, openSaveDialogForTab]);
 
   const closeTab = useCallback(
     (tabId: string) => {
@@ -183,20 +218,29 @@ export function useMultiUnitTabsController(): UseMultiUnitTabsControllerResult {
   }, []);
 
   const closeLoadDialog = useCallback(() => {
+    cancelPendingLoad();
     setIsLoadDialogOpen(false);
-  }, []);
+  }, [cancelPendingLoad]);
 
   const handleLoadUnit = useCallback(
     async (unit: IUnitIndexEntry, source: LoadUnitSource) => {
-      await loadUnitIntoTab({
-        unit,
-        source,
-        createTab,
-        navigateToTab,
-        setIsLoadDialogOpen,
-        setIsLoadingUnit,
-        showToast,
-      });
+      const requests = loadRequests.current;
+      const ticket = requests.begin(JSON.stringify([source, unit.id]));
+      if (!ticket) return;
+      try {
+        await loadUnitIntoTab({
+          unit,
+          source,
+          createTab,
+          navigateToTab,
+          setIsLoadDialogOpen,
+          setIsLoadingUnit,
+          showToast,
+          isCurrent: () => requests.isCurrent(ticket),
+        });
+      } finally {
+        requests.finish(ticket);
+      }
     },
     [createTab, navigateToTab, showToast],
   );
@@ -230,10 +274,16 @@ export function useMultiUnitTabsController(): UseMultiUnitTabsControllerResult {
     [tabs, addTab],
   );
 
-  const tabBarTabs = useMemo(
-    () => tabs.map((tab) => getTabDisplayState(tab)),
-    [tabs],
-  );
+  const [, setTabDisplayVersion] = useState(0);
+  useEffect(() => {
+    const changed = (): void => setTabDisplayVersion((version) => version + 1);
+    const unsubscribe = tabs.map((tab) =>
+      subscribeToTabDisplayState(tab, changed),
+    );
+    changed();
+    return () => unsubscribe.forEach((stop) => stop());
+  }, [tabs]);
+  const tabBarTabs = tabs.map((tab) => getTabDisplayState(tab));
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -286,7 +336,10 @@ export function useMultiUnitTabsController(): UseMultiUnitTabsControllerResult {
     isNewTabModalOpen,
     closeDialog,
     saveDialog,
+    librarySaveDisabledReason,
     isLoadDialogOpen,
+    isLoadingUnit,
+    cancelPendingLoad,
     isExportDialogOpen,
     isImportDialogOpen,
     tabBarTabs,
@@ -303,6 +356,7 @@ export function useMultiUnitTabsController(): UseMultiUnitTabsControllerResult {
     closeExportDialog,
     openImportDialog,
     closeImportDialog,
+    openSaveDialog,
     createNewUnit,
     handleLoadUnit,
     handleCloseDialogCancel,

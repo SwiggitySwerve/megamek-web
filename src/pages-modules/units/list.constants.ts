@@ -20,7 +20,7 @@ export const UNIT_TYPE_CONFIG: Record<
   [UnitType.INDUSTRIALMECH]: {
     label: 'IndustrialMech',
     badgeVariant: 'slate',
-    color: 'bg-slate-500',
+    color: 'bg-surface-raised',
   },
   [UnitType.PROTOMECH]: {
     label: 'ProtoMech',
@@ -36,7 +36,7 @@ export const UNIT_TYPE_CONFIG: Record<
   [UnitType.SUPPORT_VEHICLE]: {
     label: 'Support Vehicle',
     badgeVariant: 'slate',
-    color: 'bg-slate-400',
+    color: 'bg-surface-raised',
   },
   [UnitType.AEROSPACE]: {
     label: 'Aerospace',
@@ -89,7 +89,10 @@ export const WEIGHT_CLASS_CONFIG: Record<
   WeightClass,
   { label: string; color: string }
 > = {
-  [WeightClass.ULTRALIGHT]: { label: 'Ultralight', color: 'text-slate-400' },
+  [WeightClass.ULTRALIGHT]: {
+    label: 'Ultralight',
+    color: 'text-text-theme-secondary',
+  },
   [WeightClass.LIGHT]: { label: 'Light', color: 'text-green-400' },
   [WeightClass.MEDIUM]: { label: 'Medium', color: 'text-yellow-400' },
   [WeightClass.HEAVY]: { label: 'Heavy', color: 'text-orange-400' },
@@ -106,7 +109,7 @@ export function getUnitTypeDisplay(unitType: string): {
     UNIT_TYPE_CONFIG[unitType] || {
       label: unitType,
       badgeVariant: 'slate',
-      color: 'bg-slate-500',
+      color: 'bg-surface-raised',
     }
   );
 }
@@ -118,7 +121,7 @@ export function getWeightClassDisplay(weightClass: WeightClass): {
   return (
     WEIGHT_CLASS_CONFIG[weightClass] || {
       label: weightClass,
-      color: 'text-slate-400',
+      color: 'text-text-theme-secondary',
     }
   );
 }

@@ -48,7 +48,7 @@ const CategoryNavigation: React.FC<CategoryNavigationProps> = ({
   }
 
   return (
-    <nav className="h-full w-full bg-gray-100 p-4 md:w-64">
+    <nav className="bg-surface-raised h-full w-full p-4 md:w-64">
       <h3 className="mb-2 text-lg font-semibold">Unit Categories</h3>
       <ul>
         {/* Option to select all/clear filter */}
@@ -57,8 +57,8 @@ const CategoryNavigation: React.FC<CategoryNavigationProps> = ({
             onClick={() => onSelectCategory(null)}
             className={`w-full rounded px-2 py-1 text-left ${
               selectedCategory === null
-                ? 'bg-blue-500 text-white'
-                : 'hover:bg-gray-200'
+                ? 'bg-accent text-on-accent'
+                : 'hover:bg-surface-raised'
             }`}
           >
             All Units
@@ -70,8 +70,8 @@ const CategoryNavigation: React.FC<CategoryNavigationProps> = ({
               onClick={() => onSelectCategory(category)}
               className={`w-full rounded px-2 py-1 text-left ${
                 selectedCategory === category
-                  ? 'bg-blue-500 text-white'
-                  : 'hover:bg-gray-200'
+                  ? 'bg-accent text-on-accent'
+                  : 'hover:bg-surface-raised'
               }`}
             >
               {category}

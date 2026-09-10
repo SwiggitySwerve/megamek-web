@@ -145,6 +145,16 @@ describe('RecordSheetService', () => {
   });
 
   describe('extractData', () => {
+    it('preserves the edited role and actual engine instead of template defaults', () => {
+      const unit = {
+        ...createMockUnit(),
+        role: 'Brawler',
+        engine: { rating: 295, type: 'Standard Fusion' },
+      };
+      const data = service.extractData(unit);
+      expect(data.header.role).toBe('Brawler');
+      expect(data.header.engineDescription).toBe('295 Standard Fusion');
+    });
     it('should extract complete record sheet data from unit config', () => {
       const unit = createMockUnit();
 

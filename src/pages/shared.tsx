@@ -120,7 +120,7 @@ export default function SharedPage(): React.ReactElement {
             onClick={handleSync}
             disabled={isSyncing}
             isLoading={isSyncing}
-            leftIcon={<RefreshIcon className="h-4 w-4" />}
+            leftIcon={<RefreshIcon size="inline" />}
           >
             Sync Now
           </Button>
@@ -130,7 +130,7 @@ export default function SharedPage(): React.ReactElement {
           <Button
             variant={viewMode === 'received' ? 'primary' : 'secondary'}
             onClick={() => setViewMode('received')}
-            leftIcon={<InboxIcon className="h-4 w-4" />}
+            leftIcon={<InboxIcon size="inline" />}
             className={
               viewMode === 'received' ? '!bg-cyan-600 hover:!bg-cyan-500' : ''
             }
@@ -145,7 +145,7 @@ export default function SharedPage(): React.ReactElement {
           <Button
             variant={viewMode === 'shared' ? 'primary' : 'secondary'}
             onClick={() => setViewMode('shared')}
-            leftIcon={<ShareIcon className="h-4 w-4" />}
+            leftIcon={<ShareIcon size="inline" />}
             className={
               viewMode === 'shared' ? '!bg-violet-600 hover:!bg-violet-500' : ''
             }
@@ -163,9 +163,15 @@ export default function SharedPage(): React.ReactElement {
           <EmptyState
             icon={
               viewMode === 'received' ? (
-                <InboxIcon className="text-text-theme-muted mx-auto h-12 w-12" />
+                <InboxIcon
+                  size="hero"
+                  className="text-text-theme-muted mx-auto"
+                />
               ) : (
-                <ShareIcon className="text-text-theme-muted mx-auto h-12 w-12" />
+                <ShareIcon
+                  size="hero"
+                  className="text-text-theme-muted mx-auto"
+                />
               )
             }
             title={

@@ -113,7 +113,9 @@ export function InfantryPlatoonCounter({
     >
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h4 className="text-sm font-semibold text-white">Platoon Strength</h4>
+        <h4 className="text-text-theme-primary text-sm font-semibold">
+          Platoon Strength
+        </h4>
         <span
           className={`text-xs font-medium ${styles.counter}`}
           data-testid="infantry-threshold-label"
@@ -137,7 +139,7 @@ export function InfantryPlatoonCounter({
 
       {/* Strength bar */}
       <div
-        className="h-3 w-full overflow-hidden rounded bg-slate-700"
+        className="bg-surface-raised h-3 w-full overflow-hidden rounded"
         role="progressbar"
         aria-valuenow={current}
         aria-valuemin={0}
@@ -153,13 +155,17 @@ export function InfantryPlatoonCounter({
       {/* Squad breakdown */}
       <div className="grid grid-cols-2 gap-1 text-xs">
         <span className="text-text-theme-secondary">Squads</span>
-        <span className="font-mono text-white">{numberOfSquads}</span>
+        <span className="text-text-theme-primary font-mono">
+          {numberOfSquads}
+        </span>
         <span className="text-text-theme-secondary">Per squad</span>
-        <span className="font-mono text-white">{squadSize}</span>
+        <span className="text-text-theme-primary font-mono">{squadSize}</span>
         {specialization && (
           <>
             <span className="text-text-theme-secondary">Type</span>
-            <span className="font-mono text-white">{specialization}</span>
+            <span className="text-text-theme-primary font-mono">
+              {specialization}
+            </span>
           </>
         )}
       </div>
@@ -167,7 +173,7 @@ export function InfantryPlatoonCounter({
       {/* No per-location armor notice — TM §infantry damage */}
       <div className="border-border-theme-subtle rounded border border-dashed px-3 py-2">
         <p className="text-text-theme-secondary text-[10px] leading-relaxed">
-          <span className="font-semibold text-white">
+          <span className="text-text-theme-primary font-semibold">
             No per-location armor.
           </span>{' '}
           Infantry damage reduces trooper count directly (TechManual §infantry

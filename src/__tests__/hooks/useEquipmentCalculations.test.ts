@@ -5,15 +5,36 @@
  */
 
 import { renderHook } from '@testing-library/react';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 import type { IMountedEquipmentInstance } from '@/types/equipment/MountedEquipment';
 
 import { useEquipmentCalculations } from '@/hooks/useEquipmentCalculations';
+import { useUnitCalculations } from '@/hooks/useUnitCalculations';
 import { getEquipmentLoader } from '@/services/equipment/EquipmentLoaderService';
+import { getEquipmentLookupService } from '@/services/equipment/EquipmentLookupService';
 import { getEquipmentRegistry } from '@/services/equipment/EquipmentRegistry';
+import {
+  parseUnit,
+  UnitLoaderService,
+} from '@/services/units/unitLoaderService';
 import { MechLocation } from '@/types/construction/CriticalSlotAllocation';
 import { TechBase } from '@/types/enums/TechBase';
 import { EquipmentCategory } from '@/types/equipment';
+
+jest.mock('@/services/equipment/EquipmentFileReader', () => ({
+  readJsonFile: async (file: string, basePath: string) => {
+    const fs = await import('node:fs/promises');
+    const path = await import('node:path');
+    return JSON.parse(
+      await fs.readFile(
+        path.join(process.cwd(), 'public', basePath, file),
+        'utf8',
+      ),
+    );
+  },
+}));
 
 // Mock the useEquipmentRegistry hook
 jest.mock('@/hooks/useEquipmentRegistry', () => ({
@@ -27,6 +48,7 @@ describe('useEquipmentCalculations', () => {
     if (!loader.getIsLoaded()) {
       await loader.loadOfficialEquipment();
     }
+    await getEquipmentLookupService().initialize();
     const registry = getEquipmentRegistry();
     await registry.initialize();
   }, 30000);
@@ -51,6 +73,15 @@ describe('useEquipmentCalculations', () => {
     ...overrides,
   });
 
+  test('recovers missing imported weapon heat from the loaded definition', () => {
+    const equipment = [createMockEquipment({ heat: 0 })];
+    const { result } = renderHook(() => useEquipmentCalculations(equipment));
+    expect(result.current.totalHeat).toBe(3);
+    expect(
+      result.current.byCategory[EquipmentCategory.ENERGY_WEAPON].heat,
+    ).toBe(3);
+  });
+
   describe('Basic Calculations', () => {
     it('should calculate totals for empty equipment array', () => {
       const { result } = renderHook(() => useEquipmentCalculations([]));
@@ -69,6 +100,88 @@ describe('useEquipmentCalculations', () => {
       expect(result.current.totalSlots).toBe(1);
       expect(result.current.totalHeat).toBe(3);
       expect(result.current.itemCount).toBe(1);
+    });
+
+    it('keeps configuration equipment physical weights without charging them as payload', () => {
+      const equipment = [
+        createMockEquipment({ instanceId: 'payload', weight: 5 }),
+        createMockEquipment({
+          instanceId: 'external-heat-sink',
+          equipmentId: 'single-heat-sink',
+          name: 'Single Heat Sink',
+          category: EquipmentCategory.MISC_EQUIPMENT,
+          weight: 1,
+          heat: 0,
+          isRemovable: false,
+        }),
+        createMockEquipment({
+          instanceId: 'jump-jet',
+          equipmentId: 'jump-jet-medium',
+          name: 'Jump Jet (Medium)',
+          category: EquipmentCategory.MOVEMENT,
+          weight: 1,
+          heat: 0,
+          isRemovable: false,
+        }),
+      ];
+
+      const { result } = renderHook(() => useEquipmentCalculations(equipment));
+
+      expect(equipment.map((item) => item.weight)).toEqual([5, 1, 1]);
+      expect(result.current.totalWeight).toBe(5);
+    });
+
+    it('reports the loaded Atlas at 100 tons without double-counting fixed heat sinks', () => {
+      const serialized = parseUnit(
+        JSON.parse(
+          readFileSync(
+            join(
+              process.cwd(),
+              'public/data/units/battlemechs/2-star-league/standard/Atlas AS7-D.json',
+            ),
+            'utf8',
+          ),
+        ),
+      );
+      const state = new UnitLoaderService().mapToUnitState(serialized, true);
+      const physicalEquipmentWeight = state.equipment.reduce(
+        (total, item) => total + item.weight,
+        0,
+      );
+      const componentSelections = {
+        engineType: state.engineType,
+        engineRating: state.engineRating,
+        gyroType: state.gyroType,
+        internalStructureType: state.internalStructureType,
+        cockpitType: state.cockpitType,
+        heatSinkType: state.heatSinkType,
+        heatSinkCount: state.heatSinkCount,
+        armorType: state.armorType,
+        jumpMP: state.jumpMP,
+        jumpJetType: state.jumpJetType,
+      };
+
+      const { result } = renderHook(() => {
+        const equipment = useEquipmentCalculations(state.equipment);
+        const structure = useUnitCalculations(
+          state.tonnage,
+          componentSelections,
+          state.armorTonnage,
+          state.configuration,
+        );
+        return {
+          payloadWeight: equipment.totalWeight,
+          structuralWeight: structure.totalStructuralWeight,
+        };
+      });
+
+      expect(state.equipment).toHaveLength(20);
+      expect(physicalEquipmentWeight).toBe(44);
+      expect(result.current.payloadWeight).toBe(36);
+      expect(result.current.structuralWeight).toBe(64);
+      expect(
+        result.current.structuralWeight + result.current.payloadWeight,
+      ).toBe(100);
     });
 
     it('should sum heat from multiple weapons', () => {

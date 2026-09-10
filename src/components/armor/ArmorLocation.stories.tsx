@@ -187,10 +187,10 @@ export const WithChangeCallback: Story = {
           maxArmor={47}
           onArmorChange={handleChange}
         />
-        <div className="space-y-1 rounded bg-gray-100 p-3 font-mono text-sm dark:bg-gray-800">
+        <div className="bg-surface-base space-y-1 rounded p-3 font-mono text-sm">
           <p className="mb-2 font-semibold">Change Log:</p>
           {log.length === 0 ? (
-            <p className="text-gray-500">
+            <p className="text-text-theme-muted">
               Expand and modify armor to see events...
             </p>
           ) : (

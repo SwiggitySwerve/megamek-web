@@ -183,7 +183,8 @@ describe('statusColors', () => {
     it('should include ring for selected state', () => {
       const classes = getInteractiveClasses('selected');
       expect(classes).toContain('ring-2');
-      expect(classes).toContain('ring-yellow-400');
+      expect(classes).toContain('ring-accent');
+      expect(classes).toContain('ring-offset-surface-deep');
     });
 
     it('should include ring for dropValid state', () => {

@@ -55,7 +55,9 @@ describe('GlobalStatusBar', () => {
     const weightText = screen.getByText(/110.0 \/ 100t/);
     expect(weightText).toHaveClass('text-red-400');
 
-    expect(screen.getByText(/⚠️/)).toBeInTheDocument();
+    expect(
+      document.querySelector('[data-icon-name="warning"]'),
+    ).toBeInTheDocument();
     expect(screen.getByText(/Over Weight/)).toBeInTheDocument();
   });
 

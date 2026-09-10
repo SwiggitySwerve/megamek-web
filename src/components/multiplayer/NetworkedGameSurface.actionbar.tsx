@@ -86,7 +86,7 @@ export interface INetworkedActionBarProps {
 function controlClass(enabled: boolean): string {
   return enabled
     ? 'rounded bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-500'
-    : 'rounded bg-slate-700 px-3 py-1.5 text-sm font-medium text-slate-400 cursor-not-allowed';
+    : 'rounded bg-surface-raised px-3 py-1.5 text-sm font-medium text-text-theme-secondary cursor-not-allowed';
 }
 
 // =============================================================================
@@ -429,7 +429,7 @@ function ConcedeControl({
       className={
         enabled
           ? 'rounded border border-rose-700 px-3 py-1.5 text-sm font-medium text-rose-300 hover:bg-rose-900/30'
-          : 'cursor-not-allowed rounded border border-slate-700 px-3 py-1.5 text-sm font-medium text-slate-500'
+          : 'border-border-theme text-text-theme-muted cursor-not-allowed rounded border px-3 py-1.5 text-sm font-medium'
       }
       disabled={!enabled}
       onClick={onConcede}

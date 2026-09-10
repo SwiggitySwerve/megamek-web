@@ -154,7 +154,7 @@ export function ErrorTypeTest(): React.ReactElement | null {
         </button>
         <button
           onClick={() => setErrorType('range')}
-          className="rounded bg-blue-600 px-2 py-1 text-xs text-white transition-colors hover:bg-blue-700"
+          className="bg-accent text-on-accent hover:bg-accent-hover rounded px-2 py-1 text-xs transition-colors"
         >
           RangeError (recoverable)
         </button>

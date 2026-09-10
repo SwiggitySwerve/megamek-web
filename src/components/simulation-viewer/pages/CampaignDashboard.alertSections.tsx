@@ -3,6 +3,7 @@ import React from 'react';
 import type { IPerformerSummary } from '@/types/simulation-viewer';
 
 import { DrillDownLink } from '@/components/simulation-viewer/DrillDownLink';
+import { AppIcon } from '@/components/ui/AppIcon';
 import { FOCUS_RING_CLASSES, announce } from '@/utils/accessibility';
 
 import type { CampaignDrillDownHandler } from './CampaignDashboard.overviewSections';
@@ -36,14 +37,14 @@ export const TopPerformersSection: React.FC<TopPerformersSectionProps> = ({
   >
     <div className="flex flex-wrap items-center justify-between gap-2">
       <h2
-        className="text-lg font-semibold text-gray-800 dark:text-gray-200"
+        className="text-text-theme-primary text-lg font-semibold"
         data-testid="section-heading"
       >
         Top Performers
       </h2>
 
       <div
-        className="flex gap-1 rounded-lg bg-gray-200 p-1 dark:bg-gray-700"
+        className="bg-surface-raised flex gap-1 rounded-lg p-1"
         role="group"
         aria-label="Sort performers by"
         data-testid="performer-sort-controls"
@@ -59,8 +60,8 @@ export const TopPerformersSection: React.FC<TopPerformersSectionProps> = ({
             className={[
               `min-h-[44px] rounded-md px-3 py-2 text-sm transition-colors md:min-h-0 md:py-1 ${FOCUS_RING_CLASSES}`,
               performerSortKey === option.key
-                ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 shadow-sm font-medium'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200',
+                ? 'bg-surface-raised text-text-theme-primary  shadow-sm font-medium'
+                : 'text-text-theme-muted hover:text-text-theme-primary ',
             ].join(' ')}
             aria-pressed={performerSortKey === option.key}
             data-testid={`sort-button-${option.key}`}
@@ -73,7 +74,7 @@ export const TopPerformersSection: React.FC<TopPerformersSectionProps> = ({
 
     {sortedPerformers.length === 0 ? (
       <p
-        className="text-sm text-gray-500 italic dark:text-gray-400"
+        className="text-text-theme-muted text-sm italic"
         data-testid="performers-empty"
       >
         No performance data available yet.
@@ -113,7 +114,7 @@ export const WarningsSection: React.FC<WarningsSectionProps> = ({
     data-testid="warnings-section"
   >
     <h2
-      className="text-lg font-semibold text-gray-800 dark:text-gray-200"
+      className="text-text-theme-primary text-lg font-semibold"
       data-testid="section-heading"
     >
       Warnings
@@ -127,7 +128,7 @@ export const WarningsSection: React.FC<WarningsSectionProps> = ({
 
     {activeWarnings.length === 0 ? (
       <p
-        className="text-sm text-gray-500 italic dark:text-gray-400"
+        className="text-text-theme-muted text-sm italic"
         data-testid="warnings-empty"
       >
         No active warnings — all systems nominal.
@@ -161,21 +162,21 @@ const PerformerCard: React.FC<PerformerCardProps> = ({
   <div
     className={[
       'flex-shrink-0 w-40 md:w-48 p-3 md:p-4 rounded-lg',
-      'bg-white dark:bg-gray-800',
-      'border border-gray-200 dark:border-gray-700',
+      'bg-surface-base ',
+      'border border-border-theme',
       'shadow-sm hover:shadow-md transition-shadow',
     ].join(' ')}
     data-testid="performer-card"
   >
     <p
-      className="truncate font-semibold text-gray-900 dark:text-gray-100"
+      className="text-text-theme-primary truncate font-semibold"
       data-testid="performer-name"
       title={performer.name}
     >
       {performer.name}
     </p>
     <p
-      className="mb-2 text-xs text-gray-500 dark:text-gray-400"
+      className="text-text-theme-muted mb-2 text-xs"
       data-testid="performer-rank"
     >
       {performer.rank}
@@ -183,13 +184,13 @@ const PerformerCard: React.FC<PerformerCardProps> = ({
 
     <dl className="space-y-1 text-sm">
       <div className="flex justify-between">
-        <dt className="text-gray-500 dark:text-gray-400">Kills</dt>
+        <dt className="text-text-theme-muted">Kills</dt>
         <dd
           className={[
             'font-medium',
             activeSortKey === 'kills'
-              ? 'text-blue-600 dark:text-blue-400'
-              : 'text-gray-900 dark:text-gray-100',
+              ? 'text-accent'
+              : 'text-text-theme-primary ',
           ].join(' ')}
           data-testid="performer-kills"
         >
@@ -197,13 +198,11 @@ const PerformerCard: React.FC<PerformerCardProps> = ({
         </dd>
       </div>
       <div className="flex justify-between">
-        <dt className="text-gray-500 dark:text-gray-400">XP</dt>
+        <dt className="text-text-theme-muted">XP</dt>
         <dd
           className={[
             'font-medium',
-            activeSortKey === 'xp'
-              ? 'text-blue-600 dark:text-blue-400'
-              : 'text-gray-900 dark:text-gray-100',
+            activeSortKey === 'xp' ? 'text-accent' : 'text-text-theme-primary ',
           ].join(' ')}
           data-testid="performer-xp"
         >
@@ -211,13 +210,13 @@ const PerformerCard: React.FC<PerformerCardProps> = ({
         </dd>
       </div>
       <div className="flex justify-between">
-        <dt className="text-gray-500 dark:text-gray-400">Missions</dt>
+        <dt className="text-text-theme-muted">Missions</dt>
         <dd
           className={[
             'font-medium',
             activeSortKey === 'missionsCompleted'
-              ? 'text-blue-600 dark:text-blue-400'
-              : 'text-gray-900 dark:text-gray-100',
+              ? 'text-accent'
+              : 'text-text-theme-primary ',
           ].join(' ')}
           data-testid="performer-missions"
         >
@@ -285,13 +284,13 @@ const WarningItem: React.FC<WarningItemProps> = ({
       type="button"
       onClick={() => onDismiss(warning.id)}
       className={[
-        `ml-2 min-h-[44px] min-w-[44px] rounded p-2 hover:bg-black/10 md:min-h-0 md:min-w-0 md:p-1 dark:hover:bg-white/10 ${FOCUS_RING_CLASSES}`,
+        `ml-2 min-h-[44px] min-w-[44px] rounded p-2 hover:bg-black/10 md:min-h-0 md:min-w-0 md:p-1 ${FOCUS_RING_CLASSES}`,
         'transition-colors text-current opacity-60 hover:opacity-100 flex items-center justify-center',
       ].join(' ')}
       aria-label={`Dismiss warning: ${warning.message}`}
       data-testid="warning-dismiss"
     >
-      ✕
+      <AppIcon name="close" size="inline" aria-hidden="true" />
     </button>
   </li>
 );

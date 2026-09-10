@@ -49,7 +49,7 @@ export const KeyMomentsSection: React.FC<IKeyMomentsSectionProps> = ({
       </div>
       {filteredKeyMoments.length === 0 ? (
         <p
-          className="text-sm text-gray-500 italic dark:text-gray-400"
+          className="text-text-theme-muted text-sm italic"
           data-testid="empty-key-moments"
         >
           No key moments match the current filters.
@@ -64,7 +64,7 @@ export const KeyMomentsSection: React.FC<IKeyMomentsSectionProps> = ({
               key={moment.id}
               type="button"
               onClick={() => onMomentClick(moment)}
-              className={`min-h-[44px] w-44 flex-shrink-0 rounded-lg border border-gray-200 bg-white p-3 text-left transition-shadow hover:shadow-md md:w-48 dark:border-gray-700 dark:bg-gray-800 ${FOCUS_RING_CLASSES}`}
+              className={`border-border-theme-subtle bg-surface-base min-h-[44px] w-44 flex-shrink-0 rounded-lg border p-3 text-left transition-shadow hover:shadow-md md:w-48 ${FOCUS_RING_CLASSES}`}
               aria-label={`${moment.tier} moment: ${moment.description}, turn ${moment.turn}`}
               data-testid={`key-moment-${moment.id}`}
             >
@@ -75,14 +75,14 @@ export const KeyMomentsSection: React.FC<IKeyMomentsSectionProps> = ({
                 >
                   {moment.tier}
                 </span>
-                <span className="text-xs text-gray-500 dark:text-gray-400">
+                <span className="text-text-theme-muted text-xs">
                   Turn {moment.turn}
                 </span>
               </div>
-              <p className="text-sm text-gray-800 dark:text-gray-200">
+              <p className="text-text-theme-primary text-sm">
                 {moment.description}
               </p>
-              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-text-theme-muted mt-1 text-xs">
                 {moment.phase} · {moment.type}
               </p>
             </button>

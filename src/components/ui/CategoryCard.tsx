@@ -6,6 +6,8 @@ import Link from 'next/link';
  */
 import React from 'react';
 
+import { SvgIcon } from '@/components/ui/SvgIcon';
+
 export type AccentColor = 'amber' | 'cyan' | 'emerald' | 'rose' | 'violet';
 
 interface CategoryCardProps {
@@ -97,11 +99,11 @@ export function CategoryCard({
 
       {/* Arrow indicator */}
       <div className="text-border-theme group-hover:text-text-theme-secondary transition-colors">
-        <svg
+        <SvgIcon
+          size="inline"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
-          strokeWidth={2}
           stroke="currentColor"
           className="h-4 w-4"
         >
@@ -110,7 +112,7 @@ export function CategoryCard({
             strokeLinejoin="round"
             d="M8.25 4.5l7.5 7.5-7.5 7.5"
           />
-        </svg>
+        </SvgIcon>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
 import { EquipmentCategory } from '@/types/equipment';
 import { getCategoryColorsLegacy } from '@/utils/colors/equipmentColors';
 
@@ -26,7 +27,7 @@ export function CategoryFilterBar({
 
   const buttonBaseClass = compact
     ? 'flex-shrink-0 flex items-center justify-center w-7 h-7 rounded transition-all'
-    : 'flex-shrink-0 flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium transition-all active:scale-95';
+    : 'min-h-11 min-w-11 flex-shrink-0 flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium transition-all active:scale-95';
 
   return (
     <div className={`${containerClass} ${className}`}>
@@ -55,8 +56,10 @@ export function CategoryFilterBar({
             onClick={() => onSelectCategory(category)}
             className={`${buttonBaseClass} ${activeClass}`}
             title={title}
+            aria-label={title}
+            aria-pressed={isActive}
           >
-            <span className={compact ? 'text-base' : 'text-sm'}>{icon}</span>
+            <AppIcon name={icon} size="control" aria-hidden="true" />
             {showLabels && <span className="xs:inline hidden">{label}</span>}
           </button>
         );

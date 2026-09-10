@@ -165,7 +165,9 @@ export function AerospaceStatusBar({
       <div
         className={`bg-surface-base border-border-theme-subtle flex items-center justify-between gap-2 border-b px-3 py-1.5 text-xs ${className}`}
       >
-        <span className="font-medium text-white">{tonnage}t ASF</span>
+        <span className="text-text-theme-primary font-medium">
+          {tonnage}t ASF
+        </span>
         <span className="text-text-theme-secondary">
           {safeThrust}/{maxThrust} Thrust
         </span>
@@ -188,7 +190,9 @@ export function AerospaceStatusBar({
         >
           {weightBreakdown.remaining.toFixed(1)}t free
         </span>
-        <span className="font-medium text-white">BV {bv.final}</span>
+        <span className="text-text-theme-primary font-medium">
+          BV {bv.final}
+        </span>
       </div>
     );
   }

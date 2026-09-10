@@ -144,7 +144,7 @@ export function CreateMatchForm(
       <div>
         <label
           htmlFor="cm-displayName"
-          className="block text-xs font-medium tracking-wide text-slate-300 uppercase"
+          className="text-text-theme-secondary block text-xs font-medium tracking-wide uppercase"
         >
           Display name
         </label>
@@ -154,14 +154,14 @@ export function CreateMatchForm(
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
           maxLength={64}
-          className="mt-1 w-full rounded border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+          className="border-border-theme bg-surface-deep text-text-theme-primary mt-1 w-full rounded border px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none"
           required
         />
       </div>
       <div>
         <label
           htmlFor="cm-layout"
-          className="block text-xs font-medium tracking-wide text-slate-300 uppercase"
+          className="text-text-theme-secondary block text-xs font-medium tracking-wide uppercase"
         >
           Team layout
         </label>
@@ -169,7 +169,7 @@ export function CreateMatchForm(
           id="cm-layout"
           value={layout}
           onChange={(e) => setLayout(e.target.value as TeamLayout)}
-          className="mt-1 w-full rounded border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+          className="border-border-theme bg-surface-deep text-text-theme-primary mt-1 w-full rounded border px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none"
         >
           {LAYOUT_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -178,30 +178,30 @@ export function CreateMatchForm(
           ))}
         </select>
       </div>
-      <fieldset className="space-y-3 rounded border border-slate-700 bg-slate-950/70 p-3">
-        <legend className="px-1 text-xs font-medium tracking-wide text-slate-300 uppercase">
+      <fieldset className="border-border-theme bg-surface-deep/70 space-y-3 rounded border p-3">
+        <legend className="text-text-theme-secondary px-1 text-xs font-medium tracking-wide uppercase">
           Unit roster
         </legend>
         <div className="grid grid-cols-2 gap-2">
-          <label className="flex items-center gap-2 rounded border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100">
+          <label className="border-border-theme bg-surface-deep text-text-theme-primary flex items-center gap-2 rounded border px-3 py-2 text-sm">
             <input
               type="radio"
               name="cm-rosterMode"
               value="preset"
               checked={rosterMode === 'preset'}
               onChange={() => setRosterMode('preset')}
-              className="h-4 w-4 border-slate-600 bg-slate-950 text-emerald-600 focus:ring-emerald-500"
+              className="border-border-theme bg-surface-deep h-4 w-4 text-emerald-600 focus:ring-emerald-500"
             />
             <span>Preset</span>
           </label>
-          <label className="flex items-center gap-2 rounded border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100">
+          <label className="border-border-theme bg-surface-deep text-text-theme-primary flex items-center gap-2 rounded border px-3 py-2 text-sm">
             <input
               type="radio"
               name="cm-rosterMode"
               value="custom"
               checked={rosterMode === 'custom'}
               onChange={() => setRosterMode('custom')}
-              className="h-4 w-4 border-slate-600 bg-slate-950 text-emerald-600 focus:ring-emerald-500"
+              className="border-border-theme bg-surface-deep h-4 w-4 text-emerald-600 focus:ring-emerald-500"
             />
             <span>Custom</span>
           </label>
@@ -210,7 +210,7 @@ export function CreateMatchForm(
           <div>
             <label
               htmlFor="cm-rosterPreset"
-              className="block text-xs font-medium tracking-wide text-slate-300 uppercase"
+              className="text-text-theme-secondary block text-xs font-medium tracking-wide uppercase"
             >
               Unit roster preset
             </label>
@@ -220,7 +220,7 @@ export function CreateMatchForm(
               onChange={(e) =>
                 setRosterPresetId(e.target.value as MatchRosterPresetId)
               }
-              className="mt-1 w-full rounded border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+              className="border-border-theme bg-surface-deep text-text-theme-primary mt-1 w-full rounded border px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none"
             >
               {MATCH_ROSTER_PRESETS.map((preset) => (
                 <option key={preset.id} value={preset.id}>
@@ -234,13 +234,13 @@ export function CreateMatchForm(
             {customRosterRows.map((row) => (
               <div
                 key={row.slotId}
-                className="rounded border border-slate-800 bg-slate-900/70 p-3"
+                className="border-border-theme-subtle bg-surface-deep/70 rounded border p-3"
               >
                 <div className="mb-2 flex items-center justify-between gap-2">
-                  <div className="text-sm font-medium text-slate-100">
+                  <div className="text-text-theme-primary text-sm font-medium">
                     {row.sideLabel} #{row.seatNumber}
                   </div>
-                  <div className="text-xs text-slate-400">
+                  <div className="text-text-theme-secondary text-xs">
                     {row.side === 'player' ? 'Player side' : 'Opponent side'}
                   </div>
                 </div>
@@ -248,7 +248,7 @@ export function CreateMatchForm(
                   <div>
                     <label
                       htmlFor={`cm-custom-${row.slotId}-unit`}
-                      className="block text-xs font-medium tracking-wide text-slate-300 uppercase"
+                      className="text-text-theme-secondary block text-xs font-medium tracking-wide uppercase"
                     >
                       {row.sideLabel} #{row.seatNumber} unit
                     </label>
@@ -260,7 +260,7 @@ export function CreateMatchForm(
                           unitRef: e.target.value,
                         })
                       }
-                      className="mt-1 w-full rounded border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                      className="border-border-theme bg-surface-deep text-text-theme-primary mt-1 w-full rounded border px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none"
                     >
                       {MATCH_ROSTER_UNIT_OPTIONS.map((option) => (
                         <option key={option.unitRef} value={option.unitRef}>
@@ -272,7 +272,7 @@ export function CreateMatchForm(
                   <div>
                     <label
                       htmlFor={`cm-custom-${row.slotId}-pilot`}
-                      className="block text-xs font-medium tracking-wide text-slate-300 uppercase"
+                      className="text-text-theme-secondary block text-xs font-medium tracking-wide uppercase"
                     >
                       {row.sideLabel} #{row.seatNumber} pilot
                     </label>
@@ -286,13 +286,13 @@ export function CreateMatchForm(
                         })
                       }
                       maxLength={64}
-                      className="mt-1 w-full rounded border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                      className="border-border-theme bg-surface-deep text-text-theme-primary mt-1 w-full rounded border px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none"
                     />
                   </div>
                   <div>
                     <label
                       htmlFor={`cm-custom-${row.slotId}-gunnery`}
-                      className="block text-xs font-medium tracking-wide text-slate-300 uppercase"
+                      className="text-text-theme-secondary block text-xs font-medium tracking-wide uppercase"
                     >
                       {row.sideLabel} #{row.seatNumber} gunnery
                     </label>
@@ -304,7 +304,7 @@ export function CreateMatchForm(
                           gunnery: Number(e.target.value),
                         })
                       }
-                      className="mt-1 w-full rounded border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                      className="border-border-theme bg-surface-deep text-text-theme-primary mt-1 w-full rounded border px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none"
                     >
                       {SKILL_OPTIONS.map((skill) => (
                         <option key={skill} value={skill}>
@@ -316,7 +316,7 @@ export function CreateMatchForm(
                   <div>
                     <label
                       htmlFor={`cm-custom-${row.slotId}-piloting`}
-                      className="block text-xs font-medium tracking-wide text-slate-300 uppercase"
+                      className="text-text-theme-secondary block text-xs font-medium tracking-wide uppercase"
                     >
                       {row.sideLabel} #{row.seatNumber} piloting
                     </label>
@@ -328,7 +328,7 @@ export function CreateMatchForm(
                           piloting: Number(e.target.value),
                         })
                       }
-                      className="mt-1 w-full rounded border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                      className="border-border-theme bg-surface-deep text-text-theme-primary mt-1 w-full rounded border px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none"
                     >
                       {SKILL_OPTIONS.map((skill) => (
                         <option key={skill} value={skill}>
@@ -347,7 +347,7 @@ export function CreateMatchForm(
         <div>
           <label
             htmlFor="cm-mapRadius"
-            className="block text-xs font-medium tracking-wide text-slate-300 uppercase"
+            className="text-text-theme-secondary block text-xs font-medium tracking-wide uppercase"
           >
             Map radius
           </label>
@@ -358,13 +358,13 @@ export function CreateMatchForm(
             max={20}
             value={mapRadius}
             onChange={(e) => setMapRadius(Number(e.target.value))}
-            className="mt-1 w-full rounded border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+            className="border-border-theme bg-surface-deep text-text-theme-primary mt-1 w-full rounded border px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none"
           />
         </div>
         <div>
           <label
             htmlFor="cm-turnLimit"
-            className="block text-xs font-medium tracking-wide text-slate-300 uppercase"
+            className="text-text-theme-secondary block text-xs font-medium tracking-wide uppercase"
           >
             Turn limit
           </label>
@@ -375,16 +375,16 @@ export function CreateMatchForm(
             max={50}
             value={turnLimit}
             onChange={(e) => setTurnLimit(Number(e.target.value))}
-            className="mt-1 w-full rounded border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+            className="border-border-theme bg-surface-deep text-text-theme-primary mt-1 w-full rounded border px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none"
           />
         </div>
       </div>
-      <label className="flex items-start gap-3 rounded border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100">
+      <label className="border-border-theme bg-surface-deep text-text-theme-primary flex items-start gap-3 rounded border px-3 py-2 text-sm">
         <input
           type="checkbox"
           checked={fogOfWar}
           onChange={(e) => setFogOfWar(e.target.checked)}
-          className="mt-0.5 h-4 w-4 rounded border-slate-600 bg-slate-950 text-emerald-600 focus:ring-emerald-500"
+          className="border-border-theme bg-surface-deep mt-0.5 h-4 w-4 rounded text-emerald-600 focus:ring-emerald-500"
         />
         <span>Double-blind (fog of war)</span>
       </label>
@@ -393,7 +393,7 @@ export function CreateMatchForm(
         disabled={props.busy}
         className={`w-full rounded px-4 py-2 text-sm font-medium text-white ${
           props.busy
-            ? 'cursor-not-allowed bg-slate-700'
+            ? 'bg-surface-raised cursor-not-allowed'
             : 'bg-emerald-600 hover:bg-emerald-500'
         }`}
       >

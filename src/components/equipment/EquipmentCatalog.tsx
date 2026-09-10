@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import { SvgIcon } from '@/components/ui/SvgIcon';
+
 import { IEquipmentItem, EquipmentCategory } from '../../types/equipment';
 
 /**
@@ -52,10 +54,10 @@ export function EquipmentCatalog({
 
   return (
     <div
-      className={`equipment-catalog flex h-screen flex-col bg-white dark:bg-gray-900 ${className}`.trim()}
+      className={`equipment-catalog bg-surface-deep flex h-screen flex-col ${className}`.trim()}
     >
       {/* Sticky Search Bar */}
-      <div className="sticky top-0 z-10 border-b border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
+      <div className="border-border-theme bg-surface-deep sticky top-0 z-10 border-b">
         <div className="p-safe px-4 pt-4 pb-2">
           <div className="flex gap-2">
             <div className="relative flex-1">
@@ -64,11 +66,12 @@ export function EquipmentCatalog({
                 value={searchQuery}
                 onChange={handleSearchChange}
                 placeholder="Search equipment..."
-                className="min-h-[44px] w-full rounded-md border border-gray-300 bg-gray-100 px-4 py-3 pl-10 dark:border-gray-600 dark:bg-gray-800"
+                className="border-border-theme-strong bg-surface-raised min-h-[44px] w-full rounded-md border px-4 py-3 pl-10"
                 aria-label="Search equipment"
               />
-              <svg
-                className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400"
+              <SvgIcon
+                size="control"
+                className="text-text-theme-secondary absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -80,15 +83,16 @@ export function EquipmentCatalog({
                   strokeWidth={2}
                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 />
-              </svg>
+              </SvgIcon>
             </div>
             <button
               type="button"
               onClick={() => setShowFilterDrawer(true)}
-              className="min-h-[44px] min-w-[44px] rounded-md bg-gray-200 px-4 py-2 dark:bg-gray-700"
+              className="bg-surface-raised min-h-[44px] min-w-[44px] rounded-md px-4 py-2"
               aria-label="Open filters"
             >
-              <svg
+              <SvgIcon
+                size="toolbar"
                 className="h-6 w-6"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -101,7 +105,7 @@ export function EquipmentCatalog({
                   strokeWidth={2}
                   d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
                 />
-              </svg>
+              </SvgIcon>
             </button>
           </div>
         </div>
@@ -109,9 +113,9 @@ export function EquipmentCatalog({
 
       {/* Scrollable List */}
       <div className="flex-1 overflow-y-auto">
-        <div className="divide-y divide-gray-200 dark:divide-gray-700">
+        <div className="divide-border-theme divide-y">
           {filteredItems.length === 0 ? (
-            <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+            <div className="text-text-theme-muted p-4 text-center">
               No equipment found
             </div>
           ) : (
@@ -120,19 +124,20 @@ export function EquipmentCatalog({
                 key={item.id}
                 type="button"
                 onClick={() => handleItemTap(item)}
-                className="min-h-[44px] w-full px-4 py-3 text-left transition-colors hover:bg-gray-50 dark:hover:bg-gray-800"
+                className="hover:bg-surface-raised min-h-[44px] w-full px-4 py-3 text-left transition-colors"
               >
                 <div className="flex items-center justify-between">
                   <div className="min-w-0 flex-1">
-                    <h3 className="truncate text-sm font-medium text-gray-900 dark:text-white">
+                    <h3 className="text-text-theme-primary truncate text-sm font-medium">
                       {item.name}
                     </h3>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                    <p className="text-text-theme-muted text-xs">
                       {item.category} • {item.weight} tons
                     </p>
                   </div>
-                  <svg
-                    className="ml-2 h-5 w-5 flex-shrink-0 text-gray-400"
+                  <SvgIcon
+                    size="control"
+                    className="text-text-theme-secondary ml-2 h-5 w-5 flex-shrink-0"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -144,7 +149,7 @@ export function EquipmentCatalog({
                       strokeWidth={2}
                       d="M9 5l7 7-7 7"
                     />
-                  </svg>
+                  </SvgIcon>
                 </div>
               </button>
             ))
@@ -192,7 +197,7 @@ function FilterDrawer({
       role="presentation"
     >
       <div
-        className="absolute right-0 bottom-0 left-0 h-[80%] rounded-t-lg bg-white shadow-lg dark:bg-gray-900"
+        className="bg-surface-deep absolute right-0 bottom-0 left-0 h-[80%] rounded-t-lg shadow-lg"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
@@ -200,17 +205,18 @@ function FilterDrawer({
       >
         <div className="flex h-full flex-col">
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-gray-200 p-4 dark:border-gray-700">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+          <div className="border-border-theme flex items-center justify-between border-b p-4">
+            <h2 className="text-text-theme-primary text-lg font-semibold">
               Filters
             </h2>
             <button
               type="button"
               onClick={onClose}
-              className="min-h-[44px] min-w-[44px] rounded-full p-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+              className="hover:bg-surface-raised min-h-[44px] min-w-[44px] rounded-full p-2"
               aria-label="Close filters"
             >
-              <svg
+              <SvgIcon
+                size="toolbar"
                 className="h-6 w-6"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -223,14 +229,14 @@ function FilterDrawer({
                   strokeWidth={2}
                   d="M6 18L18 6M6 6l12 12"
                 />
-              </svg>
+              </SvgIcon>
             </button>
           </div>
 
           {/* Filters */}
           <div className="flex-1 space-y-4 overflow-y-auto p-4">
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label className="text-text-theme-secondary mb-2 block text-sm font-medium">
                 Equipment Category
               </label>
               <div className="space-y-2">
@@ -251,9 +257,9 @@ function FilterDrawer({
                           categories: newCategories,
                         });
                       }}
-                      className="h-5 w-5 rounded border-gray-300"
+                      className="border-border-theme h-5 w-5 rounded"
                     />
-                    <span className="text-sm text-gray-900 dark:text-white">
+                    <span className="text-text-theme-primary text-sm">
                       {category}
                     </span>
                   </label>
@@ -263,11 +269,11 @@ function FilterDrawer({
           </div>
 
           {/* Apply Button */}
-          <div className="p-safe border-t border-gray-200 p-4 dark:border-gray-700">
+          <div className="p-safe border-border-theme border-t p-4">
             <button
               type="button"
               onClick={onClose}
-              className="min-h-[44px] w-full rounded-md bg-blue-500 px-4 py-3 font-medium text-white transition-colors hover:bg-blue-600"
+              className="bg-accent text-on-accent hover:bg-accent-hover min-h-[44px] w-full rounded-md px-4 py-3 font-medium transition-colors"
             >
               Apply Filters
             </button>

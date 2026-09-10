@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 
@@ -56,7 +56,7 @@ describe('GlobalLoadoutTray', () => {
     render(<GlobalLoadoutTray {...defaultProps} />);
 
     // Click on the "Unallocated" section header button
-    const sectionButton = screen.getByRole('button', { name: /Unallocated/i });
+    const sectionButton = screen.getByRole('button', { name: /^Unassigned/i });
     await user.click(sectionButton);
 
     // Verify the section header was found and clicked (no error = success)
@@ -87,23 +87,27 @@ describe('GlobalLoadoutTray', () => {
     // Button should now show confirmation state
     const confirmButton = screen.getByTitle('Click again to confirm');
     expect(confirmButton).toBeInTheDocument();
-    expect(confirmButton).toHaveTextContent('?');
+    expect(confirmButton.querySelector('svg')).toHaveAttribute(
+      'data-icon-name',
+      'check',
+    );
 
     // Second click confirms and removes
     await user.click(confirmButton);
     expect(defaultProps.onRemoveEquipment).toHaveBeenCalledWith('equip-1');
   });
 
-  it('should not show remove button for non-removable equipment', () => {
+  it('keeps non-removable equipment in the collapsed fixed-systems group', async () => {
+    const user = userEvent.setup();
     const equipment = createEquipment({ isRemovable: false });
     render(<GlobalLoadoutTray {...defaultProps} equipment={[equipment]} />);
 
-    // Should show lock icon instead of remove button
     expect(screen.queryByTitle('Remove from unit')).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Fixed systems 1' }));
     expect(screen.getByTitle('Managed by configuration')).toBeInTheDocument();
   });
 
-  it('should display allocated equipment in allocated section', () => {
+  it('should display mounted equipment in mounted section', () => {
     const allocated = createEquipment({
       instanceId: 'allocated-1',
       name: 'Allocated Laser',
@@ -137,6 +141,34 @@ describe('GlobalLoadoutTray', () => {
     // The ring-1 class is applied to the item row wrapper div
     const highlightedItem = container.querySelector('.ring-1');
     expect(highlightedItem).toBeInTheDocument();
+  });
+
+  it('uses per-instance availability in the desktop context menu', () => {
+    const getAvailableLocationsForEquipment = jest.fn(() => [
+      {
+        location: MechLocation.LEFT_ARM,
+        label: 'Left Arm',
+        availableSlots: 4,
+        canFit: true,
+      },
+    ]);
+    render(
+      <GlobalLoadoutTray
+        {...defaultProps}
+        getAvailableLocationsForEquipment={getAvailableLocationsForEquipment}
+      />,
+    );
+
+    fireEvent.contextMenu(
+      screen.getByRole('button', {
+        name: 'Select Medium Laser in unallocated loadout',
+      }),
+    );
+
+    expect(getAvailableLocationsForEquipment).toHaveBeenCalledWith('equip-1');
+    expect(
+      screen.getByRole('button', { name: /add to left arm/i }),
+    ).toBeInTheDocument();
   });
 
   it('should accept available locations prop', () => {
@@ -215,105 +247,126 @@ describe('GlobalLoadoutTray', () => {
     expect(screen.getByText(/No equipment/i)).toBeInTheDocument();
   });
 
-  describe('Category Filter', () => {
-    const mixedEquipment = [
-      createEquipment({
-        instanceId: 'e1',
-        name: 'Medium Laser',
-        category: EquipmentCategory.ENERGY_WEAPON,
-      }),
-      createEquipment({
-        instanceId: 'e2',
-        name: 'AC/10',
-        category: EquipmentCategory.BALLISTIC_WEAPON,
-      }),
-      createEquipment({
-        instanceId: 'e3',
-        name: 'LRM 20',
-        category: EquipmentCategory.MISSILE_WEAPON,
-      }),
-      createEquipment({
-        instanceId: 'e4',
-        name: 'Ammo LRM',
-        category: EquipmentCategory.AMMUNITION,
-      }),
-    ];
-
-    it('should render category filter buttons', () => {
-      render(
-        <GlobalLoadoutTray {...defaultProps} equipment={mixedEquipment} />,
-      );
-
-      expect(screen.getByTitle('All Categories')).toBeInTheDocument();
-      expect(screen.getByTitle('Energy')).toBeInTheDocument();
-      expect(screen.getByTitle('Ballistic')).toBeInTheDocument();
-    });
-
-    it('should show all equipment by default', () => {
-      render(
-        <GlobalLoadoutTray {...defaultProps} equipment={mixedEquipment} />,
-      );
-
-      expect(screen.getByText('Medium Laser')).toBeInTheDocument();
-      expect(screen.getByText('AC/10')).toBeInTheDocument();
-      expect(screen.getByText('LRM 20')).toBeInTheDocument();
-      expect(screen.getByText('Ammo LRM')).toBeInTheDocument();
-    });
-
-    it('should filter to energy weapons when energy filter clicked', async () => {
+  describe('Loadout grouping and actions', () => {
+    it('uses category grouping by default and allows location grouping', async () => {
       const user = userEvent.setup();
-      render(
-        <GlobalLoadoutTray {...defaultProps} equipment={mixedEquipment} />,
-      );
-
-      await user.click(screen.getByTitle('Energy'));
-
-      expect(screen.getByText('Medium Laser')).toBeInTheDocument();
-      expect(screen.queryByText('AC/10')).not.toBeInTheDocument();
-      expect(screen.queryByText('LRM 20')).not.toBeInTheDocument();
-    });
-
-    it('should filter to ballistic weapons when ballistic filter clicked', async () => {
-      const user = userEvent.setup();
-      render(
-        <GlobalLoadoutTray {...defaultProps} equipment={mixedEquipment} />,
-      );
-
-      await user.click(screen.getByTitle('Ballistic'));
-
-      expect(screen.queryByText('Medium Laser')).not.toBeInTheDocument();
-      expect(screen.getByText('AC/10')).toBeInTheDocument();
-      expect(screen.queryByText('LRM 20')).not.toBeInTheDocument();
-    });
-
-    it('should show empty filter state when no items match filter', async () => {
-      const user = userEvent.setup();
-      const energyOnly = [
+      const equipment = [
         createEquipment({
-          instanceId: 'e1',
-          name: 'Laser',
+          instanceId: 'energy-1',
+          name: 'Medium Laser',
           category: EquipmentCategory.ENERGY_WEAPON,
         }),
+        createEquipment({
+          instanceId: 'ballistic-1',
+          name: 'AC/10',
+          category: EquipmentCategory.BALLISTIC_WEAPON,
+          isAllocated: true,
+          location: 'Right Torso',
+        }),
       ];
-      render(<GlobalLoadoutTray {...defaultProps} equipment={energyOnly} />);
+      render(<GlobalLoadoutTray {...defaultProps} equipment={equipment} />);
 
-      await user.click(screen.getByTitle('Ballistic'));
+      await user.click(
+        screen.getByRole('button', { name: 'More loadout actions' }),
+      );
+      expect(
+        screen.getByRole('button', { name: 'category', pressed: true }),
+      ).toBeInTheDocument();
+      expect(screen.getByText('Energy')).toBeInTheDocument();
+      expect(screen.getByText('Ballistic')).toBeInTheDocument();
 
-      expect(screen.getByText(/No items in filter/i)).toBeInTheDocument();
+      await user.click(screen.getByRole('button', { name: 'location' }));
+
+      expect(screen.getByText('By location')).toBeInTheDocument();
+      await user.click(
+        screen.getByRole('button', { name: 'More loadout actions' }),
+      );
+      expect(
+        screen.getByRole('button', { name: 'location', pressed: true }),
+      ).toBeInTheDocument();
+      expect(screen.getByText('Right Torso')).toBeInTheDocument();
     });
 
-    it('should return to showing all when All filter clicked', async () => {
+    it('expands duplicate equipment into individual selectable and removable instances', async () => {
       const user = userEvent.setup();
+      const equipment = [
+        createEquipment({ instanceId: 'laser-1' }),
+        createEquipment({ instanceId: 'laser-2' }),
+      ];
+      const getAvailableLocationsForEquipment = jest.fn(() => []);
       render(
-        <GlobalLoadoutTray {...defaultProps} equipment={mixedEquipment} />,
+        <GlobalLoadoutTray
+          {...defaultProps}
+          equipment={equipment}
+          getAvailableLocationsForEquipment={getAvailableLocationsForEquipment}
+        />,
       );
 
-      await user.click(screen.getByTitle('Energy'));
-      expect(screen.queryByText('AC/10')).not.toBeInTheDocument();
+      const duplicateGroup = screen.getByRole('button', {
+        name: 'Show 2 instances of Medium Laser in Unassigned',
+      });
+      expect(
+        screen.queryByRole('button', {
+          name: 'Select Medium Laser in unallocated loadout',
+        }),
+      ).not.toBeInTheDocument();
 
-      await user.click(screen.getByTitle('All Categories'));
-      expect(screen.getByText('AC/10')).toBeInTheDocument();
-      expect(screen.getByText('Medium Laser')).toBeInTheDocument();
+      await user.click(duplicateGroup);
+
+      expect(
+        screen.getAllByRole('button', {
+          name: 'Select Medium Laser in unallocated loadout',
+        }),
+      ).toHaveLength(2);
+      const instanceButtons = screen.getAllByRole('button', {
+        name: 'Select Medium Laser in unallocated loadout',
+      });
+      await user.click(instanceButtons[1]);
+      expect(defaultProps.onSelectEquipment).toHaveBeenCalledWith('laser-2');
+
+      fireEvent.contextMenu(instanceButtons[1]);
+      expect(getAvailableLocationsForEquipment).toHaveBeenCalledWith('laser-2');
+    });
+
+    it('keeps fixed systems collapsed until explicitly opened', async () => {
+      const user = userEvent.setup();
+      const fixedSystem = createEquipment({
+        instanceId: 'fixed-case',
+        name: 'CASE',
+        isRemovable: false,
+      });
+      render(<GlobalLoadoutTray {...defaultProps} equipment={[fixedSystem]} />);
+
+      const section = screen.getByRole('button', { name: 'Fixed systems 1' });
+      expect(section).toHaveAttribute('aria-expanded', 'false');
+      expect(
+        screen.queryByTitle('Managed by configuration'),
+      ).not.toBeInTheDocument();
+
+      await user.click(section);
+
+      expect(section).toHaveAttribute('aria-expanded', 'true');
+      expect(screen.getByTitle('Managed by configuration')).toBeInTheDocument();
+    });
+
+    it('moves bulk removal into the loadout actions overflow', async () => {
+      const user = userEvent.setup();
+      const confirmSpy = jest.spyOn(window, 'confirm').mockReturnValue(true);
+      render(<GlobalLoadoutTray {...defaultProps} />);
+
+      expect(
+        screen.queryByRole('button', { name: /remove all removable/i }),
+      ).not.toBeInTheDocument();
+
+      await user.click(
+        screen.getByRole('button', { name: 'More loadout actions' }),
+      );
+      await user.click(
+        screen.getByRole('button', { name: 'Remove all removable (1)' }),
+      );
+
+      expect(defaultProps.onRemoveAllEquipment).toHaveBeenCalledTimes(1);
+      confirmSpy.mockRestore();
     });
   });
 });

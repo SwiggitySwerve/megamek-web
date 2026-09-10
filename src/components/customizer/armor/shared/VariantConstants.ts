@@ -33,11 +33,11 @@ export const VARIANT_NAMES: Record<ArmorDiagramVariant, string> = {
  * Variant descriptions - brief description for each style
  */
 export const VARIANT_DESCRIPTIONS: Record<ArmorDiagramVariant, string> = {
-  'clean-tech': 'Clean design with solid colors',
-  'neon-operator': 'Sci-fi aesthetic with neon lighting',
-  'tactical-hud': 'Military-style LED readouts',
-  'premium-material': 'Chrome textures with 3D depth',
-  megamek: 'Authentic record sheet style',
+  'clean-tech': 'Clean proportional capacity fills with technical grid detail',
+  'neon-operator': 'Bottom-up glow cores with luminous edges and readouts',
+  'tactical-hud': 'Scanline capacity fills and monospace readouts',
+  'premium-material': 'Beveled metallic capacity fills and inset readouts',
+  megamek: 'Warm paper fills and dark record-sheet lettering',
 };
 
 /**
@@ -48,7 +48,6 @@ export const ALL_VARIANTS: ArmorDiagramVariant[] = [
   VARIANT_IDS.GLOW,
   VARIANT_IDS.HUD,
   VARIANT_IDS.CHROMATIC,
-  VARIANT_IDS.MEGAMEK,
 ];
 
 /**

@@ -24,6 +24,7 @@ import {
   useArmorVariantLayout,
 } from '../shared/ArmorVariantRenderHelpers';
 import { DiagramHeader } from '../shared/DiagramHeader';
+import { BipedArmorDiagram } from './BipedArmorDiagram';
 import { MegaMekLocation } from './MegaMekDiagram.location';
 
 export interface MegaMekDiagramProps extends ConfigurableArmorDiagramProps {
@@ -31,7 +32,15 @@ export interface MegaMekDiagramProps extends ConfigurableArmorDiagramProps {
   mechConfigType?: MechConfigType;
 }
 
-export function MegaMekDiagram({
+export function MegaMekDiagram(props: MegaMekDiagramProps): React.ReactElement {
+  return (props.mechConfigType ?? 'biped') === 'biped' ? (
+    <BipedArmorDiagram {...props} variant="megamek" />
+  ) : (
+    <ConfiguredMegaMekDiagram {...props} />
+  );
+}
+
+function ConfiguredMegaMekDiagram({
   armorData,
   selectedLocation,
   onLocationClick,

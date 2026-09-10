@@ -7,19 +7,26 @@
  * @spec openspec/specs/critical-slots-display/spec.md
  */
 
-import React, { useState, useRef, useEffect, memo } from 'react';
-
-import {
-  classifyEquipment,
-  getEquipmentColors,
-} from '@/utils/colors/equipmentColors';
-import {
-  getSlotColors,
-  classifySystemComponent,
-} from '@/utils/colors/slotColors';
-import { abbreviateEquipmentName } from '@/utils/equipmentNameAbbreviations';
+import React, { useState, useEffect, memo } from 'react';
 
 import type { SlotContent } from './criticalSlotTypes';
+import type {
+  SlotContextMenuState,
+  SlotDragStartState,
+  SlotDropState,
+  SlotInteractivityState,
+  SlotKeyState,
+  SlotRemoveState,
+  SlotTouchState,
+} from './SlotInteractionTypes';
+
+import { SlotContextMenuShell } from './SlotContextMenuShell';
+import {
+  getOccupiedSpanClasses,
+  getSingleSlotDisplayName,
+  getSlotMarkerClasses,
+  getSlotStateClasses,
+} from './SlotVisualHelpers';
 
 // =============================================================================
 // Context Menu Component
@@ -39,36 +46,9 @@ function SlotContextMenu({
   slotName,
   onUnassign,
   onClose,
-}: SlotContextMenuProps) {
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        onClose();
-      }
-    };
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('keydown', handleEscape);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleEscape);
-    };
-  }, [onClose]);
-
-  const adjustedX = Math.min(x, window.innerWidth - 180);
-  const adjustedY = Math.min(y, window.innerHeight - 100);
-
+}: SlotContextMenuProps): React.ReactElement {
   return (
-    <div
-      ref={menuRef}
-      className="bg-surface-base border-border-theme fixed z-50 min-w-[140px] rounded-lg border py-1 shadow-xl"
-      style={{ left: adjustedX, top: adjustedY }}
-    >
+    <SlotContextMenuShell x={x} y={y} menuHeight={100} onClose={onClose}>
       <div className="border-border-theme-subtle text-text-theme-secondary max-w-[200px] truncate border-b px-3 py-1 text-xs">
         {slotName}
       </div>
@@ -81,7 +61,7 @@ function SlotContextMenu({
       >
         Unassign
       </button>
-    </div>
+    </SlotContextMenuShell>
   );
 }
 
@@ -106,29 +86,6 @@ interface SlotRowProps {
   onDragStart?: (equipmentId: string) => void;
 }
 
-/**
- * Get color classes for slot content
- */
-function getSlotContentClasses(slot: SlotContent): string {
-  if (slot.type === 'empty') {
-    return 'bg-surface-base border-border-theme text-slate-500';
-  }
-
-  if (slot.type === 'system' && slot.name) {
-    const componentType = classifySystemComponent(slot.name);
-    const colors = getSlotColors(componentType);
-    return `${colors.bg} ${colors.border} ${colors.text}`;
-  }
-
-  if (slot.type === 'equipment' && slot.name) {
-    const colorType = classifyEquipment(slot.name);
-    const colors = getEquipmentColors(colorType);
-    return `${colors.bg} ${colors.border} ${colors.text}`;
-  }
-
-  return 'bg-surface-raised border-border-theme text-slate-300';
-}
-
 function isFixedEquipmentOnOmni(slot: SlotContent, isOmni: boolean): boolean {
   return isOmni && slot.type === 'equipment' && slot.isOmniPodMounted === false;
 }
@@ -139,82 +96,6 @@ function canUnassignSlot(slot: SlotContent, isFixedOnOmni: boolean): boolean {
     (slot.type === 'equipment' ||
       (slot.type === 'system' && !!slot.equipmentId))
   );
-}
-
-interface SlotStyleState {
-  slot: SlotContent;
-  isAssignable: boolean;
-  isDragOver: boolean;
-}
-
-interface SlotInteractivityState {
-  canDrag: boolean;
-  isTouchDevice: boolean;
-  isFixedOnOmni: boolean;
-  canUnassign: boolean;
-}
-
-interface SlotDragStartState {
-  canDrag: boolean;
-  equipmentId?: string;
-  onDragStart?: (equipmentId: string) => void;
-  setIsDragging: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-interface SlotDropState {
-  slot: SlotContent;
-  onDrop: (equipmentId: string) => void;
-  setIsDragOver: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-interface SlotRemoveState {
-  canUnassign: boolean;
-  onRemove: () => void;
-}
-
-interface SlotContextMenuState extends SlotRemoveState {
-  setContextMenu: React.Dispatch<
-    React.SetStateAction<{ x: number; y: number } | null>
-  >;
-}
-
-interface SlotTouchState extends SlotContextMenuState {
-  isTouchDevice: boolean;
-  setLongPressTimer: React.Dispatch<
-    React.SetStateAction<ReturnType<typeof setTimeout> | null>
-  >;
-}
-
-interface SlotKeyState extends SlotRemoveState {
-  onClick: () => void;
-}
-
-function getStyleClasses({
-  slot,
-  isAssignable,
-  isDragOver,
-}: SlotStyleState): string {
-  if (isDragOver) {
-    return slot.type === 'empty' && isAssignable
-      ? 'bg-green-800 border-green-400 text-green-200 scale-[1.02]'
-      : 'bg-red-900/70 border-red-400 text-red-200';
-  }
-
-  if (isAssignable && slot.type === 'empty') {
-    return 'bg-green-900/60 border-green-500 text-green-300';
-  }
-
-  return getSlotContentClasses(slot);
-}
-
-function getDisplayName(slot: SlotContent, isOmni: boolean): string {
-  if (slot.type === 'empty') return '- Empty -';
-  if (!slot.name) return '';
-
-  const name = abbreviateEquipmentName(slot.name);
-  if (!isOmni || slot.type !== 'equipment') return name;
-
-  return `${name}${slot.isOmniPodMounted ? ' (Pod)' : ' (Fixed)'}`;
 }
 
 function getCursorClasses({
@@ -389,9 +270,12 @@ export const SlotRow = memo(function SlotRow({
     isFixedOnOmni,
     canUnassign,
   };
-  const styleClasses = getStyleClasses({ slot, isAssignable, isDragOver });
-  const selectionClasses = isSelected ? 'ring-2 ring-accent' : '';
-  const displayName = getDisplayName(slot, isOmni);
+  const styleClasses = getSlotStateClasses(slot, isAssignable, isDragOver);
+  const selectionClasses = isSelected
+    ? 'ring-2 ring-accent ring-offset-1 ring-offset-surface-deep'
+    : '';
+  const spanClasses = getOccupiedSpanClasses(slot);
+  const displayName = getSingleSlotDisplayName(slot, isOmni);
   const title = getTitle(interactivityState);
 
   return (
@@ -402,7 +286,7 @@ export const SlotRow = memo(function SlotRow({
         draggable={canDrag}
         aria-label={getSlotAriaLabel(slot)}
         aria-selected={isSelected}
-        className={`border-border-theme-subtle my-0.5 flex items-center rounded-sm border transition-all focus:outline-none ${getCursorClasses(interactivityState)} ${getOpacityClasses({ isDragging, isFixedOnOmni })} ${isAssignable ? 'focus:ring-1 focus:ring-green-400 focus:ring-inset' : ''} ${styleClasses} ${selectionClasses} ${compact ? 'px-1 py-0.5 text-[10px] sm:text-xs' : 'px-1 py-0.5 text-[10px] sm:px-2 sm:py-1 sm:text-sm'} `}
+        className={`focus-visible:ring-accent my-0.5 flex min-h-8 items-center rounded-sm border transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-inset ${getCursorClasses(interactivityState)} ${getOpacityClasses({ isDragging, isFixedOnOmni })} ${styleClasses} ${selectionClasses} ${compact ? 'px-1 py-0.5 text-[10px] sm:text-xs' : 'px-1 py-0.5 text-[10px] sm:px-2 sm:py-1 sm:text-sm'} `}
         onClick={onClick}
         onDoubleClick={() => handleSlotDoubleClick({ canUnassign, onRemove })}
         onContextMenu={(e) =>
@@ -443,7 +327,30 @@ export const SlotRow = memo(function SlotRow({
         }
         title={title}
       >
-        <span className="flex-1 truncate">{displayName}</span>
+        <span
+          aria-hidden="true"
+          className={`mr-1 h-4 w-1 flex-shrink-0 rounded-full ${getSlotMarkerClasses(slot)}`}
+        />
+        <span
+          aria-hidden="true"
+          className="mr-1 w-4 flex-shrink-0 pr-1 text-right text-[10px] text-inherit tabular-nums"
+        >
+          {slot.index + 1}
+        </span>
+        <span className="min-w-0 flex-1 break-words whitespace-normal">
+          {displayName}
+        </span>
+        {spanClasses && (
+          <span
+            aria-hidden="true"
+            className="pointer-events-none relative ml-2 w-1.5 shrink-0 self-stretch"
+          >
+            <span
+              data-testid="equipment-group-bracket"
+              className={spanClasses}
+            />
+          </span>
+        )}
       </div>
 
       {/* Context Menu */}

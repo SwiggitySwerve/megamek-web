@@ -27,6 +27,7 @@
 import React, { useMemo } from 'react';
 
 import { getPhaseRailLabel } from '@/components/gameplay/EventLogDisplay.helpers';
+import { AppIcon, type AppIconName } from '@/components/ui/AppIcon';
 import {
   GamePhase,
   GameSide,
@@ -54,9 +55,9 @@ function getPhaseBgClass(phase: GamePhase): string {
     case GamePhase.Heat:
       return 'bg-yellow-700';
     case GamePhase.End:
-      return 'bg-gray-700';
+      return 'bg-surface-raised';
     default:
-      return 'bg-gray-700';
+      return 'bg-surface-raised';
   }
 }
 
@@ -85,13 +86,13 @@ function deriveUnitStatus(
 // ---------------------------------------------------------------------------
 
 const STATUS_TOKEN_CLASSES: Record<UnitRailStatus, string> = {
-  active: 'ring-2 ring-white bg-white/20 font-bold text-white',
-  upcoming: 'ring-1 ring-white/40 bg-white/10 text-white/90',
+  active: 'ring-2 ring-white bg-surface-base/20 font-bold text-white',
+  upcoming: 'ring-1 ring-white/40 bg-surface-base/10 text-white/90',
   completed: 'ring-1 ring-white/20 bg-black/30 text-white/50',
   skipped: 'ring-1 ring-white/20 bg-black/20 text-white/40 italic',
   destroyed: 'ring-1 ring-red-800/80 bg-red-950/70 text-red-100/90',
   withdrawn:
-    'ring-1 ring-slate-400/60 bg-slate-900/60 text-slate-100/90 italic',
+    'ring-1 ring-border-theme/60 bg-surface-deep/60 text-text-theme-primary/90 italic',
 };
 
 const SIDE_BADGE_CLASSES: Record<GameSide, string> = {
@@ -99,11 +100,11 @@ const SIDE_BADGE_CLASSES: Record<GameSide, string> = {
   [GameSide.Opponent]: 'bg-red-500',
 };
 
-const STATUS_ICON: Partial<Record<UnitRailStatus, string>> = {
-  completed: '✓',
-  destroyed: '✕',
-  withdrawn: '→',
-  skipped: '~',
+const STATUS_ICON: Partial<Record<UnitRailStatus, AppIconName>> = {
+  completed: 'check',
+  destroyed: 'close',
+  withdrawn: 'arrow-right',
+  skipped: 'remove',
 };
 
 const STATUS_LABEL: Record<UnitRailStatus, string> = {
@@ -133,7 +134,9 @@ function RailToken({
   shellMode,
 }: RailTokenProps): React.ReactElement {
   const tokenClass = STATUS_TOKEN_CLASSES[unit.status];
-  const sideBadge = unit.side ? SIDE_BADGE_CLASSES[unit.side] : 'bg-gray-500';
+  const sideBadge = unit.side
+    ? SIDE_BADGE_CLASSES[unit.side]
+    : 'bg-surface-raised';
   const icon = STATUS_ICON[unit.status];
   const statusLabel = STATUS_LABEL[unit.status];
 
@@ -177,7 +180,7 @@ function RailToken({
         />
         {icon && (
           <span className="ml-auto text-[10px] opacity-70" aria-hidden="true">
-            {icon}
+            <AppIcon name={icon} size="inline" />
           </span>
         )}
       </div>
@@ -221,7 +224,7 @@ function BlockerBadge({
     <div
       // Dark text on the amber fill — white-on-amber measured well below AA
       // (re-audit A11Y-R7), same treatment as the GM ledger's filled CTAs.
-      className="flex flex-shrink-0 items-center gap-1 rounded bg-amber-400 px-2 py-1 text-xs font-semibold text-slate-950"
+      className="text-text-theme-primary flex flex-shrink-0 items-center gap-1 rounded bg-amber-400 px-2 py-1 text-xs font-semibold"
       data-testid="rail-blocker-badge"
       aria-label={`${count} unit${count === 1 ? '' : 's'} awaiting ${phaseLabel}`}
       role="status"
@@ -256,7 +259,7 @@ function PhaseAdvanceControl({
           'rounded border border-white/35 px-2.5 py-1 text-xs font-semibold whitespace-nowrap uppercase transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-white',
           control.disabled
             ? 'cursor-not-allowed bg-black/10 text-white/50'
-            : 'bg-white/15 text-white hover:bg-white/25',
+            : 'bg-surface-base/15 text-white hover:bg-surface-base/25',
         ].join(' ')}
       >
         {control.label}
@@ -378,7 +381,7 @@ export function TacticalTurnRail({
 
       {/* Divider */}
       <div
-        className="hidden h-8 w-px flex-shrink-0 bg-white/20 lg:block"
+        className="bg-surface-base/20 hidden h-8 w-px flex-shrink-0 lg:block"
         aria-hidden="true"
       />
 

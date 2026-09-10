@@ -62,7 +62,7 @@ export function CombatToHitModifierRows({
 
   return (
     <div
-      className="mt-1 border-t border-slate-700/70 pt-1 text-[11px] text-slate-200"
+      className="border-border-theme/70 text-text-theme-primary mt-1 border-t pt-1 text-[11px]"
       data-testid={testId}
       {...projectionAttributes}
       data-combat-to-hit-number={combatInfo.toHitNumber}

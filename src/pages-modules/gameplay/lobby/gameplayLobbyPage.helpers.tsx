@@ -40,11 +40,14 @@ export function LobbyShell({
   readonly children: React.ReactNode;
 }): React.ReactElement {
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8 text-slate-100">
-      <Link href="/gameplay/games" className="text-sm text-slate-400">
+    <div className="text-text-theme-primary mx-auto max-w-2xl px-4 py-8">
+      <Link
+        href="/gameplay/games"
+        className="text-text-theme-secondary text-sm"
+      >
         Back to games
       </Link>
-      <p className="mt-6 rounded-lg border border-slate-800 bg-slate-950 p-4">
+      <p className="border-border-theme-subtle bg-surface-deep mt-6 rounded-lg border p-4">
         {children}
       </p>
     </div>

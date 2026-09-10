@@ -71,7 +71,9 @@ function DialogWrapper({
 export const Default: Story = {
   render: () => (
     <DialogWrapper title="Example Dialog">
-      <p className="text-slate-300">This is the dialog content area.</p>
+      <p className="text-text-theme-secondary">
+        This is the dialog content area.
+      </p>
     </DialogWrapper>
   ),
 };
@@ -82,7 +84,7 @@ export const WithSubtitle: Story = {
       title="Save Unit"
       subtitle="Enter a unique name for your custom unit"
     >
-      <p className="text-slate-300">
+      <p className="text-text-theme-secondary">
         Dialog with a subtitle for additional context.
       </p>
     </DialogWrapper>
@@ -113,7 +115,7 @@ export const WithFooter: Story = {
             </>
           }
         >
-          <p className="text-slate-300">
+          <p className="text-text-theme-secondary">
             Are you sure you want to delete this unit? This will remove all
             associated data.
           </p>
@@ -148,23 +150,23 @@ export const WithForm: Story = {
         >
           <div className="space-y-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-300">
+              <label className="text-text-theme-secondary mb-1 block text-sm font-medium">
                 Chassis Name
               </label>
               <input
                 type="text"
                 placeholder="e.g., Atlas"
-                className="w-full rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="border-border-theme-strong bg-surface-base text-text-theme-primary w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-300">
+              <label className="text-text-theme-secondary mb-1 block text-sm font-medium">
                 Variant Designation
               </label>
               <input
                 type="text"
                 placeholder="e.g., AS7-D"
-                className="w-full rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="border-border-theme-strong bg-surface-base text-text-theme-primary w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
               />
             </div>
           </div>
@@ -205,7 +207,7 @@ export const PreventClose: Story = {
             </Button>
           }
         >
-          <p className="text-slate-300">
+          <p className="text-text-theme-secondary">
             {isSaving
               ? 'Saving in progress. Dialog cannot be closed.'
               : 'Click Save to see the prevent close behavior.'}
@@ -222,7 +224,7 @@ export const LongContent: Story = {
       title="Terms and Conditions"
       subtitle="Please read carefully"
     >
-      <div className="space-y-4 text-slate-300">
+      <div className="text-text-theme-secondary space-y-4">
         <p>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
@@ -276,7 +278,7 @@ export const CustomWidth: Story = {
             </Button>
           }
         >
-          <p className="text-slate-300">
+          <p className="text-text-theme-secondary">
             This dialog has a wider max-width (max-w-3xl) for displaying more
             content.
           </p>
@@ -305,7 +307,7 @@ export const NoCloseButton: Story = {
             </Button>
           }
         >
-          <p className="text-slate-300">
+          <p className="text-text-theme-secondary">
             This dialog hides the close button to encourage users to take an
             action. They can still close by clicking outside or pressing Escape.
           </p>

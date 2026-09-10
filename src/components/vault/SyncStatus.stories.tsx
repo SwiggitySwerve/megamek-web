@@ -94,7 +94,7 @@ export const Indicators: Story = {
     layout: 'centered',
   },
   render: () => (
-    <div className="flex items-center gap-4 rounded-lg bg-gray-900 p-6">
+    <div className="bg-surface-deep flex items-center gap-4 rounded-lg p-6">
       <SyncStatusIndicator state="online" showLabel />
       <SyncStatusIndicator state="syncing" pendingCount={3} showLabel />
       <SyncStatusIndicator state="offline" showLabel />
@@ -108,7 +108,7 @@ export const PeerRows: Story = {
     layout: 'centered',
   },
   render: () => (
-    <div className="w-[520px] divide-y divide-gray-700 rounded-lg bg-gray-800">
+    <div className="divide-border-theme bg-surface-base w-[520px] divide-y rounded-lg">
       <PeerSyncRow
         peerId="KSTL-713F-VAULT-01"
         peerName="Kestrel Lance"

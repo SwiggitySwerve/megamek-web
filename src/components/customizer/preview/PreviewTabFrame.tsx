@@ -26,18 +26,12 @@ export function PreviewTabFrame({
 }: PreviewTabFrameProps): React.ReactElement {
   return (
     <div
-      className={`preview-tab ${className}`}
+      className={`preview-tab bg-surface-base flex h-full min-h-0 flex-col ${className}`}
       data-testid={testId}
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        backgroundColor: '#1a1a2e',
-      }}
     >
       <PreviewToolbar {...toolbarActions} />
 
-      <div style={{ flex: 1, overflow: 'auto' }}>{children}</div>
+      <div className="min-h-0 flex-1">{children}</div>
     </div>
   );
 }

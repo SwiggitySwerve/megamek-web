@@ -14,6 +14,7 @@ import {
   renderArmorLocationStates,
   useArmorVariantLayout,
 } from '../shared/ArmorVariantRenderHelpers';
+import { BipedArmorDiagram } from './BipedArmorDiagram';
 import { TacticalLocation } from './TacticalHUDDiagram.parts';
 
 export interface TacticalHUDDiagramProps extends ConfigurableArmorDiagramProps {
@@ -21,6 +22,16 @@ export interface TacticalHUDDiagramProps extends ConfigurableArmorDiagramProps {
 }
 
 export function TacticalHUDDiagram(
+  props: TacticalHUDDiagramProps,
+): React.ReactElement {
+  return (props.mechConfigType ?? 'biped') === 'biped' ? (
+    <BipedArmorDiagram {...props} variant="tactical-hud" />
+  ) : (
+    <ConfiguredTacticalHUDDiagram {...props} />
+  );
+}
+
+function ConfiguredTacticalHUDDiagram(
   props: TacticalHUDDiagramProps,
 ): React.ReactElement {
   const { armorData, selectedLocation, unallocatedPoints } = props;

@@ -24,22 +24,28 @@ export function KeyMomentsCard({
 
   return (
     <Card>
-      <div className="border-b border-gray-700 p-4">
-        <h3 className="font-medium text-white">Key Moments</h3>
+      <div className="border-border-theme border-b p-4">
+        <h3 className="text-text-theme-primary font-medium">Key Moments</h3>
       </div>
       <div className="space-y-2 p-4">
         {keyMoments.length === 0 ? (
           <div className="space-y-2">
-            <p className="text-sm text-gray-400">No key moments recorded.</p>
+            <p className="text-text-theme-muted text-sm">
+              No key moments recorded.
+            </p>
             {emptyStateDetail ? (
-              <div className="rounded-lg border border-gray-700/50 bg-gray-800/30 p-3">
+              <div className="border-border-theme/50 bg-surface-base/30 rounded-lg border p-3">
                 <div className="flex items-center gap-2">
-                  <span className="rounded bg-gray-700 px-1.5 py-0.5 text-xs font-bold text-gray-300">
+                  <span className="bg-surface-raised text-text-theme-secondary rounded px-1.5 py-0.5 text-xs font-bold">
                     End
                   </span>
-                  <span className="text-xs text-gray-400">Outcome event</span>
+                  <span className="text-text-theme-muted text-xs">
+                    Outcome event
+                  </span>
                 </div>
-                <p className="mt-1 text-sm text-gray-300">{emptyStateDetail}</p>
+                <p className="text-text-theme-secondary mt-1 text-sm">
+                  {emptyStateDetail}
+                </p>
               </div>
             ) : null}
           </div>
@@ -57,7 +63,7 @@ export function KeyMomentsCard({
                 ) : (
                   <button
                     onClick={() => setShowLowerTiers(true)}
-                    className="text-xs text-gray-400 underline hover:text-gray-300"
+                    className="text-text-theme-muted hover:text-text-theme-secondary text-xs underline"
                   >
                     Show {hiddenMoments.length} more moments
                   </button>
@@ -79,18 +85,18 @@ function KeyMomentRow({
   const tierStyles = {
     1: {
       container: 'border-amber-700/40 bg-amber-900/20',
-      badge: 'bg-amber-600 text-white font-bold',
-      text: 'text-white',
+      badge: 'bg-amber-600 text-on-accent font-bold',
+      text: 'text-text-theme-primary',
     },
     2: {
-      container: 'border-gray-700/50 bg-gray-800/30',
-      badge: 'bg-gray-600 text-white font-bold',
-      text: 'text-gray-300',
+      container: 'border-border-theme/50 bg-surface-base/30',
+      badge: 'bg-surface-raised text-text-theme-primary font-bold',
+      text: 'text-text-theme-secondary',
     },
     3: {
-      container: 'border-gray-700/30 bg-gray-800/20',
-      badge: 'bg-gray-700 text-gray-300',
-      text: 'text-gray-400',
+      container: 'border-border-theme/30 bg-surface-base/20',
+      badge: 'bg-surface-raised text-text-theme-secondary',
+      text: 'text-text-theme-muted',
     },
   }[moment.tier];
 
@@ -100,7 +106,9 @@ function KeyMomentRow({
         <span className={`rounded px-1.5 py-0.5 text-xs ${tierStyles.badge}`}>
           T{moment.tier}
         </span>
-        <span className="text-xs text-gray-400">Turn {moment.turn}</span>
+        <span className="text-text-theme-muted text-xs">
+          Turn {moment.turn}
+        </span>
       </div>
       <p className={`mt-1 text-sm ${tierStyles.text}`}>{moment.description}</p>
     </div>

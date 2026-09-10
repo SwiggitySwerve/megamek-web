@@ -37,7 +37,7 @@ const statusToneByStatus: Record<IAcquisitionRequest['status'], string> = {
   delivered: 'bg-emerald-500/20 text-emerald-300',
   failed: 'bg-red-500/20 text-red-300',
   in_transit: 'bg-cyan-500/20 text-cyan-300',
-  pending: 'bg-slate-500/20 text-slate-300',
+  pending: 'bg-surface-raised/20 text-text-theme-secondary',
   rolling: 'bg-amber-500/20 text-amber-300',
 };
 

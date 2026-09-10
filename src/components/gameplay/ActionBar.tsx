@@ -55,7 +55,7 @@ function ActionButton({
     'px-4 py-2 min-h-[44px] rounded font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2';
 
   const primaryClasses = action.primary
-    ? 'bg-blue-600 hover:bg-blue-700 text-white focus:ring-blue-500'
+    ? 'bg-accent hover:bg-accent-hover text-on-accent focus:ring-accent'
     : 'bg-surface-raised hover:bg-surface-deep text-text-theme-primary focus:ring-border-theme';
 
   const disabledClasses =
@@ -115,7 +115,15 @@ export function ActionBar({
   // Handle keyboard shortcuts
   React.useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
-      if (!canAct) return;
+      if (!canAct || event.defaultPrevented) return;
+      const target = event.target;
+      if (
+        target instanceof Element &&
+        target.closest(
+          'button, a[href], input, textarea, select, [contenteditable="true"], [role="button"]',
+        )
+      )
+        return;
 
       // Find matching action by shortcut
       for (const action of actions) {

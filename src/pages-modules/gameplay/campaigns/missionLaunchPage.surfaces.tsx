@@ -69,10 +69,10 @@ function directLaunchButtonClass({
   readonly warningCount: number;
 }): string {
   if (isLaunching) {
-    return 'cursor-wait rounded-lg border border-slate-700 bg-slate-900/40 px-4 py-2 font-semibold text-slate-500';
+    return 'cursor-wait rounded-lg border border-border-theme bg-surface-deep/40 px-4 py-2 font-semibold text-text-theme-muted';
   }
   if (!canLaunch) {
-    return 'cursor-not-allowed rounded-lg border border-slate-700 bg-slate-900/40 px-4 py-2 font-semibold text-slate-500';
+    return 'cursor-not-allowed rounded-lg border border-border-theme bg-surface-deep/40 px-4 py-2 font-semibold text-text-theme-muted';
   }
   if (warningCount > 0) {
     return 'rounded-lg border border-amber-500/70 bg-amber-500/15 px-4 py-2 font-semibold text-amber-100';
@@ -236,7 +236,7 @@ export function CoopMissionLaunchSurface({
         {!bothChosen ? (
           <p
             data-testid="coop-launch-waiting"
-            className="text-sm text-slate-400"
+            className="text-text-theme-secondary text-sm"
           >
             Waiting for the other player&apos;s pick - the launch button enables
             once both players choose.
@@ -271,7 +271,7 @@ export function CoopMissionLaunchSurface({
           className={
             canLaunch
               ? 'rounded-lg border border-sky-500/60 bg-sky-600/20 px-4 py-2 font-semibold text-sky-100'
-              : 'cursor-not-allowed rounded-lg border border-slate-700 bg-slate-900/40 px-4 py-2 font-semibold text-slate-500'
+              : 'border-border-theme bg-surface-deep/40 text-text-theme-muted cursor-not-allowed rounded-lg border px-4 py-2 font-semibold'
           }
         >
           Launch mission

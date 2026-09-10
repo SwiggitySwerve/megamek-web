@@ -1,3 +1,4 @@
+import type { MechConfiguration } from '@/types/unit/BattleMechInterfaces';
 /**
  * Mech Builder Service
  *
@@ -30,6 +31,7 @@ import { IFullUnit } from '../units/CanonicalUnitService';
  * Uses concrete enum types for type safety instead of strings.
  */
 export interface IEditableMech {
+  readonly configuration?: MechConfiguration;
   readonly id: string;
   readonly chassis: string;
   readonly variant: string;

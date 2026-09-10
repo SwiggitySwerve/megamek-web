@@ -49,28 +49,28 @@ describe('TabNavigation', () => {
       render(<TabNavigation {...defaultProps} />);
 
       const active = screen.getByTestId('tab-campaign-dashboard');
-      expect(active).toHaveClass('bg-white');
+      expect(active).toHaveClass('bg-surface-base');
       expect(active).toHaveClass('border-b-2');
-      expect(active).toHaveClass('border-blue-600');
-      expect(active).toHaveClass('text-blue-600');
+      expect(active).toHaveClass('border-accent');
+      expect(active).toHaveClass('text-accent');
     });
 
     it('inactive tabs have correct classes', () => {
       render(<TabNavigation {...defaultProps} />);
 
       const inactive = screen.getByTestId('tab-encounter-history');
-      expect(inactive).toHaveClass('bg-gray-100');
-      expect(inactive).toHaveClass('text-gray-600');
+      expect(inactive).toHaveClass('bg-surface-raised');
+      expect(inactive).toHaveClass('text-text-theme-muted');
     });
 
     it('active tab changes when activeTab prop changes', () => {
       const { rerender } = render(<TabNavigation {...defaultProps} />);
 
       expect(screen.getByTestId('tab-campaign-dashboard')).toHaveClass(
-        'text-blue-600',
+        'text-accent',
       );
       expect(screen.getByTestId('tab-encounter-history')).toHaveClass(
-        'text-gray-600',
+        'text-text-theme-muted',
       );
 
       rerender(
@@ -78,10 +78,10 @@ describe('TabNavigation', () => {
       );
 
       expect(screen.getByTestId('tab-campaign-dashboard')).toHaveClass(
-        'text-gray-600',
+        'text-text-theme-muted',
       );
       expect(screen.getByTestId('tab-encounter-history')).toHaveClass(
-        'text-blue-600',
+        'text-accent',
       );
     });
 
@@ -89,14 +89,14 @@ describe('TabNavigation', () => {
       render(<TabNavigation {...defaultProps} />);
 
       const inactive = screen.getByTestId('tab-encounter-history');
-      expect(inactive).toHaveClass('hover:bg-gray-200');
+      expect(inactive).toHaveClass('hover:bg-surface-base');
     });
 
-    it('active tab does not have hover:bg-gray-200', () => {
+    it('active tab does not have hover:bg-surface-base', () => {
       render(<TabNavigation {...defaultProps} />);
 
       const active = screen.getByTestId('tab-campaign-dashboard');
-      expect(active).not.toHaveClass('hover:bg-gray-200');
+      expect(active).not.toHaveClass('hover:bg-surface-base');
     });
   });
 
@@ -286,30 +286,30 @@ describe('TabNavigation', () => {
     });
   });
 
-  describe('Dark Mode', () => {
-    it('container has dark mode border class', () => {
+  describe('Application Palette', () => {
+    it('container has palette border class', () => {
       render(<TabNavigation {...defaultProps} />);
 
       expect(screen.getByTestId('tab-navigation')).toHaveClass(
-        'dark:border-gray-700',
+        'border-border-theme',
       );
     });
 
-    it('active tab has dark mode background', () => {
+    it('active tab has palette background', () => {
       render(<TabNavigation {...defaultProps} />);
 
       expect(screen.getByTestId('tab-campaign-dashboard')).toHaveClass(
-        'dark:bg-gray-800',
+        'bg-surface-base',
       );
     });
 
-    it('inactive tab has dark mode classes', () => {
+    it('inactive tab has palette classes', () => {
       render(<TabNavigation {...defaultProps} />);
 
       const inactive = screen.getByTestId('tab-encounter-history');
-      expect(inactive).toHaveClass('dark:bg-gray-900');
-      expect(inactive).toHaveClass('dark:text-gray-400');
-      expect(inactive).toHaveClass('dark:hover:bg-gray-800');
+      expect(inactive).toHaveClass('bg-surface-raised');
+      expect(inactive).toHaveClass('text-text-theme-muted');
+      expect(inactive).toHaveClass('hover:bg-surface-base');
     });
   });
 
@@ -319,7 +319,7 @@ describe('TabNavigation', () => {
 
       const tab = screen.getByTestId('tab-campaign-dashboard');
       expect(tab).toHaveClass('focus:ring-2');
-      expect(tab).toHaveClass('focus:ring-blue-500');
+      expect(tab).toHaveClass('focus:ring-accent');
     });
   });
 });

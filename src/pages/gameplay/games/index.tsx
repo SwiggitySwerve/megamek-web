@@ -15,6 +15,7 @@ import { useCallback, useState } from 'react';
 import type { MatchLogSummary } from '@/services/matchLog/MatchLogService';
 
 import { PageLayout, Card, Button, EmptyState, Badge } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { normalizeRoomCode } from '@/lib/p2p/roomCodes';
 import { useSyncRoomSelector } from '@/lib/p2p/useSyncRoomStore';
 
@@ -121,7 +122,7 @@ function GameCard({ game, onClick }: GameCardProps): React.ReactElement {
           <Link
             href={`/gameplay/matches/${encodeURIComponent(game.id)}`}
             onClick={stopCardNavigation}
-            className="inline-flex min-h-[36px] items-center rounded-md border border-slate-700 px-3 text-xs font-medium text-slate-200 hover:border-slate-500 hover:bg-slate-800"
+            className="border-border-theme text-text-theme-primary hover:border-border-theme hover:bg-surface-base inline-flex min-h-[36px] items-center rounded-md border px-3 text-xs font-medium"
             data-testid={`game-report-${game.id}`}
           >
             Report
@@ -207,13 +208,13 @@ export default function GamesListPage({
         </Button>
       }
     >
-      <section className="mb-6 rounded-lg border border-slate-800 bg-slate-950 p-4">
+      <section className="border-border-theme-subtle bg-surface-deep mb-6 rounded-lg border p-4">
         <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-slate-100">
+            <h2 className="text-text-theme-primary text-lg font-semibold">
               Networked 1v1
             </h2>
-            <p className="mt-1 text-sm text-slate-400">
+            <p className="text-text-theme-secondary mt-1 text-sm">
               Create or join a peer-to-peer lobby.
             </p>
           </div>
@@ -227,7 +228,7 @@ export default function GamesListPage({
                 value={joinCode}
                 onChange={(event) => setJoinCode(event.target.value)}
                 placeholder="Room code"
-                className="min-h-[44px] rounded-lg border border-slate-700 bg-slate-900 px-3 text-sm text-slate-100 uppercase"
+                className="border-border-theme bg-surface-deep text-text-theme-primary min-h-[44px] rounded-lg border px-3 text-sm uppercase"
               />
               <Button
                 variant="secondary"
@@ -252,7 +253,8 @@ export default function GamesListPage({
           data-testid="games-empty-state"
           icon={
             <div className="bg-surface-raised/50 mx-auto flex h-16 w-16 items-center justify-center rounded-full">
-              <svg
+              <SvgIcon
+                size="feature"
                 className="text-text-theme-muted h-8 w-8"
                 fill="none"
                 stroke="currentColor"
@@ -270,7 +272,7 @@ export default function GamesListPage({
                   strokeWidth={1.5}
                   d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
-              </svg>
+              </SvgIcon>
             </div>
           }
           title="No games yet"
@@ -299,7 +301,8 @@ export default function GamesListPage({
           href="/gameplay/forces"
           className="text-accent hover:text-accent/80 inline-flex items-center gap-2 transition-colors"
         >
-          <svg
+          <SvgIcon
+            size="inline"
             className="h-4 w-4"
             fill="none"
             stroke="currentColor"
@@ -311,14 +314,15 @@ export default function GamesListPage({
               strokeWidth={2}
               d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
             />
-          </svg>
+          </SvgIcon>
           Manage Forces
         </Link>
         <Link
           href="/gameplay/pilots"
           className="text-accent hover:text-accent/80 inline-flex items-center gap-2 transition-colors"
         >
-          <svg
+          <SvgIcon
+            size="inline"
             className="h-4 w-4"
             fill="none"
             stroke="currentColor"
@@ -330,7 +334,7 @@ export default function GamesListPage({
               strokeWidth={2}
               d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
             />
-          </svg>
+          </SvgIcon>
           Manage Pilots
         </Link>
       </div>

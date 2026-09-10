@@ -14,7 +14,6 @@ import {
   getUnitStore,
 } from '@/stores/unitStoreRegistry';
 import {
-  UNIT_TEMPLATES,
   useTabManagerStore,
   type UnitTemplate,
 } from '@/stores/useTabManagerStore';
@@ -39,26 +38,38 @@ interface LoadUnitParams {
   readonly setIsLoadDialogOpen: (isOpen: boolean) => void;
   readonly setIsLoadingUnit: (isLoading: boolean) => void;
   readonly showToast: ShowToast;
+  readonly isCurrent?: () => boolean;
 }
 
 export async function loadUnitIntoTab({
   unit,
   source,
-  createTab,
   navigateToTab,
   setIsLoadDialogOpen,
   setIsLoadingUnit,
   showToast,
+  isCurrent = () => true,
 }: LoadUnitParams): Promise<void> {
+  if (!isCurrent()) return;
   setIsLoadingUnit(true);
 
   try {
     const result = await unitLoaderService.loadUnit(unit.id, source);
+    if (!isCurrent()) return;
 
     if (!result.success || !result.state) {
-      openFallbackTemplate(unit, createTab, navigateToTab);
-      setIsLoadDialogOpen(false);
-      setIsLoadingUnit(false);
+      showToast({
+        message:
+          result.errorCode === 'unsupported-configuration'
+            ? (result.error ??
+              'This configuration is not supported by the editor.')
+            : result.errorCode === 'invalid-definition'
+              ? 'This library entry contains invalid unit data. Choose another entry or correct the saved definition.'
+              : result.errorCode === 'unsupported-family'
+                ? 'This unit family cannot be opened in the BattleMech editor. Use its family-specific editor.'
+                : `Failed to load ${unit.chassis} ${unit.variant}. Please try again.`,
+        variant: 'error',
+      });
       logger.error('Failed to load unit:', result.error);
       return;
     }
@@ -81,32 +92,15 @@ export async function loadUnitIntoTab({
     navigateToTab(newTabId);
     setIsLoadDialogOpen(false);
   } catch (error) {
+    if (!isCurrent()) return;
     logger.error('Error loading unit:', error);
     showToast({
       message: 'Failed to load unit. Please try again.',
       variant: 'error',
     });
   } finally {
-    setIsLoadingUnit(false);
+    if (isCurrent()) setIsLoadingUnit(false);
   }
-}
-
-function openFallbackTemplate(
-  unit: IUnitIndexEntry,
-  createTab: LoadUnitParams['createTab'],
-  navigateToTab: (tabId: string) => void,
-): void {
-  const baseTemplate =
-    UNIT_TEMPLATES.find((template) => template.tonnage === unit.tonnage) ||
-    UNIT_TEMPLATES[1];
-  const newTabId = createTab({
-    ...baseTemplate,
-    name: `${unit.chassis} ${unit.variant}`,
-    tonnage: unit.tonnage,
-    techBase: unit.techBase,
-  });
-
-  navigateToTab(newTabId);
 }
 
 export function buildActiveUnitExportData(

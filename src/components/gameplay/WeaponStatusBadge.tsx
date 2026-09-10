@@ -16,7 +16,7 @@ export function StatusBadge({
       ? 'bg-red-100 text-red-700'
       : tone === 'amber'
         ? 'bg-amber-100 text-amber-700'
-        : 'bg-gray-100 text-gray-600';
+        : 'bg-surface-base text-text-theme-muted';
 
   return (
     <span

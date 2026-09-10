@@ -223,7 +223,7 @@ describe('CriticalSlot', () => {
       expect(slot).toHaveClass('min-h-[88px]');
     });
 
-    it('should have 32px minimum on remove button', () => {
+    it('should have a 44px touch target on the remove button', () => {
       render(<CriticalSlot slot={mockFilledSlot} onRemove={mockOnRemove} />);
 
       const slot = screen.getByLabelText(
@@ -232,7 +232,7 @@ describe('CriticalSlot', () => {
       fireEvent.click(slot);
 
       const removeButton = screen.getByLabelText(/Remove.*Large Laser/);
-      expect(removeButton).toHaveClass('min-h-[32px]');
+      expect(removeButton).toHaveClass('min-h-11', 'min-w-11');
     });
   });
 

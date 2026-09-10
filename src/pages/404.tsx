@@ -29,19 +29,19 @@ export default function NotFoundPage(): React.ReactElement {
           <div className="flex flex-wrap gap-3">
             <Link
               href="/"
-              className="bg-accent-hover hover:bg-accent text-text-theme-primary inline-flex min-h-[44px] items-center justify-center rounded-lg border border-transparent px-4 py-2 text-sm font-medium transition-colors"
+              className="bg-accent-hover hover:bg-accent text-on-accent inline-flex min-h-[44px] items-center justify-center rounded-lg border border-transparent px-4 py-2 text-sm font-medium transition-colors"
             >
               Go to Dashboard
             </Link>
             <Link
               href="/gameplay"
-              className="bg-surface-raised hover:bg-border-theme border-border-theme inline-flex min-h-[44px] items-center justify-center rounded-lg border px-4 py-2 text-sm font-medium text-slate-300 transition-colors"
+              className="bg-surface-raised hover:bg-border-theme border-border-theme text-text-theme-secondary inline-flex min-h-[44px] items-center justify-center rounded-lg border px-4 py-2 text-sm font-medium transition-colors"
             >
               Open Gameplay
             </Link>
             <Link
               href="/replay-library"
-              className="bg-surface-raised hover:bg-border-theme border-border-theme inline-flex min-h-[44px] items-center justify-center rounded-lg border px-4 py-2 text-sm font-medium text-slate-300 transition-colors"
+              className="bg-surface-raised hover:bg-border-theme border-border-theme text-text-theme-secondary inline-flex min-h-[44px] items-center justify-center rounded-lg border px-4 py-2 text-sm font-medium transition-colors"
             >
               Open Replay Library
             </Link>

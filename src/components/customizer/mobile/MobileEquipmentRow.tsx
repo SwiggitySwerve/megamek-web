@@ -10,9 +10,12 @@
 
 import React, { useCallback, useState } from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
 import { EquipmentCategory } from '@/types/equipment';
 import { getCategoryColorsLegacy } from '@/utils/colors/equipmentColors';
 import { getLocationShorthand } from '@/utils/locationUtils';
+
+import { MobileLocationMenu } from './MobileLocationMenu';
 
 // =============================================================================
 // Types
@@ -46,6 +49,7 @@ export interface AvailableLocationOption {
   label: string;
   availableSlots: number;
   canFit: boolean;
+  reason?: string;
 }
 
 interface MobileEquipmentRowProps {
@@ -77,10 +81,6 @@ interface ConfirmButtonClickArgs {
 
 const CONFIRM_RESET_MS = 3000;
 const DISPLAY_DASH = '\u2014';
-const LOCK_ICON = String.fromCodePoint(0x1f512);
-const QUICK_ASSIGN_ICON = String.fromCodePoint(0x1f517);
-const REMOVE_ICON = '\u00d7';
-const UNASSIGN_ICON = String.fromCodePoint(0x26d3, 0xfe0f, 0x200d, 0x1f4a5);
 
 // =============================================================================
 // Row Helpers
@@ -121,7 +121,7 @@ function buildRowClassName({
   readonly className: string;
 }): string {
   return [
-    'border-border-theme-subtle/30 flex min-h-[36px] items-center border-b px-2 py-1',
+    'border-border-theme-subtle/30 flex min-h-[44px] items-center border-b px-2 py-1',
     onSelect ? 'active:bg-surface-raised/50 cursor-pointer' : '',
     isSelected ? 'bg-accent/10 border-l-accent border-l-2' : '',
     isFixedOnOmni ? 'opacity-60' : '',
@@ -138,7 +138,7 @@ function EquipmentSummary({
 }): React.ReactElement {
   return (
     <div className="flex min-w-0 flex-1 items-center gap-1">
-      <span className="truncate text-xs font-medium text-white">
+      <span className="text-text-theme-primary text-xs font-medium break-words">
         {item.name}
       </span>
       {item.damage !== undefined && (
@@ -154,15 +154,23 @@ function EquipmentSummary({
           className={`flex-shrink-0 rounded px-0.5 text-[8px] ${
             item.isOmniPodMounted
               ? 'bg-accent/20 text-accent'
-              : 'bg-slate-700 text-slate-400'
+              : 'bg-surface-raised text-text-theme-secondary'
           }`}
         >
-          {item.isOmniPodMounted ? 'P' : 'F'}
+          <span
+            title={
+              item.isOmniPodMounted
+                ? 'Pod-mounted equipment'
+                : 'Fixed OmniMech equipment'
+            }
+          >
+            {item.isOmniPodMounted ? 'P' : 'F'}
+          </span>
         </span>
       )}
       {!item.isRemovable && (
-        <span className="flex-shrink-0 text-[8px] text-slate-500">
-          {LOCK_ICON}
+        <span className="text-text-theme-muted flex-shrink-0 text-[8px]">
+          <AppIcon name="lock" size="inline" aria-hidden="true" />
         </span>
       )}
     </div>
@@ -202,7 +210,7 @@ function RangeCell({
 function HeatCell({ heat }: { readonly heat?: number }): React.ReactElement {
   return (
     <div
-      className={`border-border-theme-subtle/20 w-[20px] flex-shrink-0 border-l text-center font-mono text-[10px] ${heat && heat > 0 ? 'text-red-400' : 'text-slate-600'}`}
+      className={`border-border-theme-subtle/20 w-[20px] flex-shrink-0 border-l text-center font-mono text-[10px] ${heat && heat > 0 ? 'text-red-400' : 'text-text-theme-muted'}`}
     >
       {heat ?? 0}
     </div>
@@ -221,63 +229,6 @@ function NumberCell({
       className={`border-border-theme-subtle/20 text-text-theme-secondary ${widthClass} flex-shrink-0 border-l text-center font-mono text-[10px]`}
     >
       {value}
-    </div>
-  );
-}
-
-function LocationMenu({
-  item,
-  availableLocations,
-  isLocationMenuOpen,
-  onQuickAssign,
-  onToggleLocationMenu,
-}: {
-  readonly item: MobileEquipmentItem;
-  readonly availableLocations: readonly AvailableLocationOption[];
-  readonly isLocationMenuOpen: boolean;
-  readonly onQuickAssign?: (location: string) => void;
-  readonly onToggleLocationMenu?: () => void;
-}): React.ReactElement | null {
-  if (!isLocationMenuOpen || item.isAllocated) {
-    return null;
-  }
-
-  const fittingLocations = availableLocations.filter((loc) => loc.canFit);
-
-  return (
-    <div
-      className="bg-surface-base border-accent/40 absolute top-full right-0 z-50 mt-1 min-w-[200px] rounded-lg border px-2 py-2 shadow-xl"
-      onClick={(e) => e.stopPropagation()}
-    >
-      <div className="text-text-theme-secondary mb-2 px-1 text-[10px] font-medium tracking-wide uppercase">
-        Assign to Location
-      </div>
-      {fittingLocations.length > 0 ? (
-        <div className="grid grid-cols-2 gap-1">
-          {fittingLocations.map((loc) => (
-            <button
-              key={loc.location}
-              onClick={(e) => {
-                e.stopPropagation();
-                onQuickAssign?.(loc.location);
-                onToggleLocationMenu?.();
-              }}
-              className="bg-surface-raised hover:bg-accent/20 hover:border-accent/50 border-border-theme-subtle rounded border px-2 py-2 text-left text-xs transition-colors"
-            >
-              <div className="text-[11px] font-medium text-white">
-                {loc.label}
-              </div>
-              <div className="text-[9px] text-green-400/80">
-                {loc.availableSlots} free
-              </div>
-            </button>
-          ))}
-        </div>
-      ) : (
-        <div className="rounded bg-amber-900/10 px-2 py-3 text-center text-xs text-amber-400/80">
-          No locations with enough slots
-        </div>
-      )}
     </div>
   );
 }
@@ -304,16 +255,21 @@ function AssignmentAction({
   readonly onUnassignClick: (e: React.MouseEvent) => void;
 }): React.ReactElement {
   return (
-    <div className="border-border-theme-subtle/20 relative flex h-[36px] w-[36px] flex-shrink-0 items-center justify-center border-l">
+    <div className="border-border-theme-subtle/20 relative flex h-[44px] w-[45px] flex-shrink-0 items-center justify-center border-l">
       {canShowActions && item.isAllocated && onUnassign ? (
         <button
           onClick={onUnassignClick}
-          className={`flex h-full w-full items-center justify-center text-base transition-all active:scale-95 ${showConfirmUnassign ? 'bg-amber-900/40 text-amber-400' : 'text-slate-400 hover:bg-amber-900/20 hover:text-amber-400'}`}
+          className={`flex h-full w-full items-center justify-center text-base transition-all active:scale-95 ${showConfirmUnassign ? 'bg-amber-900/40 text-amber-400' : 'text-text-theme-secondary hover:bg-amber-900/20 hover:text-amber-400'}`}
+          aria-label={`${showConfirmUnassign ? 'Confirm unassign' : 'Unassign'} ${item.name} from ${item.location}`}
           title={
             showConfirmUnassign ? 'Confirm unassign' : 'Unassign from slot'
           }
         >
-          {showConfirmUnassign ? '?' : UNASSIGN_ICON}
+          {showConfirmUnassign ? (
+            <AppIcon name="check" size="control" aria-hidden="true" />
+          ) : (
+            <AppIcon name="unlink" size="control" aria-hidden="true" />
+          )}
         </button>
       ) : canShowActions &&
         !item.isAllocated &&
@@ -324,13 +280,15 @@ function AssignmentAction({
             e.stopPropagation();
             onToggleLocationMenu?.();
           }}
-          className={`flex h-full w-full items-center justify-center text-base transition-all active:scale-95 ${isLocationMenuOpen ? 'bg-green-900/40 text-green-400' : 'text-slate-400 hover:bg-green-900/20 hover:text-green-400'}`}
+          className={`flex h-full w-full items-center justify-center text-base transition-all active:scale-95 ${isLocationMenuOpen ? 'bg-green-900/40 text-green-400' : 'text-text-theme-secondary hover:bg-green-900/20 hover:text-green-400'}`}
+          aria-label={`Assign ${item.name} to location`}
+          aria-expanded={isLocationMenuOpen}
           title="Assign to location"
         >
-          {QUICK_ASSIGN_ICON}
+          <AppIcon name="link" size="control" aria-hidden="true" />
         </button>
       ) : null}
-      <LocationMenu
+      <MobileLocationMenu
         item={item}
         availableLocations={availableLocations}
         isLocationMenuOpen={isLocationMenuOpen}
@@ -342,25 +300,32 @@ function AssignmentAction({
 }
 
 function RemoveAction({
+  item,
   canShowActions,
   onRemove,
   showConfirmRemove,
   onRemoveClick,
 }: {
   readonly canShowActions: boolean;
+  readonly item: MobileEquipmentItem;
   readonly onRemove?: () => void;
   readonly showConfirmRemove: boolean;
   readonly onRemoveClick: (e: React.MouseEvent) => void;
 }): React.ReactElement {
   return (
-    <div className="border-border-theme-subtle/20 flex h-[36px] w-[36px] flex-shrink-0 items-center justify-center border-l">
+    <div className="border-border-theme-subtle/20 flex h-[44px] w-[45px] flex-shrink-0 items-center justify-center border-l">
       {canShowActions && onRemove && (
         <button
           onClick={onRemoveClick}
-          className={`flex h-full w-full items-center justify-center text-lg font-medium transition-all active:scale-95 ${showConfirmRemove ? 'bg-red-900/40 text-red-400' : 'text-slate-400 hover:bg-red-900/20 hover:text-red-400'}`}
+          className={`flex h-full w-full items-center justify-center text-lg font-medium transition-all active:scale-95 ${showConfirmRemove ? 'bg-red-900/40 text-red-400' : 'text-text-theme-secondary hover:bg-red-900/20 hover:text-red-400'}`}
+          aria-label={`${showConfirmRemove ? 'Confirm removal of' : 'Remove'} ${item.name}${item.location ? ` from ${item.location}` : ''}`}
           title={showConfirmRemove ? 'Confirm remove' : 'Remove from unit'}
         >
-          {showConfirmRemove ? '?' : REMOVE_ICON}
+          {showConfirmRemove ? (
+            <AppIcon name="check" size="control" aria-hidden="true" />
+          ) : (
+            <AppIcon name="trash" size="control" aria-hidden="true" />
+          )}
         </button>
       )}
     </div>
@@ -417,14 +382,27 @@ export function MobileEquipmentRow({
       })}
     >
       <div className={`mr-1.5 h-6 w-1 flex-shrink-0 rounded-sm ${colors.bg}`} />
-      <EquipmentSummary item={item} isOmni={isOmni} />
+      <button
+        type="button"
+        data-equipment-select={item.instanceId}
+        disabled={!onSelect}
+        aria-label={`Select ${item.name}${item.location ? ` in ${item.location}` : ' unassigned'}`}
+        aria-pressed={isSelected}
+        className="focus-visible:outline-accent min-h-11 min-w-0 flex-1 text-left focus-visible:outline-2 focus-visible:outline-offset-2"
+        onClick={(event) => {
+          event.stopPropagation();
+          onSelect?.();
+        }}
+      >
+        <EquipmentSummary item={item} isOmni={isOmni} />
+      </button>
       <LocationCell item={item} />
       <RangeCell ranges={item.ranges} />
       <HeatCell heat={item.heat} />
       <NumberCell value={item.criticalSlots} widthClass="w-[20px]" />
       <NumberCell value={item.weight} widthClass="w-[28px]" />
       <AssignmentAction
-        canShowActions={canShowActions}
+        canShowActions={canShowActions && (!isFixedOnOmni || !item.isAllocated)}
         item={item}
         onUnassign={onUnassign}
         onQuickAssign={onQuickAssign}
@@ -435,7 +413,8 @@ export function MobileEquipmentRow({
         onUnassignClick={handleUnassignClick}
       />
       <RemoveAction
-        canShowActions={canShowActions}
+        item={item}
+        canShowActions={canShowActions && !isFixedOnOmni}
         onRemove={onRemove}
         showConfirmRemove={showConfirmRemove}
         onRemoveClick={handleRemoveClick}

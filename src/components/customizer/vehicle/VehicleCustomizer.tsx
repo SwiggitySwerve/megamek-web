@@ -103,7 +103,7 @@ export function VehicleCustomizer({
 
           {/* Vehicle Diagram Sidebar (visible on large screens) */}
           <div className="border-border-theme bg-surface-base hidden w-64 overflow-auto border-l p-4 lg:block">
-            <h3 className="mb-3 text-sm font-semibold text-white">
+            <h3 className="text-text-theme-primary mb-3 text-sm font-semibold">
               Vehicle Overview
             </h3>
             <VehicleDiagram />

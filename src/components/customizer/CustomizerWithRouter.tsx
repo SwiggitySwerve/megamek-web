@@ -121,7 +121,8 @@ function shouldSkipUrlToStateSync({
   activeTabId,
 }: UrlToStateSyncArgs): boolean {
   if (!routerIsReady || !isHydrated || isLoading) return true;
-  if (isSyncingRef.current) return true;
+  if (isSyncingRef.current && lastSyncedRef.current.unitId === routerUnitId)
+    return true;
   return (
     lastSyncedRef.current.unitId === routerUnitId &&
     lastSyncedRef.current.activeTabId === activeTabId
@@ -317,8 +318,11 @@ export default function CustomizerWithRouter(): React.ReactElement {
     : undefined;
   // Use stored sub-tab only when URL has default 'structure' (meaning no explicit tab in URL)
   const effectiveTabId = resolveEffectiveTabId(routerTabId, storedSubTab);
+  const activeTab = useActiveTab(tabs, activeTabId);
 
-  useAutoSaveIndicator();
+  useAutoSaveIndicator(
+    activeTab ? { unitId: activeTab.id, unitType: activeTab.unitType } : null,
+  );
 
   useEffect(() => {
     // `persist.rehydrate()` is async — only flip `isHydrated` once the
@@ -401,7 +405,6 @@ export default function CustomizerWithRouter(): React.ReactElement {
     getLastSubTab,
   ]);
 
-  const activeTab = useActiveTab(tabs, activeTabId);
   const handleTabChange = useUnitTabNavigation(
     activeTabId,
     setLastSubTab,
@@ -441,7 +444,7 @@ export default function CustomizerWithRouter(): React.ReactElement {
     <ErrorBoundary componentName="CustomizerWithRouter">
       <DndProvider backend={HTML5Backend}>
         <CampaignCustomizerSessionProvider session={campaignSession}>
-          <div className="bg-surface-deep flex min-h-screen flex-col">
+          <div className="bg-surface-deep flex h-full min-h-0 flex-col overflow-hidden">
             <MultiUnitTabs>
               <ErrorBoundary componentName="UnitTypeRouter">
                 <UnitTypeRouter

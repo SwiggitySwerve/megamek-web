@@ -143,7 +143,7 @@ export function FolderCreateDialog({
   return (
     <VaultDialogFrame
       overlayClassName="bg-black/60 backdrop-blur-sm"
-      panelClassName="mx-4 w-full max-w-md rounded-2xl border border-gray-700/50 bg-gray-800 p-6 shadow-2xl shadow-black/50"
+      panelClassName="mx-4 w-full max-w-md rounded-2xl border border-border-theme/50 bg-surface-base p-6 shadow-2xl shadow-black/50"
     >
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
@@ -151,12 +151,14 @@ export function FolderCreateDialog({
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20">
             <FolderIcon className="h-5 w-5 text-cyan-400" />
           </div>
-          <h2 className="text-xl font-bold text-white">New Folder</h2>
+          <h2 className="text-text-theme-primary text-xl font-bold">
+            New Folder
+          </h2>
         </div>
         <button
           onClick={handleClose}
           aria-label="Close folder create dialog"
-          className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-700/50 hover:text-white"
+          className="text-text-theme-secondary hover:bg-surface-raised/50 hover:text-text-theme-primary rounded-lg p-2 transition-colors"
         >
           <XMarkIcon className="h-5 w-5" />
         </button>
@@ -175,14 +177,14 @@ export function FolderCreateDialog({
         />
 
         <div>
-          <label className="mb-1 block text-sm text-gray-400">
+          <label className="text-text-theme-secondary mb-1 block text-sm">
             Description (optional)
           </label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Add a description..."
-            className="w-full resize-none rounded-lg border border-gray-600 bg-gray-700/50 px-4 py-2 text-white placeholder-gray-500 transition-colors focus:border-cyan-500 focus:outline-none"
+            className="border-border-theme-strong bg-surface-raised/50 text-text-theme-primary focus:border-accent w-full resize-none rounded-lg border px-4 py-2 transition-colors focus:outline-none"
             rows={3}
           />
         </div>
@@ -293,7 +295,7 @@ export function FolderEditDialog({
   return (
     <VaultDialogFrame
       overlayClassName="bg-black/60 backdrop-blur-sm"
-      panelClassName="mx-4 w-full max-w-md rounded-2xl border border-gray-700/50 bg-gray-800 p-6 shadow-2xl shadow-black/50"
+      panelClassName="mx-4 w-full max-w-md rounded-2xl border border-border-theme/50 bg-surface-base p-6 shadow-2xl shadow-black/50"
     >
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
@@ -301,12 +303,14 @@ export function FolderEditDialog({
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-500/20">
             <FolderIcon className="h-5 w-5 text-amber-400" />
           </div>
-          <h2 className="text-xl font-bold text-white">Edit Folder</h2>
+          <h2 className="text-text-theme-primary text-xl font-bold">
+            Edit Folder
+          </h2>
         </div>
         <button
           onClick={handleClose}
           aria-label="Close folder edit dialog"
-          className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-700/50 hover:text-white"
+          className="text-text-theme-secondary hover:bg-surface-raised/50 hover:text-text-theme-primary rounded-lg p-2 transition-colors"
         >
           <XMarkIcon className="h-5 w-5" />
         </button>
@@ -325,14 +329,14 @@ export function FolderEditDialog({
         />
 
         <div>
-          <label className="mb-1 block text-sm text-gray-400">
+          <label className="text-text-theme-secondary mb-1 block text-sm">
             Description (optional)
           </label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Add a description..."
-            className="w-full resize-none rounded-lg border border-gray-600 bg-gray-700/50 px-4 py-2 text-white placeholder-gray-500 transition-colors focus:border-amber-500 focus:outline-none"
+            className="border-border-theme-strong bg-surface-raised/50 text-text-theme-primary focus:border-accent w-full resize-none rounded-lg border px-4 py-2 transition-colors focus:outline-none"
             rows={3}
           />
         </div>
@@ -348,7 +352,7 @@ export function FolderEditDialog({
       />
 
       {/* Actions */}
-      <div className="mt-6 flex justify-end gap-3 border-t border-gray-700/50 pt-4">
+      <div className="border-border-theme/50 mt-6 flex justify-end gap-3 border-t pt-4">
         <Button
           variant="ghost"
           onClick={handleClose}

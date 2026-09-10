@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import React from 'react';
 
+import { SvgIcon } from '@/components/ui/SvgIcon';
+
 import { SettingsSection, SettingsSectionProps } from './SettingsShared';
 
 export function AuditSettings({
@@ -28,12 +30,12 @@ export function AuditSettings({
             href="/audit/timeline"
             className="bg-surface-raised/50 border-border-theme-subtle hover:bg-surface-raised hover:border-border-theme group flex items-center gap-3 rounded-lg border p-4 transition-all"
           >
-            <div className="bg-accent/20 text-accent group-hover:bg-accent flex h-10 w-10 items-center justify-center rounded-lg transition-colors group-hover:text-white">
-              <svg
+            <div className="bg-accent/20 text-accent group-hover:bg-accent group-hover:text-on-accent flex h-10 w-10 items-center justify-center rounded-lg transition-colors">
+              <SvgIcon
+                size="control"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
-                strokeWidth={1.5}
                 stroke="currentColor"
                 className="h-5 w-5"
               >
@@ -42,7 +44,7 @@ export function AuditSettings({
                   strokeLinejoin="round"
                   d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
-              </svg>
+              </SvgIcon>
             </div>
             <div>
               <div className="text-text-theme-primary group-hover:text-accent text-sm font-medium transition-colors">
@@ -58,12 +60,12 @@ export function AuditSettings({
             href="/gameplay/games"
             className="bg-surface-raised/50 border-border-theme-subtle hover:bg-surface-raised hover:border-border-theme group flex items-center gap-3 rounded-lg border p-4 transition-all"
           >
-            <div className="bg-accent/20 text-accent group-hover:bg-accent flex h-10 w-10 items-center justify-center rounded-lg transition-colors group-hover:text-white">
-              <svg
+            <div className="bg-accent/20 text-accent group-hover:bg-accent group-hover:text-on-accent flex h-10 w-10 items-center justify-center rounded-lg transition-colors">
+              <SvgIcon
+                size="control"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
-                strokeWidth={1.5}
                 stroke="currentColor"
                 className="h-5 w-5"
               >
@@ -77,7 +79,7 @@ export function AuditSettings({
                   strokeLinejoin="round"
                   d="M9 9.563C9 9.252 9.252 9 9.563 9h4.874c.311 0 .563.252.563.563v4.874c0 .311-.252.563-.563.563H9.564A.562.562 0 019 14.437V9.564z"
                 />
-              </svg>
+              </SvgIcon>
             </div>
             <div>
               <div className="text-text-theme-primary group-hover:text-accent text-sm font-medium transition-colors">

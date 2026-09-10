@@ -8,8 +8,9 @@
  * @spec openspec/specs/unit-store-architecture/spec.md
  */
 
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
 import { useTabManagerStore } from '@/stores/useTabManagerStore';
 import { useUnitStore } from '@/stores/useUnitStore';
 import { getArmorDefinition } from '@/types/construction/ArmorType';
@@ -24,9 +25,11 @@ import {
 import {
   TechBaseMode,
   TechBaseComponent,
+  TECH_BASE_MODE_LABELS,
 } from '@/types/construction/TechBaseConfiguration';
 import { RulesLevel, ALL_RULES_LEVELS } from '@/types/enums/RulesLevel';
 import { TechBase } from '@/types/enums/TechBase';
+import { hasAssignedCriticalSlots } from '@/utils/construction/slotOperations/placement';
 
 import {
   TechBaseConfiguration,
@@ -60,6 +63,7 @@ export function OverviewTab({
   className = '',
 }: OverviewTabProps): React.ReactElement {
   // Get unit state from context (no tabId needed!)
+  const equipment = useUnitStore((s) => s.equipment);
   const unitId = useUnitStore((s) => s.id);
   const chassis = useUnitStore((s) => s.chassis);
   const clanName = useUnitStore((s) => s.clanName);
@@ -191,6 +195,10 @@ export function OverviewTab({
   );
 
   // Build component values based on actual store selections
+  const [isTechConfigOpen, setIsTechConfigOpen] = useState(
+    techBaseMode === TechBaseMode.MIXED,
+  );
+
   const componentValues: IComponentValues = useMemo(() => {
     const engineDef = getEngineDefinition(engineType);
     const gyroDef = getGyroDefinition(gyroType);
@@ -236,19 +244,29 @@ export function OverviewTab({
   ]);
 
   return (
-    <div className={`space-y-6 p-4 ${className}`}>
-      {/* Basic Info Panel */}
+    <div className={`space-y-4 p-4 ${className}`}>
       <div className={cs.panel.main}>
-        <h3 className={cs.text.sectionTitle}>Basic Information</h3>
+        <div className="border-border-theme-subtle mb-4 flex flex-col gap-2 border-b pb-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-accent text-xs font-semibold tracking-[0.18em] uppercase">
+              Unit dossier
+            </p>
+            <h3 className="text-text-theme-primary mt-1 text-xl font-semibold">
+              Identity
+            </h3>
+          </div>
+          <p className={`${cs.text.secondary} sm:text-right`}>
+            {TECH_BASE_MODE_LABELS[techBaseMode]} · {rulesLevel}
+          </p>
+        </div>
 
-        <div className={cs.layout.formStack}>
-          {/* Chassis, Clan Name, Model - split row */}
-          <div className={cs.layout.threeColumn}>
-            {/* Chassis */}
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-[1.35fr_0.8fr_1fr]">
             <div className={cs.layout.field}>
               <label className={cs.text.label}>Chassis</label>
               <input
                 type="text"
+                aria-label="Chassis"
                 value={chassis}
                 onChange={handleChassisChange}
                 disabled={readOnly}
@@ -257,26 +275,11 @@ export function OverviewTab({
               />
             </div>
 
-            {/* Clan Name (optional) */}
-            <div className={cs.layout.field}>
-              <label className={cs.text.label}>
-                Clan Name <span className={cs.text.secondary}>(opt)</span>
-              </label>
-              <input
-                type="text"
-                value={clanName}
-                onChange={handleClanNameChange}
-                disabled={readOnly}
-                className={cs.input.full}
-                placeholder=""
-              />
-            </div>
-
-            {/* Model */}
             <div className={cs.layout.field}>
               <label className={cs.text.label}>Model</label>
               <input
                 type="text"
+                aria-label="Model"
                 value={model}
                 onChange={handleModelChange}
                 disabled={readOnly}
@@ -284,28 +287,29 @@ export function OverviewTab({
                 placeholder="Mek"
               />
             </div>
-          </div>
 
-          {/* MUL ID, Year, Tech Level - split row */}
-          <div className={cs.layout.threeColumn}>
-            {/* MUL ID */}
             <div className={cs.layout.field}>
-              <label className={cs.text.label}>MUL ID</label>
+              <label className={cs.text.label}>
+                Clan Name <span className={cs.text.secondary}>(opt)</span>
+              </label>
               <input
                 type="text"
-                value={mulId}
-                onChange={handleMulIdChange}
+                aria-label="Clan name"
+                value={clanName}
+                onChange={handleClanNameChange}
                 disabled={readOnly}
                 className={cs.input.full}
-                placeholder="-1"
+                placeholder=""
               />
             </div>
+          </div>
 
-            {/* Year */}
+          <div className="border-border-theme-subtle grid grid-cols-1 gap-4 border-t pt-4 sm:grid-cols-3">
             <div className={cs.layout.field}>
               <label className={cs.text.label}>Year</label>
               <input
                 type="number"
+                aria-label="Year"
                 value={year}
                 onChange={handleYearChange}
                 disabled={readOnly}
@@ -315,10 +319,10 @@ export function OverviewTab({
               />
             </div>
 
-            {/* Tech Level */}
             <div className={cs.layout.field}>
               <label className={cs.text.label}>Tech Level</label>
               <select
+                aria-label="Tech level"
                 value={rulesLevel}
                 onChange={handleRulesLevelChange}
                 disabled={readOnly}
@@ -331,11 +335,23 @@ export function OverviewTab({
                 ))}
               </select>
             </div>
+
+            <div className={cs.layout.field}>
+              <label className={cs.text.label}>MUL ID</label>
+              <input
+                type="text"
+                aria-label="MUL ID"
+                value={mulId}
+                onChange={handleMulIdChange}
+                disabled={readOnly}
+                className={cs.input.full}
+                placeholder="-1"
+              />
+            </div>
           </div>
 
-          {/* OmniMech Toggle */}
           <div
-            className="mt-2 flex items-center gap-2"
+            className="border-border-theme-subtle bg-surface-deep/35 flex flex-wrap items-center gap-x-3 gap-y-2 rounded border px-3 py-3"
             data-testid="omnimech-section"
           >
             <input
@@ -355,7 +371,7 @@ export function OverviewTab({
               <button
                 type="button"
                 onClick={handleResetChassis}
-                className="border-border-theme-subtle bg-surface-deep hover:bg-surface-default text-content-secondary hover:text-content-primary ml-4 rounded border px-3 py-1 text-sm transition-colors"
+                className="border-border-theme-subtle bg-surface-deep hover:bg-surface-default text-content-secondary hover:text-content-primary min-h-11 rounded border px-3 py-1 text-sm transition-colors sm:ml-auto"
                 data-testid="reset-chassis-button"
               >
                 Reset Chassis
@@ -365,24 +381,91 @@ export function OverviewTab({
         </div>
       </div>
 
-      {/* Tech Base Configuration Panel */}
-      <TechBaseConfiguration
-        mode={techBaseMode}
-        components={componentTechBases}
-        componentValues={componentValues}
-        onModeChange={handleModeChange}
-        onComponentChange={handleComponentChange}
-        readOnly={readOnly}
-      />
+      <details
+        className={`${cs.panel.main} group`}
+        open={isTechConfigOpen}
+        onToggle={(event) => setIsTechConfigOpen(event.currentTarget.open)}
+      >
+        <summary className="focus-visible:ring-accent focus-visible:ring-offset-surface-base flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 rounded text-left focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none [&::-webkit-details-marker]:hidden">
+          <span>
+            <span className="text-text-theme-primary block text-sm font-semibold">
+              Component technology
+            </span>
+            <span className={cs.text.secondary}>
+              {techBaseMode === TechBaseMode.MIXED
+                ? 'Mixed tech is active; each component can be configured independently.'
+                : `${TECH_BASE_MODE_LABELS[techBaseMode]} applies across the unit.`}
+            </span>
+          </span>
+          <AppIcon
+            name="add"
+            size="inline"
+            className="text-accent group-open:rotate-45"
+            aria-hidden="true"
+          />
+        </summary>
+        <div className="border-border-theme-subtle mt-4 border-t pt-4">
+          <TechBaseConfiguration
+            mode={techBaseMode}
+            components={componentTechBases}
+            componentValues={componentValues}
+            onModeChange={handleModeChange}
+            onComponentChange={handleComponentChange}
+            readOnly={readOnly}
+          />
+        </div>
+      </details>
 
-      {/* Equipment Summary */}
       <div className={cs.panel.main}>
-        <h3 className={cs.text.sectionTitle}>Equipment Summary</h3>
-        <div className={cs.panel.empty}>
-          <p>No equipment mounted</p>
-          <p className="mt-2 text-sm">
-            Add weapons and equipment from the Equipment tab
-          </p>
+        <div className="border-border-theme-subtle mb-4 flex items-baseline justify-between border-b pb-3">
+          <h3 className="text-text-theme-primary text-lg font-semibold">
+            Loadout summary
+          </h3>
+          <span className={cs.text.secondary}>Current build</span>
+        </div>
+        <div
+          aria-label="Equipment summary"
+          className={
+            equipment.length
+              ? 'grid grid-cols-3 gap-3 text-center'
+              : cs.panel.empty
+          }
+        >
+          {equipment.length > 0 ? (
+            <>
+              <div className="border-border-theme-subtle bg-surface-deep/35 rounded border px-2 py-3">
+                <strong className="text-accent block font-mono text-xl">
+                  {equipment.length}
+                </strong>
+                <span className={cs.text.secondary}>Equipment items</span>
+              </div>
+              <div className="border-border-theme-subtle bg-surface-deep/35 rounded border px-2 py-3">
+                <strong className="text-text-theme-primary block font-mono text-xl">
+                  {equipment
+                    .reduce((sum, item) => sum + item.weight, 0)
+                    .toFixed(1)}{' '}
+                  t
+                </strong>
+                <span className={cs.text.secondary}>Equipment weight</span>
+              </div>
+              <div className="border-border-theme-subtle bg-surface-deep/35 rounded border px-2 py-3">
+                <strong className="text-text-theme-primary block font-mono text-xl">
+                  {
+                    equipment.filter((item) => !hasAssignedCriticalSlots(item))
+                      .length
+                  }
+                </strong>
+                <span className={cs.text.secondary}>Need placement</span>
+              </div>
+            </>
+          ) : (
+            <>
+              <p>No equipment mounted</p>
+              <p className="mt-2 text-sm">
+                Add weapons and equipment from the Equipment tab
+              </p>
+            </>
+          )}
         </div>
       </div>
 

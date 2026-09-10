@@ -1,32 +1,32 @@
-/**
- * Equipment Browser - searchable, filterable equipment catalog
- * @spec openspec/specs/equipment-browser/spec.md
- * @spec openspec/changes/unify-equipment-tab/specs/equipment-browser/spec.md
- */
+import React, { useState } from 'react';
 
-import React from 'react';
-
+import { AppIcon } from '@/components/ui/AppIcon';
+import { Button } from '@/components/ui/Button';
 import { useEquipmentBrowser } from '@/hooks/useEquipmentBrowser';
 import { SortColumn } from '@/stores/useEquipmentStore';
 import { IEquipmentItem } from '@/types/equipment';
 
+/** @spec openspec/specs/equipment-browser/spec.md */
+import workbenchStyles from '../CustomizerWorkbench.module.css';
 import { CompactFilterBar } from './CompactFilterBar';
-import { EquipmentRow } from './EquipmentRow';
+import { EquipmentCatalogCard } from './EquipmentCatalogCard';
 
 export interface EquipmentBrowserProps {
-  /** Called when equipment is added to unit */
   onAddEquipment: (equipment: IEquipmentItem) => void;
-  /** Additional CSS classes */
   className?: string;
+  readOnly?: boolean;
+  addHint?: string;
 }
 
-/**
- * Equipment browser with toggle button filtering and pagination
- */
 export function EquipmentBrowser({
   onAddEquipment,
   className = '',
+  readOnly = false,
+  addHint = 'Added to the unit.',
 }: EquipmentBrowserProps): React.ReactElement {
+  const browser = useEquipmentBrowser();
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState({ message: '', count: 0 });
   const {
     paginatedEquipment,
     isLoading,
@@ -36,240 +36,223 @@ export function EquipmentBrowser({
     currentPage,
     totalPages,
     totalItems,
-    search,
-    activeCategories,
-    showAllCategories,
-    hidePrototype,
-    hideOneShot,
-    hideUnavailable,
-    hideAmmoWithoutWeapon,
     sortColumn,
     sortDirection,
-    setSearch,
-    selectCategory,
-    showAll,
-    toggleHidePrototype,
-    toggleHideOneShot,
-    toggleHideUnavailable,
-    toggleHideAmmoWithoutWeapon,
-    clearFilters,
-    setPage,
-    setSort,
-    refresh,
-  } = useEquipmentBrowser();
+  } = browser;
+  const lastPage = Math.max(1, totalPages);
+  const add = (equipment: IEquipmentItem): void => {
+    if (readOnly) return;
+    onAddEquipment(equipment);
+    setFeedback((previous) => ({
+      message: `${equipment.name}. ${addHint}`,
+      count: previous.count + 1,
+    }));
+  };
 
-  if (error) {
+  const sortButton = (
+    column: SortColumn,
+    label: string,
+  ): React.ReactElement => (
+    <Button
+      key={column}
+      size="sm"
+      variant="ghost"
+      aria-pressed={sortColumn === column}
+      aria-label={`Sort by ${column === 'weight' ? 'weight' : label.toLowerCase()}${sortColumn === column ? `, ${sortDirection === 'asc' ? 'ascending' : 'descending'}` : ''}`}
+      onClick={() => browser.setSort(column)}
+      className={`!px-0 !text-xs ${column === 'name' ? '!justify-start' : '!justify-end'}`}
+    >
+      {label}
+      <span aria-hidden="true">
+        {sortColumn === column ? (
+          sortDirection === 'asc' ? (
+            <AppIcon name="arrow-up" size="inline" aria-hidden="true" />
+          ) : (
+            <AppIcon name="arrow-down" size="inline" aria-hidden="true" />
+          )
+        ) : (
+          <AppIcon name="chevron-up" size="inline" aria-hidden="true" />
+        )}
+      </span>
+    </Button>
+  );
+
+  if (error)
     return (
       <div
         className={`bg-surface-base border-border-theme-subtle rounded-lg border p-4 ${className}`}
       >
-        <div className="py-8 text-center">
-          <div className="mb-2 text-red-400">Failed to load equipment</div>
+        <div className="py-8 text-center" role="alert">
+          <h3 className="mb-2 text-red-400">Failed to load equipment</h3>
           <p className="text-text-theme-secondary mb-4 text-sm">{error}</p>
-          <button
-            onClick={refresh}
-            className="bg-accent hover:bg-accent/80 rounded px-4 py-2 text-white transition-colors"
-          >
-            Retry
-          </button>
+          <Button onClick={browser.refresh}>Retry</Button>
         </div>
       </div>
     );
-  }
 
   return (
-    <div
-      className={`bg-surface-base border-border-theme-subtle flex flex-col rounded-lg border ${className}`}
+    <section
+      aria-label="Equipment catalog"
+      className={`bg-surface-base flex min-h-0 min-w-0 flex-col ${className}`}
     >
-      <div className="border-border-theme-subtle flex items-center justify-between border-b px-3 py-2">
-        <h3 className="text-sm font-semibold text-white">Equipment Database</h3>
-        <span className="text-text-theme-secondary text-[10px]">
-          {totalItems} items
-        </span>
-      </div>
-
-      <div className="border-border-theme-subtle bg-surface-base/50 border-b px-3 py-2">
-        <CompactFilterBar
-          activeCategories={activeCategories}
-          showAll={showAllCategories}
-          hidePrototype={hidePrototype}
-          hideOneShot={hideOneShot}
-          hideUnavailable={hideUnavailable}
-          hideAmmoWithoutWeapon={hideAmmoWithoutWeapon}
-          search={search}
-          onSelectCategory={selectCategory}
-          onShowAll={showAll}
-          onTogglePrototype={toggleHidePrototype}
-          onToggleOneShot={toggleHideOneShot}
-          onToggleUnavailable={toggleHideUnavailable}
-          onToggleAmmoWithoutWeapon={toggleHideAmmoWithoutWeapon}
-          onSearchChange={setSearch}
-          onClearFilters={clearFilters}
-        />
-
-        {hideUnavailable && (unitYear || unitTechBase) && (
-          <div className="text-text-theme-secondary mt-1.5 flex items-center gap-2 text-[10px]">
-            <span className="text-slate-500">Filtering:</span>
-            {unitYear && (
-              <span className="bg-surface-raised rounded px-1.5 py-0.5">
-                Year ≤ {unitYear}
-              </span>
-            )}
-            {unitTechBase && (
-              <span className="bg-surface-raised rounded px-1.5 py-0.5">
-                {unitTechBase}
-              </span>
+      <CompactFilterBar
+        activeCategories={browser.activeCategories}
+        showAll={browser.showAllCategories}
+        hidePrototype={browser.hidePrototype}
+        hideOneShot={browser.hideOneShot}
+        hideUnavailable={browser.hideUnavailable}
+        hideAmmoWithoutWeapon={browser.hideAmmoWithoutWeapon}
+        search={browser.search}
+        onSelectCategory={browser.selectCategory}
+        onShowAll={browser.showAll}
+        onTogglePrototype={browser.toggleHidePrototype}
+        onToggleOneShot={browser.toggleHideOneShot}
+        onToggleUnavailable={browser.toggleHideUnavailable}
+        onToggleAmmoWithoutWeapon={browser.toggleHideAmmoWithoutWeapon}
+        onSearchChange={browser.setSearch}
+        onClearFilters={browser.clearFilters}
+        resultSummary={
+          isLoading
+            ? 'Loading…'
+            : `${totalItems} ${totalItems === 1 ? 'item' : 'items'}`
+        }
+        availabilitySummary={[
+          unitTechBase === 'Inner Sphere' ? 'IS' : unitTechBase,
+          unitYear ? `≤${unitYear}` : null,
+        ]
+          .filter(Boolean)
+          .join(' / ')}
+        sortControls={
+          <div className="flex flex-col gap-1">
+            {(['name', 'weight', 'criticalSlots'] as const).map((column) =>
+              sortButton(
+                column,
+                column === 'name'
+                  ? 'Name'
+                  : column === 'weight'
+                    ? 'Weight'
+                    : 'Slots',
+              ),
             )}
           </div>
-        )}
+        }
+      />
+      <div
+        className={`${workbenchStyles.catalogColumns} border-border-theme text-text-theme-secondary hidden h-11 shrink-0 items-center gap-3 border-b px-3 text-[10px] tracking-wide uppercase lg:grid`}
+        aria-label="Sort equipment columns"
+      >
+        {sortButton('name', 'Name')}
+        <span>Type</span>
+        {sortButton('weight', 'Tons')}
+        {sortButton('criticalSlots', 'Slots')}
+        <span className="text-right">Heat</span>
+        <span />
       </div>
-
-      <div className="flex-1 overflow-auto">
+      <div
+        className="bg-surface-deep min-h-0 flex-1 overflow-auto px-3"
+        aria-busy={isLoading}
+        data-testid="equipment-catalog-scroll"
+      >
         {isLoading ? (
-          <div className="p-8 text-center">
-            <div className="text-text-theme-secondary animate-pulse">
-              Loading equipment...
-            </div>
+          <p className="text-text-theme-secondary p-6 text-center">
+            Loading equipment...
+          </p>
+        ) : paginatedEquipment.length === 0 ? (
+          <div className="py-8 text-center">
+            <p className="text-text-theme-primary font-medium">
+              No equipment found
+            </p>
+            <p className="text-text-theme-secondary my-3 text-sm">
+              Try a shorter search or clear the filters.
+            </p>
+            <Button onClick={browser.clearFilters}>Clear filters</Button>
           </div>
         ) : (
-          <table className="w-full">
-            <thead className="bg-surface-base sticky top-0">
-              <tr className="text-text-theme-secondary border-border-theme-subtle border-b text-left text-[10px] uppercase">
-                <SortableHeader
-                  label="Name"
-                  column="name"
-                  currentColumn={sortColumn}
-                  direction={sortDirection}
-                  onSort={setSort}
-                  className="pl-1.5"
-                />
-                <th className="w-20 px-1 py-1 text-center sm:w-24">Range</th>
-                <th className="w-10 px-1 py-1 text-center sm:w-12">Dmg</th>
-                <th className="w-8 px-1 py-1 text-center sm:w-10">Heat</th>
-                <th
-                  className="w-12 cursor-pointer px-1 py-1 text-center transition-colors hover:text-white"
-                  onClick={() => setSort('weight')}
-                >
-                  <span className="flex items-center justify-center gap-0.5">
-                    Wt
-                    {sortColumn === 'weight' && (
-                      <span className="text-accent text-[8px]">
-                        {sortDirection === 'asc' ? '▲' : '▼'}
-                      </span>
-                    )}
-                  </span>
-                </th>
-                <SortableHeader
-                  label="Crit"
-                  column="criticalSlots"
-                  currentColumn={sortColumn}
-                  direction={sortDirection}
-                  onSort={setSort}
-                  className="w-10 text-center"
-                />
-                <th className="w-10 px-1 py-1"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedEquipment.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={7}
-                    className="text-text-theme-secondary px-3 py-8 text-center"
-                  >
-                    No equipment found
-                  </td>
-                </tr>
-              ) : (
-                paginatedEquipment.map((equipment) => (
-                  <EquipmentRow
-                    key={equipment.id}
+          <div>
+            <ul className="space-y-1">
+              {paginatedEquipment.map((equipment) => {
+                const entryKey = JSON.stringify([
+                  equipment.id,
+                  equipment.category,
+                  equipment.techBase,
+                ]);
+                return (
+                  <EquipmentCatalogCard
+                    key={entryKey}
                     equipment={equipment}
-                    onAdd={() => onAddEquipment(equipment)}
-                    compact
+                    expanded={selectedId === entryKey}
+                    readOnly={readOnly}
+                    onInspect={() =>
+                      setSelectedId(selectedId === entryKey ? null : entryKey)
+                    }
+                    onAdd={() => add(equipment)}
                   />
-                ))
-              )}
-            </tbody>
-          </table>
+                );
+              })}
+            </ul>
+          </div>
         )}
       </div>
-
-      <div className="border-border-theme-subtle flex items-center justify-between border-t px-3 py-1.5">
-        <div className="text-text-theme-secondary text-[10px]">
-          Page {currentPage}/{totalPages}
-        </div>
-        <div className="flex items-center gap-1">
-          <button
-            onClick={() => setPage(1)}
-            disabled={currentPage === 1}
-            className="bg-surface-raised hover:bg-surface-raised/80 text-text-theme-secondary rounded px-1.5 py-0.5 text-[10px] transition-colors disabled:opacity-40"
-          >
-            ««
-          </button>
-          <button
-            onClick={() => setPage(Math.max(1, currentPage - 1))}
-            disabled={currentPage === 1}
-            className="bg-surface-raised hover:bg-surface-raised/80 text-text-theme-secondary rounded px-1.5 py-0.5 text-[10px] transition-colors disabled:opacity-40"
-          >
-            ‹
-          </button>
-          <button
-            onClick={() => setPage(Math.min(totalPages, currentPage + 1))}
-            disabled={currentPage === totalPages}
-            className="bg-surface-raised hover:bg-surface-raised/80 text-text-theme-secondary rounded px-1.5 py-0.5 text-[10px] transition-colors disabled:opacity-40"
-          >
-            ›
-          </button>
-          <button
-            onClick={() => setPage(totalPages)}
-            disabled={currentPage === totalPages}
-            className="bg-surface-raised hover:bg-surface-raised/80 text-text-theme-secondary rounded px-1.5 py-0.5 text-[10px] transition-colors disabled:opacity-40"
-          >
-            »»
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/**
- * Sortable table header
- */
-interface SortableHeaderProps {
-  label: string;
-  column: SortColumn;
-  currentColumn: SortColumn;
-  direction: 'asc' | 'desc';
-  onSort: (column: SortColumn) => void;
-  className?: string;
-}
-
-function SortableHeader({
-  label,
-  column,
-  currentColumn,
-  direction,
-  onSort,
-  className = '',
-}: SortableHeaderProps) {
-  const isActive = column === currentColumn;
-
-  return (
-    <th
-      className={`cursor-pointer px-1 py-1 transition-colors hover:text-white ${className}`}
-      onClick={() => onSort(column)}
-    >
-      <span className="justify-inherit flex items-center gap-0.5">
-        {label}
-        {isActive && (
-          <span className="text-accent text-[8px]">
-            {direction === 'asc' ? '▲' : '▼'}
+      <div
+        className="border-border-theme flex h-12 shrink-0 items-center justify-between gap-2 border-t px-3"
+        data-testid="equipment-pagination"
+      >
+        <div className="min-w-0">
+          <span className="text-text-theme-secondary text-xs">
+            Page {Math.min(currentPage, lastPage)}/{lastPage}
           </span>
-        )}
-      </span>
-    </th>
+          <p
+            role="status"
+            aria-atomic="true"
+            className="text-text-theme-secondary max-w-lg truncate text-[11px]"
+            title={feedback.message}
+          >
+            {feedback.message && (
+              <span key={feedback.count}>{feedback.message}</span>
+            )}
+            {readOnly && 'Read-only: equipment can be inspected but not added.'}
+          </p>
+        </div>
+        <div className="flex gap-1">
+          <Button
+            size="sm"
+            variant="pagination"
+            aria-label="First page"
+            disabled={isLoading || currentPage <= 1}
+            onClick={() => browser.setPage(1)}
+          >
+            <AppIcon name="chevrons-left" size="inline" aria-hidden="true" />
+          </Button>
+          <Button
+            size="sm"
+            variant="pagination"
+            aria-label="Previous page"
+            disabled={isLoading || currentPage <= 1}
+            onClick={() => browser.setPage(Math.max(1, currentPage - 1))}
+          >
+            <AppIcon name="chevron-left" size="inline" aria-hidden="true" />
+          </Button>
+          <Button
+            size="sm"
+            variant="pagination"
+            aria-label="Next page"
+            disabled={isLoading || currentPage >= lastPage}
+            onClick={() => browser.setPage(Math.min(lastPage, currentPage + 1))}
+          >
+            <AppIcon name="chevron-right" size="inline" aria-hidden="true" />
+          </Button>
+          <Button
+            size="sm"
+            variant="pagination"
+            aria-label="Last page"
+            disabled={isLoading || currentPage >= lastPage}
+            onClick={() => browser.setPage(lastPage)}
+          >
+            <AppIcon name="chevrons-right" size="inline" aria-hidden="true" />
+          </Button>
+        </div>
+      </div>
+    </section>
   );
 }
 

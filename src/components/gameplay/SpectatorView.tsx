@@ -8,6 +8,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useMemo } from 'react';
 
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { useGameplaySelector } from '@/stores/useGameplayStore';
 
 import { HexMapDisplay } from './HexMapDisplay';
@@ -62,10 +63,12 @@ export function SpectatorView(): React.ReactElement {
 
   if (!session || !interactiveSession) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-900">
+      <div className="bg-surface-deep flex h-screen items-center justify-center">
         <div className="text-center">
           <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-cyan-500 border-t-transparent" />
-          <p className="text-gray-400">Preparing spectator mode...</p>
+          <p className="text-text-theme-secondary">
+            Preparing spectator mode...
+          </p>
         </div>
       </div>
     );
@@ -91,19 +94,20 @@ export function SpectatorView(): React.ReactElement {
         sessionId={session.id}
       >
         <div
-          className="relative flex h-screen flex-col bg-gray-900"
+          className="bg-surface-deep relative flex h-screen flex-col"
           data-testid="spectator-view"
         >
           {/* Header bar — top-band slot. */}
           <ShellSlot id="top-band" ownerId="SpectatorHeader">
-            <div className="flex items-center justify-between border-b border-gray-700 bg-gray-800/90 px-4 py-2 backdrop-blur-sm">
+            <div className="border-border-theme bg-surface-base/90 flex items-center justify-between border-b px-4 py-2 backdrop-blur-sm">
               <div className="flex items-center gap-3">
                 <Link
                   href="/gameplay/games"
-                  className="text-gray-400 transition-colors hover:text-white"
+                  className="text-text-theme-secondary transition-colors hover:text-white"
                   aria-label="Back to games"
                 >
-                  <svg
+                  <SvgIcon
+                    size="control"
                     className="h-5 w-5"
                     fill="none"
                     stroke="currentColor"
@@ -115,7 +119,7 @@ export function SpectatorView(): React.ReactElement {
                       strokeWidth={2}
                       d="M10 19l-7-7m0 0l7-7m-7 7h18"
                     />
-                  </svg>
+                  </SvgIcon>
                 </Link>
                 <div>
                   <h1 className="text-sm font-semibold text-white">
@@ -164,7 +168,7 @@ export function SpectatorView(): React.ReactElement {
 
             {/* Side panel — right-tray slot. */}
             <ShellSlot id="right-tray" ownerId="SpectatorUnitRoster">
-              <div className="w-60 overflow-y-auto border-l border-gray-700 bg-gray-800/50">
+              <div className="border-border-theme bg-surface-base/50 w-60 overflow-y-auto border-l">
                 <UnitRoster session={session} />
               </div>
             </ShellSlot>

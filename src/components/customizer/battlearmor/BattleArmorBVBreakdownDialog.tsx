@@ -12,6 +12,8 @@ import React from 'react';
 
 import type { IBABreakdown } from '@/utils/construction/battlearmor/battleArmorBV';
 
+import { AppIcon } from '@/components/ui/AppIcon';
+
 import { BreakdownDialogShell } from '../tabs/BreakdownDialogShell';
 
 // =============================================================================
@@ -65,7 +67,7 @@ export function BattleArmorBVBreakdownDialog({
   return (
     <BreakdownDialogShell
       onClose={onClose}
-      overlayClassName="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      overlayClassName="fixed inset-0 z-50 flex items-center justify-center bg-surface-deep/80"
       panelClassName="bg-bg-theme-primary border-border-theme w-96 rounded border p-4 shadow-xl"
     >
       <div className="mb-3 flex items-center justify-between">
@@ -77,7 +79,8 @@ export function BattleArmorBVBreakdownDialog({
           onClick={onClose}
           className="text-text-theme-secondary hover:text-text-theme-primary text-sm"
         >
-          ×
+          {' '}
+          <AppIcon name="close" size="inline" aria-hidden="true" />
         </button>
       </div>
 

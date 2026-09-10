@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
 import { MAX_ENGINE_RATING } from '@/hooks/useMovementCalculations';
 import { MovementEnhancementType } from '@/types/construction/MovementEnhancement';
 import { MechConfiguration } from '@/types/unit/BattleMechInterfaces';
@@ -81,35 +82,46 @@ export function StructureTabMovementSection({
 
   return (
     <div className={cs.panel.main}>
-      <h3 className={cs.text.sectionTitle}>Movement</h3>
+      <div className="border-border-theme-subtle mb-4 border-b pb-3">
+        <h3 className="text-text-theme-primary text-lg font-semibold">
+          Mobility
+        </h3>
+        <p className={`${cs.text.secondary} mt-0.5`}>
+          Base settings and derived movement limits
+        </p>
+      </div>
 
-      <div className={cs.layout.formStack}>
-        <div className="grid grid-cols-[80px_1fr_60px] items-center gap-2 sm:grid-cols-[140px_112px_1fr]">
+      <div className="space-y-5">
+        <div className="grid grid-cols-[minmax(5.5rem,1fr)_minmax(0,1.35fr)_minmax(4rem,0.75fr)] items-center gap-3">
           <span></span>
           <span
-            className={`${cs.text.secondary} text-center text-xs uppercase sm:text-sm`}
+            className={`${cs.text.secondary} text-center text-xs font-semibold tracking-[0.16em] uppercase`}
           >
             Base
           </span>
           <span
-            className={`${cs.text.secondary} text-center text-xs uppercase sm:text-sm`}
+            className={`${cs.text.secondary} text-center text-xs font-semibold tracking-[0.16em] uppercase`}
           >
             Final
           </span>
         </div>
 
-        <div className="grid grid-cols-[80px_1fr_60px] items-center gap-2 sm:grid-cols-[140px_112px_1fr]">
-          <label className={cs.text.label}>Walk MP</label>
+        <div className="grid grid-cols-[minmax(5.5rem,1fr)_minmax(0,1.35fr)_minmax(4rem,0.75fr)] items-center gap-3">
+          <label className={`${cs.text.label} font-medium`} htmlFor="walk-mp">
+            Walk MP
+          </label>
           <div className="flex items-center justify-center">
             <button
               onClick={() => handleWalkMPChange(walkMP - 1)}
               disabled={readOnly || walkMP <= walkMPRange.min}
               className={cs.button.stepperLeft}
             >
-              -
+              <AppIcon name="remove" size="inline" aria-hidden="true" />{' '}
             </button>
             <input
+              id="walk-mp"
               type="number"
+              aria-label="Walk MP"
               value={walkMP}
               onChange={(e) =>
                 handleWalkMPChange(
@@ -126,24 +138,27 @@ export function StructureTabMovementSection({
               disabled={readOnly || walkMP >= walkMPRange.max}
               className={cs.button.stepperRight}
             >
-              +
+              {' '}
+              <AppIcon name="add" size="inline" aria-hidden="true" />
             </button>
           </div>
-          <span className={`text-sm ${cs.text.value} text-center`}>
+          <span className={`font-mono text-sm ${cs.text.value} text-center`}>
             {walkMP}
           </span>
         </div>
 
-        <div className="grid grid-cols-[80px_1fr_60px] items-center gap-2 sm:grid-cols-[140px_112px_1fr]">
-          <label className={cs.text.label}>Run MP</label>
-          <span className={`text-sm ${cs.text.value} text-center`}>
+        <div className="grid grid-cols-[minmax(5.5rem,1fr)_minmax(0,1.35fr)_minmax(4rem,0.75fr)] items-center gap-3">
+          <span className={`${cs.text.label} font-medium`}>Run MP</span>
+          <span className={`font-mono text-sm ${cs.text.value} text-center`}>
             {runMP}
           </span>
           <div className="flex items-center justify-center gap-1">
-            <span className={`text-sm ${cs.text.value}`}>{runMP}</span>
+            <span className={`font-mono text-sm ${cs.text.value}`}>
+              {runMP}
+            </span>
             {maxRunMP && (
               <span
-                className="cursor-help text-sm font-bold text-white"
+                className="text-text-theme-primary cursor-help text-sm font-bold"
                 title={
                   enhancement === MovementEnhancementType.MASC
                     ? `MASC Sprint: Walk ${walkMP} × 2 = ${maxRunMP}`
@@ -160,18 +175,22 @@ export function StructureTabMovementSection({
           </div>
         </div>
 
-        <div className="grid grid-cols-[80px_1fr_60px] items-center gap-2 sm:grid-cols-[140px_112px_1fr]">
-          <label className={cs.text.label}>Jump MP</label>
+        <div className="grid grid-cols-[minmax(5.5rem,1fr)_minmax(0,1.35fr)_minmax(4rem,0.75fr)] items-center gap-3">
+          <label className={`${cs.text.label} font-medium`} htmlFor="jump-mp">
+            Jump MP
+          </label>
           <div className="flex items-center justify-center">
             <button
               onClick={() => handleJumpMPChange(jumpMP - 1)}
               disabled={readOnly || jumpMP <= 0}
               className={cs.button.stepperLeft}
             >
-              -
+              <AppIcon name="remove" size="inline" aria-hidden="true" />{' '}
             </button>
             <input
+              id="jump-mp"
               type="number"
+              aria-label="Jump MP"
               value={jumpMP}
               onChange={(e) =>
                 handleJumpMPChange(parseInt(e.target.value, 10) || 0)
@@ -186,19 +205,24 @@ export function StructureTabMovementSection({
               disabled={readOnly || jumpMP >= maxJumpMP}
               className={cs.button.stepperRight}
             >
-              +
+              {' '}
+              <AppIcon name="add" size="inline" aria-hidden="true" />
             </button>
           </div>
-          <span className={`text-sm ${cs.text.value} text-center`}>
+          <span className={`font-mono text-sm ${cs.text.value} text-center`}>
             {jumpMP}
           </span>
         </div>
 
-        <div className="grid grid-cols-[80px_1fr] items-center gap-2 sm:grid-cols-[140px_1fr]">
-          <label className={cs.text.label}>Jump Type</label>
+        <div className="grid grid-cols-[minmax(5.5rem,1fr)_minmax(0,1fr)] items-center gap-3">
+          <label className={`${cs.text.label} font-medium`} htmlFor="jump-type">
+            Jump Type
+          </label>
           <select
-            className={cs.select.inline}
+            id="jump-type"
+            className={cs.select.full}
             disabled={readOnly}
+            aria-label="Jump type"
             value={jumpJetType}
             onChange={handleJumpJetTypeChange}
           >
@@ -212,11 +236,18 @@ export function StructureTabMovementSection({
           </select>
         </div>
 
-        <div className="grid grid-cols-[80px_1fr_60px] items-center gap-2 sm:grid-cols-[140px_112px_1fr]">
-          <label className={cs.text.label}>Mech. J. Booster MP</label>
+        <div className="grid grid-cols-[minmax(5.5rem,1fr)_minmax(0,1.35fr)_minmax(4rem,0.75fr)] items-center gap-3">
+          <label
+            className={`${cs.text.label} font-medium`}
+            htmlFor="mechanical-jump-booster-mp"
+          >
+            Mech. J. Booster
+          </label>
           <div className="flex items-center justify-center">
             <input
+              id="mechanical-jump-booster-mp"
               type="number"
+              aria-label="Mechanical jump booster MP"
               value={0}
               disabled={true}
               className={`w-12 ${cs.input.compact} text-center opacity-50 ${cs.input.noSpinners}`}
@@ -243,14 +274,15 @@ export function StructureTabMovementSection({
         </div>
 
         <div className={`${cs.layout.divider} mt-2`}>
-          <h4 className="mb-3 text-sm font-semibold text-slate-300">
+          <h4 className="text-text-theme-secondary mb-3 text-sm font-semibold">
             Enhancement
           </h4>
-          <div className="grid grid-cols-[80px_1fr] items-center gap-2 sm:grid-cols-[140px_1fr]">
+          <div className="grid grid-cols-[minmax(5.5rem,1fr)_minmax(0,1fr)] items-center gap-3">
             <label className={cs.text.label}>Type</label>
             <select
               className={cs.select.inline}
               disabled={readOnly}
+              aria-label="Movement enhancement"
               value={enhancement ?? ''}
               onChange={handleEnhancementChange}
             >
@@ -280,11 +312,13 @@ export function StructureTabMovementSection({
         </div>
 
         <div className={`${cs.layout.divider} mt-2`}>
-          <div className="grid grid-cols-[80px_1fr] items-center gap-2 sm:grid-cols-[140px_1fr]">
+          <div className="grid grid-cols-[minmax(5.5rem,1fr)_minmax(0,1fr)] items-center gap-3">
             <label className={cs.text.label}>Motive Type</label>
             <select
               className={cs.select.inline}
               disabled={readOnly}
+              aria-label="Motive type"
+              aria-describedby="configuration-change-help"
               value={configuration}
               onChange={handleConfigurationChange}
             >
@@ -294,6 +328,13 @@ export function StructureTabMovementSection({
                 </option>
               ))}
             </select>
+            <p
+              id="configuration-change-help"
+              className="text-text-theme-secondary col-span-full text-xs"
+            >
+              Changing configuration clears armor in removed locations and
+              returns their equipment to unassigned.
+            </p>
           </div>
         </div>
       </div>

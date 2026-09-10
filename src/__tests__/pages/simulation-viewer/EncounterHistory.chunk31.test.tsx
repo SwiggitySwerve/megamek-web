@@ -306,13 +306,19 @@ describe('EncounterHistory', () => {
     it('resets to ascending when switching sort keys', () => {
       renderPage();
       fireEvent.click(screen.getByTestId('sort-button-duration'));
-      expect(screen.getByTestId('sort-direction-indicator')).toHaveTextContent(
-        '↓',
+      const descendingIndicator = screen.getByTestId(
+        'sort-direction-indicator',
       );
+      expect(descendingIndicator).toHaveAccessibleName('Descending');
+      expect(
+        descendingIndicator.querySelector('[data-icon-name="arrow-down"]'),
+      ).toBeInTheDocument();
       fireEvent.click(screen.getByTestId('sort-button-kills'));
-      expect(screen.getByTestId('sort-direction-indicator')).toHaveTextContent(
-        '↑',
-      );
+      const ascendingIndicator = screen.getByTestId('sort-direction-indicator');
+      expect(ascendingIndicator).toHaveAccessibleName('Ascending');
+      expect(
+        ascendingIndicator.querySelector('[data-icon-name="arrow-up"]'),
+      ).toBeInTheDocument();
     });
   });
 });

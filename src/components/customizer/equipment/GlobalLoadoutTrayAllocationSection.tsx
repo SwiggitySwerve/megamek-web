@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
+
 import { trayStyles } from './GlobalLoadoutTray.styles';
 
 interface AllocationSectionProps {
@@ -25,59 +27,66 @@ export function GlobalLoadoutTrayAllocationSection({
 }: AllocationSectionProps): React.ReactElement {
   const [isDragOver, setIsDragOver] = useState(false);
 
-  const handleDragOver = (e: React.DragEvent) => {
+  const handleDragOver = (event: React.DragEvent) => {
     if (!isDropZone) {
       return;
     }
-    e.preventDefault();
+    event.preventDefault();
     setIsDragOver(true);
   };
 
-  const handleDragLeave = (e: React.DragEvent) => {
-    if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+  const handleDragLeave = (event: React.DragEvent) => {
+    if (!event.currentTarget.contains(event.relatedTarget as Node)) {
       setIsDragOver(false);
     }
   };
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = (event: React.DragEvent) => {
     if (!isDropZone) {
       return;
     }
-    e.preventDefault();
+    event.preventDefault();
     setIsDragOver(false);
-    const equipmentId = e.dataTransfer.getData('text/equipment-id');
+    const equipmentId = event.dataTransfer.getData('text/equipment-id');
     if (equipmentId && onDrop) {
       onDrop(equipmentId);
     }
   };
 
   return (
-    <div
-      className={`border-border-theme border-b transition-all ${isDragOver ? 'ring-accent bg-accent/20 ring-2 ring-inset' : ''}`}
+    <section
+      className={`border-border-theme border-b transition-colors ${
+        isDragOver ? 'ring-accent bg-accent/10 ring-2 ring-inset' : ''
+      }`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      <button onClick={onToggle} className={trayStyles.sectionRow}>
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={isExpanded}
+        className={`${trayStyles.sectionRow} focus-visible:ring-accent focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset`}
+      >
         <span
-          className={`${trayStyles.text.primary} font-medium ${titleColor}`}
+          className={`${trayStyles.text.primary} min-w-0 truncate font-medium ${titleColor}`}
         >
           {title}
         </span>
-        <span className={`flex items-center ${trayStyles.gap}`}>
+        <span className={`flex shrink-0 items-center ${trayStyles.gap}`}>
           <span
-            className={`${trayStyles.text.secondary} text-text-theme-secondary`}
+            className={`${trayStyles.text.secondary} text-text-theme-secondary tabular-nums`}
           >
-            ({count})
+            {count}
           </span>
-          <span
-            className={`${trayStyles.text.tertiary} text-slate-500 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
-          >
-            ▼
-          </span>
+          <AppIcon
+            name="chevron-down"
+            size="inline"
+            className={`text-text-theme-secondary transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+          />
         </span>
       </button>
       {isExpanded && <div>{children}</div>}
-    </div>
+    </section>
   );
 }

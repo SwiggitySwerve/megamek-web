@@ -15,7 +15,6 @@ const meta: Meta<typeof TabBar> = {
     onSelectTab: fn(),
     onCloseTab: fn(),
     onRenameTab: fn(),
-    onNewTab: fn(),
     onLoadUnit: fn(),
   },
 };

@@ -2,6 +2,7 @@ import type { MutableRefObject } from 'react';
 
 import type { EngineType } from '@/types/construction/EngineType';
 import type { GyroType } from '@/types/construction/GyroType';
+import type { MechConfiguration } from '@/types/construction/MechConfigurationSystem';
 
 import {
   compactEquipmentSlots,
@@ -30,6 +31,8 @@ interface AssignmentActionArgs {
   readonly equipment: EquipmentList;
   readonly engineType: EngineType;
   readonly gyroType: GyroType;
+  readonly configuration?: MechConfiguration;
+  readonly isOmni?: boolean;
   readonly bulkUpdateEquipmentLocations: BulkUpdateEquipmentLocations;
 }
 
@@ -69,7 +72,12 @@ export function resetEquipmentLocations(
 export function runFillAction(args: AssignmentActionArgs): void {
   if (args.readOnly) return;
   applyAssignments(
-    fillUnhittableSlots(args.equipment, args.engineType, args.gyroType),
+    fillUnhittableSlots(
+      args.equipment,
+      args.engineType,
+      args.gyroType,
+      args.configuration,
+    ),
     args.bulkUpdateEquipmentLocations,
   );
 }
@@ -77,7 +85,13 @@ export function runFillAction(args: AssignmentActionArgs): void {
 export function runCompactAction(args: AssignmentActionArgs): void {
   if (args.readOnly) return;
   applyAssignments(
-    compactEquipmentSlots(args.equipment, args.engineType, args.gyroType),
+    compactEquipmentSlots(
+      args.equipment,
+      args.engineType,
+      args.gyroType,
+      args.configuration,
+      args.isOmni,
+    ),
     args.bulkUpdateEquipmentLocations,
   );
 }
@@ -85,7 +99,13 @@ export function runCompactAction(args: AssignmentActionArgs): void {
 export function runSortAction(args: AssignmentActionArgs): void {
   if (args.readOnly) return;
   applyAssignments(
-    sortEquipmentBySize(args.equipment, args.engineType, args.gyroType),
+    sortEquipmentBySize(
+      args.equipment,
+      args.engineType,
+      args.gyroType,
+      args.configuration,
+      args.isOmni,
+    ),
     args.bulkUpdateEquipmentLocations,
   );
 }
@@ -95,6 +115,7 @@ export function scheduleAutoFillUnhittables({
   equipment,
   engineType,
   gyroType,
+  configuration,
   bulkUpdateEquipmentLocations,
   autoModeSettings,
   isAutoRunning,
@@ -107,7 +128,7 @@ export function scheduleAutoFillUnhittables({
   isAutoRunning.current = true;
   const timer = setTimeout(() => {
     applyAssignments(
-      fillUnhittableSlots(equipment, engineType, gyroType),
+      fillUnhittableSlots(equipment, engineType, gyroType, configuration),
       bulkUpdateEquipmentLocations,
     );
     isAutoRunning.current = false;
@@ -124,15 +145,29 @@ function chooseAutoOrganizeResult({
   equipment,
   engineType,
   gyroType,
+  configuration,
+  isOmni,
 }: Omit<
   AutoOrganizeArgs,
   'readOnly' | 'bulkUpdateEquipmentLocations' | 'isAutoRunning'
 >): AssignmentResult | undefined {
   if (autoModeSettings.autoSort) {
-    return sortEquipmentBySize(equipment, engineType, gyroType);
+    return sortEquipmentBySize(
+      equipment,
+      engineType,
+      gyroType,
+      configuration,
+      isOmni,
+    );
   }
   if (autoModeSettings.autoCompact) {
-    return compactEquipmentSlots(equipment, engineType, gyroType);
+    return compactEquipmentSlots(
+      equipment,
+      engineType,
+      gyroType,
+      configuration,
+      isOmni,
+    );
   }
   return undefined;
 }
@@ -157,6 +192,8 @@ export function scheduleAutoOrganizeEquipment({
   equipment,
   engineType,
   gyroType,
+  configuration,
+  isOmni,
   bulkUpdateEquipmentLocations,
   autoModeSettings,
   isAutoRunning,
@@ -175,6 +212,8 @@ export function scheduleAutoOrganizeEquipment({
         equipment,
         engineType,
         gyroType,
+        configuration,
+        isOmni,
       }),
       equipment,
       bulkUpdateEquipmentLocations,

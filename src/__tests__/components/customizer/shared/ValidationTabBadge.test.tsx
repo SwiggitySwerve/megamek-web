@@ -32,12 +32,12 @@ describe('ValidationTabBadge', () => {
   });
 
   describe('with error counts', () => {
-    it('should render red badge with error count', () => {
+    it('should render an error token with an accessible count', () => {
       render(<ValidationTabBadge counts={errorCounts} />);
 
-      expect(screen.getByText('3')).toBeInTheDocument();
-      const badge = screen.getByText('3');
-      expect(badge).toHaveClass('bg-red-500');
+      const badge = screen.getByLabelText('3 errors');
+      expect(badge).toHaveTextContent('3');
+      expect(badge).toHaveClass('text-red-400');
     });
 
     it('should have correct aria-label', () => {
@@ -56,12 +56,15 @@ describe('ValidationTabBadge', () => {
   });
 
   describe('with warning counts only', () => {
-    it('should render amber badge with warning count', () => {
+    it('should render a warning token with an accessible count', () => {
       render(<ValidationTabBadge counts={warningCounts} />);
 
-      expect(screen.getByText('5')).toBeInTheDocument();
-      const badge = screen.getByText('5');
-      expect(badge).toHaveClass('bg-amber-500');
+      const badge = screen.getByLabelText('5 warnings');
+      expect(badge).toHaveTextContent('5');
+      expect(badge).toHaveClass('text-yellow-400');
+      expect(
+        badge.querySelector('[data-icon-name="warning"]'),
+      ).toBeInTheDocument();
     });
 
     it('should have correct aria-label', () => {
@@ -72,12 +75,13 @@ describe('ValidationTabBadge', () => {
   });
 
   describe('with mixed counts', () => {
-    it('should prioritize errors over warnings', () => {
+    it('should expose error and warning counts independently', () => {
       render(<ValidationTabBadge counts={mixedCounts} />);
 
-      expect(screen.getByText('2')).toBeInTheDocument();
-      const badge = screen.getByText('2');
-      expect(badge).toHaveClass('bg-red-500');
+      expect(screen.getByLabelText('2 errors')).toHaveClass('text-red-400');
+      expect(screen.getByLabelText('3 warnings')).toHaveClass(
+        'text-yellow-400',
+      );
     });
   });
 
@@ -111,34 +115,23 @@ describe('ValidationTabBadgeCompact', () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it('should show red dot for errors', () => {
-    const { container } = render(
-      <ValidationTabBadgeCompact errorCount={5} warningCount={0} />,
-    );
+  it('should expose the error count', () => {
+    render(<ValidationTabBadgeCompact errorCount={5} warningCount={0} />);
 
-    const dot = container.querySelector('.bg-red-500');
-    expect(dot).toBeInTheDocument();
+    expect(screen.getByLabelText('5 errors')).toHaveClass('text-red-400');
   });
 
-  it('should show amber dot for warnings only', () => {
-    const { container } = render(
-      <ValidationTabBadgeCompact errorCount={0} warningCount={3} />,
-    );
+  it('should expose the warning count', () => {
+    render(<ValidationTabBadgeCompact errorCount={0} warningCount={3} />);
 
-    const dot = container.querySelector('.bg-amber-500');
-    expect(dot).toBeInTheDocument();
+    expect(screen.getByLabelText('3 warnings')).toHaveClass('text-yellow-400');
   });
 
-  it('should show only red dot when both errors and warnings exist', () => {
-    const { container } = render(
-      <ValidationTabBadgeCompact errorCount={2} warningCount={3} />,
-    );
+  it('should expose both counts when errors and warnings exist', () => {
+    render(<ValidationTabBadgeCompact errorCount={2} warningCount={3} />);
 
-    const redDot = container.querySelector('.bg-red-500');
-    const amberDot = container.querySelector('.bg-amber-500');
-
-    expect(redDot).toBeInTheDocument();
-    expect(amberDot).not.toBeInTheDocument();
+    expect(screen.getByLabelText('2 errors')).toHaveClass('text-red-400');
+    expect(screen.getByLabelText('3 warnings')).toHaveClass('text-yellow-400');
   });
 
   it('should apply custom className', () => {

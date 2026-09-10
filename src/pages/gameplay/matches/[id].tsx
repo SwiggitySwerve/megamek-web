@@ -24,10 +24,10 @@ interface FetchState {
 function MatchReportLoading(): React.ReactElement {
   return (
     <div
-      className="flex h-screen items-center justify-center bg-gray-900"
+      className="bg-surface-deep flex h-screen items-center justify-center"
       data-testid="match-report-loading"
     >
-      <p className="text-gray-400">Loading post-battle report...</p>
+      <p className="text-text-theme-secondary">Loading post-battle report...</p>
     </div>
   );
 }
@@ -39,16 +39,18 @@ function MatchReportError({
 }): React.ReactElement {
   return (
     <div
-      className="flex h-screen flex-col items-center justify-center gap-4 bg-gray-900 px-6 text-center"
+      className="bg-surface-deep flex h-screen flex-col items-center justify-center gap-4 px-6 text-center"
       data-testid="match-report-error"
     >
       <h2 className="text-xl font-semibold text-white">
         Could not load match report
       </h2>
-      <p className="text-sm text-gray-400">{message ?? 'unknown error'}</p>
+      <p className="text-text-theme-secondary text-sm">
+        {message ?? 'unknown error'}
+      </p>
       <Link
         href="/gameplay/encounters"
-        className="inline-flex min-h-[44px] items-center rounded-lg bg-blue-600 px-5 py-3 text-sm font-medium text-white hover:bg-blue-700"
+        className="bg-accent text-on-accent hover:bg-accent-hover inline-flex min-h-[44px] items-center rounded-lg px-5 py-3 text-sm font-medium"
       >
         Back to Encounter Hub
       </Link>
@@ -61,7 +63,7 @@ function matchOutcome(report: IPostBattleReport): {
   readonly color: string;
 } {
   if (report.winner === 'draw') {
-    return { label: 'DRAW', color: 'text-gray-300' };
+    return { label: 'DRAW', color: 'text-text-theme-secondary' };
   }
 
   if (report.winner === 'player') {
@@ -88,13 +90,13 @@ function MatchReportHeader({
         {outcome.label}
       </h1>
       <p
-        className="mt-3 text-lg text-gray-300"
+        className="text-text-theme-secondary mt-3 text-lg"
         data-testid="match-report-reason"
       >
         {victoryReasonLabel(report.reason)}
       </p>
       <p
-        className="mt-1 text-sm text-gray-400"
+        className="text-text-theme-secondary mt-1 text-sm"
         data-testid="match-report-turn-count"
       >
         {report.turnCount} {report.turnCount === 1 ? 'turn' : 'turns'} played
@@ -126,11 +128,11 @@ function UnitSummaryTable({
 }): React.ReactElement {
   return (
     <div
-      className="overflow-hidden rounded-lg border border-gray-700 bg-gray-800"
+      className="border-border-theme bg-surface-base overflow-hidden rounded-lg border"
       data-testid="match-report-units"
     >
       <table className="w-full text-sm">
-        <thead className="bg-gray-900 text-xs tracking-wider text-gray-400 uppercase">
+        <thead className="bg-surface-deep text-text-theme-secondary text-xs tracking-wider uppercase">
           <tr>
             <th className="px-4 py-3 text-left">Unit</th>
             <th className="px-4 py-3 text-left">Side</th>
@@ -142,7 +144,7 @@ function UnitSummaryTable({
             <th className="px-4 py-3 text-right">XP</th>
           </tr>
         </thead>
-        <tbody className="text-gray-100">
+        <tbody className="text-text-theme-primary">
           {report.units.map((unit) => {
             const isMvp = mvpIds.has(unit.unitId);
             return (
@@ -151,7 +153,7 @@ function UnitSummaryTable({
                 className={
                   isMvp
                     ? 'border-t border-amber-500/40 bg-amber-500/10'
-                    : 'border-t border-gray-700'
+                    : 'border-border-theme border-t'
                 }
                 data-testid={`match-report-row-${unit.unitId}`}
                 data-mvp={isMvp || undefined}
@@ -164,7 +166,7 @@ function UnitSummaryTable({
                 <td className="px-4 py-3 text-right">{unit.heatProblems}</td>
                 <td className="px-4 py-3 text-right">{unit.physicalAttacks}</td>
                 <td
-                  className="px-4 py-3 text-right text-xs text-gray-400 italic"
+                  className="text-text-theme-secondary px-4 py-3 text-right text-xs italic"
                   data-testid={`match-report-xp-${unit.unitId}`}
                 >
                   pending campaign integration
@@ -192,7 +194,7 @@ function EventLogSection({
       <button
         type="button"
         onClick={onToggle}
-        className="hover:bg-gray-750 flex w-full items-center justify-between rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-left text-sm font-medium text-gray-200"
+        className="hover:bg-surface-raised border-border-theme bg-surface-base text-text-theme-primary flex w-full items-center justify-between rounded-lg border px-4 py-3 text-left text-sm font-medium"
         data-testid="match-report-log-toggle"
         aria-expanded={eventLogOpen}
       >
@@ -204,13 +206,13 @@ function EventLogSection({
       </button>
       {eventLogOpen ? (
         <div
-          className="mt-2 max-h-[400px] overflow-y-auto rounded-lg border border-gray-700 bg-gray-900 p-4 font-mono text-xs"
+          className="border-border-theme bg-surface-deep mt-2 max-h-[400px] overflow-y-auto rounded-lg border p-4 font-mono text-xs"
           data-testid="match-report-log"
         >
-          <ul className="space-y-1 text-gray-300">
+          <ul className="text-text-theme-secondary space-y-1">
             {report.log.map((event) => (
               <li key={event.id} data-testid={`match-report-log-${event.id}`}>
-                <span className="text-gray-500">
+                <span className="text-text-theme-muted">
                   T{event.turn}/{event.phase}
                 </span>{' '}
                 <span className="text-amber-300">{event.type}</span>
@@ -228,7 +230,7 @@ function MatchReportFooter(): React.ReactElement {
     <div className="mt-10 flex items-center justify-center">
       <Link
         href="/gameplay/encounters"
-        className="inline-flex min-h-[44px] items-center rounded-lg bg-blue-600 px-6 py-3 text-base font-medium text-white hover:bg-blue-700"
+        className="bg-accent text-on-accent hover:bg-accent-hover inline-flex min-h-[44px] items-center rounded-lg px-6 py-3 text-base font-medium"
         data-testid="match-report-back"
       >
         Back to Encounter Hub
@@ -297,7 +299,7 @@ export default function MatchReportPage(): React.ReactElement {
         <title>Match Report - MekStation</title>
       </Head>
       <div
-        className="min-h-screen bg-gray-900 px-6 py-10"
+        className="bg-surface-deep min-h-screen px-6 py-10"
         data-testid="match-report"
       >
         <div className="mx-auto max-w-5xl">

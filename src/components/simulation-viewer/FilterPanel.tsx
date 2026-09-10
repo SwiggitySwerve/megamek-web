@@ -5,6 +5,7 @@ import type {
   IFilterDefinition,
 } from '@/components/simulation-viewer/types';
 
+import { AppIcon } from '@/components/ui/AppIcon';
 import { FOCUS_RING_CLASSES } from '@/utils/accessibility';
 
 const DEBOUNCE_MS = 300;
@@ -91,7 +92,7 @@ export const FilterPanel: React.FC<IFilterPanelProps> = ({
 
   return (
     <div
-      className={`rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 ${className}`}
+      className={`border-border-theme-subtle bg-surface-base rounded-lg border p-4 ${className}`}
       role="region"
       aria-label="Filter controls"
       data-testid="filter-panel"
@@ -100,11 +101,11 @@ export const FilterPanel: React.FC<IFilterPanelProps> = ({
         className="mb-4 flex items-center justify-between"
         data-testid="filter-header"
       >
-        <h3 className="text-sm font-semibold tracking-wide text-gray-700 uppercase dark:text-gray-300">
+        <h3 className="text-text-theme-secondary text-sm font-semibold tracking-wide uppercase">
           Filters
           {activeCount > 0 && (
             <span
-              className="ml-2 text-blue-600 dark:text-blue-400"
+              className="text-accent ml-2"
               data-testid="active-filter-count"
             >
               ({activeCount})
@@ -129,18 +130,18 @@ export const FilterPanel: React.FC<IFilterPanelProps> = ({
           {activeBadges.map(({ filterId, option, label }) => (
             <span
               key={`${filterId}-${option}`}
-              className="inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800 dark:bg-blue-900/30 dark:text-blue-200"
+              className="bg-accent-muted text-accent inline-flex items-center rounded-full px-3 py-1 text-sm font-medium"
               data-testid={`badge-${filterId}-${option}`}
             >
               {label}
               <button
                 type="button"
                 onClick={() => handleBadgeClose(filterId, option)}
-                className={`ml-2 rounded-full hover:text-blue-900 dark:hover:text-blue-100 ${FOCUS_RING_CLASSES}`}
+                className={`hover:text-accent ml-2 rounded-full ${FOCUS_RING_CLASSES}`}
                 aria-label={`Remove ${label} filter`}
                 data-testid={`badge-close-${filterId}-${option}`}
               >
-                ×
+                <AppIcon name="close" size="inline" aria-hidden="true" />
               </button>
             </span>
           ))}
@@ -154,7 +155,7 @@ export const FilterPanel: React.FC<IFilterPanelProps> = ({
             value={localSearch}
             onChange={handleSearchChange}
             placeholder="Search filters..."
-            className={`min-h-[44px] w-full rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-900 focus:border-transparent md:min-h-0 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 ${FOCUS_RING_CLASSES}`}
+            className={`border-border-theme-subtle bg-surface-base text-text-theme-primary min-h-[44px] w-full rounded-md border px-4 py-2 focus:border-transparent md:min-h-0 ${FOCUS_RING_CLASSES}`}
             data-testid="filter-search-input"
             aria-label="Search filters"
           />
@@ -170,23 +171,23 @@ export const FilterPanel: React.FC<IFilterPanelProps> = ({
             open
           >
             <summary
-              className="flex min-h-[44px] cursor-pointer list-none items-center justify-between rounded-md p-2 text-sm font-medium text-gray-700 hover:bg-gray-50 md:min-h-0 dark:text-gray-300 dark:hover:bg-gray-700/50"
+              className="text-text-theme-secondary hover:bg-surface-base flex min-h-[44px] cursor-pointer list-none items-center justify-between rounded-md p-2 text-sm font-medium md:min-h-0"
               data-testid={`filter-summary-${filter.id}`}
               aria-label={`${filter.label} filter section`}
             >
               <span>
                 {filter.label}
                 {(activeFilters[filter.id]?.length ?? 0) > 0 && (
-                  <span className="ml-2 text-xs text-blue-600 dark:text-blue-400">
+                  <span className="text-accent ml-2 text-xs">
                     ({activeFilters[filter.id].length})
                   </span>
                 )}
               </span>
               <span
-                className="text-gray-400 transition-transform group-open:rotate-180 dark:text-gray-500"
+                className="text-text-theme-muted transition-transform group-open:rotate-180"
                 aria-hidden="true"
               >
-                ▾
+                <AppIcon name="chevron-down" size="inline" aria-hidden="true" />
               </span>
             </summary>
             <div
@@ -200,14 +201,14 @@ export const FilterPanel: React.FC<IFilterPanelProps> = ({
                 return (
                   <label
                     key={option}
-                    className="flex min-h-[44px] cursor-pointer items-center gap-2 rounded px-2 py-2 text-sm text-gray-700 hover:bg-gray-50 md:min-h-0 md:py-1 dark:text-gray-300 dark:hover:bg-gray-700/50"
+                    className="text-text-theme-secondary hover:bg-surface-base flex min-h-[44px] cursor-pointer items-center gap-2 rounded px-2 py-2 text-sm md:min-h-0 md:py-1"
                     data-testid={`filter-option-${filter.id}-${option}`}
                   >
                     <input
                       type="checkbox"
                       checked={isChecked}
                       onChange={() => handleCheckboxToggle(filter.id, option)}
-                      className="h-4 w-4 accent-blue-600"
+                      className="accent-accent h-4 w-4"
                       data-testid={`checkbox-${filter.id}-${option}`}
                       aria-label={`Filter by ${label}`}
                     />
@@ -222,7 +223,7 @@ export const FilterPanel: React.FC<IFilterPanelProps> = ({
 
       {filters.length === 0 && (
         <p
-          className="py-4 text-center text-sm text-gray-500 dark:text-gray-400"
+          className="text-text-theme-muted py-4 text-center text-sm"
           data-testid="empty-filters-message"
         >
           No filters available

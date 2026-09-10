@@ -2,14 +2,15 @@ import React from 'react';
 
 import type { IDrillDownLinkProps } from '@/components/simulation-viewer/types';
 
+import { AppIcon, type AppIconName } from '@/components/ui/AppIcon';
 import { FOCUS_RING_CLASSES } from '@/utils/accessibility';
 
-const ICONS: Record<string, string> = {
-  'arrow-right': '→',
-  'external-link': '↗',
-  'chevron-right': '›',
-  filter: '⚙',
-  search: '🔍',
+const ICONS: Record<string, AppIconName> = {
+  'arrow-right': 'arrow-right',
+  'external-link': 'external-link',
+  'chevron-right': 'chevron-right',
+  filter: 'filter',
+  search: 'search',
 };
 
 interface DrillDownLinkInternalProps extends IDrillDownLinkProps {
@@ -38,11 +39,11 @@ export const DrillDownLink: React.FC<DrillDownLinkInternalProps> = ({
     }
   };
 
-  const resolvedIcon = icon ? (ICONS[icon] ?? icon) : null;
+  const resolvedIcon = icon ? ICONS[icon] : null;
 
   const linkClasses = [
     'inline-flex items-center gap-2',
-    'text-blue-600 dark:text-blue-400',
+    'text-accent',
     'hover:underline cursor-pointer',
     'py-2 px-3 min-h-[44px] md:py-0 md:px-0 md:min-h-0',
     FOCUS_RING_CLASSES,
@@ -63,13 +64,13 @@ export const DrillDownLink: React.FC<DrillDownLinkInternalProps> = ({
       data-testid="drill-down-link"
       data-target-tab={targetTab}
     >
-      {resolvedIcon && (
+      {icon && (
         <span
           className="inline-block"
           aria-hidden="true"
           data-testid="drill-down-icon"
         >
-          {resolvedIcon}
+          {resolvedIcon ? <AppIcon name={resolvedIcon} size="inline" /> : icon}
         </span>
       )}
       <span data-testid="drill-down-label">{label}</span>

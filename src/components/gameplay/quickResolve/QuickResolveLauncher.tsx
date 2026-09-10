@@ -122,7 +122,7 @@ export function QuickResolveLauncher({
     >
       <div className="flex flex-col gap-4">
         <fieldset className="flex flex-col gap-2">
-          <legend className="text-sm font-semibold text-slate-300">
+          <legend className="text-text-theme-secondary text-sm font-semibold">
             Batch size
           </legend>
           <div className="flex gap-2">
@@ -135,7 +135,7 @@ export function QuickResolveLauncher({
                 className={
                   runCount === count
                     ? 'rounded-md border border-blue-500 bg-blue-600/30 px-4 py-2 text-sm font-medium text-white'
-                    : 'rounded-md border border-slate-700 bg-slate-800 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700'
+                    : 'border-border-theme bg-surface-base text-text-theme-secondary hover:bg-surface-raised rounded-md border px-4 py-2 text-sm font-medium'
                 }
                 data-testid={`quick-resolve-runs-${count}`}
               >
@@ -150,13 +150,13 @@ export function QuickResolveLauncher({
             className="flex flex-col gap-2"
             data-testid="quick-resolve-progress"
           >
-            <div className="flex justify-between text-sm text-slate-400">
+            <div className="text-text-theme-secondary flex justify-between text-sm">
               <span>
                 {runsCompleted} / {totalRuns} runs
               </span>
               <span>{progressPct}%</span>
             </div>
-            <div className="h-2 overflow-hidden rounded-full bg-slate-800">
+            <div className="bg-surface-base h-2 overflow-hidden rounded-full">
               <div
                 className="h-full bg-blue-500 transition-all"
                 style={{ width: `${progressPct}%` }}

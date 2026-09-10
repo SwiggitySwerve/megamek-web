@@ -66,7 +66,7 @@ export const Error: Story = {
 
 export const AllVariants: Story = {
   render: () => (
-    <div className="flex gap-6 rounded bg-slate-900 p-4">
+    <div className="bg-surface-deep flex gap-6 rounded p-4">
       <StatCell label="Default" value={50} />
       <StatCell label="Success" value={30} variant="success" />
       <StatCell label="Warning" value={28} variant="warning" />
@@ -77,7 +77,7 @@ export const AllVariants: Story = {
 
 export const UnitStatsRow: Story = {
   render: () => (
-    <div className="flex justify-around gap-6 rounded bg-slate-900 p-4">
+    <div className="bg-surface-deep flex justify-around gap-6 rounded p-4">
       <StatCell label="Tonnage" value={75} unit="t" />
       <StatCell label="Walk" value={4} unit="MP" />
       <StatCell label="Run" value={6} unit="MP" />

@@ -137,7 +137,7 @@ export const DarkModeCritical: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="dark max-w-xl rounded-lg bg-gray-900 p-8">
+      <div className="bg-surface-deep max-w-xl rounded-lg p-8">
         <Story />
       </div>
     ),
@@ -151,7 +151,7 @@ export const DarkModeWarning: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="dark max-w-xl rounded-lg bg-gray-900 p-8">
+      <div className="bg-surface-deep max-w-xl rounded-lg p-8">
         <Story />
       </div>
     ),
@@ -166,7 +166,7 @@ export const DarkModeInfo: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="dark max-w-xl rounded-lg bg-gray-900 p-8">
+      <div className="bg-surface-deep max-w-xl rounded-lg p-8">
         <Story />
       </div>
     ),
@@ -189,7 +189,7 @@ export const AllSeverities: StoryObj = {
 
 export const AllSeveritiesDark: StoryObj = {
   render: () => (
-    <div className="dark max-w-xl space-y-4 rounded-lg bg-gray-900 p-8">
+    <div className="bg-surface-deep max-w-xl space-y-4 rounded-lg p-8">
       <AnomalyAlertCard anomaly={criticalAnomaly} {...actionHandlers} />
       <AnomalyAlertCard anomaly={warningWithConfig} {...actionHandlers} />
       <AnomalyAlertCard

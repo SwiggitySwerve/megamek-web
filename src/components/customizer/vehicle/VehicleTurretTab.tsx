@@ -148,7 +148,7 @@ function SecondaryTurretControl({
 }: SecondaryProps) {
   return (
     <div className="mb-4">
-      <label className="flex cursor-pointer items-center gap-2 text-sm text-white">
+      <label className="text-text-theme-primary flex cursor-pointer items-center gap-2 text-sm">
         <input
           type="checkbox"
           checked={hasSecondaryTurret}
@@ -156,7 +156,7 @@ function SecondaryTurretControl({
           disabled={readOnly}
           data-testid="vehicle-secondary-turret-toggle"
           aria-label="Enable secondary turret"
-          className="h-4 w-4 rounded border-slate-500"
+          className="border-border-theme h-4 w-4 rounded"
         />
         Secondary Turret
       </label>
@@ -480,7 +480,9 @@ function TurretEquipmentRow({
   return (
     <div className="flex items-center gap-2 rounded border border-amber-700/50 bg-amber-900/20 p-2">
       <div className="min-w-0 flex-1">
-        <span className="block truncate text-sm text-white">{item.name}</span>
+        <span className="text-text-theme-primary block truncate text-sm">
+          {item.name}
+        </span>
         {item.isRearMounted && (
           <span className="text-xs text-cyan-400">Rear-facing</span>
         )}
@@ -488,7 +490,7 @@ function TurretEquipmentRow({
       <button
         onClick={() => onRemove(item.id)}
         disabled={readOnly}
-        className={`${cs.button.action} bg-slate-600 hover:bg-slate-500`}
+        className={`${cs.button.action} bg-surface-raised hover:bg-surface-base text-text-theme-primary`}
         title="Remove from turret"
       >
         Remove

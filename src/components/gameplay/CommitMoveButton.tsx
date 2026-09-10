@@ -62,8 +62,8 @@ export function CommitMoveButton({
   className = '',
 }: CommitMoveButtonProps): React.ReactElement {
   const buttonClasses = ready
-    ? 'cursor-pointer bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500'
-    : 'cursor-not-allowed bg-gray-300 text-gray-500';
+    ? 'cursor-pointer bg-accent text-on-accent hover:bg-accent-hover focus:ring-accent'
+    : 'cursor-not-allowed bg-surface-raised text-text-theme-muted';
   const hasRulesSummary =
     movementMode !== undefined ||
     terrainCost !== undefined ||
@@ -152,7 +152,7 @@ function MovementCommitSummary({
 
   return (
     <dl
-      className="grid grid-cols-2 gap-x-3 gap-y-1 rounded border border-gray-200 bg-gray-50 px-3 py-2 text-xs text-gray-700"
+      className="border-border-theme-subtle bg-surface-base text-text-theme-primary grid grid-cols-2 gap-x-3 gap-y-1 rounded border px-3 py-2 text-xs"
       aria-label={`Movement rules summary: ${summaryParts.join('; ')}`}
       data-testid="movement-commit-summary"
       data-movement-mode={movementMode}
@@ -163,31 +163,31 @@ function MovementCommitSummary({
     >
       {movementMode && (
         <div>
-          <dt className="font-semibold text-gray-500">Mode</dt>
+          <dt className="text-text-theme-muted font-semibold">Mode</dt>
           <dd>{formatModeLabel(movementMode)}</dd>
         </div>
       )}
       {terrainCost !== undefined && (
         <div>
-          <dt className="font-semibold text-gray-500">Terrain</dt>
+          <dt className="text-text-theme-muted font-semibold">Terrain</dt>
           <dd>{formatSigned(terrainCost)} MP</dd>
         </div>
       )}
       {turningCost !== undefined && (
         <div>
-          <dt className="font-semibold text-gray-500">Turning</dt>
+          <dt className="text-text-theme-muted font-semibold">Turning</dt>
           <dd>{formatSigned(turningCost)} MP</dd>
         </div>
       )}
       {elevationDelta !== undefined && (
         <div>
-          <dt className="font-semibold text-gray-500">Elevation</dt>
+          <dt className="text-text-theme-muted font-semibold">Elevation</dt>
           <dd>{formatSigned(elevationDelta)}</dd>
         </div>
       )}
       {elevationCost !== undefined && (
         <div>
-          <dt className="font-semibold text-gray-500">Elev. Cost</dt>
+          <dt className="text-text-theme-muted font-semibold">Elev. Cost</dt>
           <dd>{formatSigned(elevationCost)} MP</dd>
         </div>
       )}

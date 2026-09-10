@@ -2,7 +2,7 @@
  * Customizer Tabs Component
  *
  * Tabbed navigation for unit configuration sections.
- * Responsive: Shows icons-only on mobile, icons + labels on larger screens.
+ * Responsive: Shows stacked icons and labels on mobile, inline on larger screens.
  *
  * @spec openspec/specs/customizer-tabs/spec.md
  * @spec openspec/specs/customizer-responsive-layout/spec.md
@@ -11,6 +11,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 import { ValidationTabBadge } from '@/components/customizer/shared/ValidationTabBadge';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { useTabKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
 import { ValidationCountsByTab } from '@/utils/validation/validationNavigation';
 
@@ -35,6 +36,7 @@ interface CustomizerTabsProps {
   readOnly?: boolean;
   className?: string;
   validationCounts?: ValidationCountsByTab;
+  compact?: boolean;
   /**
    * Set of tab ids that have unsaved field changes.
    * When a tab id is present here the label shows a yellow dirty marker (●).
@@ -58,116 +60,73 @@ interface CustomizerTabsProps {
 // Simple SVG icons for mobile view
 const TabIcons: Record<string, React.ReactNode> = {
   overview: (
-    <svg
-      className="h-4 w-4"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
+    <SvgIcon size="inline">
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth={2}
         d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
       />
-    </svg>
+    </SvgIcon>
   ),
   structure: (
-    <svg
-      className="h-4 w-4"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
+    <SvgIcon size="inline">
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth={2}
         d="M12 2v2m0 0a2 2 0 012 2v1h2a1 1 0 011 1v3l2 1v6h-3v2h-2v-2h-4v2H8v-2H5v-6l2-1V8a1 1 0 011-1h2V6a2 2 0 012-2z"
       />
-    </svg>
+    </SvgIcon>
   ),
   armor: (
-    <svg
-      className="h-4 w-4"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
+    <SvgIcon size="inline">
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth={2}
         d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
       />
-    </svg>
+    </SvgIcon>
   ),
   equipment: (
-    <svg
-      className="h-4 w-4"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <circle cx="12" cy="12" r="3" strokeWidth={2} />
+    <SvgIcon size="inline">
+      <circle cx="12" cy="12" r="3" />
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth={2}
         d="M12 2v4m0 12v4m10-10h-4M6 12H2"
       />
-    </svg>
+    </SvgIcon>
   ),
   criticals: (
-    <svg
-      className="h-4 w-4"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
+    <SvgIcon size="inline">
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth={2}
         d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
       />
-    </svg>
+    </SvgIcon>
   ),
   fluff: (
-    <svg
-      className="h-4 w-4"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
+    <SvgIcon size="inline">
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth={2}
         d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
       />
-    </svg>
+    </SvgIcon>
   ),
   preview: (
-    <svg
-      className="h-4 w-4"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
+    <SvgIcon size="inline">
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth={2}
         d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
       />
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth={2}
         d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
       />
-    </svg>
+    </SvgIcon>
   ),
 };
 
@@ -213,7 +172,7 @@ export const DEFAULT_CUSTOMIZER_TABS: CustomizerTabConfig[] = [
  * Customizer section tabs
  *
  * Responsive behavior:
- * - Mobile (<640px): Icons only, minimum 44px touch targets
+ * - Mobile (<640px): Stacked icons and labels, minimum 44px touch targets
  * - Desktop (>=640px): Icons + labels
  * - Scroll indicators appear when tabs overflow
  */
@@ -224,6 +183,7 @@ export function CustomizerTabs({
   readOnly = false,
   className = '',
   validationCounts,
+  compact = false,
   dirtyTabs,
   errorTabs,
 }: CustomizerTabsProps): React.ReactElement {
@@ -231,6 +191,21 @@ export function CustomizerTabs({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showLeftFade, setShowLeftFade] = useState(false);
   const [showRightFade, setShowRightFade] = useState(false);
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    const selected = container?.querySelector<HTMLButtonElement>(
+      '[role="tab"][aria-selected="true"]',
+    );
+    if (container?.contains(document.activeElement)) selected?.focus();
+    const revealSelected = (): void => {
+      selected?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
+    };
+    revealSelected();
+    const observer = new ResizeObserver(revealSelected);
+    if (container) observer.observe(container);
+    return () => observer.disconnect();
+  }, [activeTab]);
 
   // Check scroll position to show/hide fade indicators
   useEffect(() => {
@@ -266,69 +241,87 @@ export function CustomizerTabs({
       {/* Tabs container */}
       <div
         ref={scrollContainerRef}
-        className="scrollbar-thumb-border-theme flex scrollbar-thin justify-evenly overflow-x-auto"
+        className={`scrollbar-thumb-border-theme flex scrollbar-thin overflow-x-auto ${compact ? 'justify-start' : 'justify-evenly'}`}
         role="tablist"
         aria-label="Unit configuration tabs"
-        onKeyDown={handleKeyDown}
+        onKeyDown={(event) => {
+          if ((event.target as HTMLElement).getAttribute('role') === 'tab')
+            handleKeyDown(event);
+        }}
       >
         {tabs.map((tab) => (
-          <button
+          <div
             key={tab.id}
-            role="tab"
-            aria-selected={tab.id === activeTab}
-            aria-controls={`tabpanel-${tab.id}`}
-            aria-label={tab.label}
-            tabIndex={tab.id === activeTab ? 0 : -1}
-            onClick={() => !tab.disabled && onTabChange(tab.id)}
-            disabled={tab.disabled}
-            className={`focus:ring-accent flex min-h-[44px] min-w-[44px] flex-1 items-center justify-center gap-1 border-b-2 px-2 py-2 text-sm font-medium whitespace-nowrap transition-colors focus:ring-2 focus:outline-none focus:ring-inset sm:gap-2 sm:px-4 ${
-              tab.id === activeTab
-                ? 'text-accent border-accent'
-                : 'text-text-theme-secondary hover:border-border-theme-subtle border-transparent hover:text-white'
-            } ${tab.disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} ${readOnly ? 'pointer-events-none' : ''} `}
+            className={compact ? 'flex shrink-0 items-center' : 'contents'}
           >
-            {tab.icon}
-            <span className="hidden sm:inline">{tab.label}</span>
-            {/* Dirty marker — yellow dot for unsaved changes */}
-            {dirtyTabs?.has(tab.id) && (
-              <span
-                className="ml-1 text-yellow-400"
-                aria-label="Unsaved changes"
-                role="img"
-                title="Unsaved changes"
-              >
-                ●
-              </span>
-            )}
-            {/* Validation error marker — red dot for failing constraints.
+            <button
+              id={`customizer-tab-${tab.id}`}
+              role="tab"
+              aria-selected={tab.id === activeTab}
+              aria-controls={`tabpanel-${tab.id}`}
+              aria-label={tab.label}
+              aria-describedby={
+                validationCounts &&
+                (validationCounts[tab.id as keyof ValidationCountsByTab]
+                  ?.errors ||
+                  validationCounts[tab.id as keyof ValidationCountsByTab]
+                    ?.warnings)
+                  ? `customizer-tab-validation-${tab.id}`
+                  : undefined
+              }
+              tabIndex={tab.id === activeTab ? 0 : -1}
+              onClick={() => !tab.disabled && onTabChange(tab.id)}
+              disabled={tab.disabled}
+              className={`focus-visible:ring-accent flex min-h-[44px] min-w-[72px] flex-shrink-0 flex-row items-center justify-center gap-2 border-b-2 px-2 py-2 text-sm font-medium whitespace-nowrap transition-colors focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset sm:min-h-[44px] sm:min-w-[44px] ${compact ? 'sm:flex-none sm:px-2' : 'sm:flex-1 sm:px-4'} sm:flex-row sm:gap-2 ${
+                tab.id === activeTab
+                  ? 'text-accent border-accent bg-accent/5'
+                  : 'text-text-theme-secondary hover:border-border-theme-subtle hover:text-text-theme-primary border-transparent'
+              } ${tab.disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} ${readOnly ? 'pointer-events-none' : ''} `}
+            >
+              {!compact && tab.icon}
+              <span className="text-xs sm:text-sm">{tab.label}</span>
+              {/* Dirty marker — yellow dot for unsaved changes */}
+              {dirtyTabs?.has(tab.id) && (
+                <span
+                  className="ml-1 text-yellow-400"
+                  aria-label="Unsaved changes"
+                  role="img"
+                  title="Unsaved changes"
+                >
+                  ●
+                </span>
+              )}
+              {/* Validation error marker — red dot for failing constraints.
                 When errorTabs is a Map, the value is the rule code (e.g.
                 "VAL-VEHICLE-ARMOR-MAX") and becomes the ARIA label + tooltip
                 so screen-reader users hear the specific failing rule.  A
                 plain Set falls back to the generic "Validation error" label.
                 Satisfies Spec § Requirement: Validation Error Markers. */}
-            {errorTabs?.has(tab.id) && (
-              <span
-                className="ml-1 text-red-500"
-                aria-label={getErrorRuleCode(errorTabs, tab.id)}
-                role="img"
-                title={getErrorRuleCode(errorTabs, tab.id)}
-              >
-                ●
-              </span>
-            )}
-            {validationCounts && (
-              <ValidationTabBadge
-                counts={
-                  validationCounts[tab.id as keyof ValidationCountsByTab] ?? {
-                    errors: 0,
-                    warnings: 0,
-                    infos: 0,
+              {errorTabs?.has(tab.id) && (
+                <span
+                  className="ml-1 text-red-500"
+                  aria-label={getErrorRuleCode(errorTabs, tab.id)}
+                  role="img"
+                  title={getErrorRuleCode(errorTabs, tab.id)}
+                >
+                  ●
+                </span>
+              )}
+              {validationCounts && (
+                <ValidationTabBadge
+                  id={`customizer-tab-validation-${tab.id}`}
+                  counts={
+                    validationCounts[tab.id as keyof ValidationCountsByTab] ?? {
+                      errors: 0,
+                      warnings: 0,
+                      infos: 0,
+                    }
                   }
-                }
-                className="ml-1"
-              />
-            )}
-          </button>
+                  className="ml-1"
+                />
+              )}
+            </button>
+          </div>
         ))}
       </div>
 

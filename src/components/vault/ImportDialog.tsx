@@ -84,9 +84,11 @@ export function ImportDialog<T>({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="mx-4 w-full max-w-lg rounded-lg bg-gray-800 p-6">
+      <div className="bg-surface-base mx-4 w-full max-w-lg rounded-lg p-6">
         {/* Header */}
-        <h2 className="mb-4 text-xl font-bold text-white">Import Bundle</h2>
+        <h2 className="text-text-theme-primary mb-4 text-xl font-bold">
+          Import Bundle
+        </h2>
 
         {/* Error display */}
         {error && (
@@ -114,7 +116,7 @@ export function ImportDialog<T>({
           <div className="mt-4 flex justify-end">
             <button
               onClick={handleClose}
-              className="rounded bg-gray-600 px-4 py-2 text-white hover:bg-gray-500"
+              className="bg-surface-raised text-text-theme-primary hover:bg-surface-raised rounded px-4 py-2"
             >
               Cancel
             </button>

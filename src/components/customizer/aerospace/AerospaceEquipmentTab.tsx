@@ -9,6 +9,7 @@
 
 import React, { useCallback } from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
 import { useAerospaceStore } from '@/stores/useAerospaceStore';
 import { AerospaceLocation } from '@/types/construction/UnitLocation';
 import { IEquipmentItem } from '@/types/equipment';
@@ -181,7 +182,7 @@ function MountedEquipmentRow({
       {/* Equipment Name */}
       <div className="min-w-0 flex-1">
         <span
-          className="block truncate text-sm text-white"
+          className="text-text-theme-primary block truncate text-sm"
           data-testid={`aerospace-equipment-name-${item.id}`}
         >
           {item.name}
@@ -213,19 +214,7 @@ function MountedEquipmentRow({
         title="Remove"
         data-testid={`aerospace-equipment-remove-${item.id}`}
       >
-        <svg
-          className="h-4 w-4"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
+        <AppIcon name="close" size="inline" aria-hidden="true" />
       </button>
     </div>
   );

@@ -87,7 +87,9 @@ export function InfantryProtectionSection({
               disabled={readOnly}
               className="border-border-theme bg-surface-raised rounded"
             />
-            <span className="text-sm text-white">Anti-Mech Training</span>
+            <span className="text-text-theme-primary text-sm">
+              Anti-Mech Training
+            </span>
           </label>
         </div>
       </div>

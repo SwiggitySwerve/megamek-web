@@ -362,7 +362,7 @@ export function CampaignCoopEntryPanel(): React.ReactElement {
 
   return (
     <>
-      <section className="mb-6 rounded-lg border border-slate-700 bg-slate-950/50 px-4 py-3">
+      <section className="border-border-theme bg-surface-deep/50 mb-6 rounded-lg border px-4 py-3">
         <div className="flex flex-wrap items-center gap-2">
           <Button
             variant="secondary"
@@ -425,7 +425,7 @@ export function CampaignCoopEntryPanel(): React.ReactElement {
               value={createCoopPassword}
               onChange={(e) => setCreateCoopPassword(e.target.value)}
               disabled={createCoopBusy}
-              className="text-text-theme-primary w-full max-w-md rounded border border-slate-600 bg-slate-950 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none"
+              className="text-text-theme-primary border-border-theme bg-surface-deep w-full max-w-md rounded border px-3 py-2 text-sm focus:border-sky-500 focus:outline-none"
             />
           </div>
         )}
@@ -441,7 +441,7 @@ export function CampaignCoopEntryPanel(): React.ReactElement {
           onClick={handleCloseJoinCoop}
         >
           <div
-            className="bg-surface-raised w-full max-w-md rounded-xl border border-slate-700 p-6 shadow-2xl"
+            className="bg-surface-raised border-border-theme w-full max-w-md rounded-xl border p-6 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <h2
@@ -468,7 +468,7 @@ export function CampaignCoopEntryPanel(): React.ReactElement {
               placeholder="ABC-DEF"
               autoFocus
               disabled={joinBusy}
-              className="text-text-theme-primary w-full rounded border border-slate-600 bg-slate-900 px-3 py-2 font-mono text-lg tracking-widest uppercase focus:border-sky-500 focus:outline-none"
+              className="text-text-theme-primary border-border-theme bg-surface-deep w-full rounded border px-3 py-2 font-mono text-lg tracking-widest uppercase focus:border-sky-500 focus:outline-none"
             />
             <label
               htmlFor="join-coop-password"
@@ -483,7 +483,7 @@ export function CampaignCoopEntryPanel(): React.ReactElement {
               value={joinCoopPassword}
               onChange={(e) => setJoinCoopPassword(e.target.value)}
               disabled={joinBusy}
-              className="text-text-theme-primary w-full rounded border border-slate-600 bg-slate-900 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none"
+              className="text-text-theme-primary border-border-theme bg-surface-deep w-full rounded border px-3 py-2 text-sm focus:border-sky-500 focus:outline-none"
             />
             {joinError && (
               <p

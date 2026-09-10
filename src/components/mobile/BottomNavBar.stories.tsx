@@ -23,8 +23,8 @@ const meta: Meta<typeof BottomNavBar> = {
       return (
         <div className="bg-surface-deep relative h-screen">
           <div className="p-4 pb-20">
-            <p className="text-white">Main content area</p>
-            <p className="mt-2 text-sm text-slate-400">
+            <p className="text-text-theme-primary">Main content area</p>
+            <p className="text-text-theme-secondary mt-2 text-sm">
               Bottom nav appears below on mobile
             </p>
           </div>

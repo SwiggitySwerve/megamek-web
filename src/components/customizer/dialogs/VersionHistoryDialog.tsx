@@ -8,6 +8,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
 import {
   customUnitApiService,
   IVersionWithData,
@@ -84,7 +85,7 @@ function VersionList({
   if (isLoading) {
     return (
       <div className={cs.dialog.loading}>
-        <SpinnerIcon className="mr-2 h-6 w-6 animate-spin" />
+        <SpinnerIcon size="toolbar" className="mr-2" />
         Loading...
       </div>
     );
@@ -93,7 +94,7 @@ function VersionList({
   if (error) {
     return (
       <div className="p-4 text-center text-red-400">
-        <ErrorIcon className="mx-auto mb-2 h-8 w-8" />
+        <ErrorIcon size="toolbar" className="mx-auto mb-2" />
         {error}
       </div>
     );
@@ -144,7 +145,9 @@ function VersionListItem({
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="font-medium text-white">v{version.version}</span>
+          <span className="text-text-theme-primary font-medium">
+            v{version.version}
+          </span>
           {version.version === currentVersion && (
             <span className="rounded bg-green-500/20 px-1.5 py-0.5 text-xs text-green-400">
               Current
@@ -161,7 +164,7 @@ function VersionListItem({
         {formatDate(version.savedAt)}
       </div>
       {version.notes && (
-        <div className="mt-1 truncate text-xs text-slate-500">
+        <div className="text-text-theme-muted mt-1 truncate text-xs">
           {version.notes}
         </div>
       )}
@@ -185,7 +188,7 @@ function VersionPreview({
   if (isLoadingPreview) {
     return (
       <div className={`${cs.dialog.loading} h-full`}>
-        <SpinnerIcon className="mr-2 h-6 w-6 animate-spin" />
+        <SpinnerIcon size="toolbar" className="mr-2" />
         Loading preview...
       </div>
     );
@@ -204,19 +207,12 @@ function EmptyPreview({ message }: { message: string }) {
   return (
     <div className={`${cs.dialog.empty} h-full`}>
       <div className="text-center">
-        <svg
+        <AppIcon
+          name="clock"
+          size="feature"
           className={cs.dialog.emptyIcon}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={1.5}
-            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
+          aria-hidden="true"
+        />
         <p>{message}</p>
       </div>
     </div>
@@ -229,7 +225,7 @@ function PreviewDetails({ previewData }: { previewData: IVersionWithData }) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h4 className="font-medium text-white">
+        <h4 className="text-text-theme-primary font-medium">
           Version {previewData.version} Details
         </h4>
         <span className="text-text-theme-secondary text-sm">
@@ -239,8 +235,8 @@ function PreviewDetails({ previewData }: { previewData: IVersionWithData }) {
 
       {previewData.notes && (
         <div className={cs.dialog.infoPanel}>
-          <div className="mb-1 text-xs text-slate-400">Notes:</div>
-          <div className="text-white">{previewData.notes}</div>
+          <div className="text-text-theme-secondary mb-1 text-xs">Notes:</div>
+          <div className="text-text-theme-primary">{previewData.notes}</div>
         </div>
       )}
 
@@ -280,7 +276,7 @@ function PreviewSummaryItem({
   return (
     <div className={cs.dialog.infoPanel}>
       <div className="text-text-theme-secondary mb-1 text-xs">{label}</div>
-      <div className="text-white">{value}</div>
+      <div className="text-text-theme-primary">{value}</div>
     </div>
   );
 }
@@ -311,7 +307,7 @@ function RevertButton({
     >
       {isReverting ? (
         <span className="flex items-center gap-2">
-          <SpinnerIcon className="h-4 w-4 animate-spin" />
+          <SpinnerIcon size="inline" />
           Reverting...
         </span>
       ) : (

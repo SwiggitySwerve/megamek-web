@@ -13,6 +13,7 @@
 import React from 'react';
 
 import { Card, Badge } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { IAssignment, ForcePosition } from '@/types/force';
 import { IPilot, IPilotSkills } from '@/types/pilot';
 
@@ -156,7 +157,8 @@ export function AssignmentSlot({
               className="hover:bg-surface-theme-elevated text-text-theme-muted hover:text-text-theme-secondary rounded p-1 opacity-0 transition-opacity group-hover:opacity-100"
               title="Clear assignment"
             >
-              <svg
+              <SvgIcon
+                size="inline"
                 className="h-4 w-4"
                 fill="none"
                 stroke="currentColor"
@@ -168,7 +170,7 @@ export function AssignmentSlot({
                   strokeWidth={2}
                   d="M6 18L18 6M6 6l12 12"
                 />
-              </svg>
+              </SvgIcon>
             </button>
           )}
         </div>

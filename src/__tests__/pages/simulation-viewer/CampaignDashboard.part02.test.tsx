@@ -253,42 +253,42 @@ describe('CampaignDashboard', () => {
     });
   });
 
-  describe('Dark Mode', () => {
-    it('dashboard container has dark mode background class', () => {
+  describe('Semantic palette', () => {
+    it('uses the semantic deep surface token for the dashboard container', () => {
       renderDashboard();
       expect(screen.getByTestId('campaign-dashboard')).toHaveClass(
-        'dark:bg-gray-900',
+        'bg-surface-deep',
       );
     });
 
-    it('section headings have dark mode text color', () => {
+    it('uses the semantic primary-text token for section headings', () => {
       renderDashboard();
       const headings = screen.getAllByTestId('section-heading');
       headings.forEach((heading) => {
-        expect(heading).toHaveClass('dark:text-gray-200');
+        expect(heading).toHaveClass('text-text-theme-primary');
       });
     });
 
-    it('dashboard title has dark mode text class', () => {
+    it('uses the semantic primary-text token for the dashboard title', () => {
       renderDashboard();
       expect(screen.getByTestId('dashboard-title')).toHaveClass(
-        'dark:text-gray-100',
+        'text-text-theme-primary',
       );
     });
 
-    it('performer cards have dark mode background', () => {
+    it('uses the semantic surface token for performer cards', () => {
       renderDashboard();
       const cards = screen.getAllByTestId('performer-card');
       cards.forEach((card) => {
-        expect(card).toHaveClass('dark:bg-gray-800');
+        expect(card).toHaveClass('bg-surface-base');
       });
     });
 
-    it('performer cards have dark mode border', () => {
+    it('uses the semantic border token for performer cards', () => {
       renderDashboard();
       const cards = screen.getAllByTestId('performer-card');
       cards.forEach((card) => {
-        expect(card).toHaveClass('dark:border-gray-700');
+        expect(card).toHaveClass('border-border-theme');
       });
     });
   });

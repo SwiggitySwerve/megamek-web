@@ -57,7 +57,7 @@ function resolveFillPercent(current: number, maximum: number): number {
     return 0;
   }
 
-  return Math.min(100, (current / maximum) * 100);
+  return Math.min(100, Math.max(0, (current / maximum) * 100));
 }
 
 function resolveExpectedFrontMaximum(

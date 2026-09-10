@@ -340,7 +340,107 @@ describe('MobileEquipmentRow', () => {
     it('should show lock icon for non-removable equipment', () => {
       const item = createItem({ isRemovable: false });
       render(<MobileEquipmentRow {...defaultProps} item={item} />);
-      expect(screen.getByText('🔒')).toBeInTheDocument();
+      expect(
+        document.querySelector('[data-icon-name="lock"]'),
+      ).toBeInTheDocument();
     });
+  });
+});
+
+describe('Mobile equipment keyboard and ownership', () => {
+  const item: MobileEquipmentItem = {
+    instanceId: 'laser-mobile',
+    name: 'Medium Laser',
+    category: EquipmentCategory.ENERGY_WEAPON,
+    weight: 1,
+    criticalSlots: 1,
+    isAllocated: true,
+    location: 'Left Arm',
+    isRemovable: true,
+    isOmniPodMounted: false,
+  };
+
+  it('selects and confirms removal with named keyboard actions', async () => {
+    const user = userEvent.setup();
+    const onSelect = jest.fn();
+    const onRemove = jest.fn();
+    render(
+      <MobileEquipmentRow
+        item={item}
+        onSelect={onSelect}
+        onRemove={onRemove}
+      />,
+    );
+    const select = screen.getByRole('button', {
+      name: 'Select Medium Laser in Left Arm',
+    });
+    select.focus();
+    await user.keyboard('{Enter}');
+    expect(onSelect).toHaveBeenCalledTimes(1);
+    screen
+      .getByRole('button', { name: 'Remove Medium Laser from Left Arm' })
+      .focus();
+    await user.keyboard('{Enter}');
+    expect(onRemove).not.toHaveBeenCalled();
+    await user.keyboard('{Enter}');
+    expect(onRemove).toHaveBeenCalledTimes(1);
+    expect(onSelect).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps fixed Omni equipment selectable without offering remove or unassign', () => {
+    render(
+      <MobileEquipmentRow
+        item={item}
+        isOmni
+        onSelect={jest.fn()}
+        onRemove={jest.fn()}
+        onUnassign={jest.fn()}
+      />,
+    );
+    expect(
+      screen.getByRole('button', { name: 'Select Medium Laser in Left Arm' }),
+    ).toBeEnabled();
+    expect(
+      screen.queryByRole('button', { name: /^Remove/ }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /^Unassign/ }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByTitle('Fixed OmniMech equipment')).toBeInTheDocument();
+  });
+
+  it('retains initial fixed placement and explains unavailable locations', async () => {
+    const onQuickAssign = jest.fn();
+    const user = userEvent.setup();
+    render(
+      <MobileEquipmentRow
+        item={{ ...item, isAllocated: false, location: undefined }}
+        isOmni
+        onQuickAssign={onQuickAssign}
+        isLocationMenuOpen
+        availableLocations={[
+          {
+            location: 'Head',
+            label: 'Head',
+            availableSlots: 0,
+            canFit: false,
+            reason: 'No free critical slots',
+          },
+          {
+            location: 'Left Arm',
+            label: 'Left Arm',
+            availableSlots: 2,
+            canFit: true,
+          },
+        ]}
+      />,
+    );
+    expect(
+      screen.getByRole('button', { name: /Head No free critical slots/ }),
+    ).toBeDisabled();
+    const arm = screen.getByRole('button', { name: /Left Arm 2 free/ });
+    arm.focus();
+    await user.keyboard('{Enter}');
+    expect(onQuickAssign).toHaveBeenCalledWith('Left Arm');
   });
 });

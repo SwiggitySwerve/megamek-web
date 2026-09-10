@@ -2,6 +2,7 @@ import React from 'react';
 
 import type { BaseArmorLocationProps } from '../shared/ArmorVariantRenderHelpers';
 
+import { darkenColor } from '../shared/ArmorFills';
 import { ArmorLocationInteractionGroup } from '../shared/ArmorLocationInteractionGroup';
 import {
   resolveTacticalLocationViewModel,
@@ -177,7 +178,10 @@ function TacticalFrontSection({
         y={frontFillY}
         width={pos.width}
         height={frontFillHeight}
-        fill={frontColor}
+        data-armor-fill={viewModel.location + '-front'}
+        data-armor-fill-ratio={frontPercent / 100}
+        data-armor-fill-section="front"
+        fill={darkenColor(frontColor, 0.42)}
         opacity={0.8}
         className="transition-all duration-300"
       />
@@ -207,7 +211,7 @@ function TacticalFrontSection({
         x={center.x}
         y={pos.y + frontSectionHeight / 2 + (isHead ? 3 : 4)}
         size={isHead ? 10 : showRear ? 12 : 14}
-        color={frontColor}
+        color="#a5f3fc"
       />
 
       {!isHead && (
@@ -273,7 +277,10 @@ function TacticalRearSection({
         y={rearFillY}
         width={pos.width}
         height={rearFillHeight}
-        fill={rearColor}
+        data-armor-fill={viewModel.location + '-rear'}
+        data-armor-fill-ratio={rearPercent / 100}
+        data-armor-fill-section="rear"
+        fill={darkenColor(rearColor, 0.42)}
         opacity={0.8}
         className="transition-all duration-300"
       />
@@ -303,7 +310,7 @@ function TacticalRearSection({
         x={center.x}
         y={dividerY + rearSectionHeight / 2 + 4}
         size={10}
-        color={rearColor}
+        color="#a5f3fc"
       />
 
       <BarGauge

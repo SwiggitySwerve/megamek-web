@@ -48,16 +48,17 @@ export function SyncStatusIndicator({
     syncing: {
       icon: <CloudArrowUpIcon className="h-4 w-4" />,
       bgClass: 'bg-blue-500/10 hover:bg-blue-500/20 border-blue-500/30',
-      dotClass: 'bg-blue-500',
+      dotClass: 'bg-accent',
       textClass: 'text-blue-400',
       label: 'Syncing',
       pulseClass: 'animate-pulse',
     },
     offline: {
       icon: <CloudOffIcon className="h-4 w-4" />,
-      bgClass: 'bg-gray-500/10 hover:bg-gray-500/20 border-gray-500/30',
-      dotClass: 'bg-gray-500',
-      textClass: 'text-gray-400',
+      bgClass:
+        'bg-surface-raised/10 hover:bg-surface-raised/20 border-border-theme-strong/30',
+      dotClass: 'bg-surface-raised',
+      textClass: 'text-text-theme-secondary',
       label: 'Offline',
     },
     error: {

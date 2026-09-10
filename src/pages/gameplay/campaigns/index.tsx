@@ -16,6 +16,7 @@ import type {
 import type { ICampaignSummary } from '@/types/campaign/SerializedCampaign';
 
 import { PageLayout, Card, Button, EmptyState } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { readCampaignListOmissionsFromResponse } from '@/lib/campaign/persistence';
 import { CampaignCoopEntryPanel } from '@/pages-modules/gameplay/campaigns/CampaignCoopEntryPanel';
 import { useCampaignPersistenceStore } from '@/stores/campaign/useCampaignPersistenceStore';
@@ -298,7 +299,8 @@ export default function CampaignsListPage(): React.ReactElement {
           onClick={handleCreateCampaign}
           data-testid="create-campaign-btn"
           leftIcon={
-            <svg
+            <SvgIcon
+              size="inline"
               className="h-4 w-4"
               fill="none"
               stroke="currentColor"
@@ -310,7 +312,7 @@ export default function CampaignsListPage(): React.ReactElement {
                 strokeWidth={2}
                 d="M12 4v16m8-8H4"
               />
-            </svg>
+            </SvgIcon>
           }
         >
           New Campaign
@@ -348,7 +350,8 @@ export default function CampaignsListPage(): React.ReactElement {
         <EmptyState
           icon={
             <div className="bg-surface-raised/50 mx-auto flex h-16 w-16 items-center justify-center rounded-full">
-              <svg
+              <SvgIcon
+                size="feature"
                 className="text-text-theme-muted h-8 w-8"
                 fill="none"
                 stroke="currentColor"
@@ -360,7 +363,7 @@ export default function CampaignsListPage(): React.ReactElement {
                   strokeWidth={1.5}
                   d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
                 />
-              </svg>
+              </SvgIcon>
             </div>
           }
           title="No campaigns yet"

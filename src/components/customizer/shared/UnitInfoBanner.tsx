@@ -1,21 +1,21 @@
 /**
  * Unit Info Banner Component
  *
- * Modular stat box display that flows and wraps as space permits.
- * Uses balanced grid for even row distribution when wrapping.
- * Single responsive component for both mobile and desktop.
+ * Unit identity and grouped movement, capacity, and combat readouts.
+ * Detailed mobile readouts can be expanded without displacing the editor.
  *
  * @spec openspec/specs/unit-info-banner/spec.md
  */
 
-import React from 'react';
+import React, { useId, useState } from 'react';
 
-import { BalancedGrid } from '@/components/common/BalancedGrid';
+import { AppIcon } from '@/components/ui/AppIcon';
 import { CustomizerTabId } from '@/hooks/useCustomizerRouter';
 import { UnitValidationState } from '@/hooks/useUnitValidation';
 import { TechBaseMode } from '@/types/construction/TechBaseConfiguration';
 import { ValidationStatus } from '@/utils/colors/statusColors';
 
+import workbenchStyles from '../CustomizerWorkbench.module.css';
 import { TechBaseBadge } from './TechBaseBadge';
 import { ValidationSummary } from './ValidationSummary';
 
@@ -51,6 +51,8 @@ interface UnitInfoBannerProps {
   validation?: UnitValidationState;
   onValidationNavigate?: (tabId: CustomizerTabId) => void;
   className?: string;
+  actions?: React.ReactNode;
+  compact?: boolean;
 }
 
 // =============================================================================
@@ -59,24 +61,17 @@ interface UnitInfoBannerProps {
 
 const styles = {
   label:
-    'text-[9px] sm:text-[10px] font-medium text-text-theme-secondary uppercase tracking-wider',
-  // Instrument strip color ramp (command-screen focus doctrine, principle 9):
-  // neutral luminance for in-budget values; color is reserved for out-of-budget
-  // / invalid states only. The old decorative ramp (BV cyan, ENGINE orange,
-  // HEAT green) is collapsed to the neutral primary token so "over budget"
-  // (amber/red) is the only signal that draws the eye.
+    'text-[10px] font-medium text-text-theme-secondary uppercase tracking-wider',
   value: {
     normal: 'text-text-theme-primary',
     warning: 'text-amber-400',
     error: 'text-red-400',
-    // success = heat within dissipation: no longer green-highlighted, it is the
-    // normal in-budget state.
     success: 'text-text-theme-primary',
     engine: 'text-text-theme-primary',
     bv: 'text-text-theme-primary',
   },
-  muted: 'text-slate-500',
-  box: 'flex flex-col items-center px-2 sm:px-3 py-0.5 sm:py-1 bg-surface-raised/50 rounded',
+  muted: 'text-text-theme-secondary',
+  box: 'flex min-w-0 flex-col gap-0.5 tabular-nums',
 } as const;
 
 function statTestId(label: string): string {
@@ -155,7 +150,11 @@ export function UnitInfoBanner({
   validation,
   onValidationNavigate,
   className = '',
+  actions,
+  compact = false,
 }: UnitInfoBannerProps): React.ReactElement {
+  const [showReadouts, setShowReadouts] = useState(false);
+  const readoutsId = useId();
   const weightStatus: 'normal' | 'warning' | 'error' =
     stats.weightUsed > stats.tonnage
       ? 'error'
@@ -176,60 +175,124 @@ export function UnitInfoBanner({
   const hasRunPlus = stats.maxRunMP && stats.maxRunMP > stats.runMP;
 
   return (
-    <div
-      className={`bg-surface-base border-border-theme-subtle rounded-lg border px-2 py-1.5 sm:px-3 sm:py-2 ${className}`}
+    <section
+      aria-label="Unit status"
+      className={`${workbenchStyles.identityBanner} ${compact ? workbenchStyles.compactMetrics : ''} ${className}`}
     >
-      <div className="mb-1.5 flex items-center gap-2">
-        <h2 className="truncate text-sm font-bold text-white sm:text-base">
-          {stats.name}
-        </h2>
-        <TechBaseBadge techBaseMode={stats.techBaseMode} />
-        {validation && (
-          <ValidationSummary
-            validation={validation}
-            onNavigate={onValidationNavigate}
-          />
-        )}
+      {!compact && (
+        <div className="flex min-w-0 items-center justify-between gap-3">
+          <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
+            <h2
+              title={stats.name}
+              className="text-text-theme-primary min-w-0 truncate text-lg font-semibold tracking-tight"
+            >
+              {stats.name}
+            </h2>
+            <TechBaseBadge techBaseMode={stats.techBaseMode} />
+            {validation && (
+              <ValidationSummary
+                validation={validation}
+                onNavigate={onValidationNavigate}
+              />
+            )}
+          </div>
+          {actions}
+        </div>
+      )}
+      {!compact && (
+        <button
+          type="button"
+          className="text-text-theme-secondary flex min-h-11 w-full items-center justify-between gap-2 text-xs sm:hidden"
+          aria-expanded={showReadouts}
+          aria-controls={readoutsId}
+          onClick={() => setShowReadouts((value) => !value)}
+        >
+          <span className="tabular-nums">
+            {stats.tonnage}t · {stats.walkMP} / {stats.runMP} / {stats.jumpMP}{' '}
+            MP
+          </span>
+          <span>
+            {showReadouts ? 'Hide readouts' : 'Show readouts'}{' '}
+            <AppIcon
+              name="chevron-down"
+              size="inline"
+              aria-hidden="true"
+              className={showReadouts ? 'rotate-180' : ' '}
+            />
+          </span>
+        </button>
+      )}
+      <div
+        id={readoutsId}
+        className={`${workbenchStyles.readouts} ${showReadouts || compact ? workbenchStyles.readoutsExpanded : ''}`}
+      >
+        <div
+          role="group"
+          aria-label="Movement"
+          className={workbenchStyles.readoutGroup}
+        >
+          <span className={workbenchStyles.readoutHeading}>Movement</span>
+          <div className="grid auto-cols-fr grid-flow-col gap-4">
+            <SimpleStat label="Walk" value={stats.walkMP} />
+            <SimpleStat label="Run" value={stats.runMP} />
+            {hasRunPlus && <SimpleStat label="Run+" value={stats.maxRunMP!} />}
+            <SimpleStat label="Jump" value={stats.jumpMP} />
+            <SimpleStat
+              label="Engine"
+              value={stats.engineRating}
+              status="engine"
+            />
+          </div>
+        </div>
+        <div
+          role="group"
+          aria-label="Capacity"
+          className={workbenchStyles.readoutGroup}
+        >
+          <span className={workbenchStyles.readoutHeading}>Capacity</span>
+          <div className="grid auto-cols-fr grid-flow-col gap-4">
+            <SimpleStat label="Tonnage" value={stats.tonnage} />
+            <CapacityStat
+              label="Weight"
+              current={stats.weightUsed.toFixed(1)}
+              max={stats.tonnage.toFixed(0)}
+              unit="t"
+              status={weightStatus}
+            />
+            <CapacityStat
+              label="Slots"
+              current={stats.criticalSlotsUsed}
+              max={stats.criticalSlotsTotal}
+              status={slotsStatus}
+            />
+          </div>
+        </div>
+        <div
+          role="group"
+          aria-label="Combat"
+          className={workbenchStyles.readoutGroup}
+        >
+          <span className={workbenchStyles.readoutHeading}>Combat</span>
+          <div className="grid auto-cols-fr grid-flow-col gap-4">
+            <CapacityStat
+              label="Armor"
+              current={stats.armorPoints}
+              max={stats.maxArmorPoints}
+            />
+            <CapacityStat
+              label="Heat"
+              current={stats.heatGenerated}
+              max={stats.heatDissipation}
+              status={heatStatus}
+            />
+            <SimpleStat
+              label="BV"
+              value={stats.battleValue?.toLocaleString() ?? '-'}
+              status="bv"
+            />
+          </div>
+        </div>
       </div>
-
-      {/* BalancedGrid automatically distributes items evenly across rows */}
-      <BalancedGrid minItemWidth={75} gap={6} className="sm:gap-1.5">
-        <SimpleStat label="Tonnage" value={stats.tonnage} />
-        <SimpleStat label="Walk" value={stats.walkMP} />
-        <SimpleStat label="Run" value={stats.runMP} />
-        {hasRunPlus && <SimpleStat label="Run+" value={stats.maxRunMP!} />}
-        <SimpleStat label="Jump" value={stats.jumpMP} />
-        <SimpleStat
-          label="BV"
-          value={stats.battleValue?.toLocaleString() ?? '-'}
-          status="bv"
-        />
-        <SimpleStat label="Engine" value={stats.engineRating} status="engine" />
-        <CapacityStat
-          label="Weight"
-          current={stats.weightUsed.toFixed(1)}
-          max={stats.tonnage.toFixed(0)}
-          unit="t"
-          status={weightStatus}
-        />
-        <CapacityStat
-          label="Armor"
-          current={stats.armorPoints}
-          max={stats.maxArmorPoints}
-        />
-        <CapacityStat
-          label="Slots"
-          current={stats.criticalSlotsUsed}
-          max={stats.criticalSlotsTotal}
-          status={slotsStatus}
-        />
-        <CapacityStat
-          label="Heat"
-          current={stats.heatGenerated}
-          max={stats.heatDissipation}
-          status={heatStatus}
-        />
-      </BalancedGrid>
-    </div>
+    </section>
   );
 }

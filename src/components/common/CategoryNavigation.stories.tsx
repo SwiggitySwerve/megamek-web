@@ -19,7 +19,7 @@ const meta: Meta<typeof CategoryNavigation> = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <div className="h-96 w-64 rounded border border-gray-200">
+      <div className="border-border-theme h-96 w-64 rounded border">
         <Story />
       </div>
     ),
@@ -61,7 +61,7 @@ function MockCategoryNavigation({
   }
 
   return (
-    <nav className="h-full w-full bg-gray-100 p-4">
+    <nav className="bg-surface-raised h-full w-full p-4">
       <h3 className="mb-2 text-lg font-semibold">Unit Categories</h3>
       <ul>
         <li key="all-categories" className="mb-1">
@@ -69,8 +69,8 @@ function MockCategoryNavigation({
             onClick={() => onSelectCategory(null)}
             className={`w-full rounded px-2 py-1 text-left ${
               selectedCategory === null
-                ? 'bg-blue-500 text-white'
-                : 'hover:bg-gray-200'
+                ? 'bg-accent text-on-accent'
+                : 'hover:bg-surface-raised'
             }`}
           >
             All Units
@@ -82,8 +82,8 @@ function MockCategoryNavigation({
               onClick={() => onSelectCategory(category)}
               className={`w-full rounded px-2 py-1 text-left ${
                 selectedCategory === category
-                  ? 'bg-blue-500 text-white'
-                  : 'hover:bg-gray-200'
+                  ? 'bg-accent text-on-accent'
+                  : 'hover:bg-surface-raised'
               }`}
             >
               {category}
@@ -209,7 +209,7 @@ export const ManyCategories: Story = {
   ),
   decorators: [
     (Story) => (
-      <div className="h-[500px] w-64 overflow-auto rounded border border-gray-200">
+      <div className="border-border-theme h-[500px] w-64 overflow-auto rounded border">
         <Story />
       </div>
     ),
@@ -232,7 +232,7 @@ export const WithContentPreview: Story = {
 
     return (
       <div className="flex gap-4">
-        <div className="h-96 w-64 rounded border border-gray-200">
+        <div className="border-border-theme h-96 w-64 rounded border">
           <MockCategoryNavigation
             selectedCategory={selected}
             onSelectCategory={setSelected}
@@ -280,7 +280,7 @@ export const WithCallback: Story = {
 
     return (
       <div className="flex gap-4">
-        <div className="h-96 w-64 rounded border border-gray-200">
+        <div className="border-border-theme h-96 w-64 rounded border">
           <MockCategoryNavigation
             selectedCategory={selected}
             onSelectCategory={handleSelect}
@@ -288,9 +288,11 @@ export const WithCallback: Story = {
         </div>
         <div className="flex-1">
           <h4 className="mb-2 font-semibold">Selection Log</h4>
-          <div className="space-y-1 rounded bg-gray-100 p-3 font-mono text-sm">
+          <div className="bg-surface-raised space-y-1 rounded p-3 font-mono text-sm">
             {log.length === 0 ? (
-              <p className="text-gray-500">Click a category to see events...</p>
+              <p className="text-text-theme-muted">
+                Click a category to see events...
+              </p>
             ) : (
               log.map((entry, i) => <p key={i}>{entry}</p>)
             )}

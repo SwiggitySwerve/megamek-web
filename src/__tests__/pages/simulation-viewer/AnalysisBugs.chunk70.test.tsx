@@ -341,13 +341,13 @@ describe('AnalysisBugs', () => {
   });
 
   /* ================================================================== */
-  /*  7. Dark Mode Tests                                                  */
+  /*  7. Semantic Palette Tests                                                  */
   /* ================================================================== */
-  describe('Dark Mode', () => {
-    it('page container has dark mode background', () => {
+  describe('Semantic palette', () => {
+    it('uses the semantic deep surface token for the page container', () => {
       renderPage();
       const main = screen.getByTestId('analysis-bugs-page');
-      expect(main.className).toContain('dark:bg-gray-900');
+      expect(main).toHaveClass('bg-surface-deep');
     });
   });
 });

@@ -69,7 +69,7 @@ describe('MegaMekDiagram', () => {
   it('should display rear armor labels for torso locations', () => {
     render(<MegaMekDiagram {...defaultProps} />);
 
-    expect(screen.getAllByText('R')).toHaveLength(3);
+    expect(screen.getAllByText('REAR')).toHaveLength(3);
   });
 
   it('should call onLocationClick when a location is clicked', async () => {

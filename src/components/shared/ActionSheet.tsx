@@ -114,7 +114,11 @@ function ActionSheetHeader({
 
   return (
     <div className="border-border-theme border-b px-4 py-3 text-center">
-      {title && <h2 className="text-base font-semibold text-white">{title}</h2>}
+      {title && (
+        <h2 className="text-text-theme-primary text-base font-semibold">
+          {title}
+        </h2>
+      )}
       {subtitle && (
         <p className="text-text-theme-secondary mt-0.5 text-sm">{subtitle}</p>
       )}
@@ -136,7 +140,7 @@ function ActionSheetActionButton({
       key={action.id}
       onClick={() => onSelect(action)}
       disabled={action.disabled}
-      className={`flex min-h-[48px] w-full items-center gap-3 px-4 py-3 text-left transition-colors ${action.disabled ? 'cursor-not-allowed opacity-50' : 'active:bg-surface-raised'} ${action.danger ? 'text-red-400' : 'text-white'} ${index > 0 ? 'border-border-theme/50 border-t' : ''} `}
+      className={`flex min-h-[48px] w-full items-center gap-3 px-4 py-3 text-left transition-colors ${action.disabled ? 'cursor-not-allowed opacity-50' : 'active:bg-surface-raised'} ${action.danger ? 'text-red-400' : 'text-text-theme-primary'} ${index > 0 ? 'border-border-theme/50 border-t' : ''} `}
     >
       {action.icon && (
         <span className="w-6 flex-shrink-0 text-center">{action.icon}</span>

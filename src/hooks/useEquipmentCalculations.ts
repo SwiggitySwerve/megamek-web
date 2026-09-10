@@ -14,10 +14,11 @@ import type { IMountedEquipmentInstance } from '@/types/equipment/MountedEquipme
 import { useEquipmentRegistry } from '@/hooks/useEquipmentRegistry';
 import { EquipmentCategory } from '@/types/equipment';
 import {
-  getTotalEquipmentWeight,
   getTotalEquipmentSlots,
   getEquipmentByCategory,
 } from '@/types/equipment/MountedEquipment';
+import { getEquipmentPayloadWeight } from '@/utils/equipment/equipmentWeightAccounting';
+import { getWeaponById } from '@/utils/equipment/weapons/utilities';
 
 // =============================================================================
 // Types
@@ -112,7 +113,7 @@ export function useEquipmentCalculations(
   equipment: readonly IMountedEquipmentInstance[],
 ): EquipmentCalculations {
   // Track registry readiness to recalculate when it becomes available
-  const { isReady: _registryReady } = useEquipmentRegistry();
+  const { isReady: registryReady } = useEquipmentRegistry();
 
   return useMemo(() => {
     // Separate allocated and unallocated equipment
@@ -124,12 +125,25 @@ export function useEquipmentCalculations(
     );
 
     // Calculate totals
-    const totalWeight = getTotalEquipmentWeight(equipment);
+    const totalWeight = getEquipmentPayloadWeight(equipment);
     const totalSlots = getTotalEquipmentSlots(equipment);
 
-    // Calculate heat - use item.heat if available, otherwise it should already be populated
-    // from the registry during loading
-    const totalHeat = equipment.reduce((total, item) => total + item.heat, 0);
+    const heatFor = (item: IMountedEquipmentInstance) =>
+      item.heat ||
+      (registryReady &&
+      [
+        EquipmentCategory.ENERGY_WEAPON,
+        EquipmentCategory.BALLISTIC_WEAPON,
+        EquipmentCategory.MISSILE_WEAPON,
+        EquipmentCategory.ARTILLERY,
+      ].includes(item.category)
+        ? getWeaponById(item.equipmentId)?.heat
+        : undefined) ||
+      0;
+    const totalHeat = equipment.reduce(
+      (total, item) => total + heatFor(item),
+      0,
+    );
     const itemCount = equipment.length;
 
     // Calculate per-category summaries
@@ -142,7 +156,7 @@ export function useEquipmentCalculations(
         count: items.length,
         weight: items.reduce((sum, item) => sum + item.weight, 0),
         slots: items.reduce((sum, item) => sum + item.criticalSlots, 0),
-        heat: items.reduce((sum, item) => sum + item.heat, 0),
+        heat: items.reduce((sum, item) => sum + heatFor(item), 0),
       };
     }
 
@@ -157,7 +171,7 @@ export function useEquipmentCalculations(
       unallocatedEquipment,
       allocatedEquipment,
     };
-  }, [equipment]); // Equipment changes trigger recalculation
+  }, [equipment, registryReady]);
 }
 
 /**
@@ -174,7 +188,7 @@ export function useRemainingCapacity(
   equipment: readonly IMountedEquipmentInstance[],
 ): { remainingWeight: number; remainingSlots: number } {
   return useMemo(() => {
-    const equipmentWeight = getTotalEquipmentWeight(equipment);
+    const equipmentWeight = getEquipmentPayloadWeight(equipment);
     const equipmentSlots = getTotalEquipmentSlots(equipment);
 
     // Total available slots is 78 minus actuators and fixed systems

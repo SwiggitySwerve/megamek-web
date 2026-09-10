@@ -3,6 +3,7 @@ import { useState } from 'react';
 import type { IContact, ContactStatus } from '@/types/vault';
 
 import { Card, Badge, Button, EmptyState } from '@/components/ui';
+import { SvgIcon, type IconSize } from '@/components/ui/SvgIcon';
 
 import { ContactCardActions } from './ContactDeleteDialog';
 import {
@@ -17,13 +18,19 @@ import {
   ContactFilterStats,
 } from './ContactFilters';
 
-function UsersIcon({ className = 'w-5 h-5' }: { className?: string }) {
+function UsersIcon({
+  className = '',
+  size,
+}: {
+  className?: string;
+  size?: IconSize;
+}) {
   return (
-    <svg
+    <SvgIcon
+      size={size}
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
-      strokeWidth={1.5}
       stroke="currentColor"
       className={className}
     >
@@ -32,21 +39,16 @@ function UsersIcon({ className = 'w-5 h-5' }: { className?: string }) {
         strokeLinejoin="round"
         d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
       />
-    </svg>
+    </SvgIcon>
   );
 }
 
-function ShieldExclamationIcon({
-  className = 'w-4 h-4',
-}: {
-  className?: string;
-}) {
+function ShieldExclamationIcon({ className = '' }: { className?: string }) {
   return (
-    <svg
+    <SvgIcon
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
-      strokeWidth={1.5}
       stroke="currentColor"
       className={className}
     >
@@ -55,13 +57,13 @@ function ShieldExclamationIcon({
         strokeLinejoin="round"
         d="M12 9v3.75m0-10.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285zm0 13.036h.008v.008H12v-.008z"
       />
-    </svg>
+    </SvgIcon>
   );
 }
 
-function SignalIcon({ className = 'w-3 h-3' }: { className?: string }) {
+function SignalIcon({ className = '' }: { className?: string }) {
   return (
-    <svg
+    <SvgIcon
       xmlns="http://www.w3.org/2000/svg"
       fill="currentColor"
       viewBox="0 0 24 24"
@@ -72,7 +74,7 @@ function SignalIcon({ className = 'w-3 h-3' }: { className?: string }) {
         d="M5.636 4.575a.75.75 0 010 1.061 9 9 0 000 12.728.75.75 0 01-1.06 1.06c-4.101-4.1-4.101-10.748 0-14.849a.75.75 0 011.06 0zm12.728 0a.75.75 0 011.06 0c4.101 4.1 4.101 10.749 0 14.85a.75.75 0 11-1.06-1.061 9 9 0 000-12.728.75.75 0 010-1.06zM7.757 6.697a.75.75 0 010 1.06 6 6 0 000 8.486.75.75 0 01-1.06 1.06 7.5 7.5 0 010-10.606.75.75 0 011.06 0zm8.486 0a.75.75 0 011.06 0 7.5 7.5 0 010 10.607.75.75 0 11-1.06-1.061 6 6 0 000-8.486.75.75 0 010-1.06zM9.879 8.818a.75.75 0 010 1.06 3 3 0 000 4.243.75.75 0 11-1.061 1.061 4.5 4.5 0 010-6.364.75.75 0 011.06 0zm4.242 0a.75.75 0 011.061 0 4.5 4.5 0 010 6.364.75.75 0 01-1.06-1.06 3 3 0 000-4.243.75.75 0 010-1.061zM12 10.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3z"
         clipRule="evenodd"
       />
-    </svg>
+    </SvgIcon>
   );
 }
 
@@ -127,7 +129,7 @@ function ContactCard({
                   ? 'animate-pulse bg-cyan-500'
                   : status === 'connecting'
                     ? 'animate-pulse bg-amber-500'
-                    : 'bg-slate-500'
+                    : 'bg-surface-raised'
             }`}
           />
         </div>
@@ -247,7 +249,9 @@ export function ContactList({
   if (contacts.length === 0) {
     return (
       <EmptyState
-        icon={<UsersIcon className="text-text-theme-muted mx-auto h-12 w-12" />}
+        icon={
+          <UsersIcon size="hero" className="text-text-theme-muted mx-auto" />
+        }
         title="No contacts yet"
         message="Add contacts to share vault content and sync with other MekStation users."
         action={

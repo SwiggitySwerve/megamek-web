@@ -84,7 +84,7 @@ export function TacticalUnitInspector({
   if (!projection) {
     return (
       <div
-        className={`flex items-center justify-center p-6 text-xs text-gray-400 ${className}`}
+        className={`text-text-theme-secondary flex items-center justify-center p-6 text-xs ${className}`}
         data-testid="inspector-empty"
       >
         Select a unit to inspect
@@ -94,7 +94,7 @@ export function TacticalUnitInspector({
 
   return (
     <div
-      className={`h-full overflow-y-auto bg-white ${className}`}
+      className={`bg-surface-base h-full overflow-y-auto ${className}`}
       data-testid="tactical-unit-inspector"
     >
       {projection.kind === 'friendly' && (

@@ -20,30 +20,41 @@ export function InfantryStatusBar({
 }: InfantryStatusBarProps): React.ReactElement {
   return (
     <div className="border-border-theme bg-surface-base rounded border px-4 py-2">
-      <div className="flex flex-wrap gap-4 text-xs text-gray-400">
+      <div className="text-text-theme-secondary flex flex-wrap gap-4 text-xs">
         <span>
-          <span className="font-medium text-white">{platoonStrength}</span>{' '}
+          <span className="text-text-theme-primary font-medium">
+            {platoonStrength}
+          </span>{' '}
           troopers
         </span>
         <span>
-          Ground MP: <span className="font-medium text-white">{groundMP}</span>
+          Ground MP:{' '}
+          <span className="text-text-theme-primary font-medium">
+            {groundMP}
+          </span>
         </span>
         {jumpMP > 0 && (
           <span>
-            Jump MP: <span className="font-medium text-white">{jumpMP}</span>
+            Jump MP:{' '}
+            <span className="text-text-theme-primary font-medium">
+              {jumpMP}
+            </span>
           </span>
         )}
         {fieldGuns.length > 0 && (
           <span>
             Field gun crew:{' '}
-            <span className="font-medium text-white">
+            <span className="text-text-theme-primary font-medium">
               {fieldGuns.reduce((sum, gun) => sum + gun.crewCount, 0)}
             </span>{' '}
             / {platoonStrength} troopers
           </span>
         )}
         <span>
-          Armor: <span className="font-medium text-white">{armorKit}</span>
+          Armor:{' '}
+          <span className="text-text-theme-primary font-medium">
+            {armorKit}
+          </span>
         </span>
       </div>
     </div>

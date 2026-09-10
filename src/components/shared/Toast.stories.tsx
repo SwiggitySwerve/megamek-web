@@ -188,7 +188,7 @@ export const MultipleToasts: Story = {
           <div className="flex gap-4">
             <button
               onClick={showMultiple}
-              className="bg-accent hover:bg-accent-hover rounded px-4 py-2 text-white transition-colors"
+              className="bg-accent hover:bg-accent-hover text-on-accent rounded px-4 py-2 transition-colors"
             >
               Show 4 toasts
             </button>

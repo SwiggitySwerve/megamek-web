@@ -354,7 +354,7 @@ export function NetworkedGameSurface({
         />
       )}
 
-      <div className="relative overflow-hidden rounded-lg border border-slate-700">
+      <div className="border-border-theme relative overflow-hidden rounded-lg border">
         <div className="min-h-[480px] bg-slate-100">
           <HexMapDisplay
             mapId={`networked-match-${mirrorSession.id}`}
@@ -374,7 +374,7 @@ export function NetworkedGameSurface({
         {paused && pausedInfo && <MatchPauseOverlay info={pausedInfo} />}
       </div>
 
-      <div className="flex items-center justify-between gap-3 rounded-lg border border-slate-700 bg-slate-900/40 p-3">
+      <div className="border-border-theme bg-surface-base/40 flex items-center justify-between gap-3 rounded-lg border p-3">
         {/* M3 — a spectator surface mounts NO intent controls. The
             action bar (which carries every movement / attack / phase /
             concede control) is replaced by a passive indicator so the
@@ -452,7 +452,7 @@ function NetworkedAuthorityStrip({
   return (
     <div
       data-testid="network-command-authority-projection"
-      className="flex flex-wrap gap-2 rounded-lg border border-slate-700 bg-slate-900/50 p-2 text-xs"
+      className="border-border-theme bg-surface-base/50 flex flex-wrap gap-2 rounded-lg border p-2 text-xs"
     >
       <span
         data-testid="network-command-authority-summary"
@@ -462,7 +462,7 @@ function NetworkedAuthorityStrip({
       </span>
       <span
         data-testid="network-command-authority-path"
-        className="rounded border border-slate-700 bg-slate-950/60 px-2 py-1 text-slate-300"
+        className="border-border-theme bg-surface-deep/60 text-text-theme-secondary rounded border px-2 py-1"
       >
         {projection.commandPath}
       </span>

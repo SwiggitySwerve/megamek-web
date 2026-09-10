@@ -8,6 +8,8 @@ import { logger } from '@/utils/logger';
 
 import type { PreviewToolbarActions } from './PreviewTabFrame';
 
+import { RecordSheetPreviewZoomControls } from './RecordSheetPreviewZoomControls';
+
 interface RenderUnitRecordSheetPreviewInput {
   canvas: HTMLCanvasElement;
   unitObject: IRecordSheetUnitInput;
@@ -146,27 +148,87 @@ export function RecordSheetCanvasPreview({
   scale,
   className = '',
 }: RecordSheetCanvasPreviewProps): React.ReactElement {
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const [zoom, setZoom] = React.useState(scale);
+
+  const fitToWidth = React.useCallback(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const availableWidth = container.clientWidth - 48;
+    if (availableWidth > 0) setZoom(Math.min(availableWidth / width, 3.0));
+  }, [width]);
+
+  const fitToPage = React.useCallback(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const availableWidth = container.clientWidth - 48;
+    const availableHeight = container.clientHeight - 48;
+    if (availableWidth <= 0 || availableHeight <= 0) return;
+    setZoom(Math.min(availableWidth / width, availableHeight / height, 3.0));
+  }, [height, width]);
+
+  React.useEffect(() => {
+    fitToPage();
+  }, [fitToPage]);
+
+  React.useEffect(() => {
+    const container = containerRef.current;
+    if (!container || typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(fitToPage);
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [fitToPage]);
+
+  const zoomIn = React.useCallback(
+    () => setZoom((value) => Math.min(value + 0.15, 3.0)),
+    [],
+  );
+  const zoomOut = React.useCallback(
+    () => setZoom((value) => Math.max(value - 0.15, 0.2)),
+    [],
+  );
+
   return (
     <div
       className={`record-sheet-preview ${className}`}
       style={{
+        position: 'relative',
+        height: '100%',
+        minHeight: 0,
         display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-        overflow: 'auto',
-        padding: '16px',
-        backgroundColor: '#2a2a3e',
+        flexDirection: 'column',
       }}
     >
-      <canvas
-        ref={canvasRef}
-        data-testid={testId}
+      <div
+        ref={containerRef}
         style={{
-          width: width * scale,
-          height: height * scale,
-          boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
-          backgroundColor: '#fff',
+          flex: 1,
+          minHeight: 0,
+          display: 'flex',
+          overflow: 'auto',
+          padding: '24px',
+          backgroundColor: 'var(--surface-deep)',
         }}
+      >
+        <canvas
+          ref={canvasRef}
+          data-testid={testId}
+          style={{
+            flexShrink: 0,
+            margin: 'auto',
+            width: width * zoom,
+            height: height * zoom,
+            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
+            backgroundColor: '#fff',
+          }}
+        />
+      </div>
+      <RecordSheetPreviewZoomControls
+        zoom={zoom}
+        onZoomIn={zoomIn}
+        onZoomOut={zoomOut}
+        onFitToWidth={fitToWidth}
+        onFitToPage={fitToPage}
       />
     </div>
   );

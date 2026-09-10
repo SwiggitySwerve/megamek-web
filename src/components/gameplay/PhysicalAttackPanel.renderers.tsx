@@ -79,7 +79,7 @@ export function PhysicalAttackTargetList({
               className={`min-h-[36px] w-full rounded border px-2 py-1 text-left ${
                 isSelected
                   ? 'border-blue-500 bg-blue-50 text-blue-900'
-                  : 'text-text-theme-primary border-gray-200 bg-white hover:bg-gray-50'
+                  : 'text-text-theme-primary border-border-theme-subtle bg-surface-base hover:bg-surface-base'
               }`}
               data-testid={`physical-attack-target-${target.id}`}
             >
@@ -209,8 +209,8 @@ function PhysicalAttackOptionRow({
       <div
         className={`flex items-center justify-between gap-2 rounded border px-2 py-1 ${
           isEligible
-            ? 'border-gray-200 bg-white'
-            : 'border-gray-200 bg-gray-100 opacity-60'
+            ? 'border-border-theme-subtle bg-surface-base'
+            : 'border-border-theme-subtle bg-surface-base opacity-60'
         }`}
         title={reasonTooltip || undefined}
         data-testid={`physical-attack-option-${option.attackType}-${option.limb ?? 'body'}`}
@@ -221,7 +221,7 @@ function PhysicalAttackOptionRow({
             className={`font-medium ${
               isEligible
                 ? 'text-text-theme-primary'
-                : 'text-gray-500 line-through'
+                : 'text-text-theme-muted line-through'
             }`}
           >
             {attackLabel}
@@ -240,8 +240,8 @@ function PhysicalAttackOptionRow({
           aria-label={`Declare ${attackLabel}`}
           className={`min-h-[32px] rounded px-2 py-1 text-xs font-medium focus:ring-2 focus:ring-offset-2 focus:outline-none ${
             isEligible
-              ? 'cursor-pointer bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500'
-              : 'cursor-not-allowed bg-gray-300 text-gray-500'
+              ? 'bg-accent text-on-accent hover:bg-accent-hover focus:ring-accent cursor-pointer'
+              : 'bg-surface-raised text-text-theme-muted cursor-not-allowed'
           }`}
           data-testid={`physical-attack-declare-${option.attackType}-${option.limb ?? 'body'}`}
         >

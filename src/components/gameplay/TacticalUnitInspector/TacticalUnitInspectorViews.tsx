@@ -38,23 +38,25 @@ const TARGET_BAND_COLOR: Record<string, string> = {
 
 function pilotStatusColor(projection: FriendlyProjection): string {
   if (!projection.pilotConscious) return 'text-red-600';
-  return projection.pilotWounds >= 3 ? 'text-amber-600' : 'text-gray-700';
+  return projection.pilotWounds >= 3
+    ? 'text-amber-600'
+    : 'text-text-theme-primary';
 }
 
 function heatStatusColor(heat: number): string {
   if (heat >= 20) return 'font-semibold text-red-600';
-  return heat >= 10 ? 'font-medium text-amber-600' : 'text-gray-800';
+  return heat >= 10 ? 'font-medium text-amber-600' : 'text-text-theme-primary';
 }
 
 function InfoRow({
   label,
   testId,
   children,
-  valueClassName = 'text-gray-800',
+  valueClassName = 'text-text-theme-primary',
 }: InfoRowProps): React.ReactElement {
   return (
     <div className="flex items-center justify-between text-xs">
-      <span className="text-gray-600">{label}</span>
+      <span className="text-text-theme-muted">{label}</span>
       <span className={valueClassName} data-testid={testId}>
         {children}
       </span>
@@ -87,7 +89,10 @@ function FriendlyHeader({
       >
         {projection.name}
       </div>
-      <div className="text-xs text-gray-500" data-testid="inspector-chassis">
+      <div
+        className="text-text-theme-muted text-xs"
+        data-testid="inspector-chassis"
+      >
         {projection.chassis}
       </div>
       {spotterEntry && (
@@ -162,7 +167,7 @@ function FriendlyStatusFlags({
       show: projection.shutdown,
       label: 'SHUTDOWN',
       className:
-        'rounded bg-gray-200 px-1 py-0.5 text-xs font-semibold text-gray-700',
+        'rounded bg-surface-raised px-1 py-0.5 text-xs font-semibold text-text-theme-primary',
     },
     {
       show: projection.prone,
@@ -241,7 +246,9 @@ function WeaponList({
 
   return (
     <div>
-      <div className="mb-1 text-xs font-medium text-gray-600">Weapons</div>
+      <div className="text-text-theme-muted mb-1 text-xs font-medium">
+        Weapons
+      </div>
       {weapons.map((weapon) => (
         <div
           key={weapon.weaponId}
@@ -307,12 +314,17 @@ function TargetHeader({
         {projection.name}
       </div>
       {projection.chassis !== null && (
-        <div className="text-xs text-gray-500" data-testid="inspector-chassis">
+        <div
+          className="text-text-theme-muted text-xs"
+          data-testid="inspector-chassis"
+        >
           {projection.chassis}
         </div>
       )}
       {!projection.isExact && (
-        <div className="text-xs text-gray-400 italic">Rough intel</div>
+        <div className="text-text-theme-secondary text-xs italic">
+          Rough intel
+        </div>
       )}
     </div>
   );
@@ -327,7 +339,7 @@ function DamageBandRow({
     <InfoRow
       label="Damage"
       testId="inspector-damage-band"
-      valueClassName={`font-medium ${TARGET_BAND_COLOR[projection.damageBand] ?? 'text-gray-800'}`}
+      valueClassName={`font-medium ${TARGET_BAND_COLOR[projection.damageBand] ?? 'text-text-theme-primary'}`}
     >
       {TARGET_BAND_LABEL[projection.damageBand] ?? projection.damageBand}
     </InfoRow>
@@ -377,7 +389,7 @@ function TargetStatusFlags({
       show: projection.shutdown !== null && projection.shutdown,
       label: 'SHUTDOWN',
       className:
-        'rounded bg-gray-200 px-1 py-0.5 text-xs font-semibold text-gray-700',
+        'rounded bg-surface-raised px-1 py-0.5 text-xs font-semibold text-text-theme-primary',
     },
     {
       show: projection.prone,
@@ -424,8 +436,12 @@ export function RedactedView(): React.ReactElement {
       data-testid="inspector-redacted"
       aria-label="Unknown contact — no intelligence available"
     >
-      <div className="text-sm font-medium text-gray-500">Unknown Contact</div>
-      <div className="text-xs text-gray-400">No intelligence available</div>
+      <div className="text-text-theme-muted text-sm font-medium">
+        Unknown Contact
+      </div>
+      <div className="text-text-theme-secondary text-xs">
+        No intelligence available
+      </div>
     </div>
   );
 }

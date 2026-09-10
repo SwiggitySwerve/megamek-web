@@ -79,7 +79,7 @@ export function TacticalLensControls({
       data-testid="tactical-lens-controls"
     >
       {/* Section label */}
-      <span className="text-xs font-semibold tracking-wide text-gray-500 uppercase">
+      <span className="text-text-theme-muted text-xs font-semibold tracking-wide uppercase">
         Map Lens
       </span>
 
@@ -100,7 +100,7 @@ export function TacticalLensControls({
                 'rounded px-2 py-1 text-xs font-medium transition-colors',
                 isActive
                   ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
+                  : 'bg-surface-base text-text-theme-primary hover:bg-surface-raised',
               ].join(' ')}
               aria-pressed={isActive}
               data-testid={`lens-btn-${preset.id}`}
@@ -114,7 +114,10 @@ export function TacticalLensControls({
       {/* Intensity slider — only shown when a lens is active */}
       {activeLens !== null && (
         <div className="mt-1 flex items-center gap-2">
-          <label htmlFor="lens-intensity" className="text-xs text-gray-500">
+          <label
+            htmlFor="lens-intensity"
+            className="text-text-theme-muted text-xs"
+          >
             Intensity
           </label>
           <input
@@ -128,7 +131,7 @@ export function TacticalLensControls({
             className="h-1 w-full cursor-pointer accent-blue-600"
             data-testid="lens-intensity-slider"
           />
-          <span className="w-8 text-right text-xs text-gray-500 tabular-nums">
+          <span className="text-text-theme-muted w-8 text-right text-xs tabular-nums">
             {Math.round(lensIntensity * 100)}%
           </span>
         </div>

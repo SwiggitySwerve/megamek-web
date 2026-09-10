@@ -10,6 +10,7 @@
 import { useEffect, useState } from 'react';
 
 import { Button, Badge } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { IPilot, PilotStatus } from '@/types/pilot';
 
 // =============================================================================
@@ -73,7 +74,7 @@ export function DeleteConfirmModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+        className="bg-surface-deep/80 absolute inset-0 backdrop-blur-sm"
         onClick={!isDeleting ? onCancel : undefined}
       />
 
@@ -82,7 +83,8 @@ export function DeleteConfirmModal({
         <div className="text-center">
           {/* Warning Icon */}
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-900/30">
-            <svg
+            <SvgIcon
+              size="feature"
               className="h-8 w-8 text-red-400"
               fill="none"
               stroke="currentColor"
@@ -94,7 +96,7 @@ export function DeleteConfirmModal({
                 strokeWidth={2}
                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
               />
-            </svg>
+            </SvgIcon>
           </div>
 
           <h3 className="text-text-theme-primary mb-2 text-xl font-bold">
@@ -176,7 +178,7 @@ export function EditIdentityModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+        className="bg-surface-deep/80 absolute inset-0 backdrop-blur-sm"
         onClick={!isSaving ? onCancel : undefined}
       />
 

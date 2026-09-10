@@ -12,6 +12,7 @@
 import React, { useState } from 'react';
 
 import { Badge, Button, Card } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { usePilotSelector } from '@/stores/usePilotStore';
 import {
   IPilot,
@@ -80,7 +81,8 @@ function UpgradeIcon({
   return (
     !isUpgrading &&
     !isMaxed && (
-      <svg
+      <SvgIcon
+        size="inline"
         className="h-4 w-4"
         fill="none"
         stroke="currentColor"
@@ -92,7 +94,7 @@ function UpgradeIcon({
           strokeWidth={2}
           d="M5 10l7-7m0 0l7 7m-7-7v18"
         />
-      </svg>
+      </SvgIcon>
     )
   );
 }
@@ -109,13 +111,18 @@ function SkillUpgradeDetail({
   if (isMaxed) {
     return (
       <p className="mt-1 flex items-center gap-1 text-xs text-emerald-400">
-        <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+        <SvgIcon
+          size="inline"
+          className="h-3 w-3"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
           <path
             fillRule="evenodd"
             d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
             clipRule="evenodd"
           />
-        </svg>
+        </SvgIcon>
         Maximum level reached
       </p>
     );
@@ -246,7 +253,8 @@ export function PilotProgressionPanel({
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-text-theme-primary flex items-center gap-2 text-lg font-semibold">
-              <svg
+              <SvgIcon
+                size="control"
                 className="text-accent h-5 w-5"
                 fill="none"
                 stroke="currentColor"
@@ -258,7 +266,7 @@ export function PilotProgressionPanel({
                   strokeWidth={2}
                   d="M13 10V3L4 14h7v7l9-11h-7z"
                 />
-              </svg>
+              </SvgIcon>
               Experience Points
             </h3>
             <p className="text-text-theme-secondary mt-1 text-sm">

@@ -21,9 +21,7 @@ export function AppearanceSettings({
   onRef,
 }: SettingsSectionProps): React.ReactElement {
   const initDraftAppearance = useAppearanceStore((s) => s.initDraftAppearance);
-  const saveUITheme = useAppearanceStore((s) => s.saveUITheme);
   const saveOtherAppearance = useAppearanceStore((s) => s.saveOtherAppearance);
-  const hasUnsavedUITheme = useAppearanceStore((s) => s.hasUnsavedUITheme);
   const hasUnsavedOtherAppearance = useAppearanceStore(
     (s) => s.hasUnsavedOtherAppearance,
   );
@@ -42,8 +40,17 @@ export function AppearanceSettings({
     draftAppearance?.animationLevel ?? savedAnimationLevel;
   const effectiveCompactMode = draftAppearance?.compactMode ?? savedCompactMode;
 
-  const setDraftAccentColor = useAppearanceStore((s) => s.setDraftAccentColor);
-  const setDraftUITheme = useAppearanceStore((s) => s.setDraftUITheme);
+  const setAccentColor = useAppearanceStore((s) => s.setAccentColor);
+  const setUITheme = useAppearanceStore((s) => s.setUITheme);
+  const [colorSaveFailed, setColorSaveFailed] = React.useState(false);
+  const saveColor = (update: () => void) => {
+    try {
+      update();
+      setColorSaveFailed(false);
+    } catch {
+      setColorSaveFailed(true);
+    }
+  };
   const setDraftFontSize = useAppearanceStore((s) => s.setDraftFontSize);
   const setDraftAnimationLevel = useAppearanceStore(
     (s) => s.setDraftAnimationLevel,
@@ -58,47 +65,39 @@ export function AppearanceSettings({
     <SettingsSection
       id="appearance"
       title="Appearance"
-      description="Customize colors, fonts, and visual effects. Changes preview instantly but require saving."
+      description="Colors apply immediately and save automatically on this device. Preview and save font, motion, and spacing changes below."
       isExpanded={isExpanded}
       onToggle={onToggle}
       onRef={onRef}
     >
-      <UIThemePicker value={effectiveUITheme} onChange={setDraftUITheme} />
-
-      {hasUnsavedUITheme && (
-        <div className="flex items-center justify-between rounded-lg border border-amber-500/30 bg-amber-500/10 p-3">
-          <div className="flex items-center gap-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="h-5 w-5 text-amber-400"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
-              />
-            </svg>
-            <span className="text-sm text-amber-200">
-              Theme preview active — save to keep changes
-            </span>
-          </div>
-          <button
-            onClick={saveUITheme}
-            className="rounded-md bg-amber-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-amber-500"
-          >
-            Save Theme
-          </button>
-        </div>
-      )}
-
+      <UIThemePicker
+        value={effectiveUITheme}
+        onChange={(theme) => saveColor(() => setUITheme(theme))}
+      />
       <AccentColorPicker
         value={effectiveAccentColor}
-        onChange={setDraftAccentColor}
+        onChange={(color) => saveColor(() => setAccentColor(color))}
       />
+      {colorSaveFailed ? (
+        <div
+          role="alert"
+          className="rounded-lg border border-red-500/50 bg-red-500/10 p-3 text-sm text-red-300"
+        >
+          Couldn’t save colors on this device. Your changes apply for this
+          session.
+          <button
+            type="button"
+            className="ml-2 underline"
+            onClick={() => saveColor(() => setUITheme(effectiveUITheme))}
+          >
+            Retry saving colors
+          </button>
+        </div>
+      ) : (
+        <p role="status" className="text-text-theme-secondary text-sm">
+          Colors save automatically on this device.
+        </p>
+      )}
 
       <Select<FontSize>
         label="Font Size"
@@ -146,7 +145,7 @@ export function AppearanceSettings({
             disabled={!hasUnsavedOtherAppearance}
             className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
               hasUnsavedOtherAppearance
-                ? 'bg-accent hover:bg-accent-hover text-white'
+                ? 'bg-accent hover:bg-accent-hover text-on-accent'
                 : 'bg-surface-raised text-text-theme-muted cursor-not-allowed'
             }`}
           >

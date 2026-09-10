@@ -185,13 +185,13 @@ describe('CampaignDashboard', () => {
       it('active sort key highlights the metric in performer cards', () => {
         renderDashboard();
         const killsValues = screen.getAllByTestId('performer-kills');
-        expect(killsValues[0]).toHaveClass('text-blue-600');
+        expect(killsValues[0]).toHaveClass('text-accent');
       });
 
       it('non-active sort metrics use default text color', () => {
         renderDashboard();
         const xpValues = screen.getAllByTestId('performer-xp');
-        expect(xpValues[0]).toHaveClass('text-gray-900');
+        expect(xpValues[0]).toHaveClass('text-text-theme-primary');
       });
     });
 

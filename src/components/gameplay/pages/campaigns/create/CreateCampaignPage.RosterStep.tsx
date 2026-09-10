@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { Button, Card, Badge } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { WIZARD_REPRESENTATIVE_UNITS } from '@/lib/campaign/wizard/representativeUnits';
 import { CANONICAL_LIBRARY_SOURCE_VERSION } from '@/lib/kernelPlugin/mekstation/mekstationGamePlugin';
 import { getCustomUnitService } from '@/services/units/CustomUnitService';
@@ -254,7 +255,8 @@ export function RosterStep({
                     onClick={() => onRemoveUnit(unit.id)}
                     className="text-text-theme-muted p-1 transition-colors hover:text-red-400"
                   >
-                    <svg
+                    <SvgIcon
+                      size="inline"
                       className="h-4 w-4"
                       fill="none"
                       stroke="currentColor"
@@ -266,7 +268,7 @@ export function RosterStep({
                         strokeWidth={2}
                         d="M6 18L18 6M6 6l12 12"
                       />
-                    </svg>
+                    </SvgIcon>
                   </button>
                 </div>
               </div>
@@ -314,7 +316,8 @@ export function RosterStep({
                 >
                   <div className="flex items-center gap-3">
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400">
-                      <svg
+                      <SvgIcon
+                        size="inline"
                         className="h-4 w-4"
                         fill="none"
                         stroke="currentColor"
@@ -326,7 +329,7 @@ export function RosterStep({
                           strokeWidth={2}
                           d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                         />
-                      </svg>
+                      </SvgIcon>
                     </div>
                     <div>
                       <span className="text-text-theme-primary text-sm font-medium">
@@ -345,7 +348,8 @@ export function RosterStep({
                     onClick={() => onRemovePilot(pilot.id)}
                     className="text-text-theme-muted p-1 transition-colors hover:text-red-400"
                   >
-                    <svg
+                    <SvgIcon
+                      size="inline"
                       className="h-4 w-4"
                       fill="none"
                       stroke="currentColor"
@@ -357,7 +361,7 @@ export function RosterStep({
                         strokeWidth={2}
                         d="M6 18L18 6M6 6l12 12"
                       />
-                    </svg>
+                    </SvgIcon>
                   </button>
                 </div>
               );

@@ -421,7 +421,7 @@ export function PhysicalAttackPanel({
 
   return (
     <section
-      className={`bg-surface-base flex flex-col gap-3 border-t border-gray-200 p-3 ${className}`}
+      className={`bg-surface-base border-border-theme-subtle flex flex-col gap-3 border-t p-3 ${className}`}
       aria-label="Physical attack planning"
       data-testid="physical-attack-panel"
     >

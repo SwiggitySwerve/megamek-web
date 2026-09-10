@@ -21,7 +21,7 @@ export const InvariantCard: React.FC<{
 
   return (
     <div
-      className={`cursor-pointer rounded-lg border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md dark:border-gray-700 dark:bg-gray-800 ${FOCUS_RING_CLASSES}`}
+      className={`border-border-theme-subtle bg-surface-base cursor-pointer rounded-lg border p-4 transition-shadow hover:shadow-md ${FOCUS_RING_CLASSES}`}
       data-testid="invariant-card"
       data-status={invariant.status}
       role="button"
@@ -32,7 +32,7 @@ export const InvariantCard: React.FC<{
     >
       <div className="mb-2 flex items-center justify-between">
         <h3
-          className="mr-2 truncate text-sm font-semibold text-gray-900 dark:text-gray-100"
+          className="text-text-theme-primary mr-2 truncate text-sm font-semibold"
           data-testid="invariant-name"
           title={invariant.name}
         >
@@ -46,12 +46,12 @@ export const InvariantCard: React.FC<{
         </span>
       </div>
       <p
-        className="mb-2 line-clamp-2 text-xs text-gray-500 dark:text-gray-400"
+        className="text-text-theme-muted mb-2 line-clamp-2 text-xs"
         data-testid="invariant-description"
       >
         {invariant.description}
       </p>
-      <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+      <div className="text-text-theme-muted flex items-center justify-between text-xs">
         <span data-testid="invariant-last-checked">
           {formatTimestamp(invariant.lastChecked)}
         </span>
@@ -81,20 +81,18 @@ export const ThresholdSlider: React.FC<{
     <div className="mb-1 flex items-center justify-between">
       <label
         htmlFor={`slider-${detectorKey}`}
-        className="text-sm font-medium text-gray-700 dark:text-gray-300"
+        className="text-text-theme-secondary text-sm font-medium"
       >
         {label}
       </label>
       <span
-        className="font-mono text-sm text-gray-900 dark:text-gray-100"
+        className="text-text-theme-primary font-mono text-sm"
         data-testid={`threshold-value-${detectorKey}`}
       >
         {value}
       </span>
     </div>
-    <p className="mb-2 text-xs text-gray-500 dark:text-gray-400">
-      {description}
-    </p>
+    <p className="text-text-theme-muted mb-2 text-xs">{description}</p>
     <input
       id={`slider-${detectorKey}`}
       type="range"
@@ -102,7 +100,7 @@ export const ThresholdSlider: React.FC<{
       max={100}
       value={value}
       onChange={(event) => onChange(detectorKey, Number(event.target.value))}
-      className={`h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-200 accent-blue-600 dark:bg-gray-600 dark:accent-blue-400 ${FOCUS_RING_CLASSES}`}
+      className={`bg-surface-raised accent-accent h-2 w-full cursor-pointer appearance-none rounded-lg ${FOCUS_RING_CLASSES}`}
       data-testid={`threshold-input-${detectorKey}`}
       aria-label={`${label} threshold`}
       aria-valuemin={0}
@@ -132,7 +130,7 @@ export const ToggleSwitch: React.FC<{
     className="group flex cursor-pointer items-center justify-between"
     data-testid={`toggle-${id}`}
   >
-    <span className="text-sm text-gray-700 transition-colors group-hover:text-gray-900 dark:text-gray-300 dark:group-hover:text-gray-100">
+    <span className="text-text-theme-secondary group-hover:text-text-theme-primary text-sm transition-colors">
       {label}
     </span>
     <div className="relative">
@@ -147,7 +145,7 @@ export const ToggleSwitch: React.FC<{
         aria-checked={checked}
         aria-label={label}
       />
-      <div className="h-5 w-9 rounded-full bg-gray-300 transition-colors peer-checked:bg-blue-600 peer-focus:ring-2 peer-focus:ring-blue-500 dark:bg-gray-600 dark:peer-checked:bg-blue-500" />
+      <div className="bg-surface-raised peer-checked:bg-accent peer-focus:ring-accent h-5 w-9 rounded-full transition-colors peer-focus:ring-2" />
       <div className="absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform peer-checked:translate-x-4" />
     </div>
   </label>

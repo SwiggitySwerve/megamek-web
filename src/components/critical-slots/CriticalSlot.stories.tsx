@@ -173,7 +173,9 @@ export const MechArm: Story = {
 
     return (
       <div>
-        <h3 className="mb-4 font-bold text-white">Left Arm (12 slots)</h3>
+        <h3 className="text-text-theme-primary mb-4 font-bold">
+          Left Arm (12 slots)
+        </h3>
         <CriticalSlotsGrid
           slots={armSlots}
           onRemove={(id) => console.log('Remove', id)}

@@ -167,9 +167,12 @@ export function GmRewindPreviewDialog({
         aria-modal="true"
         aria-labelledby={titleId}
         aria-describedby={descriptionId}
-        className="bg-surface-base w-full max-w-lg rounded-lg border border-slate-700 p-4 shadow-xl"
+        className="bg-surface-base border-border-theme w-full max-w-lg rounded-lg border p-4 shadow-xl"
       >
-        <h4 id={titleId} className="text-sm font-semibold text-slate-200">
+        <h4
+          id={titleId}
+          className="text-text-theme-primary text-sm font-semibold"
+        >
           Rewind this match?
         </h4>
 
@@ -177,7 +180,7 @@ export function GmRewindPreviewDialog({
           <p
             id={descriptionId}
             data-testid="gm-rewind-pending"
-            className="mt-2 text-xs text-slate-400"
+            className="text-text-theme-secondary mt-2 text-xs"
           >
             Working out what a rewind would touch. Nothing has been changed.
           </p>
@@ -223,7 +226,7 @@ export function GmRewindPreviewDialog({
           <p
             id={confirmReasonId}
             data-testid="gm-rewind-confirm-reason"
-            className="mt-2 text-xs text-slate-500"
+            className="text-text-theme-muted mt-2 text-xs"
           >
             {armedForClick.disabledReason}
           </p>
@@ -238,7 +241,7 @@ export function GmRewindPreviewDialog({
             type="button"
             data-testid="gm-rewind-cancel"
             onClick={onCancel}
-            className={`${BUTTON_BASE} border-slate-600 bg-slate-800 text-slate-200 hover:bg-slate-700 focus:ring-slate-400`}
+            className={`${BUTTON_BASE} border-border-theme bg-surface-base text-text-theme-primary hover:bg-surface-raised focus:ring-border-theme`}
           >
             {refused || commitResult?.kind === 'committed'
               ? 'Close'

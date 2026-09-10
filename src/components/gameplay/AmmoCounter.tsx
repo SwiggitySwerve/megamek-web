@@ -61,7 +61,7 @@ export function AmmoCounter({
 
   return (
     <div
-      className={`ammo-counter rounded-lg bg-gray-50 p-4 dark:bg-gray-800 ${className}`.trim()}
+      className={`ammo-counter bg-surface-base dark:bg-surface-base rounded-lg p-4 ${className}`.trim()}
     >
       <AmmoCounterHeader
         weaponName={weaponName}

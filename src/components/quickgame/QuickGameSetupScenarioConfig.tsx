@@ -63,7 +63,7 @@ function DifficultyControl({
 
   return (
     <div>
-      <label className="mb-2 block text-sm font-medium text-gray-300">
+      <label className="text-text-theme-secondary mb-2 block text-sm font-medium">
         Difficulty
       </label>
       <div className="space-y-2">
@@ -78,7 +78,7 @@ function DifficultyControl({
           }
           className="w-full accent-cyan-500"
         />
-        <div className="flex justify-between text-xs text-gray-500">
+        <div className="text-text-theme-muted flex justify-between text-xs">
           <span>Easy</span>
           <span className="font-medium text-cyan-400">
             {DIFFICULTY_LABELS[difficulty] ?? 'Normal'} (
@@ -97,7 +97,7 @@ function FactionControl({
 }: ScenarioControlProps): React.ReactElement {
   return (
     <div>
-      <label className="mb-2 block text-sm font-medium text-gray-300">
+      <label className="text-text-theme-secondary mb-2 block text-sm font-medium">
         Enemy Faction
       </label>
       <Select
@@ -115,7 +115,7 @@ function BiomeControl({
 }: ScenarioControlProps): React.ReactElement {
   return (
     <div>
-      <label className="mb-2 block text-sm font-medium text-gray-300">
+      <label className="text-text-theme-secondary mb-2 block text-sm font-medium">
         Biome (optional)
       </label>
       <Select
@@ -136,7 +136,7 @@ function ScenarioTypeControl({
   return (
     <div>
       <label
-        className="mb-2 block text-sm font-medium text-gray-300"
+        className="text-text-theme-secondary mb-2 block text-sm font-medium"
         htmlFor="quick-game-scenario-select"
       >
         Scenario Type
@@ -164,7 +164,7 @@ function AiTierControl({
   return (
     <div>
       <label
-        className="mb-2 block text-sm font-medium text-gray-300"
+        className="text-text-theme-secondary mb-2 block text-sm font-medium"
         htmlFor="quick-game-ai-tier-select"
       >
         AI Tier
@@ -190,7 +190,7 @@ function BattleModifiersControl({
 }: ScenarioControlProps): React.ReactElement {
   return (
     <div>
-      <label className="mb-2 block text-sm font-medium text-gray-300">
+      <label className="text-text-theme-secondary mb-2 block text-sm font-medium">
         Battle Modifiers
       </label>
       <div className="flex items-center gap-4">
@@ -205,7 +205,7 @@ function BattleModifiersControl({
           }
           className="flex-1 accent-cyan-500"
         />
-        <span className="w-8 text-right text-sm text-gray-400">
+        <span className="text-text-theme-muted w-8 text-right text-sm">
           {config?.modifierCount ?? 2}
         </span>
       </div>
@@ -222,10 +222,10 @@ function NegativeModifiersToggle({
   return (
     <div className="flex items-center justify-between">
       <div>
-        <label className="text-sm font-medium text-gray-300">
+        <label className="text-text-theme-secondary text-sm font-medium">
           Allow Negative Modifiers
         </label>
-        <p className="mt-0.5 text-xs text-gray-500">
+        <p className="text-text-theme-muted mt-0.5 text-xs">
           Include modifiers that work against you
         </p>
       </div>
@@ -238,7 +238,7 @@ function NegativeModifiersToggle({
           })
         }
         className={`relative h-6 w-11 rounded-full transition-colors ${
-          allowNegativeModifiers ? 'bg-cyan-500' : 'bg-gray-600'
+          allowNegativeModifiers ? 'bg-cyan-500' : 'bg-surface-raised'
         }`}
       >
         <span
@@ -290,22 +290,22 @@ function ForceSummaryCard({
   readonly difficulty: number;
 }): React.ReactElement {
   return (
-    <Card className="mb-6 bg-gray-800/50">
+    <Card className="bg-surface-base/50 mb-6">
       <div className="p-4">
-        <h3 className="mb-2 text-sm font-medium text-gray-300">
+        <h3 className="text-text-theme-secondary mb-2 text-sm font-medium">
           Force Summary
         </h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <p className="text-gray-500">Your Force</p>
-            <p className="text-white">
+            <p className="text-text-theme-muted">Your Force</p>
+            <p className="text-text-theme-primary">
               {game?.playerForce.units.length} units,{' '}
               {game?.playerForce.totalBV.toLocaleString()} BV
             </p>
           </div>
           <div>
-            <p className="text-gray-500">Expected Opposition</p>
-            <p className="text-white">
+            <p className="text-text-theme-muted">Expected Opposition</p>
+            <p className="text-text-theme-primary">
               ~
               {Math.round(
                 (game?.playerForce.totalBV ?? 0) * difficulty,
@@ -354,10 +354,10 @@ export function ScenarioConfigStep(): React.ReactElement {
   return (
     <div className="mx-auto max-w-2xl p-4">
       <div className="mb-6">
-        <h2 className="mb-2 text-xl font-semibold text-white">
+        <h2 className="text-text-theme-primary mb-2 text-xl font-semibold">
           Configure Scenario
         </h2>
-        <p className="text-sm text-gray-400">
+        <p className="text-text-theme-muted text-sm">
           Set the difficulty and parameters for your battle.
         </p>
       </div>

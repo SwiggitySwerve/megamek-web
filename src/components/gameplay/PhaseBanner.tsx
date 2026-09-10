@@ -49,9 +49,9 @@ function getPhaseColor(phase: GamePhase): string {
     case GamePhase.Heat:
       return 'bg-yellow-600';
     case GamePhase.End:
-      return 'bg-gray-600';
+      return 'bg-surface-raised';
     default:
-      return 'bg-gray-500';
+      return 'bg-surface-raised';
   }
 }
 

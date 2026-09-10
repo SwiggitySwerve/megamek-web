@@ -74,8 +74,8 @@ const InteractiveTabs = () => {
         activeTab={active}
         onTabChange={(t) => setActive(t as typeof active)}
       />
-      <div className="rounded-b-lg border border-t-0 border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-        <p className="text-gray-700 dark:text-gray-300">
+      <div className="border-border-theme bg-surface-base rounded-b-lg border border-t-0 p-6">
+        <p className="text-text-theme-secondary">
           Active tab: <strong>{active}</strong>
         </p>
       </div>
@@ -94,7 +94,7 @@ export const DarkMode: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="dark max-w-2xl rounded-lg bg-gray-900 p-8">
+      <div className="bg-surface-deep max-w-2xl rounded-lg p-8">
         <Story />
       </div>
     ),

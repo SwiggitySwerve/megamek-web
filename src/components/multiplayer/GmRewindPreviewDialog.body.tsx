@@ -23,7 +23,7 @@ export function RewindPreviewBody({
     <div
       id={descriptionId}
       data-testid="gm-rewind-preview-blast-radius"
-      className="mt-2 text-xs text-slate-400"
+      className="text-text-theme-secondary mt-2 text-xs"
     >
       <p>{radius.summary}</p>
       {radius.artifactLines.length > 0 && (
@@ -33,7 +33,7 @@ export function RewindPreviewBody({
           ))}
         </ul>
       )}
-      <p className="mt-2 text-slate-500">
+      <p className="text-text-theme-muted mt-2">
         Nothing has been changed yet. Looking costs nothing.
       </p>
     </div>

@@ -13,7 +13,11 @@ import React, { useEffect, useState } from 'react';
 
 import type { MechConfigType } from '@/types/construction/MechConfigType';
 
-import { useCustomizerSettingsStore } from '@/stores/useCustomizerSettingsStore';
+import { AppIcon } from '@/components/ui/AppIcon';
+import {
+  resolveArmorDiagramVariant,
+  useCustomizerSettingsStore,
+} from '@/stores/useCustomizerSettingsStore';
 import { MECH_CONFIG_DISPLAY_NAMES } from '@/types/construction/MechConfigType';
 
 import {
@@ -41,8 +45,8 @@ export function ArmorDiagramSettings({
   const setDraftArmorDiagramVariant = useCustomizerSettingsStore(
     (s) => s.setDraftArmorDiagramVariant,
   );
-  const getEffectiveArmorDiagramVariant = useCustomizerSettingsStore(
-    (s) => s.getEffectiveArmorDiagramVariant,
+  const storedEffectiveVariant = useCustomizerSettingsStore(
+    (s) => s.draftCustomizer?.armorDiagramVariant ?? s.armorDiagramVariant,
   );
 
   // Track hydration to avoid SSR mismatch (server doesn't have localStorage values)
@@ -54,7 +58,7 @@ export function ArmorDiagramSettings({
 
   // Use default on server, actual value after mount
   const effectiveVariant = hasMounted
-    ? getEffectiveArmorDiagramVariant()
+    ? resolveArmorDiagramVariant(storedEffectiveVariant)
     : DEFAULT_VARIANT;
 
   // Initialize draft and mark as mounted
@@ -80,7 +84,7 @@ export function ArmorDiagramSettings({
                 onClick={() => setPreviewMechType(configType)}
                 className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-all ${
                   isSelected
-                    ? 'bg-accent text-white shadow-sm'
+                    ? 'bg-accent text-on-accent shadow-sm'
                     : 'text-text-theme-secondary hover:text-text-theme-primary hover:bg-surface-raised'
                 }`}
               >
@@ -138,27 +142,19 @@ export function ArmorDiagramSettings({
       {hasUnsavedCustomizer && (
         <div className="mt-4 flex items-center justify-between rounded-lg border border-amber-500/30 bg-amber-500/10 p-3">
           <div className="flex items-center gap-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="h-5 w-5 text-amber-400"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
-              />
-            </svg>
+            <AppIcon
+              name="info"
+              size="control"
+              className="text-amber-400"
+              aria-hidden="true"
+            />
             <span className="text-sm text-amber-200">
               Diagram style preview active — save to keep changes
             </span>
           </div>
           <button
             onClick={saveCustomizer}
-            className="rounded-md bg-amber-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-amber-500"
+            className="text-text-theme-primary rounded-md bg-amber-600 px-3 py-1.5 text-sm font-medium transition-colors hover:bg-amber-500"
           >
             Save Diagram Style
           </button>

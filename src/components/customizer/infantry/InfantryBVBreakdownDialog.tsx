@@ -14,6 +14,8 @@ import React from 'react';
 
 import type { IInfantryBVBreakdown } from '@/utils/construction/infantry/infantryBV';
 
+import { AppIcon } from '@/components/ui/AppIcon';
+
 // =============================================================================
 // Types
 // =============================================================================
@@ -54,7 +56,7 @@ function BreakdownRow({
 }: BreakdownRowProps): React.ReactElement {
   return (
     <div
-      className={`flex items-baseline justify-between ${highlight ? 'font-semibold text-white' : 'text-text-theme-secondary'}`}
+      className={`flex items-baseline justify-between ${highlight ? 'text-text-theme-primary font-semibold' : 'text-text-theme-secondary'}`}
     >
       <span>
         {label}
@@ -79,7 +81,7 @@ export function InfantryBVBreakdownDialog({
 }: InfantryBVBreakdownDialogProps): React.ReactElement {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+      className="bg-surface-deep/80 fixed inset-0 z-50 flex items-center justify-center"
       role="dialog"
       aria-modal="true"
       aria-labelledby="infantry-bv-dialog-title"
@@ -92,17 +94,18 @@ export function InfantryBVBreakdownDialog({
         <div className="mb-4 flex items-start justify-between">
           <h2
             id="infantry-bv-dialog-title"
-            className="text-xl font-semibold text-white"
+            className="text-text-theme-primary text-xl font-semibold"
           >
             Infantry Battle Value Breakdown
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="text-text-theme-secondary hover:text-white"
+            className="text-text-theme-secondary hover:text-text-theme-primary"
             aria-label="Close"
           >
-            ×
+            {' '}
+            <AppIcon name="close" size="control" aria-hidden="true" />
           </button>
         </div>
 

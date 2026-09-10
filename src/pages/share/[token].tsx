@@ -14,6 +14,7 @@ import { useEffect, useState, useCallback } from 'react';
 import type { IShareLink } from '@/types/vault';
 
 import { PageLayout, PageLoading, Card, Button } from '@/components/ui';
+import { AppIcon, type AppIconName } from '@/components/ui/AppIcon';
 
 // =============================================================================
 // Types
@@ -29,29 +30,29 @@ interface RedeemResult {
 interface ErrorPresentation {
   readonly title: string;
   readonly message: string;
-  readonly icon: string;
+  readonly icon: AppIconName;
 }
 
 const ERROR_PRESENTATIONS: Record<string, ErrorPresentation> = {
   NOT_FOUND: {
     title: 'Share Link Not Found',
     message: 'This share link does not exist or has been deleted.',
-    icon: '\u{1F50D}',
+    icon: 'search',
   },
   EXPIRED: {
     title: 'Share Link Expired',
     message: 'This share link has expired and is no longer valid.',
-    icon: '\u23F0',
+    icon: 'clock',
   },
   MAX_USES: {
     title: 'Share Link Used Up',
     message: 'This share link has reached its maximum number of uses.',
-    icon: '\u{1F4CA}',
+    icon: 'info',
   },
   INACTIVE: {
     title: 'Share Link Inactive',
     message: 'This share link has been deactivated by its owner.',
-    icon: '\u{1F512}',
+    icon: 'lock',
   },
 };
 
@@ -63,7 +64,7 @@ function errorPresentation(result: RedeemResult | null): ErrorPresentation {
     knownError ?? {
       title: 'Invalid Share Link',
       message: result?.error || 'There was a problem with this share link.',
-      icon: '\u26A0\uFE0F',
+      icon: 'warning',
     }
   );
 }
@@ -87,11 +88,16 @@ function ShareLinkErrorState({
       backLabel="Go Home"
     >
       <Card variant="dark" className="mx-auto max-w-md p-8 text-center">
-        <div className="mb-4 text-6xl">{presentation.icon}</div>
-        <h2 className="mb-2 text-xl font-bold text-white">
+        <AppIcon
+          name={presentation.icon}
+          size="hero"
+          className="mx-auto mb-4 text-red-400"
+          aria-hidden="true"
+        />
+        <h2 className="text-text-theme-primary mb-2 text-xl font-bold">
           {presentation.title}
         </h2>
-        <p className="mb-6 text-gray-400">{presentation.message}</p>
+        <p className="text-text-theme-secondary mb-6">{presentation.message}</p>
         <div className="flex justify-center gap-3">
           <Button variant="secondary" onClick={onTryAgain}>
             Try Again
@@ -155,7 +161,7 @@ function getLevelColor(level: string): string {
     case 'admin':
       return 'bg-violet-600';
     default:
-      return 'bg-gray-600';
+      return 'bg-surface-raised';
   }
 }
 
@@ -246,18 +252,25 @@ export default function ShareLinkPage(): React.JSX.Element {
       >
         <Card variant="dark" className="mx-auto max-w-md p-6">
           <div className="mb-6 text-center">
-            <div className="mb-2 text-4xl">✅</div>
+            <AppIcon
+              name="check"
+              size="feature"
+              className="mx-auto mb-2 text-green-400"
+              aria-hidden="true"
+            />
             <h2 className="text-xl font-bold text-green-400">Access Granted</h2>
           </div>
 
           <div className="space-y-4">
-            <div className="flex items-center justify-between border-b border-gray-700 py-2">
-              <span className="text-gray-400">Scope</span>
-              <span className="text-white">{formatScope(link)}</span>
+            <div className="border-border-theme flex items-center justify-between border-b py-2">
+              <span className="text-text-theme-secondary">Scope</span>
+              <span className="text-text-theme-primary">
+                {formatScope(link)}
+              </span>
             </div>
 
-            <div className="flex items-center justify-between border-b border-gray-700 py-2">
-              <span className="text-gray-400">Permission</span>
+            <div className="border-border-theme flex items-center justify-between border-b py-2">
+              <span className="text-text-theme-secondary">Permission</span>
               <span
                 className={`rounded px-2 py-1 text-xs font-medium text-white ${getLevelColor(link.level)}`}
               >
@@ -266,34 +279,34 @@ export default function ShareLinkPage(): React.JSX.Element {
             </div>
 
             {link.label && (
-              <div className="flex items-center justify-between border-b border-gray-700 py-2">
-                <span className="text-gray-400">Label</span>
-                <span className="text-white">{link.label}</span>
+              <div className="border-border-theme flex items-center justify-between border-b py-2">
+                <span className="text-text-theme-secondary">Label</span>
+                <span className="text-text-theme-primary">{link.label}</span>
               </div>
             )}
 
-            <div className="flex items-center justify-between border-b border-gray-700 py-2">
-              <span className="text-gray-400">Uses</span>
-              <span className="text-white">
+            <div className="border-border-theme flex items-center justify-between border-b py-2">
+              <span className="text-text-theme-secondary">Uses</span>
+              <span className="text-text-theme-primary">
                 {link.useCount}
                 {link.maxUses ? ` / ${link.maxUses}` : ''}
               </span>
             </div>
 
             {link.expiresAt && (
-              <div className="flex items-center justify-between border-b border-gray-700 py-2">
-                <span className="text-gray-400">Expires</span>
-                <span className="text-white">
+              <div className="border-border-theme flex items-center justify-between border-b py-2">
+                <span className="text-text-theme-secondary">Expires</span>
+                <span className="text-text-theme-primary">
                   {new Date(link.expiresAt).toLocaleDateString()}
                 </span>
               </div>
             )}
           </div>
 
-          <div className="mt-6 rounded-lg bg-gray-900 p-4">
-            <p className="text-center text-sm text-gray-400">
+          <div className="bg-surface-deep mt-6 rounded-lg p-4">
+            <p className="text-text-theme-secondary text-center text-sm">
               You now have{' '}
-              <span className="font-medium text-white">
+              <span className="text-text-theme-primary font-medium">
                 {formatLevel(link.level)}
               </span>{' '}
               access to the shared content. The content should be available in

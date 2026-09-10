@@ -45,7 +45,7 @@ function moraleClasses(state: MoraleState): string {
     case 1:
       return 'bg-amber-500/20 text-amber-400';
     case 2:
-      return 'bg-slate-500/20 text-slate-300';
+      return 'bg-surface-raised/20 text-text-theme-secondary';
     case 3:
       return 'bg-sky-500/20 text-sky-400';
     default:

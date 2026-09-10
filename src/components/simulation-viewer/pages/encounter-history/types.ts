@@ -118,9 +118,9 @@ export const OUTCOME_COLORS: Record<IBattle['outcome'], string> = {
 };
 
 export const TIER_COLORS: Record<IKeyMoment['tier'], string> = {
-  critical: 'bg-red-600 text-white',
-  major: 'bg-amber-500 text-white',
-  minor: 'bg-blue-500 text-white',
+  critical: 'bg-red-600 text-on-accent',
+  major: 'bg-amber-500 text-on-accent',
+  minor: 'bg-blue-500 text-on-accent',
 };
 
 export const STATUS_COLORS: Record<string, string> = {
@@ -196,12 +196,12 @@ export function getDamageIntensityClass(
   damage: number,
   maxDamage: number,
 ): string {
-  if (damage === 0 || maxDamage === 0) return 'bg-gray-50 dark:bg-gray-800';
+  if (damage === 0 || maxDamage === 0) return 'bg-surface-deep ';
   const ratio = damage / maxDamage;
   if (ratio < 0.25) return 'bg-red-100 dark:bg-red-900/30';
   if (ratio < 0.5) return 'bg-red-200 dark:bg-red-800/40';
   if (ratio < 0.75) return 'bg-red-400 dark:bg-red-700/50';
-  return 'bg-red-600 dark:bg-red-500/70 text-white';
+  return 'bg-red-600 dark:bg-red-500/70 text-on-accent';
 }
 
 /** Resolve a unit ID to its display name from the battle's forces. */

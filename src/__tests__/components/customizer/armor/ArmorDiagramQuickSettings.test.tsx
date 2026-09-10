@@ -67,7 +67,7 @@ describe('ArmorDiagramQuickSettings', () => {
     await user.click(screen.getByRole('button', { expanded: false }));
 
     expect(screen.getByRole('listbox')).toBeInTheDocument();
-    expect(screen.getAllByRole('option')).toHaveLength(5);
+    expect(screen.getAllByRole('option')).toHaveLength(4);
   });
 
   it('displays all variant options in dropdown', async () => {
@@ -82,7 +82,9 @@ describe('ArmorDiagramQuickSettings', () => {
     expect(options[1]).toHaveTextContent('Glow');
     expect(options[2]).toHaveTextContent('HUD');
     expect(options[3]).toHaveTextContent('Chromatic');
-    expect(options[4]).toHaveTextContent('MegaMek');
+    expect(
+      screen.queryByRole('option', { name: 'MegaMek' }),
+    ).not.toBeInTheDocument();
   });
 
   it('calls setArmorDiagramVariant when option selected', async () => {
@@ -169,9 +171,9 @@ describe('ArmorDiagramQuickSettings', () => {
     render(<ArmorDiagramQuickSettings />);
 
     await user.click(screen.getByRole('button', { expanded: false }));
-    await user.click(screen.getByRole('option', { name: 'MegaMek' }));
+    await user.click(screen.getByRole('option', { name: 'Chromatic' }));
 
-    expect(mockSetArmorDiagramVariant).toHaveBeenCalledWith('megamek');
+    expect(mockSetArmorDiagramVariant).toHaveBeenCalledWith('premium-material');
     expect(mockSetArmorDiagramVariant).toHaveBeenCalledTimes(1);
   });
 });

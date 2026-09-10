@@ -165,14 +165,14 @@ function UnreachableHoverTooltip({
 }): React.ReactElement {
   return (
     <div
-      className="pointer-events-none absolute top-2 left-1/2 max-w-[260px] -translate-x-1/2 rounded bg-slate-900/90 px-2 py-1 text-xs font-medium text-slate-100 shadow"
+      className="bg-surface-deep/90 text-text-theme-primary pointer-events-none absolute top-2 left-1/2 max-w-[260px] -translate-x-1/2 rounded px-2 py-1 text-xs font-medium shadow"
       data-testid="hex-unreachable-tooltip"
       role="tooltip"
     >
       <div>Unreachable</div>
       {reason && (
         <div
-          className="mt-0.5 text-[11px] font-normal text-slate-200"
+          className="text-text-theme-primary mt-0.5 text-[11px] font-normal"
           data-testid="hex-unreachable-tooltip-reason"
         >
           {reason}
@@ -217,7 +217,7 @@ function MovementHoverTooltip({
 
   return (
     <div
-      className="pointer-events-none absolute top-2 left-1/2 max-w-[300px] -translate-x-1/2 rounded bg-slate-950/90 px-3 py-2 text-xs text-slate-100 shadow"
+      className="bg-surface-deep/90 text-text-theme-primary pointer-events-none absolute top-2 left-1/2 max-w-[300px] -translate-x-1/2 rounded px-3 py-2 text-xs shadow"
       data-testid="hex-movement-tooltip"
       role="tooltip"
     >
@@ -295,7 +295,7 @@ function CombatHoverTooltip({
 
   return (
     <div
-      className="pointer-events-none absolute top-2 left-1/2 max-w-[300px] -translate-x-1/2 rounded bg-slate-950/90 px-3 py-2 text-xs text-slate-100 shadow"
+      className="bg-surface-deep/90 text-text-theme-primary pointer-events-none absolute top-2 left-1/2 max-w-[300px] -translate-x-1/2 rounded px-3 py-2 text-xs shadow"
       data-testid="hex-combat-tooltip"
       role="tooltip"
     >

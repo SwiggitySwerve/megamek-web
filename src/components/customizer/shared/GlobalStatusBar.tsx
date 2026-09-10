@@ -9,6 +9,8 @@
 
 import React from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
+
 // =============================================================================
 // Types
 // =============================================================================
@@ -61,7 +63,11 @@ export function GlobalStatusBar({
         <div className="flex items-center gap-2">
           <span className="text-text-theme-secondary">Weight:</span>
           <span
-            className={isOverWeight ? 'font-medium text-red-400' : 'text-white'}
+            className={
+              isOverWeight
+                ? 'font-medium text-red-400'
+                : 'text-text-theme-primary'
+            }
           >
             {stats.weightUsed.toFixed(1)} / {stats.weightMax}t
           </span>
@@ -74,13 +80,17 @@ export function GlobalStatusBar({
         </div>
 
         {/* Divider */}
-        <div className="h-4 w-px bg-slate-600" />
+        <div className="bg-border-theme h-4 w-px" />
 
         {/* Slots */}
         <div className="flex items-center gap-2">
           <span className="text-text-theme-secondary">Free Slots:</span>
           <span
-            className={isOverSlots ? 'font-medium text-red-400' : 'text-white'}
+            className={
+              isOverSlots
+                ? 'font-medium text-red-400'
+                : 'text-text-theme-primary'
+            }
           >
             {stats.slotsUsed} / {stats.slotsTotal}
           </span>
@@ -92,13 +102,17 @@ export function GlobalStatusBar({
         </div>
 
         {/* Divider */}
-        <div className="h-4 w-px bg-slate-600" />
+        <div className="bg-border-theme h-4 w-px" />
 
         {/* Heat */}
         <div className="flex items-center gap-2">
           <span className="text-text-theme-secondary">Heat:</span>
           <span
-            className={isOverHeat ? 'font-medium text-amber-400' : 'text-white'}
+            className={
+              isOverHeat
+                ? 'font-medium text-amber-400'
+                : 'text-text-theme-primary'
+            }
           >
             {stats.heatGenerated} / {stats.heatDissipation}
           </span>
@@ -115,7 +129,7 @@ export function GlobalStatusBar({
         {/* Capacity warnings */}
         {(isOverWeight || isOverSlots) && (
           <div className="flex items-center gap-2 text-xs">
-            <span className="text-red-400">⚠️</span>
+            <AppIcon name="warning" size="inline" aria-hidden="true" />
             <span className="text-red-400">
               {isOverWeight && 'Over Weight'}
               {isOverWeight && isOverSlots && ' • '}

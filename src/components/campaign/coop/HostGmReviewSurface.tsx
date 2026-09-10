@@ -204,9 +204,9 @@ export function HostGmReviewSurface({
       // Programmatically focusable so focus has somewhere to land when the
       // control it came from no longer exists. Never in the tab order.
       tabIndex={-1}
-      className={`rounded-xl border border-slate-700 bg-slate-900/60 p-4 ${className}`}
+      className={`border-border-theme bg-surface-deep/60 rounded-xl border p-4 ${className}`}
     >
-      <h3 className="mb-3 text-sm font-semibold tracking-wide text-slate-400 uppercase">
+      <h3 className="text-text-theme-secondary mb-3 text-sm font-semibold tracking-wide uppercase">
         GM Review — Pending Guest Proposals
       </h3>
 
@@ -259,7 +259,7 @@ export function HostGmReviewSurface({
           what makes it safe to offer to an actor whose last command was
           refused. */}
       {lifecycle?.recovery && (
-        <div className="mb-3 rounded-lg border border-slate-700 bg-slate-950/60 p-3 text-xs text-slate-300">
+        <div className="border-border-theme bg-surface-deep/60 text-text-theme-secondary mb-3 rounded-lg border p-3 text-xs">
           <p data-testid="gm-lifecycle-recovery-description">
             {lifecycle.recovery.description}
           </p>
@@ -276,7 +276,7 @@ export function HostGmReviewSurface({
             <p
               data-testid="gm-lifecycle-recovery-server-action"
               data-server-action={lifecycle.recovery.serverAction}
-              className="mt-1 text-slate-400"
+              className="text-text-theme-secondary mt-1"
             >
               Server instruction: {lifecycle.recovery.serverAction}
             </p>
@@ -302,7 +302,7 @@ export function HostGmReviewSurface({
             <p
               data-testid="gm-lifecycle-recovery-wait"
               data-recovery-code={lifecycle.recovery.code}
-              className="mt-2 text-sm font-medium text-slate-200"
+              className="text-text-theme-primary mt-2 text-sm font-medium"
             >
               {lifecycle.recovery.label}
             </p>
@@ -323,7 +323,7 @@ export function HostGmReviewSurface({
           </span>
           <span
             data-testid="host-command-authority-path"
-            className="rounded border border-slate-700 bg-slate-950/60 px-2 py-1 text-slate-300"
+            className="border-border-theme bg-surface-deep/60 text-text-theme-secondary rounded border px-2 py-1"
           >
             {authorityProjection.commandPath}
           </span>
@@ -341,7 +341,7 @@ export function HostGmReviewSurface({
       {pending.length === 0 ? (
         <p
           data-testid="host-gm-review-empty"
-          className="text-sm text-slate-500"
+          className="text-text-theme-muted text-sm"
         >
           No proposals awaiting review.
         </p>
@@ -355,19 +355,19 @@ export function HostGmReviewSurface({
             <li
               key={entry.proposal.proposalId}
               data-testid={`pending-proposal-${entry.proposal.proposalId}`}
-              className="rounded-lg border border-slate-700 bg-slate-800/60 p-3"
+              className="border-border-theme bg-surface-base/60 rounded-lg border p-3"
             >
               {/* Effect summary — what the proposal does. */}
-              <div className="text-sm font-medium text-slate-200">
+              <div className="text-text-theme-primary text-sm font-medium">
                 {entry.effectSummary}
               </div>
 
               {/* Campaign context — balance + standing + roster effect. */}
-              <dl className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-slate-400">
+              <dl className="text-text-theme-secondary mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
                 <dt>Current balance</dt>
                 <dd
                   data-testid={`proposal-balance-${entry.proposal.proposalId}`}
-                  className="text-right text-slate-300"
+                  className="text-text-theme-secondary text-right"
                 >
                   {formatCbills(entry.balanceAtSubmit)}
                 </dd>
@@ -376,14 +376,14 @@ export function HostGmReviewSurface({
                     <dt>Faction standing</dt>
                     <dd
                       data-testid={`proposal-standing-${entry.proposal.proposalId}`}
-                      className="text-right text-slate-300"
+                      className="text-text-theme-secondary text-right"
                     >
                       {entry.relevantStanding}
                     </dd>
                   </>
                 )}
                 <dt>Proposing player</dt>
-                <dd className="text-right text-slate-300">
+                <dd className="text-text-theme-secondary text-right">
                   {entry.proposal.proposingPlayerId}
                 </dd>
               </dl>
@@ -426,7 +426,7 @@ export function HostGmReviewSurface({
                   onClick={() => decide(entry, 'approve')}
                   className={
                     decisionRefused(entry, 'approve', lifecycle)
-                      ? 'cursor-not-allowed rounded-lg border border-slate-600 bg-slate-800 px-3 py-1.5 text-sm font-medium text-slate-500'
+                      ? 'border-border-theme bg-surface-base text-text-theme-muted cursor-not-allowed rounded-lg border px-3 py-1.5 text-sm font-medium'
                       : 'rounded-lg border border-emerald-500/50 bg-emerald-600/20 px-3 py-1.5 text-sm font-medium text-emerald-200 hover:bg-emerald-600/30'
                   }
                 >

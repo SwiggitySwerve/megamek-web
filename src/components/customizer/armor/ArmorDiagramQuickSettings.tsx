@@ -7,7 +7,9 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
 import {
+  resolveArmorDiagramVariant,
   useCustomizerSettingsStore,
   ArmorDiagramVariant,
 } from '@/stores/useCustomizerSettingsStore';
@@ -35,9 +37,10 @@ export function ArmorDiagramQuickSettings({
     setHasMounted(true);
   }, []);
 
-  // Use effective variant (respects draft if exists) for display
-  const getEffectiveArmorDiagramVariant = useCustomizerSettingsStore(
-    (s) => s.getEffectiveArmorDiagramVariant,
+  // Subscribe to the effective value itself so consecutive draft selections
+  // update the label without relying on unrelated local state changes.
+  const storedEffectiveVariant = useCustomizerSettingsStore(
+    (s) => s.draftCustomizer?.armorDiagramVariant ?? s.armorDiagramVariant,
   );
   const setArmorDiagramVariant = useCustomizerSettingsStore(
     (s) => s.setArmorDiagramVariant,
@@ -48,7 +51,7 @@ export function ArmorDiagramQuickSettings({
 
   // Use default on server, actual value after mount to avoid hydration mismatch
   const effectiveVariant = hasMounted
-    ? getEffectiveArmorDiagramVariant()
+    ? resolveArmorDiagramVariant(storedEffectiveVariant)
     : DEFAULT_VARIANT;
   const currentLabel = getVariantName(effectiveVariant);
 
@@ -102,19 +105,12 @@ export function ArmorDiagramQuickSettings({
         <span className="text-text-theme-primary font-medium">
           {currentLabel}
         </span>
-        <svg
-          className={`text-text-theme-secondary h-3 w-3 transition-transform ${isOpen ? 'rotate-180' : ''}`}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 9l-7 7-7-7"
-          />
-        </svg>
+        <AppIcon
+          name="chevron-down"
+          size="inline"
+          aria-hidden="true"
+          className={`transition-transform ${isOpen ? 'rotate-180' : ''}`}
+        />
       </button>
 
       {isOpen && (
@@ -139,19 +135,12 @@ export function ArmorDiagramQuickSettings({
               >
                 <span>{getVariantName(variant)}</span>
                 {isSelected && (
-                  <svg
-                    className="text-accent h-3.5 w-3.5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
+                  <AppIcon
+                    name="check"
+                    size="inline"
+                    aria-hidden="true"
+                    className="text-accent"
+                  />
                 )}
               </button>
             );

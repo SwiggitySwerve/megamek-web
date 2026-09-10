@@ -5,6 +5,7 @@
 import Link from 'next/link';
 
 import { Badge, TechBaseBadge } from '@/components/ui';
+import { AppIcon } from '@/components/ui/AppIcon';
 import { RulesLevel } from '@/types/enums/RulesLevel';
 import { TechBase } from '@/types/enums/TechBase';
 import { EquipmentCategory } from '@/types/equipment';
@@ -184,20 +185,11 @@ export function EquipmentListView({
               </div>
 
               {/* Arrow */}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
-                className="text-border-theme group-hover:text-text-theme-secondary h-3 w-3 flex-shrink-0"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M8.25 4.5l7.5 7.5-7.5 7.5"
-                />
-              </svg>
+              <AppIcon
+                name="chevron-right"
+                size="inline"
+                className="text-border-theme group-hover:text-text-theme-secondary flex-shrink-0"
+              />
             </div>
           </Link>
         );

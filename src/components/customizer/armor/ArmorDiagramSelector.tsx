@@ -9,6 +9,7 @@ import React, { useState, useEffect } from 'react';
 
 import type { LocationArmorData } from '@/types/construction/LocationArmorData';
 
+import { AppIcon } from '@/components/ui/AppIcon';
 import { MechLocation } from '@/types/construction';
 
 import {
@@ -155,22 +156,15 @@ export function ArmorDiagramSelector({
           <div className="relative">
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="bg-surface-raised hover:bg-surface-raised/80 flex items-center gap-2 rounded px-3 py-1.5 text-sm text-white transition-colors"
+              className="bg-surface-raised hover:bg-surface-raised/80 text-text-theme-primary flex items-center gap-2 rounded px-3 py-1.5 text-sm transition-colors"
             >
               <span>{VARIANT_INFO[activeVariant].name}</span>
-              <svg
-                className={`h-4 w-4 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
+              <AppIcon
+                name="chevron-down"
+                size="inline"
+                className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ' '}`}
+                aria-hidden="true"
+              />
             </button>
 
             {isDropdownOpen && (
@@ -184,21 +178,16 @@ export function ArmorDiagramSelector({
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-white">
+                      <span className="text-text-theme-primary text-sm font-medium">
                         {VARIANT_INFO[v].name}
                       </span>
                       {activeVariant === v && (
-                        <svg
-                          className="h-4 w-4 text-green-400"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
+                        <AppIcon
+                          name="check"
+                          size="inline"
+                          className="text-green-400"
+                          aria-hidden="true"
+                        />
                       )}
                     </div>
                     <p className="text-text-theme-secondary mt-0.5 text-xs">

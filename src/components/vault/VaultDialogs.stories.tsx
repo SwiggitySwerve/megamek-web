@@ -52,7 +52,7 @@ const DialogStoryHost = ({
 }: {
   children: ReactNode;
 }): ReactElement => (
-  <div className="min-h-[620px] bg-gray-950 p-8">{children}</div>
+  <div className="bg-surface-deep min-h-[620px] p-8">{children}</div>
 );
 
 const meta: Meta<typeof ShareDialog> = {

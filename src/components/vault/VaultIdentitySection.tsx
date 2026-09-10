@@ -138,7 +138,7 @@ function CreateIdentityForm({
       <button
         type="submit"
         disabled={loading}
-        className="bg-accent hover:bg-accent-hover w-full rounded-lg px-4 py-2 font-medium text-white transition-colors disabled:opacity-50"
+        className="bg-accent hover:bg-accent-hover text-on-accent w-full rounded-lg px-4 py-2 font-medium transition-colors disabled:opacity-50"
       >
         {loading ? 'Creating Identity...' : 'Create Identity'}
       </button>
@@ -205,7 +205,7 @@ function UnlockIdentityForm({
       <button
         type="submit"
         disabled={loading || !password}
-        className="bg-accent hover:bg-accent-hover w-full rounded-lg px-4 py-2 font-medium text-white transition-colors disabled:opacity-50"
+        className="bg-accent hover:bg-accent-hover text-on-accent w-full rounded-lg px-4 py-2 font-medium transition-colors disabled:opacity-50"
       >
         {loading ? 'Unlocking...' : 'Unlock Vault'}
       </button>

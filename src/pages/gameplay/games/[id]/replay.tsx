@@ -324,7 +324,7 @@ export default function GameReplayPage(): React.ReactElement {
         <title>Game Replay - MekStation</title>
       </Head>
       <div
-        className="flex h-screen flex-col bg-gray-900"
+        className="bg-surface-deep flex h-screen flex-col"
         data-testid="replay-page"
       >
         <ReplayHeader

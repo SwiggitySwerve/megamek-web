@@ -9,6 +9,8 @@
 
 import React from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
+
 import { customizerStyles as cs } from '../styles';
 
 interface CrewEditorProps {
@@ -42,7 +44,7 @@ export function CrewEditor({
             className={cs.button.stepperLeft}
             data-testid="aerospace-crew-decrease"
           >
-            -
+            <AppIcon name="remove" size="inline" aria-hidden="true" />{' '}
           </button>
           <input
             type="number"
@@ -57,7 +59,8 @@ export function CrewEditor({
             className={cs.button.stepperRight}
             data-testid="aerospace-crew-increase"
           >
-            +
+            {' '}
+            <AppIcon name="add" size="inline" aria-hidden="true" />
           </button>
           <span className={cs.text.secondary}>× 5t each</span>
         </div>
@@ -75,7 +78,7 @@ export function CrewEditor({
             className={cs.button.stepperLeft}
             data-testid="aerospace-passengers-decrease"
           >
-            -
+            <AppIcon name="remove" size="inline" aria-hidden="true" />{' '}
           </button>
           <input
             type="number"
@@ -90,7 +93,8 @@ export function CrewEditor({
             className={cs.button.stepperRight}
             data-testid="aerospace-passengers-increase"
           >
-            +
+            {' '}
+            <AppIcon name="add" size="inline" aria-hidden="true" />
           </button>
           <span className={cs.text.secondary}>× 3t each</span>
         </div>
@@ -108,7 +112,7 @@ export function CrewEditor({
             className={cs.button.stepperLeft}
             data-testid="aerospace-marines-decrease"
           >
-            -
+            <AppIcon name="remove" size="inline" aria-hidden="true" />{' '}
           </button>
           <input
             type="number"
@@ -123,7 +127,8 @@ export function CrewEditor({
             className={cs.button.stepperRight}
             data-testid="aerospace-marines-increase"
           >
-            +
+            {' '}
+            <AppIcon name="add" size="inline" aria-hidden="true" />
           </button>
           <span className={cs.text.secondary}>× 3t each</span>
         </div>

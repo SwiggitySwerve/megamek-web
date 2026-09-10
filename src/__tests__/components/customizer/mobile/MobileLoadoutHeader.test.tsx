@@ -112,8 +112,12 @@ describe('MobileLoadoutHeader', () => {
     });
 
     it('should show expand indicator', () => {
-      render(<MobileLoadoutHeader {...defaultProps} isExpanded={false} />);
-      expect(screen.getByText('▲')).toBeInTheDocument();
+      const { container } = render(
+        <MobileLoadoutHeader {...defaultProps} isExpanded={false} />,
+      );
+      expect(
+        container.querySelector('[data-icon-name="chevron-up"]'),
+      ).toBeInTheDocument();
     });
 
     it('should rotate indicator when expanded', () => {

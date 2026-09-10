@@ -4,7 +4,9 @@ import { MechLocation } from '@/types/construction';
 
 import type { BaseArmorLocationProps } from '../shared/ArmorVariantRenderHelpers';
 
+import { ArmorCapacityFill } from '../shared/ArmorCapacityFill';
 import {
+  darkenColor,
   getArmorStatusColor,
   getTorsoFrontStatusColor,
   getTorsoRearStatusColor,
@@ -127,6 +129,8 @@ interface CleanTechFrontShapeProps {
   showRear: boolean;
   geometry: CleanTechGeometry;
   colors: CleanTechColors;
+  values: CleanTechArmorValues;
+  marker: string;
 }
 
 function CleanTechFrontShape({
@@ -134,31 +138,44 @@ function CleanTechFrontShape({
   showRear,
   geometry,
   colors,
+  values,
+  marker,
 }: CleanTechFrontShapeProps): React.ReactElement {
-  if (position.path && !showRear) {
-    return (
-      <path
-        d={position.path}
-        fill={colors.fillColor}
-        stroke={colors.strokeColor}
-        strokeWidth={colors.strokeWidth}
-        className="transition-all duration-150"
-      />
-    );
-  }
-
+  const frontPosition =
+    position.path && !showRear
+      ? position
+      : { ...position, path: undefined, height: geometry.frontHeight };
   return (
-    <rect
-      x={position.x}
-      y={position.y}
-      width={position.width}
-      height={geometry.frontHeight}
-      rx={6}
-      fill={colors.fillColor}
-      stroke={colors.strokeColor}
-      strokeWidth={colors.strokeWidth}
-      className="transition-all duration-150"
-    />
+    <>
+      <ArmorCapacityFill
+        position={frontPosition}
+        current={values.current}
+        maximum={showRear ? Math.round(values.maximum * 0.75) : values.maximum}
+        color={darkenColor(colors.fillColor, 0.25)}
+        emptyColor="#0b1620"
+        marker={marker}
+        radius={6}
+      />
+      {position.path && !showRear ? (
+        <path
+          d={position.path}
+          fill="none"
+          stroke={colors.strokeColor}
+          strokeWidth={colors.strokeWidth}
+        />
+      ) : (
+        <rect
+          x={position.x}
+          y={position.y}
+          width={position.width}
+          height={geometry.frontHeight}
+          rx={6}
+          fill="none"
+          stroke={colors.strokeColor}
+          strokeWidth={colors.strokeWidth}
+        />
+      )}
+    </>
   );
 }
 
@@ -167,6 +184,8 @@ interface CleanTechRearSectionProps {
   geometry: CleanTechGeometry;
   colors: CleanTechColors;
   rear: number;
+  maximum: number;
+  marker: string;
 }
 
 function CleanTechRearSection({
@@ -174,6 +193,8 @@ function CleanTechRearSection({
   geometry,
   colors,
   rear,
+  maximum,
+  marker,
 }: CleanTechRearSectionProps): React.ReactElement {
   return (
     <>
@@ -187,13 +208,28 @@ function CleanTechRearSection({
         strokeDasharray="3 2"
         className="pointer-events-none"
       />
+      <ArmorCapacityFill
+        position={{
+          x: position.x,
+          y: geometry.rearY,
+          width: position.width,
+          height: geometry.rearHeight,
+        }}
+        current={rear}
+        maximum={maximum}
+        color={darkenColor(colors.rearFillColor, 0.25)}
+        emptyColor="#0b1620"
+        marker={marker}
+        section="rear"
+        radius={6}
+      />
       <rect
         x={position.x}
         y={geometry.rearY}
         width={position.width}
         height={geometry.rearHeight}
         rx={6}
-        fill={colors.rearFillColor}
+        fill="none"
         stroke={colors.strokeColor}
         strokeWidth={colors.strokeWidth}
         className="transition-all duration-150"
@@ -262,6 +298,8 @@ export function CleanTechLocation({
         showRear={showRear}
         geometry={geometry}
         colors={colors}
+        values={values}
+        marker={`${location}-front`}
       />
 
       <text
@@ -301,6 +339,8 @@ export function CleanTechLocation({
           geometry={geometry}
           colors={colors}
           rear={rear}
+          maximum={Math.round(maximum * 0.25)}
+          marker={`${location}-rear`}
         />
       )}
     </ArmorLocationInteractionGroup>

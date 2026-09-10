@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
 import { FOCUS_RING_CLASSES } from '@/utils/accessibility';
 
 import type { IBattle, SortDirection, SortKey } from './types';
@@ -60,12 +61,18 @@ export function BattleListToggle({
     <button
       type="button"
       onClick={onToggle}
-      className={`flex min-h-[44px] w-full items-center justify-between rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-700 lg:hidden dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 ${FOCUS_RING_CLASSES}`}
+      className={`border-border-theme-subtle bg-surface-base text-text-theme-secondary flex min-h-[44px] w-full items-center justify-between rounded-lg border px-4 py-3 text-sm font-medium lg:hidden ${FOCUS_RING_CLASSES}`}
       aria-expanded={isOpen}
       data-testid="sidebar-toggle"
     >
       <span>Battle List ({battleCount})</span>
-      <span aria-hidden="true">{isOpen ? '▾' : '▸'}</span>
+      <span aria-hidden="true">
+        {isOpen ? (
+          <AppIcon name="chevron-down" size="inline" />
+        ) : (
+          <AppIcon name="chevron-right" size="inline" />
+        )}
+      </span>
     </button>
   );
 }
@@ -81,7 +88,7 @@ export function BattleSortControls({
 }): React.ReactElement {
   return (
     <div
-      className="mb-4 flex items-center gap-1 rounded-lg bg-gray-200 p-1 dark:bg-gray-700"
+      className="bg-surface-raised mb-4 flex items-center gap-1 rounded-lg p-1"
       role="group"
       aria-label="Sort battles by"
       data-testid="sort-controls"
@@ -117,7 +124,7 @@ export function BattleListContent({
   if (battles.length === 0) {
     return (
       <p
-        className="py-8 text-center text-sm text-gray-500 italic dark:text-gray-400"
+        className="text-text-theme-muted py-8 text-center text-sm italic"
         data-testid="empty-battle-list"
       >
         No battles match the current filters.
@@ -171,8 +178,8 @@ function SortButton({
       className={[
         `flex min-h-[44px] items-center gap-1 rounded-md px-3 py-2 text-sm transition-colors md:min-h-0 md:py-1 ${FOCUS_RING_CLASSES}`,
         isActive
-          ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 shadow-sm font-medium'
-          : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200',
+          ? 'bg-surface-raised text-text-theme-primary  shadow-sm font-medium'
+          : 'text-text-theme-muted hover:text-text-theme-primary ',
       ].join(' ')}
       aria-pressed={isActive}
       data-testid={`sort-button-${option.key}`}
@@ -193,7 +200,11 @@ function SortDirectionIndicator({
       aria-label={sortDirection === 'asc' ? 'Ascending' : 'Descending'}
       data-testid="sort-direction-indicator"
     >
-      {sortDirection === 'asc' ? '↑' : '↓'}
+      {sortDirection === 'asc' ? (
+        <AppIcon name="arrow-up" size="inline" />
+      ) : (
+        <AppIcon name="arrow-down" size="inline" />
+      )}
     </span>
   );
 }
@@ -215,7 +226,7 @@ function MissionGroup({
 }): React.ReactElement {
   return (
     <div
-      className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700"
+      className="border-border-theme overflow-hidden rounded-lg border"
       data-testid={`mission-group-${missionId}`}
     >
       <MissionGroupHeader
@@ -255,14 +266,18 @@ function MissionGroupHeader({
     <button
       type="button"
       onClick={() => onToggleMission(missionId)}
-      className={`flex min-h-[44px] w-full items-center justify-between bg-gray-100 px-3 py-3 text-sm font-semibold text-gray-700 md:min-h-0 md:py-2 dark:bg-gray-800 dark:text-gray-300 ${FOCUS_RING_CLASSES}`}
+      className={`bg-surface-raised text-text-theme-secondary flex min-h-[44px] w-full items-center justify-between px-3 py-3 text-sm font-semibold md:min-h-0 md:py-2 ${FOCUS_RING_CLASSES}`}
       aria-expanded={isExpanded}
       aria-label={`${group.missionName} mission group, ${group.battles.length} battle${group.battles.length !== 1 ? 's' : ''}`}
       data-testid={`mission-group-header-${missionId}`}
     >
       <span>{group.missionName}</span>
-      <span className="text-gray-400 dark:text-gray-500" aria-hidden="true">
-        {isExpanded ? '▾' : '▸'}
+      <span className="text-text-theme-muted" aria-hidden="true">
+        {isExpanded ? (
+          <AppIcon name="chevron-down" size="inline" />
+        ) : (
+          <AppIcon name="chevron-right" size="inline" />
+        )}
       </span>
     </button>
   );
@@ -284,15 +299,15 @@ function BattleCard({
       className={[
         `w-full rounded-md border p-3 text-left transition-colors ${FOCUS_RING_CLASSES}`,
         isSelected
-          ? 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20'
-          : 'border-transparent hover:bg-gray-50 dark:hover:bg-gray-800',
+          ? 'border-accent bg-accent-muted'
+          : 'border-transparent hover:bg-surface-base ',
       ].join(' ')}
       aria-current={isSelected ? 'true' : undefined}
       aria-label={`Battle on ${new Date(battle.timestamp).toLocaleDateString()}, ${battle.outcome}, ${battle.stats.totalKills} kills`}
       data-testid={`battle-card-${battle.id}`}
     >
       <div className="mb-1 flex items-center justify-between">
-        <span className="text-xs text-gray-500 dark:text-gray-400">
+        <span className="text-text-theme-muted text-xs">
           {new Date(battle.timestamp).toLocaleDateString()}
         </span>
         <span
@@ -302,15 +317,17 @@ function BattleCard({
           {battle.outcome}
         </span>
       </div>
-      <div className="flex items-center gap-3 text-xs text-gray-600 dark:text-gray-400">
+      <div className="text-text-theme-muted flex items-center gap-3 text-xs">
         <span data-testid={`battle-duration-${battle.id}`}>
-          ⏱ {formatDuration(battle.duration)}
+          <AppIcon name="clock" size="inline" />{' '}
+          {formatDuration(battle.duration)}
         </span>
         <span data-testid={`battle-kills-${battle.id}`}>
-          ⚔ {battle.stats.totalKills} kills
+          <AppIcon name="swords" size="inline" /> {battle.stats.totalKills}{' '}
+          kills
         </span>
         <span data-testid={`battle-damage-${battle.id}`}>
-          💥 {battle.stats.totalDamage} dmg
+          <AppIcon name="impact" size="inline" /> {battle.stats.totalDamage} dmg
         </span>
       </div>
     </button>

@@ -25,6 +25,7 @@ import React, { useMemo, useState } from 'react';
 
 import type { IForceSummary } from '@/utils/gameplay/forceSummary';
 
+import { AppIcon } from '@/components/ui/AppIcon';
 import {
   FORCE_COMPARISON_METRIC_LABEL,
   FORCE_COMPARISON_METRIC_ORDER,
@@ -69,7 +70,7 @@ export interface ForceComparisonPanelProps {
  * `formatDelta` so color-blind users still parse severity (spec § 11.1).
  */
 const SEVERITY_BG: Record<DeltaSeverity, string> = {
-  low: 'bg-gray-700/40 text-gray-200',
+  low: 'bg-surface-raised/40 text-text-theme-primary',
   moderate: 'bg-amber-500/20 text-amber-300',
   high: 'bg-red-500/20 text-red-300',
 };
@@ -296,7 +297,7 @@ export function ForceComparisonPanel({
               className="text-amber-400"
               data-testid="force-comparison-warning-icon"
             >
-              ⚠
+              <AppIcon name="warning" size="inline" aria-hidden="true" />
             </span>
           )}
           <h3 className="text-text-theme-secondary text-sm font-medium tracking-wider uppercase">

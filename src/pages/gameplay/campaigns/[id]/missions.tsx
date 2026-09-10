@@ -9,6 +9,7 @@ import { useState } from 'react';
 
 import { CampaignNavigation } from '@/components/campaign/CampaignNavigation';
 import { PageLayout, Card, EmptyState, Badge } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import {
   getLoadedCampaign,
   renderPendingCampaignPage,
@@ -44,7 +45,7 @@ export function MissionCard({
       case MissionStatus.PENDING:
         return 'bg-blue-500/20 text-blue-400';
       default:
-        return 'bg-gray-500/20 text-gray-400';
+        return 'bg-surface-raised/20 text-text-theme-secondary';
     }
   };
 
@@ -269,7 +270,8 @@ export default function MissionsPage(): React.ReactElement {
         <EmptyState
           icon={
             <div className="bg-surface-raised/50 mx-auto flex h-16 w-16 items-center justify-center rounded-full">
-              <svg
+              <SvgIcon
+                size="feature"
                 className="text-text-theme-muted h-8 w-8"
                 fill="none"
                 stroke="currentColor"
@@ -281,7 +283,7 @@ export default function MissionsPage(): React.ReactElement {
                   strokeWidth={2}
                   d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
                 />
-              </svg>
+              </SvgIcon>
             </div>
           }
           title={filter === 'all' ? 'No missions' : `No ${filter} missions`}

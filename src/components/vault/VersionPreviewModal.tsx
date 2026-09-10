@@ -78,11 +78,11 @@ export function VersionPreview({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-      <div className="mx-4 flex max-h-[85vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-gray-700/50 bg-gray-800 shadow-2xl shadow-black/50">
+      <div className="border-border-theme/50 bg-surface-base mx-4 flex max-h-[85vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border shadow-2xl shadow-black/50">
         {/* Header */}
         <div className="relative flex-shrink-0 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 via-teal-500/10 to-transparent" />
-          <div className="relative border-b border-gray-700/50 p-5">
+          <div className="border-border-theme/50 relative border-b p-5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500/30 to-teal-500/20 shadow-lg shadow-cyan-500/10">
@@ -91,10 +91,10 @@ export function VersionPreview({
                   </span>
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-white">
+                  <h2 className="text-text-theme-primary text-xl font-bold">
                     Version Preview
                   </h2>
-                  <p className="mt-0.5 text-sm text-gray-400">
+                  <p className="text-text-theme-secondary mt-0.5 text-sm">
                     {version.message || 'No description'} &middot;{' '}
                     {formatRelativeTime(version.createdAt)}
                   </p>
@@ -103,7 +103,7 @@ export function VersionPreview({
               <button
                 onClick={handleClose}
                 aria-label="Close version preview"
-                className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-700/50 hover:text-white"
+                className="text-text-theme-secondary hover:bg-surface-raised/50 hover:text-text-theme-primary rounded-lg p-2 transition-colors"
               >
                 <XMarkIcon className="h-6 w-6" />
               </button>
@@ -112,19 +112,19 @@ export function VersionPreview({
         </div>
 
         {/* Meta info */}
-        <div className="flex-shrink-0 border-b border-gray-700/50 bg-gray-800/50 p-4">
+        <div className="border-border-theme/50 bg-surface-base/50 flex-shrink-0 border-b p-4">
           <div className="flex items-center gap-6 text-sm">
-            <div className="flex items-center gap-2 text-gray-400">
+            <div className="text-text-theme-secondary flex items-center gap-2">
               <UserCircleIcon className="h-4 w-4" />
               <span>Created by {getCreatorDisplay(version.createdBy)}</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-400">
+            <div className="text-text-theme-secondary flex items-center gap-2">
               <ClockIcon className="h-4 w-4" />
               <span title={formatFullDateTime(version.createdAt)}>
                 {formatFullDateTime(version.createdAt)}
               </span>
             </div>
-            <div className="flex items-center gap-2 text-gray-400">
+            <div className="text-text-theme-secondary flex items-center gap-2">
               <ServerStackIcon className="h-4 w-4" />
               <span>{formatBytes(version.sizeBytes)}</span>
             </div>
@@ -134,15 +134,15 @@ export function VersionPreview({
         {/* Content */}
         <div className="flex-1 overflow-auto p-4">
           <div className="relative">
-            <pre className="overflow-x-auto rounded-xl border border-gray-700/50 bg-gray-900/50 p-4 font-mono text-sm leading-relaxed whitespace-pre text-gray-300">
+            <pre className="border-border-theme/50 bg-surface-deep/50 text-text-theme-secondary overflow-x-auto rounded-xl border p-4 font-mono text-sm leading-relaxed whitespace-pre">
               {formattedContent}
             </pre>
           </div>
         </div>
 
         {/* Actions */}
-        <div className="flex flex-shrink-0 items-center justify-between gap-4 border-t border-gray-700/50 bg-gray-800/80 p-4">
-          <div className="flex items-center gap-2 font-mono text-xs text-gray-500">
+        <div className="border-border-theme/50 bg-surface-base/80 flex flex-shrink-0 items-center justify-between gap-4 border-t p-4">
+          <div className="text-text-theme-muted flex items-center gap-2 font-mono text-xs">
             Hash: {version.contentHash.slice(0, 16)}...
           </div>
           <div className="flex items-center gap-3">

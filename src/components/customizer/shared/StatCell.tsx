@@ -22,7 +22,7 @@ interface StatCellProps {
 }
 
 const variantStyles = {
-  default: 'text-slate-100',
+  default: 'text-text-theme-primary',
   warning: 'text-yellow-400',
   error: 'text-red-400',
   success: 'text-green-400',
@@ -40,13 +40,13 @@ export function StatCell({
 }: StatCellProps): React.ReactElement {
   return (
     <div className={`flex flex-col items-center ${className}`}>
-      <span className="text-xs tracking-wide text-slate-400 uppercase">
+      <span className="text-text-theme-secondary text-xs tracking-wide uppercase">
         {label}
       </span>
       <span className={`text-lg font-bold ${variantStyles[variant]}`}>
         {value}
         {unit && (
-          <span className="ml-0.5 text-sm font-normal text-slate-400">
+          <span className="text-text-theme-secondary ml-0.5 text-sm font-normal">
             {unit}
           </span>
         )}

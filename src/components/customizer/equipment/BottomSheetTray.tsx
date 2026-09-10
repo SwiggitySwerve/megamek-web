@@ -15,8 +15,9 @@
  * @spec c:\Users\wroll\.cursor\plans\mobile_loadout_full-screen_redesign_00a59d27.plan.md
  */
 
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useEffect } from 'react';
 
+import { useDeviceType } from '@/hooks/useDeviceType';
 import { usePersistedState, STORAGE_KEYS } from '@/hooks/usePersistedState';
 import { MechLocation } from '@/types/construction';
 
@@ -37,6 +38,7 @@ import {
 // =============================================================================
 
 interface BottomSheetTrayProps {
+  openRequest?: number;
   equipment: LoadoutEquipmentItem[];
   equipmentCount: number;
   onRemoveEquipment: (instanceId: string) => void;
@@ -77,6 +79,7 @@ const DEFAULT_STATS: MobileLoadoutStats = {
 // =============================================================================
 
 export function BottomSheetTray({
+  openRequest = 0,
   equipment,
   equipmentCount,
   onRemoveEquipment,
@@ -91,11 +94,16 @@ export function BottomSheetTray({
   stats: providedStats,
   className = '',
 }: BottomSheetTrayProps): React.ReactElement {
+  const { isMobile } = useDeviceType();
   // Persist expanded state to localStorage
   const [isExpanded, setIsExpanded] = usePersistedState(
     STORAGE_KEYS.LOADOUT_SHEET_EXPANDED,
     false,
   );
+
+  useEffect(() => {
+    if (openRequest > 0) setIsExpanded(true);
+  }, [openRequest, setIsExpanded]);
 
   // Compute stats from equipment if not provided
   const computedStats: MobileLoadoutStats = useMemo(() => {
@@ -154,6 +162,7 @@ export function BottomSheetTray({
           label: loc.label,
           availableSlots: loc.availableSlots,
           canFit: loc.canFit,
+          reason: loc.reason,
         }));
       }
 
@@ -161,14 +170,13 @@ export function BottomSheetTray({
       const item = equipment.find((e) => e.instanceId === instanceId);
       if (!item) return [];
 
-      return availableLocations
-        .filter((loc) => loc.availableSlots >= item.criticalSlots)
-        .map((loc) => ({
-          location: loc.location as string,
-          label: loc.label,
-          availableSlots: loc.availableSlots,
-          canFit: loc.canFit && loc.availableSlots >= item.criticalSlots,
-        }));
+      return availableLocations.map((loc) => ({
+        location: loc.location as string,
+        label: loc.label,
+        availableSlots: loc.availableSlots,
+        canFit: loc.canFit && loc.availableSlots >= item.criticalSlots,
+        reason: loc.reason,
+      }));
     },
     [equipment, availableLocations, getAvailableLocationsForEquipment],
   );
@@ -189,7 +197,7 @@ export function BottomSheetTray({
       <div
         className={`fixed right-0 bottom-0 left-0 z-40 ${className} `}
         style={{
-          paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+          bottom: 'calc(5rem + env(safe-area-inset-bottom, 0px))',
         }}
       >
         <MobileLoadoutHeader
@@ -200,7 +208,7 @@ export function BottomSheetTray({
       </div>
 
       {/* Expanded State: Full-Screen List */}
-      {isExpanded && (
+      {isExpanded && isMobile && (
         <MobileLoadoutList
           equipment={mobileEquipment}
           stats={computedStats}

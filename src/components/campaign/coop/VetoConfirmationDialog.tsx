@@ -102,15 +102,21 @@ export function VetoConfirmationDialog({
         // On the element carrying the role, so the dialog has a name.
         aria-labelledby={titleId}
         aria-describedby={descriptionId}
-        className="bg-surface-base w-full max-w-md rounded-lg border border-slate-700 p-4 shadow-xl"
+        className="bg-surface-base border-border-theme w-full max-w-md rounded-lg border p-4 shadow-xl"
       >
-        <h4 id={titleId} className="text-sm font-semibold text-slate-200">
+        <h4
+          id={titleId}
+          className="text-text-theme-primary text-sm font-semibold"
+        >
           Veto this proposal?
         </h4>
-        <p id={descriptionId} className="mt-2 text-xs text-slate-400">
+        <p
+          id={descriptionId}
+          className="text-text-theme-secondary mt-2 text-xs"
+        >
           {effectSummary}
         </p>
-        <p className="mt-2 text-xs text-slate-400">
+        <p className="text-text-theme-secondary mt-2 text-xs">
           The proposing player is told their proposal was vetoed. This cannot be
           undone from here.
         </p>
@@ -121,7 +127,7 @@ export function VetoConfirmationDialog({
             type="button"
             data-testid="veto-cancel"
             onClick={onCancel}
-            className="min-h-[44px] rounded-lg border border-slate-600 bg-slate-800 px-3 py-1.5 text-sm font-medium text-slate-200 hover:bg-slate-700 focus:ring-2 focus:ring-slate-400 focus:outline-none"
+            className="border-border-theme bg-surface-base text-text-theme-primary hover:bg-surface-raised focus:ring-border-theme min-h-[44px] rounded-lg border px-3 py-1.5 text-sm font-medium focus:ring-2 focus:outline-none"
           >
             Keep proposal
           </button>

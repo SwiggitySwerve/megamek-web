@@ -63,7 +63,7 @@ function getEventColor(type: GameEventType): string {
   if (RED_EVENT_TYPES.has(type)) return 'bg-red-500';
   if (type === GameEventType.UnitDestroyed) return 'bg-red-700';
   if (type === GameEventType.CriticalHit) return 'bg-orange-500';
-  return 'bg-gray-500';
+  return 'bg-surface-deep0';
 }
 
 function formatTime(timestamp: string): string {
@@ -84,7 +84,9 @@ export function QuickGameTimeline(): React.ReactElement {
 
   if (!game) {
     return (
-      <div className="p-4 text-center text-gray-400">No game in progress</div>
+      <div className="text-text-theme-muted p-4 text-center">
+        No game in progress
+      </div>
     );
   }
 
@@ -93,7 +95,9 @@ export function QuickGameTimeline(): React.ReactElement {
   if (events.length === 0) {
     return (
       <Card className="p-4">
-        <p className="text-center text-gray-400">No events recorded yet</p>
+        <p className="text-text-theme-muted text-center">
+          No events recorded yet
+        </p>
       </Card>
     );
   }
@@ -101,17 +105,21 @@ export function QuickGameTimeline(): React.ReactElement {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-medium text-white">Session Timeline</h3>
-        <span className="text-sm text-gray-400">{events.length} events</span>
+        <h3 className="text-text-theme-primary text-lg font-medium">
+          Session Timeline
+        </h3>
+        <span className="text-text-theme-muted text-sm">
+          {events.length} events
+        </span>
       </div>
 
       <Card>
         <div className="max-h-96 overflow-y-auto">
-          <div className="divide-y divide-gray-700">
+          <div className="divide-border-theme divide-y">
             {events.map((event, _index) => (
               <div
                 key={event.id}
-                className="p-3 transition-colors hover:bg-gray-800/50"
+                className="hover:bg-surface-base/50 p-3 transition-colors"
               >
                 <div className="flex items-start gap-3">
                   {/* Event indicator */}
@@ -122,25 +130,29 @@ export function QuickGameTimeline(): React.ReactElement {
                   {/* Event content */}
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
-                      <p className="truncate text-sm font-medium text-white">
+                      <p className="text-text-theme-primary truncate text-sm font-medium">
                         {EVENT_LABELS[event.type] ?? event.type}
                       </p>
-                      <span className="flex-shrink-0 text-xs text-gray-500">
+                      <span className="text-text-theme-muted flex-shrink-0 text-xs">
                         {formatTime(event.timestamp)}
                       </span>
                     </div>
 
                     <div className="mt-1 flex items-center gap-2">
-                      <span className="text-xs text-gray-400">
+                      <span className="text-text-theme-muted text-xs">
                         Turn {event.turn}
                       </span>
-                      <span className="text-xs text-gray-600">|</span>
-                      <span className="text-xs text-gray-400">
+                      <span className="text-text-theme-secondary text-xs">
+                        |
+                      </span>
+                      <span className="text-text-theme-muted text-xs">
                         {PHASE_LABELS[event.phase]}
                       </span>
                       {event.actorId && (
                         <>
-                          <span className="text-xs text-gray-600">|</span>
+                          <span className="text-text-theme-secondary text-xs">
+                            |
+                          </span>
                           <span className="truncate text-xs text-cyan-400">
                             {event.actorId}
                           </span>
@@ -150,7 +162,7 @@ export function QuickGameTimeline(): React.ReactElement {
                   </div>
 
                   {/* Sequence number */}
-                  <span className="flex-shrink-0 text-xs text-gray-600">
+                  <span className="text-text-theme-secondary flex-shrink-0 text-xs">
                     #{event.sequence}
                   </span>
                 </div>

@@ -38,15 +38,17 @@ export function LoadoutCard({
   return (
     <section
       aria-label={`${title} loadout`}
-      className="rounded-lg border border-slate-800 bg-slate-950 p-4"
+      className="border-border-theme-subtle bg-surface-deep rounded-lg border p-4"
     >
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-slate-100">{title}</h2>
+        <h2 className="text-text-theme-primary text-lg font-semibold">
+          {title}
+        </h2>
         <ReadyBadge ready={ready} />
       </div>
 
       {loadout.units.length === 0 ? (
-        <p className="mt-4 rounded-md border border-slate-800 bg-slate-900 p-3 text-sm text-slate-400">
+        <p className="border-border-theme-subtle bg-surface-deep text-text-theme-secondary mt-4 rounded-md border p-3 text-sm">
           No mechs selected
         </p>
       ) : (
@@ -58,14 +60,14 @@ export function LoadoutCard({
             return (
               <li
                 key={unit.unitId}
-                className="rounded-md border border-slate-800 bg-slate-900 p-3"
+                className="border-border-theme-subtle bg-surface-deep rounded-md border p-3"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="font-medium text-slate-100">
+                    <p className="text-text-theme-primary font-medium">
                       {unit.designation}
                     </p>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-text-theme-secondary text-xs">
                       {unit.tonnage}T / {unit.bv.toLocaleString()} BV
                     </p>
                   </div>
@@ -80,7 +82,7 @@ export function LoadoutCard({
                   )}
                 </div>
                 <label className="mt-3 block text-sm">
-                  <span className="text-slate-300">Pilot</span>
+                  <span className="text-text-theme-secondary">Pilot</span>
                   <select
                     aria-label={`${title} pilot for ${unit.designation}`}
                     value={selectedPilotId}
@@ -94,7 +96,7 @@ export function LoadoutCard({
                         onChange,
                       )
                     }
-                    className="mt-1 w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 disabled:opacity-60"
+                    className="border-border-theme bg-surface-deep text-text-theme-primary mt-1 w-full rounded-md border px-3 py-2 text-sm disabled:opacity-60"
                   >
                     <option value="">No pilot</option>
                     {pilots.map((pilot) => {
@@ -120,7 +122,7 @@ export function LoadoutCard({
       )}
 
       <label className="mt-4 block text-sm">
-        <span className="text-slate-300">Add mech</span>
+        <span className="text-text-theme-secondary">Add mech</span>
         <select
           aria-label={`Add unit to ${title} loadout`}
           disabled={!canAdd}
@@ -136,7 +138,7 @@ export function LoadoutCard({
               });
             }
           }}
-          className="mt-1 w-full rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 disabled:opacity-60"
+          className="border-border-theme bg-surface-deep text-text-theme-primary mt-1 w-full rounded-md border px-3 py-2 text-sm disabled:opacity-60"
         >
           <option value="">
             {editable ? 'Choose a mech' : 'Remote loadout is read only'}
@@ -149,7 +151,7 @@ export function LoadoutCard({
         </select>
       </label>
 
-      <p className="mt-3 text-xs text-slate-500">
+      <p className="text-text-theme-muted mt-3 text-xs">
         {side === 'host' ? 'Player side' : 'Opponent side'}
       </p>
     </section>
@@ -166,7 +168,7 @@ export function ReadyBadge({
       className={`rounded px-2 py-1 text-xs font-medium ${
         ready
           ? 'bg-emerald-800 text-emerald-100'
-          : 'bg-slate-800 text-slate-300'
+          : 'bg-surface-base text-text-theme-secondary'
       }`}
     >
       {ready ? 'Ready' : 'Not ready'}

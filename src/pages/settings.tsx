@@ -3,10 +3,8 @@
  *
  * App configuration and preferences.
  *
- * Appearance settings use a draft/preview system:
- * - Changes are applied immediately for live preview
- * - Changes are NOT persisted until the user clicks "Save"
- * - Navigating away without saving reverts to previous values
+ * Palette and accent changes save immediately. Other appearance settings
+ * preview until saved; leaving the page discards those remaining drafts.
  */
 
 import Head from 'next/head';

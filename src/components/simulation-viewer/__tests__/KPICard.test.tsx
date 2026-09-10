@@ -82,7 +82,10 @@ describe('KPICard', () => {
 
       const comparison = screen.getByTestId('kpi-comparison');
       expect(comparison).toHaveClass('text-green-600');
-      expect(comparison).toHaveTextContent('↑');
+      expect(comparison.firstElementChild?.firstElementChild).toHaveAttribute(
+        'data-icon-name',
+        'arrow-up',
+      );
     });
 
     it('applies red color for down direction', () => {
@@ -97,10 +100,13 @@ describe('KPICard', () => {
 
       const comparison = screen.getByTestId('kpi-comparison');
       expect(comparison).toHaveClass('text-red-600');
-      expect(comparison).toHaveTextContent('↓');
+      expect(comparison.firstElementChild?.firstElementChild).toHaveAttribute(
+        'data-icon-name',
+        'arrow-down',
+      );
     });
 
-    it('applies gray color for neutral direction', () => {
+    it('applies palette text color for neutral direction', () => {
       render(
         <KPICard
           label="Win Rate"
@@ -111,15 +117,18 @@ describe('KPICard', () => {
       );
 
       const comparison = screen.getByTestId('kpi-comparison');
-      expect(comparison).toHaveClass('text-gray-600');
-      expect(comparison).toHaveTextContent('→');
+      expect(comparison).toHaveClass('text-text-theme-muted');
+      expect(comparison.firstElementChild?.firstElementChild).toHaveAttribute(
+        'data-icon-name',
+        'arrow-right',
+      );
     });
 
     it('defaults to neutral when comparisonDirection is not provided', () => {
       render(<KPICard label="Win Rate" value="75%" comparison="0%" />);
 
       const comparison = screen.getByTestId('kpi-comparison');
-      expect(comparison).toHaveClass('text-gray-600');
+      expect(comparison).toHaveClass('text-text-theme-muted');
     });
   });
 
@@ -164,7 +173,7 @@ describe('KPICard', () => {
       );
 
       const polyline = container.querySelector('polyline');
-      expect(polyline).toHaveAttribute('stroke', '#4b5563');
+      expect(polyline).toHaveAttribute('stroke', 'var(--text-secondary)');
     });
 
     it('has accessible role and label on SVG', () => {
@@ -276,7 +285,7 @@ describe('KPICard', () => {
 
       const card = screen.getByTestId('kpi-card');
       expect(card).toHaveClass('focus:ring-2');
-      expect(card).toHaveClass('focus:ring-blue-500');
+      expect(card).toHaveClass('focus:ring-accent');
       expect(card).toHaveClass('focus:ring-offset-2');
     });
 
@@ -314,23 +323,27 @@ describe('KPICard', () => {
     });
   });
 
-  describe('Dark Mode', () => {
-    it('has dark mode background class', () => {
+  describe('Application Palette', () => {
+    it('has palette background class', () => {
       render(<KPICard {...defaultProps} />);
 
-      expect(screen.getByTestId('kpi-card')).toHaveClass('dark:bg-gray-800');
+      expect(screen.getByTestId('kpi-card')).toHaveClass('bg-surface-base');
     });
 
-    it('has dark mode label color', () => {
+    it('has palette label color', () => {
       render(<KPICard {...defaultProps} />);
 
-      expect(screen.getByTestId('kpi-label')).toHaveClass('dark:text-gray-400');
+      expect(screen.getByTestId('kpi-label')).toHaveClass(
+        'text-text-theme-secondary',
+      );
     });
 
-    it('has dark mode value color', () => {
+    it('has palette value color', () => {
       render(<KPICard {...defaultProps} />);
 
-      expect(screen.getByTestId('kpi-value')).toHaveClass('dark:text-gray-100');
+      expect(screen.getByTestId('kpi-value')).toHaveClass(
+        'text-text-theme-primary',
+      );
     });
   });
 

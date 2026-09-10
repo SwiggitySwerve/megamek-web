@@ -23,12 +23,12 @@ export const ViewerSection: React.FC<ViewerSectionProps> = ({
 }) => {
   const heading = (
     <h2
-      className={`${headerAction ? '' : 'mb-3 '}text-lg font-semibold text-gray-800 dark:text-gray-200`}
+      className={`${headerAction ? '' : 'mb-3 '}text-lg text-text-theme-primary font-semibold`}
       data-testid={headingTestId}
     >
       {title}
       {count !== undefined && count > 0 ? (
-        <span className="ml-2 text-sm font-normal text-gray-500 dark:text-gray-400">
+        <span className="text-text-theme-muted ml-2 text-sm font-normal">
           ({count})
         </span>
       ) : null}

@@ -10,6 +10,7 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
 import { Button, Card } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { navigateToGameSession } from '@/lib/gameplay/tacticalNavigation';
 import GameSessionPage from '@/pages/gameplay/games/[id]';
 import { useGameplaySelector } from '@/stores/useGameplayStore';
@@ -58,12 +59,12 @@ function UnitCard({ unit, isPlayer }: UnitCardProps): React.ReactElement {
           >
             {unit.name}
           </p>
-          <p className="text-xs text-gray-500">
+          <p className="text-text-theme-muted text-xs">
             {unit.pilotName && `${unit.pilotName} - `}
             {unit.gunnery}/{unit.piloting}
           </p>
         </div>
-        <div className="text-right text-xs text-gray-400">
+        <div className="text-text-theme-muted text-right text-xs">
           <p>{unit.tonnage}t</p>
           <p>{unit.bv} BV</p>
         </div>
@@ -162,17 +163,18 @@ export function QuickGamePlay(): React.ReactElement {
   if (!game) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <p className="text-gray-400">No game in progress</p>
+        <p className="text-text-theme-muted">No game in progress</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-900">
+      <div className="bg-surface-deep flex min-h-screen items-center justify-center">
         <Card className="mx-4 max-w-md border-red-700/50">
           <div className="p-6 text-center">
-            <svg
+            <SvgIcon
+              size="hero"
               className="mx-auto mb-4 h-12 w-12 text-red-400"
               fill="none"
               stroke="currentColor"
@@ -184,11 +186,11 @@ export function QuickGamePlay(): React.ReactElement {
                 strokeWidth={2}
                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
               />
-            </svg>
+            </SvgIcon>
             <h3 className="mb-2 text-lg font-medium text-red-300">
               Battle Error
             </h3>
-            <p className="text-sm text-gray-400">{error}</p>
+            <p className="text-text-theme-muted text-sm">{error}</p>
           </div>
         </Card>
       </div>
@@ -201,9 +203,9 @@ export function QuickGamePlay(): React.ReactElement {
     }
 
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-900">
+      <div className="bg-surface-deep flex min-h-screen items-center justify-center">
         <Card className="p-8 text-center">
-          <p className="text-gray-400">Opening tactical battle...</p>
+          <p className="text-text-theme-muted">Opening tactical battle...</p>
         </Card>
       </div>
     );
@@ -215,12 +217,12 @@ export function QuickGamePlay(): React.ReactElement {
     !persistedTacticalSession
   ) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-900">
+      <div className="bg-surface-deep flex min-h-screen items-center justify-center">
         <Card className="mx-4 max-w-lg border-amber-600/50 p-8 text-center">
-          <h2 className="mb-2 text-xl font-bold text-white">
+          <h2 className="text-text-theme-primary mb-2 text-xl font-bold">
             Battle Session Unavailable
           </h2>
-          <p className="text-sm text-gray-400">
+          <p className="text-text-theme-muted text-sm">
             This Quick Game is marked active, but no recoverable tactical
             session is linked. No battle result has been recorded.
           </p>
@@ -243,9 +245,9 @@ export function QuickGamePlay(): React.ReactElement {
     persistedTacticalSession
   ) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-900">
+      <div className="bg-surface-deep flex min-h-screen items-center justify-center">
         <Card className="p-8 text-center">
-          <p className="text-gray-400">Recovering tactical battle...</p>
+          <p className="text-text-theme-muted">Recovering tactical battle...</p>
         </Card>
       </div>
     );
@@ -253,7 +255,7 @@ export function QuickGamePlay(): React.ReactElement {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-900">
+      <div className="bg-surface-deep flex min-h-screen items-center justify-center">
         <div className="mx-4 max-w-lg text-center">
           <div className="mb-8">
             <div className="relative mx-auto h-16 w-16">
@@ -263,10 +265,10 @@ export function QuickGamePlay(): React.ReactElement {
             </div>
           </div>
 
-          <h2 className="mb-2 text-xl font-bold text-white">
+          <h2 className="text-text-theme-primary mb-2 text-xl font-bold">
             Resolving Battle...
           </h2>
-          <p className="mb-8 text-sm text-gray-400">
+          <p className="text-text-theme-muted mb-8 text-sm">
             The GameEngine is auto-resolving combat between forces
           </p>
 
@@ -274,17 +276,17 @@ export function QuickGamePlay(): React.ReactElement {
             <div className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-medium text-white">
+                  <h3 className="text-text-theme-primary font-medium">
                     {game.scenario?.template.name}
                   </h3>
-                  <p className="mt-1 text-xs text-gray-400">
+                  <p className="text-text-theme-muted mt-1 text-xs">
                     {game.scenario?.mapPreset.name} -{' '}
                     {game.scenario?.mapPreset.biome}
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm text-gray-400">Forces</p>
-                  <p className="text-white">
+                  <p className="text-text-theme-muted text-sm">Forces</p>
+                  <p className="text-text-theme-primary">
                     <span className="text-cyan-400">
                       {game.playerForce.units.length}
                     </span>
@@ -300,7 +302,7 @@ export function QuickGamePlay(): React.ReactElement {
 
           <div className="mt-6 grid gap-4 md:grid-cols-2">
             <Card>
-              <div className="border-b border-gray-700 p-3">
+              <div className="border-border-theme border-b p-3">
                 <h3 className="text-sm font-medium text-cyan-400">
                   Your Force
                 </h3>
@@ -313,7 +315,7 @@ export function QuickGamePlay(): React.ReactElement {
             </Card>
 
             <Card>
-              <div className="border-b border-gray-700 p-3">
+              <div className="border-border-theme border-b p-3">
                 <h3 className="text-sm font-medium text-red-400">
                   Enemy Force
                 </h3>
@@ -335,9 +337,11 @@ export function QuickGamePlay(): React.ReactElement {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-900">
+    <div className="bg-surface-deep flex min-h-screen items-center justify-center">
       <Card className="p-8 text-center">
-        <p className="text-gray-400">Battle complete. Loading results...</p>
+        <p className="text-text-theme-muted">
+          Battle complete. Loading results...
+        </p>
       </Card>
     </div>
   );

@@ -38,10 +38,10 @@ export function ResetSettings({
     >
       <div className="flex items-center justify-between">
         <div>
-          <div className="text-sm font-medium text-white">
+          <div className="text-text-theme-primary text-sm font-medium">
             Reset All Settings
           </div>
-          <div className="mt-0.5 text-xs text-slate-400">
+          <div className="text-text-theme-secondary mt-0.5 text-xs">
             Restore all settings to their default values
           </div>
         </div>

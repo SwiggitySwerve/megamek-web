@@ -59,7 +59,7 @@ export function NewTabModalNewMode({
   return (
     <div className="space-y-4">
       <div>
-        <label className="mb-2 block text-sm font-medium text-slate-300">
+        <label className="text-text-theme-secondary mb-2 block text-sm font-medium">
           Unit Type
         </label>
         <div className="grid grid-cols-3 gap-2">
@@ -81,7 +81,7 @@ export function NewTabModalNewMode({
 
       {unitType === UnitType.BATTLEMECH && (
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-300">
+          <label className="text-text-theme-secondary mb-2 block text-sm font-medium">
             Select Template
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -95,7 +95,7 @@ export function NewTabModalNewMode({
                     : 'border-border-theme hover:border-border-theme-subtle'
                 }`}
               >
-                <div className="text-sm font-medium text-white">
+                <div className="text-text-theme-primary text-sm font-medium">
                   {template.name}
                 </div>
                 <div className="text-text-theme-secondary text-xs">
@@ -110,7 +110,7 @@ export function NewTabModalNewMode({
 
       {unitType === UnitType.VEHICLE && (
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-300">
+          <label className="text-text-theme-secondary mb-2 block text-sm font-medium">
             Select Template
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -124,7 +124,7 @@ export function NewTabModalNewMode({
                     : 'border-border-theme hover:border-border-theme-subtle'
                 }`}
               >
-                <div className="text-sm font-medium text-white">
+                <div className="text-text-theme-primary text-sm font-medium">
                   {template.name}
                 </div>
                 <div className="text-text-theme-secondary text-xs">
@@ -139,7 +139,7 @@ export function NewTabModalNewMode({
 
       {unitType === UnitType.AEROSPACE && (
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-300">
+          <label className="text-text-theme-secondary mb-2 block text-sm font-medium">
             Select Template
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -153,7 +153,7 @@ export function NewTabModalNewMode({
                     : 'border-border-theme hover:border-border-theme-subtle'
                 }`}
               >
-                <div className="text-sm font-medium text-white">
+                <div className="text-text-theme-primary text-sm font-medium">
                   {template.name}
                 </div>
                 <div className="text-text-theme-secondary text-xs">
@@ -168,7 +168,7 @@ export function NewTabModalNewMode({
 
       {unitType === UnitType.BATTLE_ARMOR && (
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-300">
+          <label className="text-text-theme-secondary mb-2 block text-sm font-medium">
             Select Template
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -182,7 +182,7 @@ export function NewTabModalNewMode({
                     : 'border-border-theme hover:border-border-theme-subtle'
                 }`}
               >
-                <div className="text-sm font-medium text-white">
+                <div className="text-text-theme-primary text-sm font-medium">
                   {template.name}
                 </div>
                 <div className="text-text-theme-secondary text-xs">
@@ -197,7 +197,7 @@ export function NewTabModalNewMode({
 
       {unitType === UnitType.INFANTRY && (
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-300">
+          <label className="text-text-theme-secondary mb-2 block text-sm font-medium">
             Select Template
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -211,7 +211,7 @@ export function NewTabModalNewMode({
                     : 'border-border-theme hover:border-border-theme-subtle'
                 }`}
               >
-                <div className="text-sm font-medium text-white">
+                <div className="text-text-theme-primary text-sm font-medium">
                   {template.name}
                 </div>
                 <div className="text-text-theme-secondary text-xs">
@@ -226,7 +226,7 @@ export function NewTabModalNewMode({
 
       {unitType === UnitType.PROTOMECH && (
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-300">
+          <label className="text-text-theme-secondary mb-2 block text-sm font-medium">
             Select Template
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -240,7 +240,7 @@ export function NewTabModalNewMode({
                     : 'border-border-theme hover:border-border-theme-subtle'
                 }`}
               >
-                <div className="text-sm font-medium text-white">
+                <div className="text-text-theme-primary text-sm font-medium">
                   {template.name}
                 </div>
                 <div className="text-text-theme-secondary text-xs">
@@ -254,7 +254,7 @@ export function NewTabModalNewMode({
 
       {unitType !== UnitType.PROTOMECH && (
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-300">
+          <label className="text-text-theme-secondary mb-2 block text-sm font-medium">
             Tech Base
           </label>
           <div className="flex gap-2">

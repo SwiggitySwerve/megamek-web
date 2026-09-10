@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
 import { UNIT_TEMPLATES, UnitTemplate } from '@/stores/useMultiUnitStore';
 import { TechBase } from '@/types/enums/TechBase';
 import { UnitType } from '@/types/unit/BattleMechInterfaces';
@@ -113,30 +114,20 @@ export function NewTabModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+      className="bg-surface-deep/80 fixed inset-0 z-50 flex items-center justify-center"
       onClick={handleOverlayClick}
       onKeyDown={handleKeyDown}
     >
       <div className="bg-surface-base border-border-theme-subtle mx-4 max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg border shadow-xl">
         <div className="border-border-theme-subtle bg-surface-base sticky top-0 z-10 flex items-center justify-between border-b px-4 py-3">
-          <h2 className="text-lg font-semibold text-white">Create New Unit</h2>
+          <h2 className="text-text-theme-primary text-lg font-semibold">
+            Create New Unit
+          </h2>
           <button
             onClick={onClose}
-            className="text-text-theme-secondary transition-colors hover:text-white"
+            className="text-text-theme-secondary hover:text-text-theme-primary transition-colors"
           >
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <AppIcon name="close" size="control" aria-hidden="true" />
           </button>
         </div>
 
@@ -147,8 +138,8 @@ export function NewTabModal({
               onClick={() => setMode(tabMode)}
               className={`flex-1 px-4 py-2 text-sm font-medium transition-colors ${
                 mode === tabMode
-                  ? 'bg-blue-600 text-white'
-                  : 'text-text-theme-secondary hover:bg-surface-raised hover:text-white'
+                  ? 'bg-accent text-on-accent'
+                  : 'text-text-theme-secondary hover:bg-surface-raised hover:text-text-theme-primary'
               }`}
             >
               {tabMode === 'new' && 'New Unit'}
@@ -192,13 +183,13 @@ export function NewTabModal({
         <div className="border-border-theme-subtle flex justify-end gap-2 border-t px-4 py-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-slate-300 transition-colors hover:text-white"
+            className="text-text-theme-secondary hover:text-text-theme-primary px-4 py-2 text-sm font-medium transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleCreate}
-            className="bg-accent hover:bg-accent-hover rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
+            className="bg-accent hover:bg-accent-hover text-on-accent rounded-lg px-4 py-2 text-sm font-medium transition-colors"
           >
             Create Unit
           </button>

@@ -32,7 +32,7 @@ const LOCATION_LABELS: Partial<Record<MechLocation, string>> = {
 };
 
 function getLocationLabel(location: MechLocation): string {
-  return LOCATION_LABELS[location] ?? '';
+  return LOCATION_LABELS[location] ?? location;
 }
 
 interface LocationGridProps {
@@ -106,17 +106,22 @@ export function LocationGrid({
 
   return (
     <div
-      className={`bg-surface-deep border-border-theme w-full max-w-xs border sm:w-32 md:w-36 ${className} `}
+      role="group"
+      aria-label={`${label} critical slots`}
+      className={`bg-surface-deep border-border-theme w-full min-w-0 overflow-hidden rounded-md border shadow-sm ${className}`}
     >
-      {/* Location header */}
-      <div className="border-border-theme bg-surface-base border-b px-1 py-1 text-center sm:px-2 sm:py-1.5">
-        <span className="block truncate text-xs font-medium text-slate-200 sm:text-sm">
+      {/* Consistent location header keeps the diagram scannable at any width. */}
+      <div className="border-border-theme bg-surface-base/95 border-l-accent/70 flex min-h-11 items-center justify-between border-b border-l-2 px-2 py-1.5">
+        <span className="text-text-theme-primary block min-w-0 text-xs font-semibold tracking-wide break-words whitespace-normal uppercase sm:text-sm">
           {label}
+        </span>
+        <span className="text-text-theme-muted ml-2 flex-shrink-0 text-[10px] tabular-nums">
+          {slotCount}
         </span>
       </div>
 
       {/* Slots */}
-      <div className="p-0.5">
+      <div className="p-1">
         {entries.map((entry) =>
           isSuperheavy && entry.isDoubleSlot ? (
             <DoubleSlotRow

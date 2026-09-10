@@ -21,6 +21,8 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
+
 const HINT_STORAGE_KEY = 'mekstation.camera.hotkeyHintSeen';
 
 interface IHotkeyEntry {
@@ -83,7 +85,7 @@ const HOTKEY_GROUPS: readonly IHotkeyGroup[] = [
  */
 function KeyCap({ label }: { label: string }): React.ReactElement {
   return (
-    <kbd className="inline-flex min-w-[22px] items-center justify-center rounded border border-slate-500 bg-slate-800 px-1.5 py-0.5 font-mono text-xs text-slate-100 shadow-sm">
+    <kbd className="border-border-theme bg-surface-base text-text-theme-primary inline-flex min-w-[22px] items-center justify-center rounded border px-1.5 py-0.5 font-mono text-xs shadow-sm">
       {label}
     </kbd>
   );
@@ -120,13 +122,13 @@ export function HotkeyHelpOverlay({
 
   return (
     <div
-      className="absolute inset-0 z-40 flex items-center justify-center bg-slate-950/70 p-4"
+      className="bg-surface-deep/70 absolute inset-0 z-40 flex items-center justify-center p-4"
       onClick={onClose}
       data-testid="hotkey-help-overlay-backdrop"
       role="presentation"
     >
       <div
-        className="max-h-[80vh] w-full max-w-md overflow-y-auto rounded-lg border border-slate-700 bg-slate-900 p-5 shadow-xl"
+        className="border-border-theme bg-surface-deep max-h-[80vh] w-full max-w-md overflow-y-auto rounded-lg border p-5 shadow-xl"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
@@ -136,14 +138,14 @@ export function HotkeyHelpOverlay({
         <div className="mb-3 flex items-center justify-between">
           <h2
             id="hotkey-help-title"
-            className="text-lg font-semibold text-slate-100"
+            className="text-text-theme-primary text-lg font-semibold"
           >
             Keyboard Shortcuts
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="rounded px-2 py-1 text-sm text-slate-300 hover:bg-slate-800"
+            className="text-text-theme-secondary hover:bg-surface-base rounded px-2 py-1 text-sm"
             aria-label="Close shortcuts help"
             data-testid="hotkey-help-close"
           >
@@ -164,19 +166,19 @@ export function HotkeyHelpOverlay({
                 {group.entries.map((entry, idx) => (
                   <li
                     key={`${group.title}-${idx}`}
-                    className="flex items-baseline justify-between gap-3 text-sm text-slate-200"
+                    className="text-text-theme-primary flex items-baseline justify-between gap-3 text-sm"
                   >
                     <span className="flex flex-wrap items-center gap-1">
                       {entry.keys.map((k, i) => (
                         <React.Fragment key={`${group.title}-${idx}-${i}`}>
                           <KeyCap label={k} />
                           {i < entry.keys.length - 1 && (
-                            <span className="text-slate-500">/</span>
+                            <span className="text-text-theme-muted">/</span>
                           )}
                         </React.Fragment>
                       ))}
                     </span>
-                    <span className="text-right text-slate-300">
+                    <span className="text-text-theme-secondary text-right">
                       {entry.description}
                     </span>
                   </li>
@@ -234,7 +236,7 @@ export function HotkeyHintBadge(): React.ReactElement | null {
 
   return (
     <div
-      className="pointer-events-auto absolute top-2 right-auto bottom-auto left-2 flex items-center justify-center gap-2 rounded-full border border-slate-700 bg-slate-900/90 px-2 py-1 text-[11px] whitespace-nowrap text-slate-200 shadow-lg lg:top-auto lg:right-auto lg:bottom-4 lg:left-1/2 lg:-translate-x-1/2 lg:px-3 lg:py-1.5 lg:text-xs"
+      className="border-border-theme bg-surface-deep/90 text-text-theme-primary pointer-events-auto absolute top-2 right-auto bottom-auto left-2 flex items-center justify-center gap-2 rounded-full border px-2 py-1 text-[11px] whitespace-nowrap shadow-lg lg:top-auto lg:right-auto lg:bottom-4 lg:left-1/2 lg:-translate-x-1/2 lg:px-3 lg:py-1.5 lg:text-xs"
       data-testid="hotkey-hint-badge"
       role="status"
     >
@@ -248,10 +250,10 @@ export function HotkeyHintBadge(): React.ReactElement | null {
       <button
         type="button"
         onClick={dismiss}
-        className="rounded px-1 text-slate-400 hover:bg-slate-800"
+        className="text-text-theme-secondary hover:bg-surface-base rounded px-1"
         aria-label="Dismiss shortcut hint"
       >
-        ×
+        <AppIcon name="close" size="inline" aria-hidden="true" />
       </button>
     </div>
   );

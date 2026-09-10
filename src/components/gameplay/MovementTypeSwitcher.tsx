@@ -58,9 +58,9 @@ function TypeButton({
   const baseClasses =
     'min-h-[44px] rounded px-4 py-2 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2';
   const stateClasses = active
-    ? 'bg-blue-600 text-white focus:ring-blue-500'
+    ? 'bg-accent text-on-accent focus:ring-accent'
     : disabled
-      ? 'cursor-not-allowed bg-gray-200 text-gray-400'
+      ? 'cursor-not-allowed bg-surface-raised text-text-theme-secondary'
       : 'bg-surface-raised text-text-theme-primary hover:bg-surface-deep focus:ring-border-theme cursor-pointer';
 
   return (

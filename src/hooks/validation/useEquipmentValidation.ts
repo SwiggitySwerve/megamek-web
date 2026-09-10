@@ -10,7 +10,11 @@
 import { useMemo } from 'react';
 
 import { useUnitStore } from '@/stores/useUnitStore';
-import { ISlotsByLocation } from '@/types/validation/UnitValidationInterfaces';
+import {
+  ICriticalSlotIssue,
+  ISlotsByLocation,
+} from '@/types/validation/UnitValidationInterfaces';
+import { getEquipmentSlotIssues } from '@/utils/construction/slotOperations/placement';
 import { buildSlotsByLocation } from '@/utils/validation/slotValidationUtils';
 
 /**
@@ -19,6 +23,7 @@ import { buildSlotsByLocation } from '@/utils/validation/slotValidationUtils';
 export interface EquipmentValidationData {
   /** Per-location critical slot usage */
   slotsByLocation: ISlotsByLocation;
+  equipmentSlotIssues: readonly ICriticalSlotIssue[];
 }
 
 /**
@@ -28,6 +33,8 @@ export interface EquipmentValidationData {
  */
 export function useEquipmentValidation(): EquipmentValidationData {
   const equipment = useUnitStore((s) => s.equipment);
+  const engineType = useUnitStore((s) => s.engineType);
+  const gyroType = useUnitStore((s) => s.gyroType);
   const configuration = useUnitStore((s) => s.configuration);
 
   return useMemo(() => {
@@ -36,6 +43,12 @@ export function useEquipmentValidation(): EquipmentValidationData {
 
     return {
       slotsByLocation,
+      equipmentSlotIssues: getEquipmentSlotIssues(
+        equipment,
+        configuration,
+        engineType,
+        gyroType,
+      ),
     };
-  }, [equipment, configuration]);
+  }, [equipment, configuration, engineType, gyroType]);
 }

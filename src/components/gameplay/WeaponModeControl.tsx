@@ -16,9 +16,9 @@ function modeButtonClasses(active: boolean, eligible = true): string {
     return 'border-blue-600 bg-blue-600 text-white';
   }
   if (!eligible) {
-    return 'border-gray-200 bg-gray-100 text-gray-400 hover:bg-gray-200';
+    return 'border-border-theme-subtle bg-surface-base text-text-theme-secondary hover:bg-surface-raised';
   }
-  return 'border-gray-300 bg-white text-gray-700 hover:border-blue-400 hover:text-blue-700';
+  return 'border-border-theme-subtle bg-surface-base text-text-theme-primary hover:border-blue-400 hover:text-blue-700';
 }
 
 export function WeaponModeControl({
@@ -31,7 +31,7 @@ export function WeaponModeControl({
 
   return (
     <div
-      className="ml-6 inline-flex w-fit overflow-hidden rounded border border-gray-300 text-xs"
+      className="border-border-theme-subtle ml-6 inline-flex w-fit overflow-hidden rounded border text-xs"
       role="group"
       aria-label={`${weaponName} fire mode`}
       data-testid={`weapon-mode-control-${weaponId}`}

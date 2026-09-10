@@ -81,14 +81,14 @@ export function GameplayLobbyPanel({
   };
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 text-slate-100">
-      <header className="mb-6 flex flex-col gap-4 border-b border-slate-800 pb-5 md:flex-row md:items-end md:justify-between">
+    <div className="text-text-theme-primary mx-auto max-w-6xl px-4 py-8">
+      <header className="border-border-theme-subtle mb-6 flex flex-col gap-4 border-b pb-5 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="text-sm font-medium text-cyan-300">
             Networked 1v1 Lobby
           </p>
           <h1 className="mt-1 text-3xl font-semibold">Room {roomCode}</h1>
-          <p className="mt-2 text-sm text-slate-400">
+          <p className="text-text-theme-secondary mt-2 text-sm">
             {lobbyState.guestPeerId
               ? 'Opponent connected'
               : 'Waiting for opponent...'}
@@ -127,11 +127,11 @@ export function GameplayLobbyPanel({
           onChange={onLoadoutChange}
         />
 
-        <section className="rounded-lg border border-slate-800 bg-slate-950 p-4">
-          <h2 className="text-lg font-semibold text-slate-100">Map</h2>
+        <section className="border-border-theme-subtle bg-surface-deep rounded-lg border p-4">
+          <h2 className="text-text-theme-primary text-lg font-semibold">Map</h2>
           <div className="mt-4 space-y-3">
             <label className="block text-sm">
-              <span className="text-slate-300">Radius</span>
+              <span className="text-text-theme-secondary">Radius</span>
               <input
                 aria-label="Map radius"
                 type="number"
@@ -145,11 +145,11 @@ export function GameplayLobbyPanel({
                     radius: Number(event.target.value),
                   })
                 }
-                className="mt-1 w-full rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 disabled:opacity-60"
+                className="border-border-theme bg-surface-deep text-text-theme-primary mt-1 w-full rounded-md border px-3 py-2 text-sm disabled:opacity-60"
               />
             </label>
             <label className="block text-sm">
-              <span className="text-slate-300">Terrain</span>
+              <span className="text-text-theme-secondary">Terrain</span>
               <select
                 aria-label="Terrain preset"
                 value={lobbyState.mapConfig.terrainPreset}
@@ -160,7 +160,7 @@ export function GameplayLobbyPanel({
                     terrainPreset: event.target.value,
                   })
                 }
-                className="mt-1 w-full rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 disabled:opacity-60"
+                className="border-border-theme bg-surface-deep text-text-theme-primary mt-1 w-full rounded-md border px-3 py-2 text-sm disabled:opacity-60"
               >
                 <option value="clear">Clear</option>
                 <option value="rolling">Rolling Hills</option>
@@ -169,7 +169,7 @@ export function GameplayLobbyPanel({
               </select>
             </label>
             <label className="block text-sm">
-              <span className="text-slate-300">Turn limit</span>
+              <span className="text-text-theme-secondary">Turn limit</span>
               <input
                 aria-label="Turn limit"
                 type="number"
@@ -183,11 +183,11 @@ export function GameplayLobbyPanel({
                     turnLimit: Number(event.target.value),
                   })
                 }
-                className="mt-1 w-full rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 disabled:opacity-60"
+                className="border-border-theme bg-surface-deep text-text-theme-primary mt-1 w-full rounded-md border px-3 py-2 text-sm disabled:opacity-60"
               />
             </label>
             <label className="block text-sm">
-              <span className="text-slate-300">Host plays as</span>
+              <span className="text-text-theme-secondary">Host plays as</span>
               <select
                 aria-label="Host side"
                 value={hostSide}
@@ -197,19 +197,19 @@ export function GameplayLobbyPanel({
                     event.target.value === 'opponent' ? 'opponent' : 'player',
                   )
                 }
-                className="mt-1 w-full rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 disabled:opacity-60"
+                className="border-border-theme bg-surface-deep text-text-theme-primary mt-1 w-full rounded-md border px-3 py-2 text-sm disabled:opacity-60"
               >
                 <option value="player">Player (blue)</option>
                 <option value="opponent">Opponent (red)</option>
               </select>
-              <p className="mt-1 text-xs text-slate-500">
+              <p className="text-text-theme-muted mt-1 text-xs">
                 Guest will play as{' '}
                 {hostSide === 'player' ? 'Opponent (red)' : 'Player (blue)'}.
               </p>
             </label>
           </div>
 
-          <div className="mt-5 rounded-md border border-slate-800 bg-slate-900 p-3">
+          <div className="border-border-theme-subtle bg-surface-deep mt-5 rounded-md border p-3">
             <div className="flex items-center justify-between text-sm">
               <span>Host</span>
               <ReadyBadge ready={lobbyState.hostReady} />
@@ -229,7 +229,7 @@ export function GameplayLobbyPanel({
               type="button"
               disabled={readyBlockReason !== null}
               onClick={() => onReadyChange(!localReady)}
-              className="mt-4 w-full rounded-md bg-emerald-700 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600 disabled:cursor-not-allowed disabled:bg-slate-700"
+              className="disabled:bg-surface-raised mt-4 w-full rounded-md bg-emerald-700 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600 disabled:cursor-not-allowed"
             >
               {localReady ? 'Not Ready' : 'Ready'}
             </button>
@@ -240,7 +240,7 @@ export function GameplayLobbyPanel({
               type="button"
               disabled={!launchReady}
               onClick={onLaunch}
-              className="mt-2 w-full rounded-md bg-cyan-700 px-4 py-2 text-sm font-medium text-white hover:bg-cyan-600 disabled:cursor-not-allowed disabled:bg-slate-700"
+              className="bg-accent text-on-accent hover:bg-accent-hover disabled:bg-surface-raised disabled:text-text-theme-secondary mt-2 w-full rounded-md px-4 py-2 text-sm font-medium disabled:cursor-not-allowed"
             >
               Launch Match
             </button>

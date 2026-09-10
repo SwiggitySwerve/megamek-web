@@ -25,7 +25,7 @@ export function GeneralTab({
 }: TabContentProps): React.ReactElement {
   return (
     <div className="space-y-4">
-      <h3 className="mb-4 text-lg font-semibold text-white">
+      <h3 className="text-text-theme-primary mb-4 text-lg font-semibold">
         General Settings
       </h3>
 
@@ -109,7 +109,7 @@ export function GeneralTab({
               updateLocalSetting('defaultSaveDirectory', e.target.value)
             }
             placeholder="Default save location"
-            className="bg-surface-raised border-border-theme placeholder-text-theme-secondary flex-1 rounded border px-3 py-2 text-sm text-white"
+            className="bg-surface-raised border-border-theme placeholder-text-theme-secondary text-text-theme-primary flex-1 rounded border px-3 py-2 text-sm"
           />
           <Button
             variant="secondary"
@@ -134,7 +134,9 @@ export function BackupsTab({
 }: TabContentProps): React.ReactElement {
   return (
     <div className="space-y-4">
-      <h3 className="mb-4 text-lg font-semibold text-white">Backup Settings</h3>
+      <h3 className="text-text-theme-primary mb-4 text-lg font-semibold">
+        Backup Settings
+      </h3>
 
       <label className="flex cursor-pointer items-center gap-3">
         <input
@@ -166,7 +168,7 @@ export function BackupsTab({
             )
           }
           disabled={!localSettings.enableAutoBackup}
-          className="bg-surface-raised border-border-theme w-24 rounded border px-3 py-2 text-sm text-white disabled:opacity-50"
+          className="bg-surface-raised border-border-theme text-text-theme-primary w-24 rounded border px-3 py-2 text-sm disabled:opacity-50"
         />
       </div>
 
@@ -182,7 +184,7 @@ export function BackupsTab({
           onChange={(e) =>
             updateLocalSetting('maxBackupCount', parseInt(e.target.value) || 10)
           }
-          className="bg-surface-raised border-border-theme w-24 rounded border px-3 py-2 text-sm text-white"
+          className="bg-surface-raised border-border-theme text-text-theme-primary w-24 rounded border px-3 py-2 text-sm"
         />
       </div>
 
@@ -198,7 +200,7 @@ export function BackupsTab({
               updateLocalSetting('backupDirectory', e.target.value)
             }
             placeholder="Default backup location"
-            className="bg-surface-raised border-border-theme placeholder-text-theme-secondary flex-1 rounded border px-3 py-2 text-sm text-white"
+            className="bg-surface-raised border-border-theme placeholder-text-theme-secondary text-text-theme-primary flex-1 rounded border px-3 py-2 text-sm"
           />
           <Button
             variant="secondary"
@@ -223,7 +225,9 @@ export function UpdatesTab({
 }: TabContentProps): React.ReactElement {
   return (
     <div className="space-y-4">
-      <h3 className="mb-4 text-lg font-semibold text-white">Update Settings</h3>
+      <h3 className="text-text-theme-primary mb-4 text-lg font-semibold">
+        Update Settings
+      </h3>
 
       <label className="flex cursor-pointer items-center gap-3">
         <input
@@ -248,7 +252,7 @@ export function UpdatesTab({
           onChange={(e) =>
             updateLocalSetting('updateChannel', e.target.value as UpdateChannel)
           }
-          className="bg-surface-raised border-border-theme w-40 rounded border px-3 py-2 text-sm text-white"
+          className="bg-surface-raised border-border-theme text-text-theme-primary w-40 rounded border px-3 py-2 text-sm"
         >
           <option value="stable">Stable</option>
           <option value="beta">Beta</option>
@@ -283,7 +287,7 @@ export function AdvancedTab({
 }: TabContentProps): React.ReactElement {
   return (
     <div className="space-y-4">
-      <h3 className="mb-4 text-lg font-semibold text-white">
+      <h3 className="text-text-theme-primary mb-4 text-lg font-semibold">
         Advanced Settings
       </h3>
 
@@ -299,7 +303,7 @@ export function AdvancedTab({
               updateLocalSetting('dataDirectory', e.target.value)
             }
             placeholder="Default data location"
-            className="bg-surface-raised border-border-theme placeholder-text-theme-secondary flex-1 rounded border px-3 py-2 text-sm text-white"
+            className="bg-surface-raised border-border-theme placeholder-text-theme-secondary text-text-theme-primary flex-1 rounded border px-3 py-2 text-sm"
           />
           <Button
             variant="secondary"
@@ -326,7 +330,7 @@ export function AdvancedTab({
           onChange={(e) =>
             updateLocalSetting('maxRecentFiles', parseInt(e.target.value) || 15)
           }
-          className="bg-surface-raised border-border-theme w-24 rounded border px-3 py-2 text-sm text-white"
+          className="bg-surface-raised border-border-theme text-text-theme-primary w-24 rounded border px-3 py-2 text-sm"
         />
       </div>
 

@@ -27,6 +27,7 @@ import {
   useArmorVariantLayout,
 } from '../shared/ArmorVariantRenderHelpers';
 import { DiagramHeader } from '../shared/DiagramHeader';
+import { CleanTechBipedDiagram } from './CleanTechBipedDiagram';
 import { CleanTechLocation } from './CleanTechDiagram.location';
 
 export interface CleanTechDiagramProps extends ConfigurableArmorDiagramProps {
@@ -34,7 +35,17 @@ export interface CleanTechDiagramProps extends ConfigurableArmorDiagramProps {
   mechConfigType?: MechConfigType;
 }
 
-export function CleanTechDiagram({
+export function CleanTechDiagram(
+  props: CleanTechDiagramProps,
+): React.ReactElement {
+  return (props.mechConfigType ?? 'biped') === 'biped' ? (
+    <CleanTechBipedDiagram {...props} />
+  ) : (
+    <ConfiguredCleanTechDiagram {...props} />
+  );
+}
+
+function ConfiguredCleanTechDiagram({
   armorData,
   selectedLocation,
   onLocationClick,

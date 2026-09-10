@@ -65,12 +65,12 @@ export function PeerSyncRow({
       textClass: 'text-emerald-400',
     },
     connecting: {
-      dotClass: 'bg-blue-500 animate-pulse',
+      dotClass: 'bg-accent animate-pulse',
       textClass: 'text-blue-400',
     },
     disconnected: {
-      dotClass: 'bg-gray-500',
-      textClass: 'text-gray-400',
+      dotClass: 'bg-surface-raised',
+      textClass: 'text-text-theme-secondary',
     },
     failed: {
       dotClass: 'bg-red-500',
@@ -84,22 +84,25 @@ export function PeerSyncRow({
 
   return (
     <div
-      className={`group relative p-4 transition-all duration-200 hover:bg-gray-700/30 ${className} `}
+      className={`group hover:bg-surface-raised/30 relative p-4 transition-all duration-200 ${className} `}
     >
       <div className="flex items-center gap-4">
         <div className="relative flex-shrink-0">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-gray-600/50 to-gray-700/50">
-            <UserIcon className="h-5 w-5 text-gray-400" />
+          <div className="from-surface-raised/50 to-surface-raised/50 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br">
+            <UserIcon className="text-text-theme-secondary h-5 w-5" />
           </div>
           <span
-            className={`absolute -right-0.5 -bottom-0.5 h-3 w-3 rounded-full border-2 border-gray-800 ${config.dotClass}`}
+            className={`border-border-theme absolute -right-0.5 -bottom-0.5 h-3 w-3 rounded-full border-2 ${config.dotClass}`}
             title={getConnectionStateLabel(connectionState)}
           />
         </div>
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <span className="truncate font-medium text-white" title={peerId}>
+            <span
+              className="text-text-theme-primary truncate font-medium"
+              title={peerId}
+            >
               {displayName}
             </span>
             {failedCount > 0 && (
@@ -111,11 +114,11 @@ export function PeerSyncRow({
 
           {showProgress ? (
             <div className="mt-2">
-              <div className="mb-1 flex items-center justify-between text-xs text-gray-400">
+              <div className="text-text-theme-secondary mb-1 flex items-center justify-between text-xs">
                 <span>Syncing...</span>
                 <span>{syncProgress}%</span>
               </div>
-              <div className="h-1.5 overflow-hidden rounded-full bg-gray-700">
+              <div className="bg-surface-raised h-1.5 overflow-hidden rounded-full">
                 <div
                   className="h-full rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 transition-all duration-300"
                   style={{ width: `${syncProgress}%` }}
@@ -124,12 +127,12 @@ export function PeerSyncRow({
             </div>
           ) : (
             <div className="mt-1 flex items-center gap-4 text-sm">
-              <div className="flex items-center gap-1.5 text-gray-500">
+              <div className="text-text-theme-muted flex items-center gap-1.5">
                 <PaperAirplaneIcon className="h-3.5 w-3.5" />
                 <span>
                   {pendingCount} pending
                   {pendingSizeBytes !== undefined && pendingSizeBytes > 0 && (
-                    <span className="text-gray-600">
+                    <span className="text-text-theme-muted">
                       {' '}
                       ({formatBytes(pendingSizeBytes)})
                     </span>
@@ -137,7 +140,7 @@ export function PeerSyncRow({
                 </span>
               </div>
 
-              <div className="flex items-center gap-1.5 text-gray-500">
+              <div className="text-text-theme-muted flex items-center gap-1.5">
                 <ClockIcon className="h-3.5 w-3.5" />
                 <span>{formatRelativeTime(lastSuccessAt)}</span>
               </div>

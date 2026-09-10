@@ -116,7 +116,7 @@ export function InfantryPlatoonConfigurationSection({
         </div>
         <div>
           <label className={cs.text.label}>Platoon Strength</label>
-          <div className="bg-surface-raised border-border-theme rounded border px-3 py-2 text-sm text-white">
+          <div className="bg-surface-raised border-border-theme text-text-theme-primary rounded border px-3 py-2 text-sm">
             {controls.platoonStrength} soldiers
           </div>
         </div>
@@ -125,13 +125,13 @@ export function InfantryPlatoonConfigurationSection({
       <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
         <div>
           <label className={cs.text.label}>Ground MP</label>
-          <div className="bg-surface-raised border-border-theme rounded border px-3 py-2 text-sm text-white">
+          <div className="bg-surface-raised border-border-theme text-text-theme-primary rounded border px-3 py-2 text-sm">
             {controls.groundMP}
           </div>
         </div>
         <div>
           <label className={cs.text.label}>Jump MP</label>
-          <div className="bg-surface-raised border-border-theme rounded border px-3 py-2 text-sm text-white">
+          <div className="bg-surface-raised border-border-theme text-text-theme-primary rounded border px-3 py-2 text-sm">
             {controls.jumpMP}
           </div>
         </div>
@@ -167,7 +167,7 @@ export function InfantryWeaponsSection({
             ))}
           </select>
           {controls.primaryWeapon && (
-            <p className="mt-1 text-xs text-gray-400">
+            <p className="text-text-theme-secondary mt-1 text-xs">
               Selected: {controls.primaryWeapon}
             </p>
           )}
@@ -189,7 +189,7 @@ export function InfantryWeaponsSection({
             ))}
           </select>
           {controls.secondaryWeapon && (
-            <p className="mt-1 text-xs text-gray-400">
+            <p className="text-text-theme-secondary mt-1 text-xs">
               {controls.secondaryWeaponCount} troopers carry{' '}
               {controls.secondaryWeapon}
             </p>

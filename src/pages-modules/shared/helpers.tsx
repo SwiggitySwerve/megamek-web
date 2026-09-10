@@ -50,7 +50,7 @@ export function getTypeDisplay(type: ShareableContentType | 'folder'): {
       return {
         icon: <DocumentIcon className="h-5 w-5" />,
         label: 'Item',
-        color: 'text-slate-400',
+        color: 'text-text-theme-secondary',
       };
   }
 }

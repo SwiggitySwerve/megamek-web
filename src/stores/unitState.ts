@@ -1,3 +1,4 @@
+import type { IUnitDefinitionReference } from '@/types/unit/UnitDefinition';
 /**
  * Unit State Interface
  *
@@ -6,6 +7,7 @@
  *
  * @spec openspec/specs/unit-store-architecture/spec.md
  */
+import type { ISerializedFluff } from '@/types/unit/UnitSerialization';
 
 import { IArmorAllocation } from '@/types/construction/ArmorAllocation';
 import { ArmorTypeEnum } from '@/types/construction/ArmorType';
@@ -213,6 +215,14 @@ export interface UnitState {
 
   /** Master Unit List ID (-1 for custom units, can include hyphens) */
   mulId: string;
+  /** Originating definition retained across draft and library round trips. */
+  readonly sourceDefinition?: IUnitDefinitionReference;
+
+  /** Combat role metadata carried by canonical/custom unit payloads. */
+  role?: string;
+
+  /** Optional descriptive text carried by canonical/custom unit payloads. */
+  fluff?: ISerializedFluff;
 
   /** Introduction year */
   year: number;
@@ -342,6 +352,8 @@ export interface UnitActions {
   setMulId: (mulId: string) => void;
   setYear: (year: number) => void;
   setRulesLevel: (rulesLevel: RulesLevel) => void;
+  setRole: (role: string) => void;
+  updateFluff: (patch: Partial<ISerializedFluff>) => void;
 
   // Chassis
   setTonnage: (tonnage: number) => void;
@@ -501,6 +513,8 @@ export function createDefaultUnitState(options: CreateUnitOptions): UnitState {
     clanName: '',
     model: defaultModel,
     mulId: '-1', // -1 for custom units
+    role: '',
+    fluff: {},
     year: 3145, // Default to Dark Age era
     rulesLevel: RulesLevel.STANDARD,
     tonnage: options.tonnage,

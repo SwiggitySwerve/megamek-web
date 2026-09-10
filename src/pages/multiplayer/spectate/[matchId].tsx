@@ -67,15 +67,15 @@ function SpectatorAuthPrompt({
   readonly onSubmit: () => void;
 }): React.ReactElement {
   return (
-    <div className="mx-auto max-w-md px-4 py-8 text-slate-200">
+    <div className="text-text-theme-primary mx-auto max-w-md px-4 py-8">
       <Link
         href="/multiplayer"
-        className="text-sm text-slate-400 hover:text-slate-200"
+        className="text-text-theme-secondary hover:text-text-theme-primary text-sm"
       >
         Back to multiplayer hub
       </Link>
       <h1 className="mt-2 text-2xl font-bold">Unlock vault to spectate</h1>
-      <p className="mt-2 text-xs text-slate-400">
+      <p className="text-text-theme-secondary mt-2 text-xs">
         Watching a match requires a signed identity. Enter your vault password
         to mint a token.
       </p>
@@ -83,14 +83,14 @@ function SpectatorAuthPrompt({
         type="password"
         value={password}
         onChange={(e) => onPasswordChange(e.target.value)}
-        className="mt-3 w-full rounded border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 focus:border-sky-500 focus:outline-none"
+        className="border-border-theme bg-surface-deep text-text-theme-primary mt-3 w-full rounded border px-3 py-2 text-sm focus:border-sky-500 focus:outline-none"
         placeholder="Vault password"
       />
       <button
         type="button"
         onClick={onSubmit}
         disabled={password.length === 0}
-        className="mt-2 w-full rounded bg-sky-600 px-3 py-2 text-sm font-medium text-white hover:bg-sky-500 disabled:cursor-not-allowed disabled:bg-slate-700"
+        className="bg-accent text-on-accent hover:bg-accent-hover disabled:bg-surface-raised mt-2 w-full rounded px-3 py-2 text-sm font-medium disabled:cursor-not-allowed"
       >
         Watch match
       </button>
@@ -109,10 +109,10 @@ function SpectatorRegisterError({
   readonly error: string;
 }): React.ReactElement {
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8 text-slate-200">
+    <div className="text-text-theme-primary mx-auto max-w-2xl px-4 py-8">
       <Link
         href="/multiplayer"
-        className="text-sm text-slate-400 hover:text-slate-200"
+        className="text-text-theme-secondary hover:text-text-theme-primary text-sm"
       >
         Back to multiplayer hub
       </Link>
@@ -155,7 +155,7 @@ export default function SpectatePage(): React.ReactElement {
 
   if (!matchId) {
     return (
-      <div className="mx-auto max-w-2xl px-4 py-8 text-slate-200">
+      <div className="text-text-theme-primary mx-auto max-w-2xl px-4 py-8">
         <p>Loading...</p>
       </div>
     );
@@ -189,11 +189,11 @@ export default function SpectatePage(): React.ReactElement {
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 text-slate-200">
+    <div className="text-text-theme-primary mx-auto max-w-4xl px-4 py-8">
       <header className="mb-6 flex items-center justify-between">
         <Link
           href="/multiplayer"
-          className="text-sm text-slate-400 hover:text-slate-200"
+          className="text-text-theme-secondary hover:text-text-theme-primary text-sm"
         >
           Back to multiplayer hub
         </Link>

@@ -65,7 +65,7 @@ function FolderTreeItem({
       className={`group flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2.5 transition-all duration-200 ${
         isSelected
           ? 'border border-cyan-500/30 bg-gradient-to-r from-cyan-500/20 to-blue-500/10 shadow-lg shadow-cyan-500/5'
-          : 'border border-transparent hover:border-gray-600/50 hover:bg-gray-700/50'
+          : 'hover:border-border-theme-strong/50 hover:bg-surface-raised/50 border border-transparent'
       } `}
       style={{ paddingLeft: `${12 + depth * 20}px` }}
       onClick={onSelect}
@@ -79,7 +79,7 @@ function FolderTreeItem({
         aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${folder.name}`}
         className={`flex h-5 w-5 flex-shrink-0 items-center justify-center rounded transition-all duration-200 ${
           hasChildren
-            ? 'text-gray-400 hover:bg-gray-600/50 hover:text-white'
+            ? 'text-text-theme-secondary hover:bg-surface-raised/50 hover:text-text-theme-primary'
             : 'pointer-events-none text-transparent'
         } `}
       >
@@ -93,7 +93,7 @@ function FolderTreeItem({
 
       {/* Folder Icon */}
       <div
-        className={`flex-shrink-0 transition-colors ${isSelected ? 'text-cyan-400' : 'text-gray-400 group-hover:text-gray-300'}`}
+        className={`flex-shrink-0 transition-colors ${isSelected ? 'text-cyan-400' : 'text-text-theme-secondary group-hover:text-text-theme-secondary'}`}
       >
         {isExpanded && hasChildren ? (
           <FolderOpenIcon className="h-5 w-5" />
@@ -106,7 +106,7 @@ function FolderTreeItem({
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <span
-            className={`truncate font-medium ${isSelected ? 'text-white' : 'text-gray-200'}`}
+            className={`truncate font-medium ${isSelected ? 'text-text-theme-primary' : ''}`}
           >
             {folder.name}
           </span>
@@ -117,7 +117,7 @@ function FolderTreeItem({
           )}
         </div>
         {folder.description && (
-          <p className="mt-0.5 truncate text-xs text-gray-500">
+          <p className="text-text-theme-muted mt-0.5 truncate text-xs">
             {folder.description}
           </p>
         )}
@@ -128,7 +128,7 @@ function FolderTreeItem({
         className={`flex-shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
           isSelected
             ? 'bg-cyan-500/20 text-cyan-300'
-            : 'bg-gray-700/50 text-gray-400 group-hover:bg-gray-600/50'
+            : 'bg-surface-raised/50 text-text-theme-secondary group-hover:bg-surface-raised/50'
         } `}
       >
         {folder.itemCount}
@@ -183,7 +183,9 @@ export function FolderList({
     return (
       <div className="flex items-center justify-center py-12">
         <SpinnerIcon className="h-6 w-6 text-cyan-400" />
-        <span className="ml-3 text-gray-400">Loading folders...</span>
+        <span className="text-text-theme-secondary ml-3">
+          Loading folders...
+        </span>
       </div>
     );
   }
@@ -199,9 +201,12 @@ export function FolderList({
   if (folders.length === 0) {
     return (
       <div className="py-12 text-center">
-        <FolderIcon className="mx-auto mb-3 h-12 w-12 text-gray-600" />
-        <p className="text-gray-400">No folders yet</p>
-        <p className="mt-1 text-sm text-gray-500">
+        <FolderIcon
+          size="hero"
+          className="text-text-theme-muted mx-auto mb-3"
+        />
+        <p className="text-text-theme-secondary">No folders yet</p>
+        <p className="text-text-theme-muted mt-1 text-sm">
           Create a folder to organize your vault
         </p>
       </div>

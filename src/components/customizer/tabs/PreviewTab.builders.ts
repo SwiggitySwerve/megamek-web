@@ -1,64 +1,46 @@
-import type {
-  IArmorAllocation as IEditableArmorAllocation,
-  IEditableMech,
-} from '@/services/construction/MechBuilderService';
+import type { IEditableMech } from '@/services/construction/MechBuilderService';
 import type { IUnitConfig } from '@/services/printing/recordsheet/types';
-
-import { MechLocation } from '@/types/construction/CriticalSlotAllocation';
-import { TechBase } from '@/types/enums/TechBase';
-import { EquipmentCategory } from '@/types/equipment';
+import type { IArmorAllocation } from '@/types/construction/ArmorAllocation';
+import type { IMountedEquipmentInstance } from '@/types/equipment/MountedEquipment';
 
 import {
-  BIPED_ARMOR_LOCATIONS,
-  SIX_SLOT_ARMOR_LOCATIONS,
-} from '../armor/shared/ArmorVariantRenderHelpers';
+  buildEditableArmorAllocation,
+  projectEditableMech,
+} from '@/services/construction/editableMechProjection';
+import { EngineType } from '@/types/construction/EngineType';
+import { GyroType } from '@/types/construction/GyroType';
+import {
+  getLocationsForConfig,
+  getLocationSlotCount,
+} from '@/types/construction/mechConfigHelpers';
+import { EquipmentCategory } from '@/types/equipment';
+import { MechConfiguration } from '@/types/unit/BattleMechInterfaces';
+import { getFixedSlotNames } from '@/utils/construction/slotOperations/topology';
+
 import {
   buildRecordSheetNameParts,
   buildRecordSheetUnitIdentity,
   type RecordSheetUnitIdentityWithTonnageInput,
 } from '../preview/recordSheetUnitIdentity';
 
-interface PreviewEquipment {
-  equipmentId: string;
-  instanceId: string;
-  name: string;
-  category: string;
-  location?: string | null;
-  slots?: readonly number[];
-  heat?: number;
-}
-
-interface PreviewArmorAllocation {
-  [MechLocation.HEAD]: number;
-  [MechLocation.CENTER_TORSO]: number;
-  centerTorsoRear: number;
-  [MechLocation.LEFT_TORSO]: number;
-  leftTorsoRear: number;
-  [MechLocation.RIGHT_TORSO]: number;
-  rightTorsoRear: number;
-  [MechLocation.LEFT_ARM]: number;
-  [MechLocation.RIGHT_ARM]: number;
-  [MechLocation.LEFT_LEG]: number;
-  [MechLocation.RIGHT_LEG]: number;
-}
-
-interface PreviewUnitState extends Omit<
+export interface PreviewUnitState extends Omit<
   RecordSheetUnitIdentityWithTonnageInput,
   'id'
 > {
-  configuration: string;
-  engineType: string;
+  role?: string;
+  configuration: MechConfiguration;
+  engineType: EngineType;
   engineRating: number;
-  gyroType: string;
+  gyroType: GyroType;
   internalStructureType: string;
   cockpitType: string;
   armorType: string;
-  armorAllocation: PreviewArmorAllocation;
+  armorAllocation: IArmorAllocation;
   heatSinkType: string;
   heatSinkCount: number;
   enhancement: string | null | undefined;
   jumpMP: number;
-  equipment: readonly PreviewEquipment[];
+  equipment: readonly IMountedEquipmentInstance[];
 }
 
 type CriticalSlot = {
@@ -74,64 +56,31 @@ export function buildPreviewMechNameParts(state: PreviewUnitState): {
   return buildRecordSheetNameParts(state);
 }
 
-export function buildEditableArmorAllocation(
-  armorAllocation: PreviewArmorAllocation,
-): IEditableArmorAllocation {
-  return {
-    head: armorAllocation[MechLocation.HEAD],
-    centerTorso: armorAllocation[MechLocation.CENTER_TORSO],
-    centerTorsoRear: armorAllocation.centerTorsoRear,
-    leftTorso: armorAllocation[MechLocation.LEFT_TORSO],
-    leftTorsoRear: armorAllocation.leftTorsoRear,
-    rightTorso: armorAllocation[MechLocation.RIGHT_TORSO],
-    rightTorsoRear: armorAllocation.rightTorsoRear,
-    leftArm: armorAllocation[MechLocation.LEFT_ARM],
-    rightArm: armorAllocation[MechLocation.RIGHT_ARM],
-    leftLeg: armorAllocation[MechLocation.LEFT_LEG],
-    rightLeg: armorAllocation[MechLocation.RIGHT_LEG],
-  };
-}
+export { buildEditableArmorAllocation };
 
 export function buildEditableMech(
   state: PreviewUnitState,
   walkMP: number,
 ): IEditableMech {
-  const nameParts = buildPreviewMechNameParts(state);
-
-  return {
-    id: 'preview',
-    chassis: nameParts.chassis,
-    variant: nameParts.model,
-    tonnage: state.tonnage,
-    techBase: state.techBase as TechBase,
-    engineType: state.engineType,
-    engineRating: state.engineRating,
-    walkMP,
-    structureType: state.internalStructureType,
-    gyroType: state.gyroType,
-    cockpitType: state.cockpitType,
-    armorType: state.armorType,
-    armorAllocation: buildEditableArmorAllocation(state.armorAllocation),
-    heatSinkType: state.heatSinkType,
-    heatSinkCount: state.heatSinkCount,
-    equipment: state.equipment.map((eq) => ({
-      equipmentId: eq.equipmentId,
-      location: eq.location ?? '',
-      slotIndex: eq.slots?.[0] ?? 0,
-    })),
-    isDirty: false,
-  };
+  return projectEditableMech(state, walkMP);
 }
 
 export function buildCriticalSlotsFromEquipment(
-  equipment: readonly PreviewEquipment[],
+  equipment: readonly IMountedEquipmentInstance[],
+  configuration: MechConfiguration,
+  engineType: EngineType,
+  gyroType: GyroType,
 ): Record<string, CriticalSlot[]> {
   const result: Record<string, CriticalSlot[]> = {};
 
-  BIPED_ARMOR_LOCATIONS.forEach((loc) => {
-    result[loc] = new Array<CriticalSlot>(
-      SIX_SLOT_ARMOR_LOCATIONS.has(loc) ? 6 : 12,
+  getLocationsForConfig(configuration).forEach((location) => {
+    const slots = new Array<CriticalSlot>(
+      getLocationSlotCount(location, configuration),
     ).fill(null);
+    getFixedSlotNames(location, engineType, gyroType).forEach((name, index) => {
+      slots[index] = { content: name, isSystem: true };
+    });
+    result[location] = slots;
   });
 
   equipment.forEach((eq) => {
@@ -144,11 +93,13 @@ export function buildCriticalSlotsFromEquipment(
         return;
       }
 
-      result[eq.location as string][slotIndex] = {
-        content: eq.name,
-        isSystem: false,
-        equipmentId: eq.instanceId,
-      };
+      if (!result[eq.location as string][slotIndex]?.isSystem) {
+        result[eq.location as string][slotIndex] = {
+          content: eq.name,
+          isSystem: false,
+          equipmentId: eq.instanceId,
+        };
+      }
     });
   });
 
@@ -164,6 +115,7 @@ export function buildPreviewUnitConfig(
 ): IUnitConfig {
   return {
     ...buildRecordSheetUnitIdentity({ ...state, id: 'preview' }),
+    role: state.role,
     configuration: state.configuration,
     engine: {
       type: state.engineType,
@@ -191,7 +143,7 @@ export function buildPreviewUnitConfig(
     equipment: state.equipment.map((eq) => ({
       id: eq.instanceId,
       name: eq.name,
-      location: (eq.location || MechLocation.CENTER_TORSO) as string,
+      location: eq.location || 'Unassigned',
       heat: eq.heat || 0,
       damage: '-',
       ranges: undefined,
@@ -200,7 +152,12 @@ export function buildPreviewUnitConfig(
       ammoCount: undefined,
       slots: eq.slots ? [...eq.slots] : undefined,
     })),
-    criticalSlots: buildCriticalSlotsFromEquipment(state.equipment),
+    criticalSlots: buildCriticalSlotsFromEquipment(
+      state.equipment,
+      state.configuration,
+      state.engineType,
+      state.gyroType,
+    ),
     enhancements: state.enhancement ? [state.enhancement] : [],
     battleValue,
     cost,

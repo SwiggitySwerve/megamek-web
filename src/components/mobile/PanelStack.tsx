@@ -273,7 +273,7 @@ function PanelInternal({
     <div
       ref={panelRef}
       data-panel-id={id}
-      className="fixed inset-0 h-full w-full bg-white dark:bg-gray-900"
+      className="bg-surface-deep fixed inset-0 h-full w-full"
       style={{
         ...presentation,
         transition: PANEL_TRANSITION,

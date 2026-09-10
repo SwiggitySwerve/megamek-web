@@ -1,94 +1,114 @@
-/**
- * Tests for useAutoSaveIndicator.
- *
- * Regression focus: the hook is mounted by CustomizerWithRouter, which sits
- * ABOVE the UnitStoreProvider boundary. On non-mech tabs there is no provider,
- * so the hook must read UnitStoreContext as nullable and no-op rather than
- * throw (the pre-existing /customizer crash — audit
- * .audit/2026-05-14-customizer-armor-diagram-visual-audit.md Finding 1).
- */
-
-import { renderHook, act } from '@testing-library/react';
-import React from 'react';
+import { act, renderHook } from '@testing-library/react';
 
 import { useAutoSaveIndicator } from '@/hooks/useAutoSaveIndicator';
-import { createNewUnitStore, UnitStoreContext } from '@/stores/useUnitStore';
-import { TechBase } from '@/types/enums/TechBase';
+import { clientSafeStorage } from '@/stores/utils/clientSafeStorage';
+import { UnitType } from '@/types/unit/BattleMechInterfaces';
 
 const showToastMock = jest.fn();
 jest.mock('@/components/shared/Toast', () => ({
   useToast: () => ({ showToast: showToastMock }),
 }));
 
-function makeStore() {
-  return createNewUnitStore({
-    name: 'Test Mech TST-1',
-    tonnage: 50,
-    techBase: TechBase.INNER_SPHERE,
-  });
-}
+const MECH_ID = '11111111-1111-4111-8111-111111111111';
+const VEHICLE_ID = '22222222-2222-4222-8222-222222222222';
+const MECH_TARGET = { unitId: MECH_ID, unitType: UnitType.BATTLEMECH };
 
 beforeEach(() => {
   showToastMock.mockClear();
+  localStorage.clear();
   jest.useFakeTimers();
 });
 
 afterEach(() => {
   jest.runOnlyPendingTimers();
   jest.useRealTimers();
+  jest.restoreAllMocks();
 });
 
 describe('useAutoSaveIndicator', () => {
-  it('does not throw when rendered with NO UnitStoreProvider ancestor', () => {
-    // The pre-existing /customizer crash: non-mech tabs have no provider.
-    expect(() => {
-      renderHook(() => useAutoSaveIndicator());
-    }).not.toThrow();
-  });
+  it('does not report a save without an active customizer unit', () => {
+    renderHook(() => useAutoSaveIndicator(null));
 
-  it('does not fire a toast when there is no store in context', () => {
-    renderHook(() => useAutoSaveIndicator());
     act(() => {
-      jest.advanceTimersByTime(1000);
+      clientSafeStorage.setItem(`megamek-unit-${MECH_ID}`, '{}');
+      jest.advanceTimersByTime(500);
     });
+
     expect(showToastMock).not.toHaveBeenCalled();
   });
 
-  it('fires a "Saved" toast after a debounce when the store records a modification', () => {
-    const store = makeStore();
-    const wrapper = ({ children }: { children: React.ReactNode }) => (
-      <UnitStoreContext.Provider value={store}>
-        {children}
-      </UnitStoreContext.Provider>
-    );
-    renderHook(() => useAutoSaveIndicator(), { wrapper });
+  it('reports draft success only after the active unit write succeeds', () => {
+    renderHook(() => useAutoSaveIndicator(MECH_TARGET));
 
     act(() => {
-      store.setState({ lastModifiedAt: Date.now() });
+      clientSafeStorage.setItem(`megamek-unit-${MECH_ID}`, '{"state":{}}');
     });
-    // Toast is debounced 500ms — not fired immediately.
     expect(showToastMock).not.toHaveBeenCalled();
 
     act(() => {
       jest.advanceTimersByTime(500);
     });
+
+    expect(localStorage.getItem(`megamek-unit-${MECH_ID}`)).toBe(
+      '{"state":{}}',
+    );
     expect(showToastMock).toHaveBeenCalledWith(
-      expect.objectContaining({ message: 'Saved', variant: 'success' }),
+      expect.objectContaining({
+        message: 'Draft saved in this browser',
+        variant: 'success',
+      }),
     );
   });
 
-  it('does not fire a toast when the store has no modification', () => {
-    const store = makeStore();
-    const wrapper = ({ children }: { children: React.ReactNode }) => (
-      <UnitStoreContext.Provider value={store}>
-        {children}
-      </UnitStoreContext.Provider>
-    );
-    renderHook(() => useAutoSaveIndicator(), { wrapper });
+  it('reports a failed active-unit write and never reports success', () => {
+    jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('quota exceeded');
+    });
+    renderHook(() => useAutoSaveIndicator(MECH_TARGET));
 
     act(() => {
-      jest.advanceTimersByTime(1000);
+      expect(() =>
+        clientSafeStorage.setItem(`megamek-unit-${MECH_ID}`, '{}'),
+      ).toThrow('quota exceeded');
+      jest.advanceTimersByTime(500);
     });
+
+    expect(showToastMock).toHaveBeenCalledTimes(1);
+    expect(showToastMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'Draft could not be saved in this browser',
+        variant: 'error',
+      }),
+    );
+  });
+
+  it('ignores a receipt for a different unit family', () => {
+    renderHook(() => useAutoSaveIndicator(MECH_TARGET));
+
+    act(() => {
+      clientSafeStorage.setItem(`megamek-vehicle-${MECH_ID}`, '{}');
+      jest.advanceTimersByTime(500);
+    });
+
+    expect(showToastMock).not.toHaveBeenCalled();
+  });
+
+  it('cancels a pending receipt when the active unit switches', () => {
+    const { rerender } = renderHook(
+      ({ target }) => useAutoSaveIndicator(target),
+      { initialProps: { target: MECH_TARGET } },
+    );
+
+    act(() => {
+      clientSafeStorage.setItem(`megamek-unit-${MECH_ID}`, '{}');
+    });
+    rerender({
+      target: { unitId: VEHICLE_ID, unitType: UnitType.VEHICLE },
+    });
+    act(() => {
+      jest.advanceTimersByTime(500);
+    });
+
     expect(showToastMock).not.toHaveBeenCalled();
   });
 });

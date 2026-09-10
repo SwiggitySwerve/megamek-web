@@ -35,7 +35,7 @@ export const RosterSection: React.FC<RosterSectionProps> = ({
     data-testid="roster-section"
   >
     <h2
-      className="text-lg font-semibold text-gray-800 dark:text-gray-200"
+      className="text-text-theme-primary text-lg font-semibold"
       data-testid="section-heading"
     >
       Roster
@@ -90,7 +90,7 @@ export const ForceSection: React.FC<ForceSectionProps> = ({
     data-testid="force-section"
   >
     <h2
-      className="text-lg font-semibold text-gray-800 dark:text-gray-200"
+      className="text-text-theme-primary text-lg font-semibold"
       data-testid="section-heading"
     >
       Force Status
@@ -162,7 +162,7 @@ export const FinancialSection: React.FC<FinancialSectionProps> = ({
     data-testid="financial-section"
   >
     <h2
-      className="text-lg font-semibold text-gray-800 dark:text-gray-200"
+      className="text-text-theme-primary text-lg font-semibold"
       data-testid="section-heading"
     >
       Financial Overview
@@ -226,7 +226,7 @@ export const ProgressionSection: React.FC<ProgressionSectionProps> = ({
     data-testid="progression-section"
   >
     <h2
-      className="text-lg font-semibold text-gray-800 dark:text-gray-200"
+      className="text-text-theme-primary text-lg font-semibold"
       data-testid="section-heading"
     >
       Progression

@@ -20,13 +20,18 @@ import * as path from 'path';
 import { NodeCanonicalUnitService } from '../NodeCanonicalUnitService';
 import { UnitContractParseError } from '../unitLoaderService/unitContractAdapter';
 
-// A minimal but contract-valid BattleMech unit (id non-empty + valid unitType).
+// Start with canonical data so the happy-path fixture keeps the full unit contract.
 const VALID_UNIT = {
+  ...JSON.parse(
+    fs.readFileSync(
+      path.resolve(
+        process.cwd(),
+        'public/data/units/battlemechs/2-star-league/standard/Atlas AS7-D.json',
+      ),
+      'utf-8',
+    ),
+  ),
   id: 'test-valid-mech',
-  chassis: 'Atlas',
-  model: 'AS7-D',
-  unitType: 'BattleMech',
-  tonnage: 100,
 };
 
 // Malformed: `unitType` is not a member of the contract enum.

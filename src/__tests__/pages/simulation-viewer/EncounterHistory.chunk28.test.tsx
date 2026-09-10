@@ -306,9 +306,11 @@ describe('EncounterHistory', () => {
     it('toggles sort direction when clicking same sort button', () => {
       renderPage();
       fireEvent.click(screen.getByTestId('sort-button-duration'));
-      expect(screen.getByTestId('sort-direction-indicator')).toHaveTextContent(
-        '↓',
-      );
+      const indicator = screen.getByTestId('sort-direction-indicator');
+      expect(indicator).toHaveAccessibleName('Descending');
+      expect(
+        indicator.querySelector('[data-icon-name="arrow-down"]'),
+      ).toBeInTheDocument();
     });
   });
 });

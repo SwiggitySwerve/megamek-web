@@ -131,7 +131,7 @@ const meta: Meta<typeof FolderList> = {
   },
   decorators: [
     (Story) => (
-      <div className="w-[720px] max-w-full rounded-lg bg-gray-900 p-6">
+      <div className="bg-surface-deep w-[720px] max-w-full rounded-lg p-6">
         <Story />
       </div>
     ),
@@ -162,7 +162,7 @@ export const CreateDialog: Story = {
     layout: 'fullscreen',
   },
   render: () => (
-    <div className="min-h-[520px] bg-gray-950">
+    <div className="bg-surface-deep min-h-[520px]">
       <FolderCreateDialog
         isOpen
         onClose={fn()}
@@ -178,7 +178,7 @@ export const EditDialog: Story = {
     layout: 'fullscreen',
   },
   render: () => (
-    <div className="min-h-[540px] bg-gray-950">
+    <div className="bg-surface-deep min-h-[540px]">
       <FolderEditDialog
         isOpen
         onClose={fn()}

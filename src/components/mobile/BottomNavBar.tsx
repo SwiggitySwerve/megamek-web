@@ -62,7 +62,7 @@ export function BottomNavBar({
 
   return (
     <nav
-      className={`fixed right-0 bottom-0 left-0 z-50 border-t border-gray-200 bg-white md:hidden dark:border-gray-700 dark:bg-gray-900 ${className}`.trim()}
+      className={`border-border-theme bg-surface-deep fixed right-0 bottom-0 left-0 z-50 border-t md:hidden ${className}`.trim()}
       style={{
         minHeight: '56px',
         paddingBottom: 'env(safe-area-inset-bottom, 0px)',
@@ -80,8 +80,8 @@ export function BottomNavBar({
               onClick={() => handleTabPress(tab)}
               className={`flex min-h-[44px] min-w-[44px] flex-1 flex-col items-center justify-center transition-colors duration-200 ${
                 isActive
-                  ? 'text-blue-600 dark:text-blue-400'
-                  : 'text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'
+                  ? 'text-accent'
+                  : 'text-text-theme-secondary hover:text-text-theme-primary'
               } `.trim()}
               style={{
                 paddingTop: '8px',

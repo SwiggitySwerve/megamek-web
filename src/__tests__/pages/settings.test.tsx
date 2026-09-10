@@ -228,7 +228,7 @@ describe('Settings Page', () => {
 
       expect(
         screen.getByText(
-          'Customize colors, fonts, and visual effects. Changes preview instantly but require saving.',
+          'Colors apply immediately and save automatically on this device. Preview and save font, motion, and spacing changes below.',
         ),
       ).toBeInTheDocument();
     });
@@ -296,13 +296,25 @@ describe('Settings Page', () => {
       expect(animationSelect).toBeInTheDocument();
     });
 
-    it('renders UI Theme picker with 4 themes', () => {
+    it('renders all 10 application palettes', () => {
       renderSettings();
 
-      expect(screen.getByText('Default')).toBeInTheDocument();
-      expect(screen.getByText('Minimal')).toBeInTheDocument();
-      expect(screen.getByText('Neon')).toBeInTheDocument();
-      expect(screen.getByText('Tactical')).toBeInTheDocument();
+      for (const name of [
+        'Midnight blue',
+        'Petrol teal',
+        'Field olive',
+        'Classic slate',
+        'Royal violet',
+        'Burgundy',
+        'Copper',
+        'Neon',
+        'Tactical',
+        'Obsidian',
+      ]) {
+        expect(
+          screen.getByRole('button', { name: new RegExp(name) }),
+        ).toBeInTheDocument();
+      }
     });
 
     it('renders compact mode toggle', () => {
@@ -322,7 +334,7 @@ describe('Settings Page', () => {
       expect(screen.getByText('Appearance settings saved')).toBeInTheDocument();
     });
 
-    it('marks appearance as unsaved after changing accent color', () => {
+    it('persists accent color immediately without an appearance draft', () => {
       renderSettings();
 
       const cyanButton = screen.getByLabelText('Cyan');
@@ -330,17 +342,24 @@ describe('Settings Page', () => {
         fireEvent.click(cyanButton);
       });
 
+      expect(screen.getByText('Appearance settings saved')).toBeInTheDocument();
+      expect(useAppearanceStore.getState().accentColor).toBe('cyan');
       expect(
-        screen.getByText('You have unsaved appearance changes'),
-      ).toBeInTheDocument();
+        JSON.parse(localStorage.getItem('mekstation-appearance')!).state
+          .accentColor,
+      ).toBe('cyan');
+      expect(
+        screen.getByRole('button', { name: 'Save Appearance' }),
+      ).toBeDisabled();
     });
 
-    it('shows Save Appearance button enabled after making changes', () => {
+    it('requires saving font changes independently of palette changes', () => {
       renderSettings();
 
-      const cyanButton = screen.getByLabelText('Cyan');
       act(() => {
-        fireEvent.click(cyanButton);
+        fireEvent.change(screen.getByDisplayValue('Medium (16px)'), {
+          target: { value: 'large' },
+        });
       });
 
       const saveButton = screen.getByText('Save Appearance');
@@ -438,8 +457,8 @@ describe('Settings Page', () => {
     });
   });
 
-  describe('UI Theme Draft Preview', () => {
-    it('shows theme save notice when UI theme is changed', () => {
+  describe('UI Theme Persistence', () => {
+    it('persists the selected palette immediately', () => {
       renderSettings();
 
       const neonButton = screen.getByText('Neon').closest('button');
@@ -450,9 +469,16 @@ describe('Settings Page', () => {
       });
 
       expect(
-        screen.getByText('Theme preview active — save to keep changes'),
+        screen.getByText('Colors save automatically on this device.'),
       ).toBeInTheDocument();
-      expect(screen.getByText('Save Theme')).toBeInTheDocument();
+      expect(useAppearanceStore.getState().uiTheme).toBe('neon');
+      expect(
+        JSON.parse(localStorage.getItem('mekstation-appearance')!).state
+          .uiTheme,
+      ).toBe('neon');
+      expect(
+        screen.queryByRole('button', { name: 'Save Theme' }),
+      ).not.toBeInTheDocument();
     });
   });
 });

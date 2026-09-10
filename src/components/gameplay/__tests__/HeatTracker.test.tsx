@@ -205,7 +205,11 @@ describe('HeatTracker', () => {
         />,
       );
 
-      expect(screen.getByText('⚠️ Ammo explosion risk')).toBeInTheDocument();
+      const risk = screen.getByTestId('heat-tracker-ammo-risk');
+      expect(risk).toHaveTextContent('Ammo explosion risk');
+      expect(
+        risk.querySelector('[data-icon-name=\"warning\"]'),
+      ).toBeInTheDocument();
     });
 
     it('should have warning color changes', () => {
@@ -324,7 +328,10 @@ describe('HeatTracker', () => {
         />,
       );
 
-      expect(screen.getByText(/⚠️ HEAT OVERFLOW:/)).toBeInTheDocument();
+      const overflow = screen.getByTestId('heat-tracker-overflow');
+      expect(
+        overflow.querySelector('[data-icon-name=\"warning\"]'),
+      ).toBeInTheDocument();
       expect(screen.getByText(/5 over limit/)).toBeInTheDocument();
     });
 

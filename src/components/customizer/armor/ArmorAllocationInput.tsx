@@ -139,7 +139,7 @@ export function ArmorAllocationInput({
       data-armor-group={groupId}
       data-testid={testId}
       aria-label={`${label} armor value`}
-      className={`w-full rounded border border-slate-600 bg-slate-800 px-2 py-0.5 text-center text-xs text-white ${className}`}
+      className={`bg-border-theme bg-surface-raised text-text-theme-primary w-full rounded border px-2 py-0.5 text-center text-xs ${className}`}
     />
   );
 }

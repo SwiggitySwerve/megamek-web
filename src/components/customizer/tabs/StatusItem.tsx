@@ -10,7 +10,7 @@ interface StatusItemProps {
 }
 
 const STATUS_COLORS: Record<StatusLevel, string> = {
-  normal: 'text-white',
+  normal: 'text-text-theme-primary',
   warning: 'text-amber-400',
   error: 'text-red-400',
   success: 'text-green-400',

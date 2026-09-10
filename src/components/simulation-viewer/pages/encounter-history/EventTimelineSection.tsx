@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 
 import { VirtualizedTimeline } from '@/components/simulation-viewer/VirtualizedTimeline';
+import { AppIcon } from '@/components/ui/AppIcon';
 import { FOCUS_RING_CLASSES } from '@/utils/accessibility';
 
 import type { IBattle } from './types';
@@ -113,43 +114,48 @@ export const EventTimelineSection: React.FC<IEventTimelineSectionProps> = ({
       title="Event Timeline"
     >
       <div
-        className="mb-4 flex flex-wrap items-center gap-2 rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800"
+        className="border-border-theme-subtle bg-surface-base mb-4 flex flex-wrap items-center gap-2 rounded-lg border p-3"
         data-testid="vcr-controls"
       >
         <button
           type="button"
           onClick={handleStepBack}
           disabled={localTurn <= 1}
-          className={`min-h-[44px] rounded-md bg-gray-100 px-3 py-2 text-sm text-gray-700 hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50 md:min-h-0 md:py-1 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 ${FOCUS_RING_CLASSES}`}
+          className={`bg-surface-raised text-text-theme-secondary hover:bg-surface-raised min-h-[44px] rounded-md px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50 md:min-h-0 md:py-1 ${FOCUS_RING_CLASSES}`}
           aria-label="Step back"
           data-testid="vcr-step-back"
         >
-          ⏮ Back
+          <AppIcon name="skip-back" size="inline" aria-hidden="true" /> Back
         </button>
         <button
           type="button"
           onClick={handlePlayPause}
           disabled={maxTurn === 0}
-          className={`min-h-[44px] rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 md:min-h-0 md:py-1 ${FOCUS_RING_CLASSES}`}
+          className={`text-on-accent bg-accent hover:bg-accent-hover min-h-[44px] rounded-md px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50 md:min-h-0 md:py-1 ${FOCUS_RING_CLASSES}`}
           aria-label={isPlaying ? 'Pause' : 'Play'}
           data-testid="vcr-play-pause"
         >
-          {isPlaying ? '⏸ Pause' : '▶ Play'}
+          <AppIcon
+            name={isPlaying ? 'pause' : 'play'}
+            size="inline"
+            aria-hidden="true"
+          />
+          {isPlaying ? 'Pause' : 'Play'}
         </button>
         <button
           type="button"
           onClick={handleStepForward}
           disabled={localTurn >= maxTurn}
-          className={`min-h-[44px] rounded-md bg-gray-100 px-3 py-2 text-sm text-gray-700 hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50 md:min-h-0 md:py-1 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 ${FOCUS_RING_CLASSES}`}
+          className={`bg-surface-raised text-text-theme-secondary hover:bg-surface-raised min-h-[44px] rounded-md px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50 md:min-h-0 md:py-1 ${FOCUS_RING_CLASSES}`}
           aria-label="Step forward"
           data-testid="vcr-step-forward"
         >
-          Next ⏭
+          Next <AppIcon name="skip-forward" size="inline" aria-hidden="true" />
         </button>
         <select
           value={speed}
           onChange={handleSpeedChange}
-          className={`min-h-[44px] rounded-md border border-gray-300 bg-white px-2 py-2 text-sm text-gray-700 md:min-h-0 md:py-1 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 ${FOCUS_RING_CLASSES}`}
+          className={`border-border-theme-subtle bg-surface-base text-text-theme-secondary min-h-[44px] rounded-md border px-2 py-2 text-sm md:min-h-0 md:py-1 ${FOCUS_RING_CLASSES}`}
           aria-label="Playback speed"
           data-testid="vcr-speed-select"
         >
@@ -158,7 +164,7 @@ export const EventTimelineSection: React.FC<IEventTimelineSectionProps> = ({
           <option value={4}>4x</option>
         </select>
         <span
-          className="ml-auto text-sm text-gray-600 dark:text-gray-400"
+          className="text-text-theme-muted ml-auto text-sm"
           aria-live="polite"
           aria-atomic="true"
           data-testid="vcr-turn-display"
@@ -169,7 +175,7 @@ export const EventTimelineSection: React.FC<IEventTimelineSectionProps> = ({
 
       {battle.events.length === 0 ? (
         <p
-          className="text-sm text-gray-500 italic dark:text-gray-400"
+          className="text-text-theme-muted text-sm italic"
           data-testid="empty-events"
         >
           No events recorded.

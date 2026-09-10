@@ -1,3 +1,4 @@
+import React, { useState, useRef, useEffect } from 'react';
 /**
  * Unit Tab Component
  *
@@ -6,9 +7,11 @@
  * @spec openspec/specs/multi-unit-tabs/spec.md
  */
 
-import React, { useState, useRef, useEffect } from 'react';
+import { AppIcon } from '@/components/ui/AppIcon';
 
 import type { TabDisplayInfo } from './tabTypes';
+
+import { TechBaseBadge } from '../shared/TechBaseBadge';
 
 interface UnitTabProps {
   /** Tab data */
@@ -85,13 +88,11 @@ export function UnitTab({
 
   return (
     <div
-      className={`group min-h-touch flex max-w-[160px] min-w-[100px] cursor-pointer items-center gap-2 border-b-2 px-3 py-2 transition-colors sm:min-h-0 sm:max-w-[200px] sm:min-w-[120px] sm:py-2 ${
+      className={`group flex min-h-11 max-w-[220px] min-w-[140px] shrink-0 items-center gap-1 rounded-t border-b-2 pl-2 transition-colors ${
         isActive
-          ? 'border-blue-500 bg-slate-700 text-slate-100'
-          : 'border-transparent bg-transparent text-slate-400 hover:bg-slate-700/50 hover:text-slate-300'
+          ? 'border-accent bg-surface-raised text-text-theme-primary'
+          : 'text-text-theme-secondary hover:bg-surface-raised hover:text-text-theme-primary border-transparent bg-transparent'
       } `}
-      onClick={onSelect}
-      onDoubleClick={handleDoubleClick}
     >
       {/* Tab name or input */}
       <div className="min-w-0 flex-1">
@@ -103,19 +104,37 @@ export function UnitTab({
             onChange={(e) => setEditName(e.target.value)}
             onBlur={submitRename}
             onKeyDown={handleKeyDown}
-            className="w-full rounded bg-slate-600 px-1 py-0.5 text-sm text-white outline-none focus:ring-1 focus:ring-blue-500"
+            className="bg-surface-raised text-text-theme-primary focus-visible:ring-accent w-full rounded px-1 py-0.5 text-sm outline-none focus-visible:ring-2"
             onClick={(e) => e.stopPropagation()}
           />
         ) : (
-          <span className="block truncate text-sm">{displayName}</span>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={isActive}
+            aria-label={tab.name}
+            tabIndex={isActive ? 0 : -1}
+            title={`${tab.name} · Double-click to rename`}
+            onClick={onSelect}
+            onDoubleClick={handleDoubleClick}
+            className="focus-visible:outline-accent flex min-h-11 w-full min-w-0 items-center gap-2 rounded text-left text-xs focus-visible:outline-2 focus-visible:outline-offset-[-2px]"
+          >
+            <span className="truncate">{displayName}</span>
+            {tab.techBaseMode && (
+              <TechBaseBadge
+                techBaseMode={tab.techBaseMode}
+                className="shrink-0 !px-1 !py-0 !text-[10px]"
+              />
+            )}
+          </button>
         )}
       </div>
 
       {/* Modified indicator */}
       {tab.isModified && !isEditing && (
         <span
-          className="h-2 w-2 flex-shrink-0 rounded-full bg-orange-500"
-          title="Unsaved changes"
+          className="bg-accent h-2 w-2 flex-shrink-0 rounded-full"
+          title="Changes not saved to library"
         />
       )}
 
@@ -123,10 +142,11 @@ export function UnitTab({
       {canClose && !isEditing && (
         <button
           onClick={handleCloseClick}
-          className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-sm leading-none text-slate-400 transition-all duration-100 hover:bg-slate-500 hover:text-white sm:h-[18px] sm:w-[18px] sm:text-xs"
+          className="text-text-theme-secondary hover:bg-surface-raised-hover hover:text-text-theme-primary flex h-11 w-11 shrink-0 items-center justify-center rounded !p-0 transition-colors"
           title="Close (Ctrl+W)"
+          aria-label={`Close ${tab.name}`}
         >
-          ×
+          <AppIcon name="close" size="inline" />
         </button>
       )}
     </div>

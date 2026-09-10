@@ -85,7 +85,7 @@ export function ProtoMechChassisTypeSection({
               disabled={readOnly}
               className="accent-accent"
             />
-            <span className="text-sm text-white">
+            <span className="text-text-theme-primary text-sm">
               {CHASSIS_LABELS[chassisType]}
             </span>
           </label>
@@ -162,7 +162,7 @@ export function ProtoMechMovementSection({
           <label className={cs.text.label}>
             Run MP <span className={cs.text.secondary}>(walk + 1)</span>
           </label>
-          <div className="bg-surface-raised border-border-theme rounded border px-3 py-2 text-sm text-white">
+          <div className="bg-surface-raised border-border-theme text-text-theme-primary rounded border px-3 py-2 text-sm">
             {controls.runMP}
           </div>
         </div>
@@ -192,7 +192,9 @@ export function ProtoMechMovementSection({
       <div className="mt-3 flex flex-wrap gap-4 text-sm">
         <span className={cs.text.secondary}>
           Effective Walk:{' '}
-          <span className="text-white">{controls.effectiveWalk}</span>
+          <span className="text-text-theme-primary">
+            {controls.effectiveWalk}
+          </span>
           {controls.hasMyomerBooster && (
             <span className="ml-1 text-green-400">(+1 booster)</span>
           )}
@@ -200,7 +202,9 @@ export function ProtoMechMovementSection({
         {controls.isGliderChassis && (
           <span className={cs.text.secondary}>
             Effective Jump:{' '}
-            <span className="text-white">{controls.effectiveJump}</span>
+            <span className="text-text-theme-primary">
+              {controls.effectiveJump}
+            </span>
             <span className="ml-1 text-blue-400">(+2 glider wings)</span>
           </span>
         )}
@@ -215,7 +219,7 @@ export function ProtoMechMovementSection({
             disabled={readOnly}
             className="border-border-theme bg-surface-raised rounded"
           />
-          <span className="text-sm text-white">
+          <span className="text-text-theme-primary text-sm">
             Myomer Booster{' '}
             <span className={cs.text.secondary}>
               (Light / Medium only; +1 walk)
@@ -232,7 +236,7 @@ export function ProtoMechMovementSection({
               disabled={readOnly}
               className="border-border-theme bg-surface-raised rounded"
             />
-            <span className="text-sm text-white">
+            <span className="text-text-theme-primary text-sm">
               Gliding Wings{' '}
               <span className={cs.text.secondary}>(+2 jump MP)</span>
             </span>
@@ -260,7 +264,7 @@ export function ProtoMechMainGunSection({
           disabled={readOnly}
           className="border-border-theme bg-surface-raised rounded"
         />
-        <span className="text-sm text-white">Main Gun Mount</span>
+        <span className="text-text-theme-primary text-sm">Main Gun Mount</span>
       </label>
 
       {controls.hasMainGun && (

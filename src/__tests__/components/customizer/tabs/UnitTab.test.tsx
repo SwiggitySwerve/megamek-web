@@ -32,7 +32,7 @@ describe('UnitTab', () => {
     const user = userEvent.setup();
     render(<UnitTab {...defaultProps} />);
 
-    const tab = screen.getByText('Atlas AS7-D').closest('div');
+    const tab = screen.getByRole('tab', { name: 'Atlas AS7-D' });
     if (tab) {
       await user.click(tab);
       expect(defaultProps.onSelect).toHaveBeenCalledTimes(1);
@@ -43,27 +43,16 @@ describe('UnitTab', () => {
     const user = userEvent.setup();
     render(<UnitTab {...defaultProps} />);
 
-    // Find close button - it's the × icon button in the tab
-    const buttons = screen.getAllByRole('button');
-    // The close button should be the smaller one with × icon
-    const closeButton = buttons.find(
-      (btn) => btn.querySelector('svg') !== null,
-    );
-
-    if (closeButton) {
-      await user.click(closeButton);
-      expect(defaultProps.onClose).toHaveBeenCalledTimes(1);
-    } else {
-      // If no icon button found, test that close functionality exists
-      expect(buttons.length).toBeGreaterThan(0);
-    }
+    await user.click(screen.getByRole('button', { name: 'Close Atlas AS7-D' }));
+    expect(defaultProps.onClose).toHaveBeenCalledTimes(1);
+    expect(defaultProps.onSelect).not.toHaveBeenCalled();
   });
 
   it('should enter edit mode on double-click', async () => {
     const user = userEvent.setup();
     render(<UnitTab {...defaultProps} />);
 
-    const tab = screen.getByText('Atlas AS7-D').closest('div');
+    const tab = screen.getByRole('tab', { name: 'Atlas AS7-D' });
     if (tab) {
       await user.dblClick(tab);
       const input = screen.getByDisplayValue('Atlas AS7-D');
@@ -75,7 +64,7 @@ describe('UnitTab', () => {
     const user = userEvent.setup();
     render(<UnitTab {...defaultProps} />);
 
-    const tab = screen.getByText('Atlas AS7-D').closest('div');
+    const tab = screen.getByRole('tab', { name: 'Atlas AS7-D' });
     if (tab) {
       await user.dblClick(tab);
       const input = screen.getByDisplayValue('Atlas AS7-D');
@@ -90,9 +79,9 @@ describe('UnitTab', () => {
   it('should highlight active tab', () => {
     const { container } = render(<UnitTab {...defaultProps} isActive={true} />);
 
-    // The outer div has the bg-slate-700 class when active
+    // The outer div has the bg-surface-raised class when active
     const tab = container.firstChild as HTMLElement;
-    expect(tab).toHaveClass('bg-slate-700');
+    expect(tab).toHaveClass('bg-surface-raised');
   });
 
   it('should show modification indicator', () => {
@@ -103,9 +92,9 @@ describe('UnitTab', () => {
       />,
     );
 
-    // The modification indicator is now a colored dot with title "Unsaved changes"
-    const indicator = screen.getByTitle('Unsaved changes');
+    // The modification indicator is now a colored dot with title "Changes not saved to library"
+    const indicator = screen.getByTitle('Changes not saved to library');
     expect(indicator).toBeInTheDocument();
-    expect(indicator).toHaveClass('bg-orange-500');
+    expect(indicator).toHaveClass('bg-accent');
   });
 });

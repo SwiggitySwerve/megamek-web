@@ -104,7 +104,7 @@ export function NetworkedGmRewindControls({
         <p
           id={previewReasonId}
           data-testid="networked-gm-rewind-unavailable"
-          className="self-center text-xs text-slate-400"
+          className="text-text-theme-secondary self-center text-xs"
         >
           {previewArm.disabledReason}
         </p>

@@ -14,7 +14,7 @@ export function BranchRecoveryInstruction({
   return (
     <span
       data-testid="tactical-branch-recovery-action"
-      className="text-xs text-slate-400"
+      className="text-text-theme-secondary text-xs"
     >
       {recoveryAction}
     </span>

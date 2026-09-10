@@ -26,7 +26,7 @@ export function QueueStatsGrid({
   expiringSoon,
 }: QueueStatsGridProps): React.ReactElement {
   return (
-    <div className="grid flex-shrink-0 grid-cols-4 gap-px bg-gray-700/30">
+    <div className="bg-surface-raised/30 grid flex-shrink-0 grid-cols-4 gap-px">
       <QueueStat
         value={totalPending}
         label="Pending"
@@ -36,7 +36,7 @@ export function QueueStatsGrid({
       <QueueStat
         value={totalExpired}
         label="Expired"
-        colorClass="text-gray-400"
+        colorClass="text-text-theme-secondary"
       />
       <QueueStat
         value={expiringSoon}
@@ -59,11 +59,11 @@ function QueueStat({
   colorClass,
 }: QueueStatProps): React.ReactElement {
   return (
-    <div className="bg-gray-800/80 p-4 text-center">
+    <div className="bg-surface-base/80 p-4 text-center">
       <div className={`text-2xl font-bold tabular-nums ${colorClass}`}>
         {formatNumber(value)}
       </div>
-      <div className="mt-1 text-xs tracking-wider text-gray-500 uppercase">
+      <div className="text-text-theme-muted mt-1 text-xs tracking-wider uppercase">
         {label}
       </div>
     </div>
@@ -82,9 +82,9 @@ export function QueueStorageInfo({
   }
 
   return (
-    <div className="flex items-center justify-between border-b border-gray-700/50 bg-gray-800/50 px-5 py-3 text-sm">
-      <span className="text-gray-400">Queue storage used</span>
-      <span className="font-medium text-white tabular-nums">
+    <div className="border-border-theme/50 bg-surface-base/50 flex items-center justify-between border-b px-5 py-3 text-sm">
+      <span className="text-text-theme-secondary">Queue storage used</span>
+      <span className="text-text-theme-primary font-medium tabular-nums">
         {formatBytes(stats.totalSizeBytes)}
       </span>
     </div>
@@ -117,7 +117,7 @@ export function GlobalQueueActions({
   }
 
   return (
-    <div className="flex items-center gap-3 border-b border-gray-700/50 bg-gray-800/30 px-5 py-3">
+    <div className="border-border-theme/50 bg-surface-base/30 flex items-center gap-3 border-b px-5 py-3">
       {onFlushAll && (
         <Button
           variant="secondary"
@@ -162,11 +162,13 @@ export function PeerList({
   if (peerSummaries.length === 0) {
     return (
       <div className="p-8 text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-700/50">
-          <UserIcon className="h-8 w-8 text-gray-500" />
+        <div className="bg-surface-raised/50 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl">
+          <UserIcon size="feature" className="text-text-theme-muted" />
         </div>
-        <p className="font-medium text-gray-400">No peers connected</p>
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="text-text-theme-secondary font-medium">
+          No peers connected
+        </p>
+        <p className="text-text-theme-muted mt-1 text-sm">
           Peer sync status will appear here
         </p>
       </div>
@@ -175,7 +177,7 @@ export function PeerList({
 
   return (
     <div className="flex-1 overflow-y-auto">
-      <div className="divide-y divide-gray-700/50">
+      <div className="divide-border-theme/50 divide-y">
         {peerSummaries.map((summary) => (
           <PeerSyncRow
             key={summary.peerId}

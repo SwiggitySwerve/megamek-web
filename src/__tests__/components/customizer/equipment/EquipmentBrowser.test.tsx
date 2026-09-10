@@ -17,33 +17,18 @@ jest.mock('@/components/customizer/equipment/CompactFilterBar', () => ({
     search,
     onSearchChange,
     onClearFilters,
+    availabilitySummary,
   }: CompactFilterBarProps) => (
     <div data-testid="compact-filter-bar">
       <input
+        aria-label="Search equipment"
         placeholder="Search..."
         value={search}
         onChange={(e) => onSearchChange(e.target.value)}
       />
       <button onClick={onClearFilters}>Clear</button>
+      <span>{availabilitySummary}</span>
     </div>
-  ),
-}));
-
-// Mock EquipmentRow
-jest.mock('@/components/customizer/equipment/EquipmentRow', () => ({
-  EquipmentRow: ({
-    equipment,
-    onAdd,
-  }: {
-    equipment: { name: string };
-    onAdd: () => void;
-  }) => (
-    <tr>
-      <td>{equipment.name}</td>
-      <td>
-        <button onClick={onAdd}>Add</button>
-      </td>
-    </tr>
   ),
 }));
 
@@ -107,10 +92,48 @@ describe('EquipmentBrowser', () => {
     (useEquipmentBrowser as jest.Mock).mockReturnValue(defaultMockHook);
   });
 
+  it('keeps duplicate equipment IDs in different categories independent through filtering', async () => {
+    const user = userEvent.setup();
+    const ams = {
+      ...mockEquipment[0],
+      id: 'ams',
+      name: 'Anti-Missile System',
+      category: EquipmentCategory.BALLISTIC_WEAPON,
+    };
+    (useEquipmentBrowser as jest.Mock).mockReturnValue({
+      ...defaultMockHook,
+      paginatedEquipment: [
+        ams,
+        { ...ams, category: EquipmentCategory.MISC_EQUIPMENT },
+        mockEquipment[0],
+      ],
+      totalItems: 3,
+    });
+    const onAddEquipment = jest.fn();
+    const view = render(<EquipmentBrowser onAddEquipment={onAddEquipment} />);
+    const details = screen.getAllByRole('button', {
+      name: 'Details for Anti-Missile System',
+    });
+    await user.click(details[0]);
+    expect(details[0]).toHaveAttribute('aria-expanded', 'true');
+    expect(details[1]).toHaveAttribute('aria-expanded', 'false');
+    (useEquipmentBrowser as jest.Mock).mockReturnValue({
+      ...defaultMockHook,
+      paginatedEquipment: [mockEquipment[0]],
+      totalItems: 1,
+      search: 'Medium Laser',
+    });
+    view.rerender(<EquipmentBrowser onAddEquipment={onAddEquipment} />);
+    expect(screen.getAllByRole('listitem')).toHaveLength(1);
+    expect(screen.queryByText('Anti-Missile System')).not.toBeInTheDocument();
+  });
+
   it('should render equipment browser', () => {
     render(<EquipmentBrowser onAddEquipment={jest.fn()} />);
 
-    expect(screen.getByText('Equipment Database')).toBeInTheDocument();
+    expect(
+      screen.getByRole('textbox', { name: 'Search equipment' }),
+    ).toBeInTheDocument();
   });
 
   it('should render equipment table', () => {
@@ -237,10 +260,10 @@ describe('EquipmentBrowser', () => {
 
     render(<EquipmentBrowser onAddEquipment={jest.fn()} />);
 
-    const weightHeader = screen.getByText('Wt');
+    const weightHeader = screen.getByRole('button', { name: 'Sort by weight' });
     await user.click(weightHeader);
 
-    expect(setSort).toHaveBeenCalled();
+    expect(setSort).toHaveBeenCalledWith('weight');
   });
 
   it('should display unit context when filtering by availability', () => {
@@ -253,7 +276,21 @@ describe('EquipmentBrowser', () => {
 
     render(<EquipmentBrowser onAddEquipment={jest.fn()} />);
 
-    expect(screen.getByText(/Year ≤ 3050/i)).toBeInTheDocument();
-    expect(screen.getByText(TechBase.INNER_SPHERE)).toBeInTheDocument();
+    expect(screen.getByText(/IS \/ ≤3050/)).toBeInTheDocument();
+  });
+  it('allows keyboard inspection in read-only mode but cannot add equipment', async () => {
+    const user = userEvent.setup();
+    const onAddEquipment = jest.fn();
+    render(<EquipmentBrowser readOnly onAddEquipment={onAddEquipment} />);
+    const details = screen.getByRole('button', {
+      name: 'Details for Medium Laser',
+    });
+    details.focus();
+    await user.keyboard('{Enter}');
+    expect(details).toHaveAttribute('aria-expanded', 'true');
+    const add = screen.getByRole('button', { name: 'Add Medium Laser' });
+    expect(add).toBeDisabled();
+    await user.click(add);
+    expect(onAddEquipment).not.toHaveBeenCalled();
   });
 });

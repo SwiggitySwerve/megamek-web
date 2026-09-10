@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 
 import { EventTimeline, TimelineFilters } from '@/components/audit/timeline';
 import { Card } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { useCampaignTimeline } from '@/hooks/audit';
 import { IBaseEvent, EventCategory } from '@/types/events';
 
@@ -68,7 +69,8 @@ export function CampaignAuditTab({
           className="bg-surface-raised border-border-theme-subtle hover:border-border-theme rounded-lg border p-2 transition-colors disabled:opacity-50"
           aria-label="Refresh timeline"
         >
-          <svg
+          <SvgIcon
+            size="control"
             className={`text-text-theme-secondary h-5 w-5 ${isLoading ? 'animate-spin' : ''}`}
             fill="none"
             stroke="currentColor"
@@ -81,7 +83,7 @@ export function CampaignAuditTab({
               strokeWidth={2}
               d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
             />
-          </svg>
+          </SvgIcon>
         </button>
       </div>
 
@@ -101,7 +103,8 @@ export function CampaignAuditTab({
             className="flex items-center gap-3 p-4 text-red-400"
             role="alert"
           >
-            <svg
+            <SvgIcon
+              size="control"
               className="h-5 w-5"
               fill="none"
               stroke="currentColor"
@@ -114,7 +117,7 @@ export function CampaignAuditTab({
                 strokeWidth={2}
                 d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
-            </svg>
+            </SvgIcon>
             <span>{error.message}</span>
           </div>
         </Card>
@@ -123,7 +126,8 @@ export function CampaignAuditTab({
       <div className="text-text-theme-secondary text-sm" aria-live="polite">
         {isLoading ? (
           <span className="flex items-center gap-2">
-            <svg
+            <SvgIcon
+              size="inline"
               className="h-4 w-4 animate-spin"
               fill="none"
               viewBox="0 0 24 24"
@@ -142,7 +146,7 @@ export function CampaignAuditTab({
                 fill="currentColor"
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               />
-            </svg>
+            </SvgIcon>
             Loading...
           </span>
         ) : (
@@ -158,7 +162,8 @@ export function CampaignAuditTab({
       {!isLoading && allEvents.length === 0 && (
         <Card className="p-8 text-center">
           <div className="bg-surface-raised/50 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
-            <svg
+            <SvgIcon
+              size="feature"
               className="text-text-theme-muted h-8 w-8"
               fill="none"
               stroke="currentColor"
@@ -171,7 +176,7 @@ export function CampaignAuditTab({
                 strokeWidth={1.5}
                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
               />
-            </svg>
+            </SvgIcon>
           </div>
           <h3 className="text-text-theme-primary mb-2 text-lg font-semibold">
             No Events Yet

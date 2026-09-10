@@ -1,3 +1,6 @@
+import { useMemo } from 'react';
+
+import { IComponentSelections } from '@/stores/useMultiUnitStore';
 /**
  * Unit Calculations Hook
  *
@@ -6,14 +9,16 @@
  *
  * @spec openspec/specs/component-configuration/spec.md
  */
-
-import { useMemo } from 'react';
-
-import { IComponentSelections } from '@/stores/useMultiUnitStore';
+import { MechLocation } from '@/types/construction';
 import { getCockpitDefinition } from '@/types/construction/CockpitType';
 import { getEngineDefinition } from '@/types/construction/EngineType';
 import { getHeatSinkDefinition } from '@/types/construction/HeatSinkType';
 import { getInternalStructureDefinition } from '@/types/construction/InternalStructureType';
+import {
+  MechConfiguration,
+  getLocationsForConfig,
+  isLegLocation,
+} from '@/types/construction/MechConfigurationSystem';
 import { getArmorCriticalSlots } from '@/utils/construction/armorCalculations';
 import {
   calculateEngineWeight,
@@ -81,6 +86,7 @@ export function useUnitCalculations(
   tonnage: number,
   selections: IComponentSelections,
   armorTonnage: number = 0,
+  configuration: MechConfiguration = MechConfiguration.BIPED,
 ): UnitCalculations {
   return useMemo(() => {
     // Get component definitions
@@ -189,8 +195,14 @@ export function useUnitCalculations(
     // - Engine (CT + side torso)
     // - Gyro
     // - Cockpit (life support, sensors, cockpit itself)
-    // - Actuators (fixed at 16: 4 per arm, 4 per leg)
-    const actuatorSlots = 16; // Shoulder, upper arm, lower arm, hand × 2; Hip, upper leg, lower leg, foot × 2
+    // Four actuator slots per actual limb, including a tripod center leg.
+    const actuatorSlots =
+      getLocationsForConfig(configuration).filter(
+        (location) =>
+          isLegLocation(location) ||
+          location === MechLocation.LEFT_ARM ||
+          location === MechLocation.RIGHT_ARM,
+      ).length * 4;
     const totalSystemSlots =
       engineSlots + gyroSlots + cockpitSlots + actuatorSlots;
 
@@ -239,5 +251,5 @@ export function useUnitCalculations(
       runMP,
       jumpMP,
     };
-  }, [tonnage, selections, armorTonnage]);
+  }, [tonnage, selections, armorTonnage, configuration]);
 }

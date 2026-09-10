@@ -13,9 +13,9 @@ export function NoGameResultsCard({
   readonly onStartNewGame: () => void;
 }): React.ReactElement {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-900">
+    <div className="bg-surface-deep flex min-h-screen items-center justify-center">
       <Card className="p-8 text-center">
-        <p className="text-gray-400">No game results to display.</p>
+        <p className="text-text-theme-muted">No game results to display.</p>
         <Button variant="primary" onClick={onStartNewGame} className="mt-4">
           Start New Game
         </Button>
@@ -40,7 +40,7 @@ export function ResultsTabList({
       ref={tabListRef}
       role="tablist"
       aria-label="Battle results tabs"
-      className="flex border-b border-gray-700"
+      className="border-border-theme flex border-b"
       onKeyDown={onKeyDown}
     >
       {RESULTS_TABS.map((tab) => (
@@ -52,10 +52,10 @@ export function ResultsTabList({
           aria-controls={`tabpanel-${tab.id}`}
           tabIndex={activeTab === tab.id ? 0 : -1}
           onClick={() => onTabChange(tab.id)}
-          className={`flex-1 px-4 py-3 text-sm font-medium transition-colors focus:ring-2 focus:ring-blue-500 focus:outline-none focus:ring-inset ${
+          className={`focus:ring-accent flex-1 px-4 py-3 text-sm font-medium transition-colors focus:ring-2 focus:outline-none focus:ring-inset ${
             activeTab === tab.id
-              ? 'border-b-2 border-blue-500 bg-gray-800/50 text-white'
-              : 'text-gray-400 hover:bg-gray-800/30 hover:text-white'
+              ? 'bg-surface-base/50 text-text-theme-primary border-accent border-b-2'
+              : 'text-text-theme-muted hover:bg-surface-base/30 hover:text-text-theme-primary'
           } `}
         >
           {tab.label}
@@ -115,7 +115,7 @@ export function PersistStatusFooter({
 }): React.ReactElement {
   return (
     <p
-      className="mt-6 text-center text-xs text-gray-500"
+      className="text-text-theme-muted mt-6 text-center text-xs"
       data-testid="quick-game-persist-status"
     >
       {status === 'saved' && (

@@ -79,12 +79,12 @@ export const EncounterHistory: React.FC<IEncounterHistoryProps> = ({
 
   return (
     <div
-      className="min-h-screen bg-gray-50 p-4 md:p-6 lg:p-8 dark:bg-gray-900"
+      className="bg-surface-deep min-h-screen p-4 md:p-6 lg:p-8"
       data-testid="encounter-history"
       data-campaign-id={campaignId}
     >
       <h1
-        className="mb-6 text-2xl font-bold text-gray-900 md:text-3xl dark:text-gray-100"
+        className="text-text-theme-primary mb-6 text-2xl font-bold md:text-3xl"
         data-testid="encounter-history-title"
       >
         Encounter History
@@ -109,7 +109,7 @@ export const EncounterHistory: React.FC<IEncounterHistoryProps> = ({
         >
           {!selectedBattle ? (
             <div
-              className="flex h-64 items-center justify-center text-lg text-gray-500 dark:text-gray-400"
+              className="text-text-theme-muted flex h-64 items-center justify-center text-lg"
               data-testid="no-battle-selected"
             >
               Select a battle to view details

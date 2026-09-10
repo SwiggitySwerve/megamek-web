@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
+
 import { FACTION_COLORS } from './StarmapDisplay.model';
 
 interface StarmapFactionLegendProps {
@@ -19,18 +21,18 @@ export function StarmapFactionLegend({
   onToggle,
 }: StarmapFactionLegendProps): React.ReactElement {
   return (
-    <div className="absolute top-3 right-3 text-xs text-slate-200">
+    <div className="text-text-theme-primary absolute top-3 right-3 text-xs">
       {isOpen ? (
-        <div className="rounded border border-slate-700/80 bg-slate-900/90 p-3 shadow-lg">
+        <div className="border-border-theme/80 bg-surface-deep/90 rounded border p-3 shadow-lg">
           <button
             type="button"
             onClick={() => onToggle(false)}
-            className="mb-2 flex w-full items-center justify-between gap-4 font-semibold text-slate-100"
+            className="text-text-theme-primary mb-2 flex w-full items-center justify-between gap-4 font-semibold"
             data-testid="starmap-legend-toggle"
             aria-expanded="true"
           >
             <span>Factions</span>
-            <span aria-hidden="true">x</span>
+            <AppIcon name="close" size="inline" aria-hidden="true" />
           </button>
           <div className="grid grid-cols-2 gap-x-4 gap-y-1">
             {Object.entries(FACTION_COLORS).map(([faction, color]) => (
@@ -48,7 +50,7 @@ export function StarmapFactionLegend({
         <button
           type="button"
           onClick={() => onToggle(true)}
-          className="rounded border border-slate-700/80 bg-slate-900/90 px-3 py-1.5 font-semibold text-slate-100 shadow-lg transition-colors hover:bg-slate-800"
+          className="border-border-theme/80 bg-surface-deep/90 text-text-theme-primary hover:bg-surface-base rounded border px-3 py-1.5 font-semibold shadow-lg transition-colors"
           data-testid="starmap-legend-toggle"
           aria-expanded="false"
         >
@@ -71,7 +73,7 @@ export function StarmapZoomControls({
       data-testid="zoom-controls"
     >
       <span
-        className="rounded bg-slate-800/90 px-2 py-1 text-xs text-slate-100 shadow-lg"
+        className="bg-surface-base/90 text-text-theme-primary rounded px-2 py-1 text-xs shadow-lg"
         data-testid="starmap-detail-status"
       >
         Zoom {(zoom * 100).toFixed(0)}%
@@ -79,29 +81,29 @@ export function StarmapZoomControls({
       <button
         type="button"
         onClick={onZoomIn}
-        className="rounded bg-slate-800 p-2 text-white shadow-lg transition-colors hover:bg-slate-700"
+        className="bg-surface-base text-text-theme-primary hover:bg-surface-raised flex min-h-11 min-w-11 items-center justify-center rounded p-2 shadow-lg transition-colors"
         title="Zoom in"
         data-testid="zoom-in-btn"
       >
-        +
+        <AppIcon name="add" size="control" aria-hidden="true" />
       </button>
       <button
         type="button"
         onClick={onZoomOut}
-        className="rounded bg-slate-800 p-2 text-white shadow-lg transition-colors hover:bg-slate-700"
+        className="bg-surface-base text-text-theme-primary hover:bg-surface-raised flex min-h-11 min-w-11 items-center justify-center rounded p-2 shadow-lg transition-colors"
         title="Zoom out"
         data-testid="zoom-out-btn"
       >
-        -
+        <AppIcon name="remove" size="control" aria-hidden="true" />
       </button>
       <button
         type="button"
         onClick={onResetView}
-        className="rounded bg-slate-800 p-2 text-white shadow-lg transition-colors hover:bg-slate-700"
+        className="bg-surface-base text-text-theme-primary hover:bg-surface-raised flex min-h-11 min-w-11 items-center justify-center rounded p-2 shadow-lg transition-colors"
         title="Reset view"
         data-testid="reset-view-btn"
       >
-        O
+        <AppIcon name="refresh" size="control" aria-hidden="true" />
       </button>
     </div>
   );

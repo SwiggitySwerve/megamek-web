@@ -1,5 +1,7 @@
 import { useCallback, useState } from 'react';
 
+import type { TabInfo } from '@/stores/useTabManagerStore';
+
 import { useToast } from '@/components/shared/Toast';
 import { customUnitApiService } from '@/services/units/CustomUnitApiService';
 import { getUnitStore } from '@/stores/unitStoreRegistry';
@@ -7,6 +9,8 @@ import { Era } from '@/types/temporal/Era';
 import { logger } from '@/utils/logger';
 import { serializeCustomUnitState } from '@/utils/serialization/CustomUnitSerializer';
 import { getEraForYear } from '@/utils/temporal/eraUtils';
+
+import { getLibrarySaveDisabledReason } from './MultiUnitTabsUnitState';
 
 export interface CloseDialogState {
   isOpen: boolean;
@@ -36,9 +40,12 @@ const INITIAL_SAVE_DIALOG: SaveDialogState = {
   closeAfterSave: false,
 };
 
+type GetTabById = (tabId: string) => TabInfo | undefined;
+
 export function useDialogHandlers(
   performCloseTab: (tabId: string) => void,
   renameTab: (tabId: string, name: string) => void,
+  getTabById: GetTabById,
 ): {
   closeDialog: CloseDialogState;
   saveDialog: SaveDialogState;
@@ -52,6 +59,7 @@ export function useDialogHandlers(
     overwriteId?: string,
   ) => Promise<void>;
   openCloseDialog: (tabId: string, tabName: string) => void;
+  openSaveDialog: (tabId: string) => void;
 } {
   const { showToast } = useToast();
 
@@ -71,24 +79,51 @@ export function useDialogHandlers(
     setCloseDialog(INITIAL_CLOSE_DIALOG);
   }, [closeDialog.tabId, performCloseTab]);
 
-  const handleCloseDialogSave = useCallback(() => {
-    if (closeDialog.tabId) {
-      const unitStore = getUnitStore(closeDialog.tabId);
-      if (unitStore) {
-        const state = unitStore.getState();
-        setCloseDialog(INITIAL_CLOSE_DIALOG);
-        setSaveDialog({
-          isOpen: true,
-          tabId: closeDialog.tabId,
-          chassis: state.name || 'New Mech',
-          variant: '',
-          closeAfterSave: true,
+  const openSaveDialogForTab = useCallback(
+    (tabId: string, closeAfterSave: boolean) => {
+      const disabledReason = getLibrarySaveDisabledReason(getTabById(tabId));
+      if (disabledReason) {
+        showToast({ message: disabledReason, variant: 'error' });
+        return;
+      }
+
+      const unitStore = getUnitStore(tabId);
+      if (!unitStore) {
+        showToast({
+          message: 'This unit is no longer available to save.',
+          variant: 'error',
         });
         return;
       }
+
+      const state = unitStore.getState();
+      setSaveDialog({
+        isOpen: true,
+        tabId,
+        chassis: state.chassis || state.name || 'New Mech',
+        variant: state.model || '',
+        closeAfterSave,
+      });
+
+      if (closeAfterSave) {
+        setCloseDialog(INITIAL_CLOSE_DIALOG);
+      }
+    },
+    [getTabById, showToast],
+  );
+
+  const handleCloseDialogSave = useCallback(() => {
+    if (closeDialog.tabId) {
+      openSaveDialogForTab(closeDialog.tabId, true);
     }
-    setCloseDialog(INITIAL_CLOSE_DIALOG);
-  }, [closeDialog.tabId]);
+  }, [closeDialog.tabId, openSaveDialogForTab]);
+
+  const openSaveDialog = useCallback(
+    (tabId: string) => {
+      openSaveDialogForTab(tabId, false);
+    },
+    [openSaveDialogForTab],
+  );
 
   const handleSaveDialogCancel = useCallback(() => {
     setSaveDialog(INITIAL_SAVE_DIALOG);
@@ -100,8 +135,20 @@ export function useDialogHandlers(
         return;
       }
 
+      const disabledReason = getLibrarySaveDisabledReason(
+        getTabById(saveDialog.tabId),
+      );
+      if (disabledReason) {
+        showToast({ message: disabledReason, variant: 'error' });
+        return;
+      }
+
       const unitStore = getUnitStore(saveDialog.tabId);
       if (!unitStore) {
+        showToast({
+          message: 'This unit is no longer available to save.',
+          variant: 'error',
+        });
         return;
       }
 
@@ -141,13 +188,38 @@ export function useDialogHandlers(
           return;
         }
 
+        const unitName = [chassis, variant].filter(Boolean).join(' ');
+        if (!getTabById(saveDialog.tabId)) {
+          showToast({
+            message: `Unit "${unitName}" saved, but its source tab is no longer open.`,
+            variant: 'warning',
+          });
+          setSaveDialog(INITIAL_SAVE_DIALOG);
+          return;
+        }
+
+        if (unitStore.getState() !== state) {
+          showToast({
+            message: `Unit "${unitName}" saved, but newer browser draft changes remain.`,
+            variant: 'warning',
+          });
+          setSaveDialog(INITIAL_SAVE_DIALOG);
+          return;
+        }
+
+        unitStore.setState({
+          chassis,
+          model: variant,
+          name: unitName,
+          isModified: false,
+          lastModifiedAt: Date.now(),
+        });
+        renameTab(saveDialog.tabId, unitName);
+
         showToast({
-          message: `Unit "${chassis} ${variant}" saved successfully!`,
+          message: `Unit "${unitName}" saved successfully!`,
           variant: 'success',
         });
-
-        state.markModified(false);
-        renameTab(saveDialog.tabId, `${chassis} ${variant}`);
 
         const shouldClose = saveDialog.closeAfterSave;
         const tabIdToClose = saveDialog.tabId;
@@ -169,6 +241,7 @@ export function useDialogHandlers(
     [
       saveDialog.tabId,
       saveDialog.closeAfterSave,
+      getTabById,
       renameTab,
       performCloseTab,
       showToast,
@@ -192,5 +265,6 @@ export function useDialogHandlers(
     handleSaveDialogCancel,
     handleSaveDialogSave,
     openCloseDialog,
+    openSaveDialog,
   };
 }

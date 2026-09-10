@@ -1,3 +1,5 @@
+import type { AppIconName } from '@/components/ui/AppIcon';
+
 import { EquipmentCategory } from '@/types/equipment';
 
 export const CATEGORY_ORDER: EquipmentCategory[] = [
@@ -30,21 +32,29 @@ export const CATEGORY_LABELS: Record<EquipmentCategory, string> = {
 export interface CategoryFilterConfig {
   category: EquipmentCategory | 'ALL';
   label: string;
-  icon: string;
+  icon: AppIconName;
 }
 
 export const CATEGORY_FILTERS: CategoryFilterConfig[] = [
-  { category: 'ALL', label: 'All', icon: '∑' },
-  { category: EquipmentCategory.ENERGY_WEAPON, label: 'Energy', icon: '⚡' },
+  { category: 'ALL', label: 'All', icon: 'category' },
+  { category: EquipmentCategory.ENERGY_WEAPON, label: 'Energy', icon: 'flame' },
   {
     category: EquipmentCategory.BALLISTIC_WEAPON,
     label: 'Ballistic',
-    icon: '🎯',
+    icon: 'impact',
   },
-  { category: EquipmentCategory.MISSILE_WEAPON, label: 'Missile', icon: '🚀' },
-  { category: EquipmentCategory.AMMUNITION, label: 'Ammo', icon: '📦' },
-  { category: EquipmentCategory.ELECTRONICS, label: 'Elec', icon: '📡' },
-  { category: EquipmentCategory.MISC_EQUIPMENT, label: 'Other', icon: '⚙️' },
+  {
+    category: EquipmentCategory.MISSILE_WEAPON,
+    label: 'Missile',
+    icon: 'arrow-right',
+  },
+  { category: EquipmentCategory.AMMUNITION, label: 'Ammo', icon: 'folder' },
+  { category: EquipmentCategory.ELECTRONICS, label: 'Elec', icon: 'settings' },
+  {
+    category: EquipmentCategory.MISC_EQUIPMENT,
+    label: 'Other',
+    icon: 'category',
+  },
 ];
 
 /** Categories grouped under "Other" filter when MISC_EQUIPMENT is selected */

@@ -142,7 +142,7 @@ export function TurnCountHistogram({
   if (successfulRuns < 2) {
     return (
       <div
-        className={`rounded-md border border-slate-700 bg-slate-900/40 p-4 text-sm text-slate-400 ${className}`}
+        className={`border-border-theme bg-surface-deep/40 text-text-theme-secondary rounded-md border p-4 text-sm ${className}`}
         data-testid="turn-count-histogram-empty"
       >
         Not enough data
@@ -163,7 +163,7 @@ export function TurnCountHistogram({
       data-testid="turn-count-histogram"
     >
       <div
-        className="relative h-32 w-full overflow-hidden rounded-md border border-slate-700 bg-slate-900/40"
+        className="border-border-theme bg-surface-deep/40 relative h-32 w-full overflow-hidden rounded-md border"
         role="img"
         aria-label={`Turn count distribution: mean ${stats.mean.toFixed(1)}, median ${stats.median.toFixed(1)}, range ${stats.min}-${stats.max}`}
       >
@@ -226,7 +226,7 @@ export function TurnCountHistogram({
       </div>
 
       {/* Legend + axis labels */}
-      <div className="flex items-center justify-between text-xs text-slate-400">
+      <div className="text-text-theme-secondary flex items-center justify-between text-xs">
         <span>Turn {stats.min}</span>
         <div className="flex gap-3">
           <span className="flex items-center gap-1">

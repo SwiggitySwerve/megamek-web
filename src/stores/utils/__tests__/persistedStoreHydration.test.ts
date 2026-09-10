@@ -95,6 +95,30 @@ describe('Persisted store hydration boundary', () => {
   });
 
   describe('useAppearanceStore (mekstation-appearance)', () => {
+    it.each(['petrol', 'field', 'slate', 'violet', 'burgundy', 'copper'])(
+      'rehydrates the saved %s palette',
+      (uiTheme) => {
+        localStorage.setItem(
+          'mekstation-appearance',
+          JSON.stringify({
+            state: {
+              accentColor: 'violet',
+              fontSize: 'medium',
+              animationLevel: 'full',
+              compactMode: false,
+              uiTheme,
+            },
+            version: 0,
+          }),
+        );
+        jest.isolateModules(() => {
+          const { useAppearanceStore } = require('@/stores/useAppearanceStore');
+          expect(useAppearanceStore.getState().uiTheme).toBe(uiTheme);
+          expect(useAppearanceStore.getState().accentColor).toBe('violet');
+        });
+      },
+    );
+
     it('hydrates a valid persisted payload', () => {
       localStorage.setItem(
         'mekstation-appearance',
@@ -171,6 +195,28 @@ describe('Persisted store hydration boundary', () => {
         expect(useCustomizerSettingsStore.getState().armorDiagramMode).toBe(
           'silhouette',
         );
+        expect(useCustomizerSettingsStore.getState().armorDiagramVariant).toBe(
+          'clean-tech',
+        );
+      });
+    });
+
+    it('migrates a persisted MegaMek appearance preference to Standard', () => {
+      localStorage.setItem(
+        'mekstation-customizer-settings',
+        JSON.stringify({
+          state: {
+            armorDiagramMode: 'silhouette',
+            armorDiagramVariant: 'megamek',
+            showArmorDiagramSelector: true,
+          },
+          version: 0,
+        }),
+      );
+      jest.isolateModules(() => {
+        const {
+          useCustomizerSettingsStore,
+        } = require('@/stores/useCustomizerSettingsStore');
         expect(useCustomizerSettingsStore.getState().armorDiagramVariant).toBe(
           'clean-tech',
         );

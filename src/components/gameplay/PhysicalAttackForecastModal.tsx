@@ -162,7 +162,7 @@ export function PhysicalAttackForecastModal({
         </header>
 
         {showZweihanderToggle && (
-          <label className="bg-surface-base flex items-center gap-2 rounded border border-gray-200 px-2 py-2 text-sm">
+          <label className="bg-surface-base border-border-theme-subtle flex items-center gap-2 rounded border px-2 py-2 text-sm">
             <input
               type="checkbox"
               checked={zweihanderTwoHanded}
@@ -189,7 +189,7 @@ export function PhysicalAttackForecastModal({
         {toHit.allowed && (
           <>
             <section
-              className="bg-surface-base rounded border border-gray-200 p-2"
+              className="bg-surface-base border-border-theme-subtle rounded border p-2"
               data-testid="physical-forecast-tn-section"
             >
               <div className="flex items-center justify-between">
@@ -239,7 +239,7 @@ export function PhysicalAttackForecastModal({
             </section>
 
             <section
-              className="bg-surface-base rounded border border-gray-200 p-2"
+              className="bg-surface-base border-border-theme-subtle rounded border p-2"
               data-testid="physical-forecast-damage-section"
             >
               <div className="flex items-center justify-between">
@@ -283,7 +283,7 @@ export function PhysicalAttackForecastModal({
           </>
         )}
 
-        <footer className="flex items-center justify-end border-t border-gray-200 pt-3">
+        <footer className="border-border-theme-subtle flex items-center justify-end border-t pt-3">
           <div className="flex items-center gap-2">
             <button
               type="button"
@@ -299,8 +299,8 @@ export function PhysicalAttackForecastModal({
               disabled={!toHit.allowed}
               className={`min-h-[44px] rounded px-4 py-2 font-medium focus:ring-2 focus:ring-offset-2 focus:outline-none ${
                 toHit.allowed
-                  ? 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500'
-                  : 'cursor-not-allowed bg-gray-300 text-gray-500'
+                  ? 'bg-accent text-on-accent hover:bg-accent-hover focus:ring-accent'
+                  : 'bg-surface-raised text-text-theme-muted cursor-not-allowed'
               }`}
               data-testid="physical-forecast-confirm-button"
             >

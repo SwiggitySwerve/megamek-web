@@ -41,6 +41,7 @@ export const CriticalSlotOverflowValidation: IUnitValidationRuleDefinition = {
   validate(context: IUnitValidationContext): IUnitValidationRuleResult {
     const { unit } = context;
     const errors: IUnitValidationError[] = [];
+    const warnings: IUnitValidationError[] = [];
 
     if (!unit.slotsByLocation) {
       return createEmptyRuleResult(this);
@@ -68,6 +69,19 @@ export const CriticalSlotOverflowValidation: IUnitValidationRuleDefinition = {
       }
     }
 
-    return createRuleResult(this, { errors });
+    for (const issue of unit.equipmentSlotIssues ?? []) {
+      addRuleDiagnostic(
+        issue.severity === UnitValidationSeverity.WARNING ? warnings : errors,
+        this,
+        issue.severity,
+        issue.message,
+        {
+          field: `criticalSlots.${issue.instanceId}`,
+          suggestion:
+            'Select the equipment in Critical Slots and choose an available slot.',
+        },
+      );
+    }
+    return createRuleResult(this, { errors, warnings });
   },
 };

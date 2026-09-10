@@ -150,7 +150,7 @@ function PremiumFrontSection({
         height={model.frontSectionHeight}
         rx={8}
         ry={8}
-        fill={darkenColor(model.frontColor, 0.3)}
+        fill="#0b1620"
         stroke={
           model.isSelected ? '#60a5fa' : darkenColor(model.frontColor, 0.1)
         }
@@ -183,9 +183,12 @@ function PremiumFrontSection({
         y={pos.y + model.frontSectionHeight * (1 - model.frontPercent / 100)}
         width={pos.width}
         height={model.frontSectionHeight * (model.frontPercent / 100)}
+        data-armor-fill={model.location + '-front'}
+        data-armor-fill-ratio={model.frontPercent / 100}
+        data-armor-fill-section="front"
         rx={8}
         fill={model.frontColor}
-        opacity={0.4}
+        opacity={0.85}
         className="transition-all duration-300"
       />
 
@@ -256,7 +259,7 @@ function PremiumRearSection({
         width={pos.width}
         height={model.rearSectionHeight}
         rx={8}
-        fill={darkenColor(model.rearColor, 0.4)}
+        fill="#0b1620"
         stroke={
           model.isSelected ? '#60a5fa' : darkenColor(model.rearColor, 0.2)
         }
@@ -282,9 +285,12 @@ function PremiumRearSection({
         }
         width={pos.width}
         height={model.rearSectionHeight * (model.rearPercent / 100)}
+        data-armor-fill={model.location + '-rear'}
+        data-armor-fill-ratio={model.rearPercent / 100}
+        data-armor-fill-section="rear"
         rx={8}
         fill={model.rearColor}
-        opacity={0.4}
+        opacity={0.85}
         className="transition-all duration-300"
       />
 

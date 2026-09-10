@@ -8,13 +8,17 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import { AppearancePersistedSchema } from '@/stores/utils/persistedStoreSchemas';
+import {
+  AppearancePersistedSchema,
+  type AppearancePersisted,
+} from '@/stores/utils/persistedStoreSchemas';
 import { createZodPersistMerge } from '@/stores/utils/zodPersistMerge';
+export { ACCENT_COLOR_CSS, FONT_SIZE_CSS } from '@/constants/appearance';
 
 /**
  * Global UI theme variants
  */
-export type UITheme = 'default' | 'neon' | 'tactical' | 'minimal';
+export type UITheme = AppearancePersisted['uiTheme'];
 
 /**
  * Accent color options
@@ -132,11 +136,24 @@ export const useAppearanceStore = create<AppearanceState>()(
       ...DEFAULT_APPEARANCE,
 
       // Direct setters (immediately persisted)
-      setAccentColor: (color) => set({ accentColor: color }),
+      setAccentColor: (color) =>
+        set((state) => ({
+          accentColor: color,
+          draftAppearance: state.draftAppearance
+            ? { ...state.draftAppearance, accentColor: color }
+            : null,
+        })),
       setFontSize: (size) => set({ fontSize: size }),
       setAnimationLevel: (level) => set({ animationLevel: level }),
       setCompactMode: (compact) => set({ compactMode: compact }),
-      setUITheme: (theme) => set({ uiTheme: theme }),
+      setUITheme: (theme) =>
+        set((state) => ({
+          uiTheme: theme,
+          draftAppearance: state.draftAppearance
+            ? { ...state.draftAppearance, uiTheme: theme }
+            : null,
+          hasUnsavedUITheme: false,
+        })),
 
       // Draft setters for live preview (not persisted until save)
       setDraftAccentColor: (color) =>
@@ -285,10 +302,22 @@ export const useAppearanceStore = create<AppearanceState>()(
       name: 'mekstation-appearance',
       // Validate the rehydrated `localStorage` payload against a Zod schema;
       // a corrupt payload is discarded and the store keeps its default state.
-      merge: createZodPersistMerge<AppearanceState>(
-        AppearancePersistedSchema,
-        'mekstation-appearance',
-      ),
+      merge: (persisted, current) => {
+        const merged = createZodPersistMerge<AppearanceState>(
+          AppearancePersistedSchema,
+          'mekstation-appearance',
+        )(persisted, current);
+        return {
+          ...merged,
+          draftAppearance: current.draftAppearance
+            ? {
+                ...current.draftAppearance,
+                uiTheme: merged.uiTheme,
+                accentColor: merged.accentColor,
+              }
+            : null,
+        };
+      },
       // Don't persist draft state
       partialize: (state) => ({
         accentColor: state.accentColor,
@@ -300,51 +329,3 @@ export const useAppearanceStore = create<AppearanceState>()(
     },
   ),
 );
-
-/**
- * Accent color CSS variable mappings
- */
-export const ACCENT_COLOR_CSS: Record<
-  AccentColor,
-  { primary: string; hover: string; muted: string }
-> = {
-  amber: {
-    primary: '#f59e0b',
-    hover: '#d97706',
-    muted: 'rgba(245, 158, 11, 0.15)',
-  },
-  cyan: {
-    primary: '#06b6d4',
-    hover: '#0891b2',
-    muted: 'rgba(6, 182, 212, 0.15)',
-  },
-  emerald: {
-    primary: '#10b981',
-    hover: '#059669',
-    muted: 'rgba(16, 185, 129, 0.15)',
-  },
-  rose: {
-    primary: '#f43f5e',
-    hover: '#e11d48',
-    muted: 'rgba(244, 63, 94, 0.15)',
-  },
-  violet: {
-    primary: '#8b5cf6',
-    hover: '#7c3aed',
-    muted: 'rgba(139, 92, 246, 0.15)',
-  },
-  blue: {
-    primary: '#3b82f6',
-    hover: '#2563eb',
-    muted: 'rgba(59, 130, 246, 0.15)',
-  },
-};
-
-/**
- * Font size CSS mappings
- */
-export const FONT_SIZE_CSS: Record<FontSize, string> = {
-  small: '14px',
-  medium: '16px',
-  large: '18px',
-};

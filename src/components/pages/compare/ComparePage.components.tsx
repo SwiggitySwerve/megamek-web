@@ -1,4 +1,6 @@
 import { Card, EmptyState } from '@/components/ui';
+import { AppIcon } from '@/components/ui/AppIcon';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { IUnitEntry, IUnitDetails, calculateTotalArmor } from '@/types/pages';
 
 interface CompareSearchResultsProps {
@@ -51,7 +53,9 @@ export function CompareSearchResults({
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="font-medium text-white">{unit.name}</div>
+                    <div className="text-text-theme-primary font-medium">
+                      {unit.name}
+                    </div>
                     <div className="text-text-theme-secondary text-sm">
                       {unit.tonnage}t - {unit.techBase.replace(/_/g, ' ')}
                     </div>
@@ -138,7 +142,7 @@ function MobileComparisonCards({
         <Card key={unit.id} variant="dark" className="overflow-hidden">
           <div className="bg-surface-base border-border-theme/50 flex items-start justify-between border-b p-4">
             <div>
-              <h3 className="text-lg font-semibold text-white">
+              <h3 className="text-text-theme-primary text-lg font-semibold">
                 {unit.name || `${unit.chassis} ${unit.model}`}
               </h3>
               <p className="text-text-theme-secondary text-sm">
@@ -215,7 +219,7 @@ function DesktopComparisonTable({
                 <th key={unit.id} className="min-w-[200px] px-4 py-3 text-left">
                   <div className="flex items-start justify-between">
                     <div>
-                      <div className="font-semibold text-white">
+                      <div className="text-text-theme-primary font-semibold">
                         {unit.name || `${unit.chassis} ${unit.model}`}
                       </div>
                       <div className="text-text-theme-secondary text-sm">
@@ -301,7 +305,7 @@ function RemoveUnitButton({
   return (
     <button
       onClick={() => onRemoveUnit(unit.id)}
-      className="-mt-2 -mr-2 flex min-h-[44px] min-w-[44px] items-center justify-center text-slate-500 transition-colors hover:text-red-400 active:text-red-500"
+      className="text-text-theme-muted -mt-2 -mr-2 flex min-h-[44px] min-w-[44px] items-center justify-center transition-colors hover:text-red-400 active:text-red-500"
       aria-label={`Remove ${unit.name || unit.chassis} from comparison`}
     >
       <CloseIcon />
@@ -328,7 +332,7 @@ function CompareRow({
       {units.map((unit) => (
         <td
           key={unit.id}
-          className={`px-4 py-3 text-white ${mono ? 'font-mono' : ''}`}
+          className={`text-text-theme-primary px-4 py-3 ${mono ? 'font-mono' : ''}`}
         >
           {getValue(unit)}
         </td>
@@ -351,45 +355,21 @@ function MobileStatRow({
   return (
     <div className="flex items-center justify-between px-4 py-3">
       <span className="text-text-theme-secondary">{label}</span>
-      <span className={`text-white ${mono ? 'font-mono' : ''}`}>{value}</span>
+      <span className={`text-text-theme-primary ${mono ? 'font-mono' : ''}`}>
+        {value}
+      </span>
     </div>
   );
 }
 
 function CompareIcon(): React.ReactElement {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={1.5}
-      stroke="currentColor"
-      className="h-16 w-16"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"
-      />
-    </svg>
+    <SvgIcon size="hero">
+      <path d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+    </SvgIcon>
   );
 }
 
 function CloseIcon(): React.ReactElement {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={1.5}
-      stroke="currentColor"
-      className="h-5 w-5"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M6 18L18 6M6 6l12 12"
-      />
-    </svg>
-  );
+  return <AppIcon name="close" size="control" />;
 }

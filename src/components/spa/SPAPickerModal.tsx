@@ -21,6 +21,7 @@ import React from 'react';
 import type { ISPADefinition, SPASource } from '@/types/spa/SPADefinition';
 
 import { ModalOverlay } from '@/components/customizer/dialogs/ModalOverlay';
+import { AppIcon } from '@/components/ui/AppIcon';
 
 import type { SPADesignation, SPAPickerMode } from './SPAPicker/types';
 
@@ -95,19 +96,7 @@ export function SPAPickerModal({
             className="text-text-theme-secondary hover:text-text-theme-primary hover:bg-surface-raised rounded-lg p-2 transition-colors"
             aria-label="Close"
           >
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <AppIcon name="close" size="control" />
           </button>
         </div>
 

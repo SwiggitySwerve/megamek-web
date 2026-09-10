@@ -88,9 +88,9 @@ export function CoopParticipationPicker({
   return (
     <section
       data-testid="coop-participation-picker"
-      className={`rounded-xl border border-slate-700 bg-slate-900/60 p-4 ${className}`}
+      className={`border-border-theme bg-surface-deep/60 rounded-xl border p-4 ${className}`}
     >
-      <h3 className="mb-3 text-sm font-semibold tracking-wide text-slate-400 uppercase">
+      <h3 className="text-text-theme-secondary mb-3 text-sm font-semibold tracking-wide uppercase">
         {playerName} — Mission Participation
       </h3>
 
@@ -107,19 +107,19 @@ export function CoopParticipationPicker({
               className={
                 selected
                   ? 'w-full rounded-lg border border-sky-500/60 bg-sky-600/20 p-3 text-left'
-                  : 'w-full rounded-lg border border-slate-700 bg-slate-800/60 p-3 text-left hover:border-slate-600'
+                  : 'border-border-theme bg-surface-base/60 hover:border-border-theme w-full rounded-lg border p-3 text-left'
               }
             >
               <div
                 className={
                   selected
                     ? 'text-sm font-semibold text-sky-200'
-                    : 'text-sm font-semibold text-slate-300'
+                    : 'text-text-theme-secondary text-sm font-semibold'
                 }
               >
                 {option.label}
               </div>
-              <div className="mt-1 text-xs text-slate-400">
+              <div className="text-text-theme-secondary mt-1 text-xs">
                 {option.description}
               </div>
             </button>

@@ -169,7 +169,7 @@ export const DarkMode: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="dark w-full max-w-sm rounded-lg bg-gray-900 p-8">
+      <div className="bg-surface-deep w-full max-w-sm rounded-lg p-8">
         <Story />
       </div>
     ),

@@ -300,15 +300,15 @@ function selectBattle(battleId: string) {
 
 describe('EncounterHistory', () => {
   // ===========================================================================
-  // 7. Dark Mode Tests (5 tests)
+  // 7. Semantic Palette Tests (5 tests)
   // ===========================================================================
-  describe('Dark Mode Tests', () => {
-    it('VCR controls have dark mode styling', () => {
+  describe('Semantic Palette Tests', () => {
+    it('use semantic surface and border tokens for VCR controls', () => {
       renderPage();
       selectBattle('b1');
       const vcr = screen.getByTestId('vcr-controls');
-      expect(vcr).toHaveClass('dark:bg-gray-800');
-      expect(vcr).toHaveClass('dark:border-gray-700');
+      expect(vcr).toHaveClass('bg-surface-base');
+      expect(vcr).toHaveClass('border-border-theme-subtle');
     });
   });
 });

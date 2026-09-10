@@ -13,7 +13,7 @@ import { NumberBadge, DotIndicator } from './LocationRenderer';
 type ArmorPosition = LocationContentProps['pos'];
 
 function getFillPercent(value: number, maximum: number): number {
-  return maximum > 0 ? Math.min(100, (value / maximum) * 100) : 0;
+  return maximum > 0 ? Math.min(100, Math.max(0, (value / maximum) * 100)) : 0;
 }
 
 function getPremiumSplitPercents({
@@ -41,21 +41,17 @@ function getPremiumLocationColors({
   maximum,
   rear,
   showRear,
-  isSelected,
 }: {
   current: number;
   maximum: number;
   rear: number;
   showRear: boolean;
-  isSelected: boolean;
 }): { frontColor: string; rearColor: string } {
   return {
-    frontColor: isSelected
-      ? '#3b82f6'
-      : showRear
-        ? getTorsoFrontStatusColor(current, maximum)
-        : getArmorStatusColor(current, maximum),
-    rearColor: isSelected ? '#2563eb' : getTorsoRearStatusColor(rear, maximum),
+    frontColor: showRear
+      ? getTorsoFrontStatusColor(current, maximum)
+      : getArmorStatusColor(current, maximum),
+    rearColor: getTorsoRearStatusColor(rear, maximum),
   };
 }
 
@@ -103,7 +99,6 @@ export function PremiumLocationContent({
     maximum,
     rear,
     showRear,
-    isSelected,
   });
   const liftOffset = isHovered ? -2 : 0;
   const {
@@ -158,6 +153,9 @@ export function PremiumLocationContent({
           width={pos.width}
           height={frontSectionHeight * (frontPercent / 100)}
           rx={8}
+          data-armor-fill={label + '-front'}
+          data-armor-fill-ratio={frontPercent / 100}
+          data-armor-fill-section="front"
           fill={frontColor}
           opacity={0.4}
           className="transition-all duration-300"
@@ -229,6 +227,9 @@ export function PremiumLocationContent({
             width={pos.width}
             height={rearSectionHeight * (rearPercent / 100)}
             rx={8}
+            data-armor-fill={label + '-rear'}
+            data-armor-fill-ratio={rearPercent / 100}
+            data-armor-fill-section="rear"
             fill={rearColor}
             opacity={0.4}
             className="transition-all duration-300"

@@ -21,22 +21,22 @@ export function DashboardCard({
   return (
     <section
       data-testid={testid}
-      className="flex flex-col rounded-xl border border-slate-700 bg-slate-900/60 p-4"
+      className="border-border-theme bg-surface-deep/60 flex flex-col rounded-xl border p-4"
     >
-      <h3 className="mb-3 text-sm font-semibold tracking-wide text-slate-400 uppercase">
+      <h3 className="text-text-theme-secondary mb-3 text-sm font-semibold tracking-wide uppercase">
         {title}
       </h3>
       {headerNote ? (
         <p
           data-testid={headerNoteTestId}
-          className="-mt-2 mb-3 text-xs text-slate-400"
+          className="text-text-theme-secondary -mt-2 mb-3 text-xs"
         >
           {headerNote}
         </p>
       ) : null}
       <div className="flex-1">{children}</div>
       {footer ? (
-        <div className="mt-3 border-t border-slate-700 pt-3">{footer}</div>
+        <div className="border-border-theme mt-3 border-t pt-3">{footer}</div>
       ) : null}
     </section>
   );

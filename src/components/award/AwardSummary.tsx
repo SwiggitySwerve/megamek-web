@@ -8,6 +8,7 @@
 import React, { useMemo, useState } from 'react';
 
 import { Card } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import {
   IAward,
   IPilotAward,
@@ -175,7 +176,7 @@ function ProgressBar({
                 ? 'bg-gradient-to-r from-blue-500 to-cyan-400'
                 : award.rarity === AwardRarity.Uncommon
                   ? 'bg-gradient-to-r from-emerald-500 to-green-400'
-                  : 'bg-gradient-to-r from-slate-500 to-slate-400'
+                  : 'from-surface-raised to-surface-raised bg-gradient-to-r'
           }`}
           style={{ width: `${percentage}%` }}
         />
@@ -243,19 +244,9 @@ export function AwardSummary({
     return (
       <Card className={`p-8 text-center ${className}`}>
         <div className="bg-surface-raised/50 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
-          <svg
-            className="text-text-theme-muted h-8 w-8"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
-            />
-          </svg>
+          <SvgIcon size="feature" className="text-text-theme-muted">
+            <path d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+          </SvgIcon>
         </div>
         <h3 className="text-text-theme-primary mb-2 text-lg font-semibold">
           No Awards This Game

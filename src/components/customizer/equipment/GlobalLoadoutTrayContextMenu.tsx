@@ -50,13 +50,13 @@ export function GlobalLoadoutTrayContextMenu({
   }, [onClose]);
 
   const adjustedX = Math.min(x, window.innerWidth - 220);
-  const adjustedY = Math.min(y, window.innerHeight - 300);
+  const adjustedY = Math.max(8, Math.min(y, window.innerHeight - 300));
   const validLocations = availableLocations.filter((loc) => loc.canFit);
 
   return (
     <div
       ref={menuRef}
-      className="bg-surface-base border-border-theme fixed z-50 min-w-[200px] rounded-lg border py-1 shadow-xl"
+      className="bg-surface-base border-border-theme fixed z-50 max-h-[70vh] min-w-[200px] overflow-auto rounded-lg border py-1 shadow-xl"
       style={{ left: adjustedX, top: adjustedY }}
     >
       <div
@@ -81,27 +81,29 @@ export function GlobalLoadoutTrayContextMenu({
         </>
       )}
 
-      {!item.isAllocated && validLocations.length > 0 && (
+      {availableLocations.length > 0 && (
         <>
           <div
-            className={`${trayStyles.padding.header} py-1 ${trayStyles.text.secondary} tracking-wider text-slate-500 uppercase`}
+            className={`${trayStyles.padding.header} py-1 ${trayStyles.text.secondary} text-text-theme-muted tracking-wider uppercase`}
           >
             Quick Assign
           </div>
-          {validLocations.map((loc) => (
+          {availableLocations.map((loc) => (
             <button
               key={loc.location}
+              disabled={!loc.canFit}
+              title={loc.reason}
               onClick={() => {
                 onQuickAssign(loc.location);
                 onClose();
               }}
-              className={`w-full text-left ${trayStyles.padding.header} py-1.5 ${trayStyles.text.primary} hover:bg-surface-raised flex items-center justify-between gap-3 whitespace-nowrap text-slate-200 transition-colors`}
+              className={`w-full text-left ${trayStyles.padding.header} min-h-11 py-1.5 ${trayStyles.text.primary} hover:bg-surface-raised text-text-theme-primary flex items-center justify-between gap-3 whitespace-nowrap transition-colors disabled:opacity-50`}
             >
               <span className="flex-shrink-0">Add to {loc.label}</span>
               <span
-                className={`text-slate-500 ${trayStyles.text.secondary} flex-shrink-0`}
+                className={`text-text-theme-muted ${trayStyles.text.secondary} flex-shrink-0`}
               >
-                {loc.availableSlots} free
+                {loc.canFit ? `${loc.availableSlots} free` : loc.reason}
               </span>
             </button>
           ))}
@@ -110,7 +112,7 @@ export function GlobalLoadoutTrayContextMenu({
 
       {!item.isAllocated && validLocations.length === 0 && (
         <div
-          className={`${trayStyles.padding.header} py-2 ${trayStyles.text.primary} text-slate-500 italic`}
+          className={`${trayStyles.padding.header} py-2 ${trayStyles.text.primary} text-text-theme-muted italic`}
         >
           No locations with {item.criticalSlots} contiguous slots
         </div>

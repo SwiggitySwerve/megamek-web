@@ -300,13 +300,13 @@ function selectBattle(battleId: string) {
 
 describe('EncounterHistory', () => {
   // ===========================================================================
-  // 7. Dark Mode Tests (5 tests)
+  // 7. Semantic Palette Tests (5 tests)
   // ===========================================================================
-  describe('Dark Mode Tests', () => {
-    it('page title has dark mode text color', () => {
+  describe('Semantic Palette Tests', () => {
+    it('uses the semantic primary-text token for the page title', () => {
       renderPage();
       expect(screen.getByTestId('encounter-history-title')).toHaveClass(
-        'dark:text-gray-100',
+        'text-text-theme-primary',
       );
     });
   });

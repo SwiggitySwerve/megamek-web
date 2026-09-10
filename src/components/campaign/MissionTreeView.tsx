@@ -6,6 +6,7 @@
  */
 import React from 'react';
 
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import { ICampaignMission, CampaignMissionStatus } from '@/types/campaign';
 
 // =============================================================================
@@ -46,13 +47,14 @@ function getMissionStatusStyles(
       border: 'border-amber-500 ring-2 ring-amber-500/30',
       text: 'text-amber-400',
       icon: (
-        <svg
+        <SvgIcon
+          size="inline"
           className="h-4 w-4 animate-pulse"
           fill="currentColor"
           viewBox="0 0 24 24"
         >
           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-        </svg>
+        </SvgIcon>
       ),
     };
   }
@@ -64,7 +66,8 @@ function getMissionStatusStyles(
         border: 'border-emerald-500',
         text: 'text-emerald-400',
         icon: (
-          <svg
+          <SvgIcon
+            size="inline"
             className="h-4 w-4"
             fill="none"
             stroke="currentColor"
@@ -76,7 +79,7 @@ function getMissionStatusStyles(
               strokeWidth={2}
               d="M5 13l4 4L19 7"
             />
-          </svg>
+          </SvgIcon>
         ),
       };
     case CampaignMissionStatus.Defeat:
@@ -85,7 +88,8 @@ function getMissionStatusStyles(
         border: 'border-red-500',
         text: 'text-red-400',
         icon: (
-          <svg
+          <SvgIcon
+            size="inline"
             className="h-4 w-4"
             fill="none"
             stroke="currentColor"
@@ -97,7 +101,7 @@ function getMissionStatusStyles(
               strokeWidth={2}
               d="M6 18L18 6M6 6l12 12"
             />
-          </svg>
+          </SvgIcon>
         ),
       };
     case CampaignMissionStatus.Available:
@@ -106,7 +110,8 @@ function getMissionStatusStyles(
         border: 'border-cyan-500/50',
         text: 'text-cyan-400',
         icon: (
-          <svg
+          <SvgIcon
+            size="inline"
             className="h-4 w-4"
             fill="none"
             stroke="currentColor"
@@ -118,7 +123,7 @@ function getMissionStatusStyles(
               strokeWidth={2}
               d="M13 10V3L4 14h7v7l9-11h-7z"
             />
-          </svg>
+          </SvgIcon>
         ),
       };
     case CampaignMissionStatus.InProgress:
@@ -127,7 +132,8 @@ function getMissionStatusStyles(
         border: 'border-amber-500',
         text: 'text-amber-400',
         icon: (
-          <svg
+          <SvgIcon
+            size="inline"
             className="h-4 w-4 animate-spin"
             fill="none"
             stroke="currentColor"
@@ -139,7 +145,7 @@ function getMissionStatusStyles(
               strokeWidth={2}
               d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
             />
-          </svg>
+          </SvgIcon>
         ),
       };
     case CampaignMissionStatus.Locked:
@@ -150,7 +156,8 @@ function getMissionStatusStyles(
         border: 'border-border-theme-subtle',
         text: 'text-text-theme-muted',
         icon: (
-          <svg
+          <SvgIcon
+            size="inline"
             className="h-4 w-4"
             fill="none"
             stroke="currentColor"
@@ -162,7 +169,7 @@ function getMissionStatusStyles(
               strokeWidth={2}
               d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
             />
-          </svg>
+          </SvgIcon>
         ),
       };
   }
@@ -314,7 +321,8 @@ export function MissionTreeView({
   if (missions.length === 0) {
     return (
       <div className="text-text-theme-muted py-8 text-center">
-        <svg
+        <SvgIcon
+          size="hero"
           className="mx-auto mb-3 h-12 w-12 opacity-50"
           fill="none"
           stroke="currentColor"
@@ -326,7 +334,7 @@ export function MissionTreeView({
             strokeWidth={1.5}
             d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
           />
-        </svg>
+        </SvgIcon>
         <p>No missions defined yet</p>
         <p className="mt-1 text-sm">
           Add missions to see the campaign structure

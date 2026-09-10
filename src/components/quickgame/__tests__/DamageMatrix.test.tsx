@@ -176,7 +176,10 @@ describe('DamageMatrix', () => {
 
       const selfDamageCell = screen.getByTestId('self-damage-cell');
       expect(selfDamageCell).toBeInTheDocument();
-      expect(selfDamageCell).toHaveClass('bg-gray-700');
+      expect(selfDamageCell).toHaveClass(
+        'bg-surface-raised',
+        'text-text-theme-muted',
+      );
     });
   });
 

@@ -19,6 +19,7 @@ import React from 'react';
 import type { IRepairBayItem } from '@/types/campaign/CampaignInventory';
 
 import { Badge, Card } from '@/components/ui';
+import { AppIcon } from '@/components/ui/AppIcon';
 import { groupRepairBayByUnit } from '@/stores/campaign/campaignBaySelectors';
 
 import { BayEmpty } from './BayStates';
@@ -38,7 +39,7 @@ function statusClasses(status: IRepairBayItem['status']): string {
       return 'bg-red-500/20 text-red-400';
     case 'queued':
     default:
-      return 'bg-slate-500/20 text-slate-400';
+      return 'bg-surface-raised/20 text-text-theme-secondary';
   }
 }
 
@@ -114,7 +115,7 @@ export function RepairTicketRow({
               className="text-text-theme-secondary hover:text-text-theme-primary disabled:cursor-not-allowed disabled:opacity-30"
               data-testid={`repair-ticket-up-${ticket.ticketId}`}
             >
-              ▲
+              <AppIcon name="arrow-up" size="inline" aria-hidden="true" />
             </button>
             <button
               type="button"
@@ -124,7 +125,7 @@ export function RepairTicketRow({
               className="text-text-theme-secondary hover:text-text-theme-primary disabled:cursor-not-allowed disabled:opacity-30"
               data-testid={`repair-ticket-down-${ticket.ticketId}`}
             >
-              ▼
+              <AppIcon name="arrow-down" size="inline" aria-hidden="true" />
             </button>
           </div>
         </div>

@@ -19,6 +19,8 @@
 
 import React from 'react';
 
+import { AppIcon, type AppIconName } from '@/components/ui/AppIcon';
+
 import type { ILedgerModel } from './AttackIntentComposer.model';
 import type { IThresholdChip } from './composer.types';
 
@@ -33,10 +35,10 @@ const CHIP_STATE_CLASSES: Record<IThresholdChip['state'], string> = {
 };
 
 /** Non-color-only state glyphs so chip states survive CVD / grayscale. */
-const CHIP_STATE_GLYPHS: Record<IThresholdChip['state'], string> = {
-  safe: '○',
-  risk: '▲',
-  auto: '✖',
+const CHIP_STATE_GLYPHS: Record<IThresholdChip['state'], AppIconName> = {
+  safe: 'info',
+  risk: 'warning',
+  auto: 'close',
 };
 
 function ThresholdChip({
@@ -53,7 +55,11 @@ function ThresholdChip({
       aria-label={`${chip.label}: ${chip.detail}`}
       title={chip.detail}
     >
-      <span aria-hidden="true">{CHIP_STATE_GLYPHS[chip.state]}</span>
+      <AppIcon
+        name={CHIP_STATE_GLYPHS[chip.state]}
+        size="inline"
+        aria-hidden="true"
+      />
       {chip.label}
       <span className="opacity-80">{chip.detail}</span>
     </span>

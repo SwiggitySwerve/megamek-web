@@ -3,6 +3,12 @@
 /* Print styles for unit cards */
 @import '../components/unit-card/UnitCard.print.css';
 
+@custom-variant dark (&:where([data-color-scheme='dark'], [data-color-scheme='dark'] *));
+
+:root {
+  color-scheme: dark;
+}
+
 /*
  * Tailwind v4 @theme block for CSS-first configuration.
  * These define theme tokens that Tailwind needs to know about at build time
@@ -11,7 +17,7 @@
  * The actual values reference CSS variables which are overridden by theme classes
  * at runtime (.theme-neon, .theme-tactical, etc.).
  */
-@theme {
+@theme inline {
   /* Surface colors for backgrounds (bg-surface-*) */
   --color-surface-deep: var(--surface-deep);
   --color-surface-base: var(--surface-base);
@@ -21,6 +27,7 @@
   --color-accent: var(--accent-primary);
   --color-accent-hover: var(--accent-hover);
   --color-accent-muted: var(--accent-muted);
+  --color-on-accent: #07121c;
 
   /* Text theme colors (text-text-theme-*) */
   --color-text-theme-primary: var(--text-primary);
@@ -38,9 +45,9 @@
   --foreground: #1e293b;
 
   /* Global Scrollbar Theme Variables */
-  --scrollbar-thumb: #d1d5db;
-  --scrollbar-thumb-hover: #9ca3af;
-  --scrollbar-track: #f3f4f6;
+  --scrollbar-thumb: var(--border-default);
+  --scrollbar-thumb-hover: var(--border-strong);
+  --scrollbar-track: var(--surface-deep);
   --scrollbar-width: 8px;
 
   /* Armor Diagram Status Colors */
@@ -72,28 +79,15 @@
   --text-muted: #9ca3af; /* gray-400 - WCAG AA compliant (5:1 contrast) */
 
   /* Accent Color System (defaults to amber, updated by GlobalStyleProvider) */
-  --accent-primary: #f59e0b; /* amber-500 */
-  --accent-hover: #d97706; /* amber-600 */
-  --accent-muted: rgba(245, 158, 11, 0.15);
+  --accent-primary: #fbbf24;
+  --accent-hover: #f59e0b;
+  --accent-muted: rgba(251, 191, 36, 0.15);
 
   /* Font Size (updated by GlobalStyleProvider) */
   --font-size-base: 16px;
 
   /* Touch Targets (WCAG 2.5.5 minimum) */
   --touch-target-min: 44px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0f172a;
-    --foreground: #e2e8f0;
-
-    /* Dark Theme Scrollbar Variables */
-    --scrollbar-thumb: #475569;
-    --scrollbar-thumb-hover: #64748b;
-    --scrollbar-track: #1e293b;
-    --scrollbar-width: 8px;
-  }
 }
 
 body {
@@ -159,91 +153,94 @@ body {
   }
 }
 
-/* Form Elements Styling for Better Visibility */
-input[type='text'],
-input[type='search'],
-input[type='email'],
-input[type='password'],
-input[type='number'],
-input[type='tel'],
-input[type='url'],
-textarea,
-select {
-  background-color: #f9fafb;
-  border: 1px solid #d1d5db;
-  border-radius: 0.375rem;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  color: #111827;
-  transition:
-    border-color 0.15s ease-in-out,
-    box-shadow 0.15s ease-in-out;
-}
+@layer base {
+  /* Form Elements Styling for Better Visibility */
+  input[type='text'],
+  input[type='search'],
+  input[type='email'],
+  input[type='password'],
+  input[type='number'],
+  input[type='tel'],
+  input[type='url'],
+  textarea,
+  select {
+    background-color: var(--surface-deep);
+    border: 1px solid var(--border-default);
+    border-radius: 0.375rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--text-primary);
+    transition:
+      border-color 0.15s ease-in-out,
+      box-shadow 0.15s ease-in-out;
+  }
 
-input[type='text']:focus,
-input[type='search']:focus,
-input[type='email']:focus,
-input[type='password']:focus,
-input[type='number']:focus,
-input[type='tel']:focus,
-input[type='url']:focus,
-textarea:focus,
-select:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
+  input[type='text']:focus,
+  input[type='search']:focus,
+  input[type='email']:focus,
+  input[type='password']:focus,
+  input[type='number']:focus,
+  input[type='tel']:focus,
+  input[type='url']:focus,
+  textarea:focus,
+  select:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px var(--accent-muted);
+  }
 
-input[type='text']:disabled,
-input[type='search']:disabled,
-input[type='email']:disabled,
-input[type='password']:disabled,
-input[type='number']:disabled,
-input[type='tel']:disabled,
-input[type='url']:disabled,
-textarea:disabled,
-select:disabled {
-  background-color: #f9fafb;
-  color: #6b7280;
-  cursor: not-allowed;
-}
+  input[type='text']:disabled,
+  input[type='search']:disabled,
+  input[type='email']:disabled,
+  input[type='password']:disabled,
+  input[type='number']:disabled,
+  input[type='tel']:disabled,
+  input[type='url']:disabled,
+  textarea:disabled,
+  select:disabled {
+    background-color: var(--surface-deep);
+    color: var(--text-muted);
+    cursor: not-allowed;
+  }
 
-/* Select dropdown styling */
-select {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-  background-position: right 0.5rem center;
-  background-repeat: no-repeat;
-  background-size: 1.5em 1.5em;
-  padding-right: 2.5rem;
-  appearance: none;
-}
+  /* Select dropdown styling */
+  select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24'%3e%3cpath stroke='%23cbd5e1' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m5 9 7 7 7-7'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+    appearance: none;
+  }
 
-/* Checkbox and Radio styling */
-input[type='checkbox'],
-input[type='radio'] {
-  width: 1rem;
-  height: 1rem;
-  color: #3b82f6;
-  background-color: #f9fafb;
-  border: 1px solid #d1d5db;
-  border-radius: 0.25rem;
-}
+  /* Checkbox and Radio styling */
+  input[type='checkbox'],
+  input[type='radio'] {
+    accent-color: var(--accent-primary);
+    width: 1rem;
+    height: 1rem;
+    color: var(--accent-primary);
+    background-color: var(--surface-deep);
+    border: 1px solid var(--border-default);
+    border-radius: 0.25rem;
+  }
 
-input[type='radio'] {
-  border-radius: 50%;
-}
+  input[type='radio'] {
+    border-radius: 50%;
+  }
 
-input[type='checkbox']:checked,
-input[type='radio']:checked {
-  background-color: #3b82f6;
-  border-color: #3b82f6;
-}
+  input[type='checkbox']:checked,
+  input[type='radio']:checked {
+    background-color: var(--accent-primary);
+    border-color: var(--accent-primary);
+  }
 
-input[type='checkbox']:focus,
-input[type='radio']:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  input[type='checkbox']:focus,
+  input[type='radio']:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--accent-muted);
+  }
 }
 
 /* Button styling */
@@ -262,74 +259,15 @@ button:disabled {
   opacity: 0.5;
 }
 
-/* Dark mode form elements */
-@media (prefers-color-scheme: dark) {
-  input[type='text'],
-  input[type='search'],
-  input[type='email'],
-  input[type='password'],
-  input[type='number'],
-  input[type='tel'],
-  input[type='url'],
-  textarea,
-  select {
-    background-color: #374151;
-    border-color: #4b5563;
-    color: #f9fafb;
-  }
-
-  input[type='text']:focus,
-  input[type='search']:focus,
-  input[type='email']:focus,
-  input[type='password']:focus,
-  input[type='number']:focus,
-  input[type='tel']:focus,
-  input[type='url']:focus,
-  textarea:focus,
-  select:focus {
-    border-color: #60a5fa;
-    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
-  }
-
-  input[type='text']:disabled,
-  input[type='search']:disabled,
-  input[type='email']:disabled,
-  input[type='password']:disabled,
-  input[type='number']:disabled,
-  input[type='tel']:disabled,
-  input[type='url']:disabled,
-  textarea:disabled,
-  select:disabled {
-    background-color: #1f2937;
-    color: #9ca3af;
-  }
-
-  input[type='checkbox'],
-  input[type='radio'] {
-    background-color: #374151;
-    border-color: #4b5563;
-  }
-
-  input[type='checkbox']:checked,
-  input[type='radio']:checked {
-    background-color: #60a5fa;
-    border-color: #60a5fa;
-  }
-
-  select {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-  }
-}
-
 /* Custom Theme Classes */
 .navy-section {
-  background-color: #1e3a8a;
+  background-color: var(--surface-base);
   padding: 0.75rem;
   border-radius: 0.375rem;
 }
 
 .navy-section label {
-  color: white;
+  color: var(--text-primary);
   font-weight: 500;
   font-size: 0.875rem;
   margin-bottom: 0.25rem;
@@ -337,17 +275,17 @@ button:disabled {
 }
 
 .navy-section h3 {
-  color: white;
+  color: var(--text-primary);
   font-weight: 600;
   margin-bottom: 0.5rem;
 }
 
 .navy-section button {
-  color: white;
+  color: var(--text-primary);
 }
 
 .navy-section button:hover {
-  color: #d1d5db;
+  color: var(--text-secondary);
 }
 
 .list-item-card {
@@ -364,8 +302,8 @@ button:disabled {
 }
 
 .list-item-card:hover {
-  background-color: #1e3a8a;
-  color: white;
+  background-color: var(--surface-base);
+  color: var(--text-primary);
 }
 
 .list-item-card:hover * {
@@ -387,8 +325,8 @@ button:disabled {
 }
 
 .list-item-link:hover {
-  color: white;
-  background-color: #1e3a8a;
+  color: var(--text-primary);
+  background-color: var(--surface-base);
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
 }
@@ -406,12 +344,14 @@ button:disabled {
 /* Elegant auto-hide scrollbars for better UX */
 .scrollbar-elegant {
   scrollbar-width: thin;
-  scrollbar-color: rgba(71, 85, 105, 0.3) transparent;
+  scrollbar-color: color-mix(in srgb, var(--border-default) 30%, transparent)
+    transparent;
   transition: scrollbar-color 0.3s ease;
 }
 
 .scrollbar-elegant:hover {
-  scrollbar-color: rgba(71, 85, 105, 0.8) rgba(30, 41, 59, 0.3);
+  scrollbar-color: color-mix(in srgb, var(--border-default) 80%, transparent)
+    color-mix(in srgb, var(--surface-base) 30%, transparent);
 }
 
 .scrollbar-elegant::-webkit-scrollbar {
@@ -425,14 +365,14 @@ button:disabled {
 }
 
 .scrollbar-elegant::-webkit-scrollbar-thumb {
-  background: rgba(71, 85, 105, 0.3);
+  background: color-mix(in srgb, var(--border-default) 30%, transparent);
   border-radius: 3px;
   border: none;
   transition: background 0.3s ease;
 }
 
 .scrollbar-elegant::-webkit-scrollbar-thumb:hover {
-  background: rgba(71, 85, 105, 0.8);
+  background: color-mix(in srgb, var(--border-default) 80%, transparent);
 }
 
 .scrollbar-elegant::-webkit-scrollbar-corner {
@@ -447,7 +387,8 @@ button:disabled {
 }
 
 .scrollbar-autohide:hover {
-  scrollbar-color: rgba(71, 85, 105, 0.6) rgba(30, 41, 59, 0.2);
+  scrollbar-color: color-mix(in srgb, var(--border-default) 60%, transparent)
+    color-mix(in srgb, var(--surface-base) 20%, transparent);
 }
 
 .scrollbar-autohide::-webkit-scrollbar {
@@ -467,11 +408,11 @@ button:disabled {
 }
 
 .scrollbar-autohide:hover::-webkit-scrollbar-thumb {
-  background: rgba(71, 85, 105, 0.6);
+  background: color-mix(in srgb, var(--border-default) 60%, transparent);
 }
 
 .scrollbar-autohide::-webkit-scrollbar-thumb:hover {
-  background: rgba(71, 85, 105, 0.8);
+  background: color-mix(in srgb, var(--border-default) 80%, transparent);
 }
 
 .scrollbar-autohide::-webkit-scrollbar-corner {
@@ -481,7 +422,7 @@ button:disabled {
 /* Custom thin scrollbars for better UX (legacy) */
 .scrollbar-thin {
   scrollbar-width: thin;
-  scrollbar-color: #475569 #1e293b;
+  scrollbar-color: var(--border-default) var(--surface-base);
 }
 
 .scrollbar-thin::-webkit-scrollbar {
@@ -490,31 +431,31 @@ button:disabled {
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
-  background: #1e293b;
+  background: var(--surface-base);
   border-radius: 4px;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: #475569;
+  background: var(--border-default);
   border-radius: 4px;
-  border: 1px solid #1e293b;
+  border: 1px solid var(--surface-base);
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
+  background: var(--border-strong);
 }
 
 .scrollbar-thin::-webkit-scrollbar-corner {
-  background: #1e293b;
+  background: var(--surface-base);
 }
 
 /* Scrollbar variants */
 .scrollbar-thumb-slate-600::-webkit-scrollbar-thumb {
-  background: #475569;
+  background: var(--border-default);
 }
 
 .scrollbar-track-slate-800::-webkit-scrollbar-track {
-  background: #1e293b;
+  background: var(--surface-base);
 }
 
 /* ========================================
@@ -576,7 +517,7 @@ button:disabled {
 .card-gradient {
   @apply bg-surface-base/40 backdrop-blur border border-border-theme/50 rounded-2xl p-6
          transition-all duration-300 hover:border-border-theme-strong hover:bg-surface-base/60
-         hover:shadow-xl hover:shadow-amber-900/10;
+         hover:shadow-xl hover:shadow-accent/10;
 }
 
 /* Inputs */
@@ -617,7 +558,7 @@ button:disabled {
 }
 
 .btn-primary {
-  @apply bg-amber-600 hover:bg-amber-500 text-white;
+  @apply bg-accent hover:bg-accent-hover text-on-accent;
 }
 
 .btn-secondary {
@@ -711,7 +652,7 @@ button:disabled {
 
 /* Section Headers */
 .section-title {
-  @apply text-lg font-semibold text-white mb-4 flex items-center gap-2;
+  @apply text-lg font-semibold text-text-theme-primary mb-4 flex items-center gap-2;
 }
 
 .section-title-amber {
@@ -740,11 +681,11 @@ button:disabled {
 }
 
 .stat-value {
-  @apply text-white font-mono;
+  @apply text-text-theme-primary font-mono;
 }
 
 .stat-value-highlight {
-  @apply text-white font-mono bg-surface-raised/50 px-3 py-1 rounded;
+  @apply text-text-theme-primary font-mono bg-surface-raised/50 px-3 py-1 rounded;
 }
 
 /* Loading States */
@@ -833,7 +774,7 @@ button:disabled {
 
 /* Dialog Buttons */
 .dialog-btn-primary {
-  @apply px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-blue-500 text-white rounded transition-colors min-h-[44px];
+  @apply px-4 py-2 text-sm font-medium bg-accent hover:bg-accent-hover text-on-accent rounded transition-colors min-h-[44px];
 }
 
 .dialog-btn-primary:disabled {
@@ -894,7 +835,7 @@ button:disabled {
 }
 
 .dialog-table-row-selected {
-  @apply bg-blue-600/20;
+  @apply bg-accent-muted;
 }
 
 /* Dialog Info Panels */
@@ -934,7 +875,7 @@ button:disabled {
 }
 
 .dialog-dropzone-active {
-  @apply border-blue-500 bg-blue-500/10;
+  @apply border-accent bg-accent-muted;
 }
 
 /* Dialog Warning Icon Container */
@@ -993,7 +934,7 @@ button:disabled {
 
 /* Section header - bold uppercase like COMP/CON category headers */
 .text-section-header {
-  @apply text-xl font-bold tracking-wide uppercase text-white;
+  @apply text-xl font-bold tracking-wide uppercase text-text-theme-primary;
 }
 
 /* Category label - used on navigation cards */
@@ -1122,7 +1063,7 @@ button:disabled {
 }
 
 .diagram-title {
-  @apply text-lg font-semibold text-white;
+  @apply text-lg font-semibold text-text-theme-primary;
 }
 
 .diagram-title-neon {
@@ -1174,7 +1115,7 @@ button:disabled {
 }
 
 .value-neutral {
-  @apply text-white font-medium;
+  @apply text-text-theme-primary font-medium;
 }
 
 .value-muted {
@@ -1242,7 +1183,7 @@ button:disabled {
 }
 
 .hover-glow {
-  @apply hover:shadow-lg hover:shadow-amber-900/10;
+  @apply hover:shadow-lg hover:shadow-accent/10;
 }
 
 .hover-glow-cyan {
@@ -1292,13 +1233,134 @@ button:disabled {
  * Use these for theme-specific style overrides.
  */
 
-/* Default theme - clean slate design */
+/* Base palettes share the same semantic equipment and accent colors. */
+:root,
 .theme-default {
-  /* Base theme, uses root values */
+  --background: #09162b;
+  --foreground: #f6f4ed;
+  --surface-deep: #09162b;
+  --surface-base: #122e50;
+  --surface-raised: #21466c;
+  --border-subtle: #21466c;
+  --border-default: #365f86;
+  --border-strong: #adc4dc;
+  --text-primary: #f6f4ed;
+  --text-secondary: #adc4dc;
+  --text-muted: #adc4dc;
+  --scrollbar-thumb: #365f86;
+  --scrollbar-thumb-hover: #adc4dc;
+  --scrollbar-track: #09162b;
+}
+
+.theme-petrol {
+  --background: #071d22;
+  --foreground: #f6f4ed;
+  --surface-deep: #071d22;
+  --surface-base: #0e353d;
+  --surface-raised: #1b5159;
+  --border-subtle: #1b5159;
+  --border-default: #367580;
+  --border-strong: #a8cbd0;
+  --text-primary: #f6f4ed;
+  --text-secondary: #a8cbd0;
+  --text-muted: #a8cbd0;
+  --scrollbar-thumb: #367580;
+  --scrollbar-thumb-hover: #a8cbd0;
+  --scrollbar-track: #071d22;
+}
+
+.theme-field {
+  --background: #141c0d;
+  --foreground: #f6f4ed;
+  --surface-deep: #141c0d;
+  --surface-base: #2a381e;
+  --surface-raised: #435431;
+  --border-subtle: #435431;
+  --border-default: #697e51;
+  --border-strong: #c1cbb0;
+  --text-primary: #f6f4ed;
+  --text-secondary: #c1cbb0;
+  --text-muted: #c1cbb0;
+  --scrollbar-thumb: #697e51;
+  --scrollbar-thumb-hover: #c1cbb0;
+  --scrollbar-track: #141c0d;
+}
+
+.theme-slate {
+  --background: #0f172a;
+  --foreground: #f6f4ed;
+  --surface-deep: #0f172a;
+  --surface-base: #1e293b;
+  --surface-raised: #334155;
+  --border-subtle: #334155;
+  --border-default: #475569;
+  --border-strong: #cbd5e1;
+  --text-primary: #f6f4ed;
+  --text-secondary: #cbd5e1;
+  --text-muted: #cbd5e1;
+  --scrollbar-thumb: #475569;
+  --scrollbar-thumb-hover: #cbd5e1;
+  --scrollbar-track: #0f172a;
+}
+
+.theme-violet {
+  --background: #170e29;
+  --foreground: #f6f4ed;
+  --surface-deep: #170e29;
+  --surface-base: #2c1c47;
+  --surface-raised: #453064;
+  --border-subtle: #453064;
+  --border-default: #6f5492;
+  --border-strong: #c7b6dd;
+  --text-primary: #f6f4ed;
+  --text-secondary: #c7b6dd;
+  --text-muted: #c7b6dd;
+  --scrollbar-thumb: #6f5492;
+  --scrollbar-thumb-hover: #c7b6dd;
+  --scrollbar-track: #170e29;
+}
+
+.theme-burgundy {
+  --background: #230f1c;
+  --foreground: #f6f4ed;
+  --surface-deep: #230f1c;
+  --surface-base: #3e1d30;
+  --surface-raised: #5c3047;
+  --border-subtle: #5c3047;
+  --border-default: #85516d;
+  --border-strong: #dab4c9;
+  --text-primary: #f6f4ed;
+  --text-secondary: #dab4c9;
+  --text-muted: #dab4c9;
+  --scrollbar-thumb: #85516d;
+  --scrollbar-thumb-hover: #dab4c9;
+  --scrollbar-track: #230f1c;
+}
+
+.theme-copper {
+  --background: #23160e;
+  --foreground: #f6f4ed;
+  --surface-deep: #23160e;
+  --surface-base: #3f2a1b;
+  --surface-raised: #60422c;
+  --border-subtle: #60422c;
+  --border-default: #876447;
+  --border-strong: #dcc1a8;
+  --text-primary: #f6f4ed;
+  --text-secondary: #dcc1a8;
+  --text-muted: #dcc1a8;
+  --scrollbar-thumb: #876447;
+  --scrollbar-thumb-hover: #dcc1a8;
+  --scrollbar-track: #23160e;
 }
 
 /* Neon theme - cyberpunk with glow effects */
 .theme-neon {
+  --background: #0a0a1a;
+  --foreground: #e0f2fe;
+  --scrollbar-thumb: #0891b2;
+  --scrollbar-thumb-hover: #67e8f9;
+  --scrollbar-track: #0a0a1a;
   /* Base CSS variables */
   --surface-deep: #0a0a1a;
   --surface-base: #0f172a;
@@ -1308,18 +1370,7 @@ button:disabled {
   --border-strong: rgba(6, 182, 212, 0.8);
   --text-primary: #e0f2fe;
   --text-secondary: #67e8f9;
-  --text-muted: #0891b2;
-
-  /* Tailwind color token overrides (used by generated utilities) */
-  --color-surface-deep: #0a0a1a;
-  --color-surface-base: #0f172a;
-  --color-surface-raised: #1e293b;
-  --color-border-theme-subtle: rgba(6, 182, 212, 0.3);
-  --color-border-theme: rgba(6, 182, 212, 0.5);
-  --color-border-theme-strong: rgba(6, 182, 212, 0.8);
-  --color-text-theme-primary: #e0f2fe;
-  --color-text-theme-secondary: #67e8f9;
-  --color-text-theme-muted: #0891b2;
+  --text-muted: #67cbdc;
 }
 
 .theme-neon input:focus,
@@ -1330,6 +1381,11 @@ button:disabled {
 
 /* Tactical theme - military HUD style */
 .theme-tactical {
+  --background: #0a1628;
+  --foreground: #fef3c7;
+  --scrollbar-thumb: #b45309;
+  --scrollbar-thumb-hover: #fcd34d;
+  --scrollbar-track: #0a1628;
   /* Base CSS variables */
   --surface-deep: #0a1628;
   --surface-base: #0c1220;
@@ -1339,18 +1395,7 @@ button:disabled {
   --border-strong: rgba(245, 158, 11, 0.6);
   --text-primary: #fef3c7;
   --text-secondary: #fcd34d;
-  --text-muted: #d97706; /* amber-600 - WCAG AA compliant (5.2:1 contrast) */
-
-  /* Tailwind color token overrides (used by generated utilities) */
-  --color-surface-deep: #0a1628;
-  --color-surface-base: #0c1220;
-  --color-surface-raised: #1a2332;
-  --color-border-theme-subtle: rgba(245, 158, 11, 0.2);
-  --color-border-theme: rgba(245, 158, 11, 0.4);
-  --color-border-theme-strong: rgba(245, 158, 11, 0.6);
-  --color-text-theme-primary: #fef3c7;
-  --color-text-theme-secondary: #fcd34d;
-  --color-text-theme-muted: #d97706; /* amber-600 - WCAG AA compliant */
+  --text-muted: #e9b85f;
 }
 
 .theme-tactical h1,
@@ -1362,21 +1407,21 @@ button:disabled {
 
 /* Minimal theme - reduced visual noise */
 .theme-minimal {
+  --background: #0c1015;
+  --foreground: #f8fafc;
+  --scrollbar-thumb: #505c69;
+  --scrollbar-thumb-hover: #aeb9c5;
+  --scrollbar-track: #0c1015;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #aeb9c5;
   /* Base CSS variables */
-  --surface-deep: #0f172a;
-  --surface-base: #1e293b;
-  --surface-raised: #334155;
-  --border-subtle: rgba(51, 65, 85, 0.5);
-  --border-default: rgba(71, 85, 105, 0.5);
-  --border-strong: rgba(100, 116, 139, 0.5);
-
-  /* Tailwind color token overrides (used by generated utilities) */
-  --color-surface-deep: #0f172a;
-  --color-surface-base: #1e293b;
-  --color-surface-raised: #334155;
-  --color-border-theme-subtle: rgba(51, 65, 85, 0.5);
-  --color-border-theme: rgba(71, 85, 105, 0.5);
-  --color-border-theme-strong: rgba(100, 116, 139, 0.5);
+  --surface-deep: #0c1015;
+  --surface-base: #161b22;
+  --surface-raised: #2b3139;
+  --border-subtle: #333c46;
+  --border-default: #505c69;
+  --border-strong: #aeb9c5;
 }
 
 /* ========================================
@@ -1406,7 +1451,9 @@ button:disabled {
 
 @media print {
   /* Reset background colors for print */
-  :root {
+  :root,
+  body[class] {
+    color-scheme: light;
     --background: #ffffff;
     --foreground: #000000;
     --surface-deep: #ffffff;
@@ -1612,4 +1659,23 @@ button:disabled {
     border-left: 2px solid #999;
     padding-left: 0.5rem;
   }
+}
+
+/* UI symbols share one stroke system; diagrams and charts do not use this class. */
+@layer components {
+  .ui-icon {
+    display: inline-block;
+    overflow: visible;
+  }
+
+  .ui-icon[data-icon-size='feature'],
+  .ui-icon[data-icon-size='hero'] {
+    display: block;
+  }
+}
+
+.ui-icon :where(path, circle, rect, line, polyline, polygon, ellipse) {
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }

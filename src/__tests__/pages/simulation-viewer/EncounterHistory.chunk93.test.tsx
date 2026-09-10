@@ -300,15 +300,15 @@ function selectBattle(battleId: string) {
 
 describe('EncounterHistory', () => {
   // ===========================================================================
-  // 7. Dark Mode Tests (5 tests)
+  // 7. Semantic Palette Tests (5 tests)
   // ===========================================================================
-  describe('Dark Mode Tests', () => {
-    it('force panels have dark mode background and border', () => {
+  describe('Semantic Palette Tests', () => {
+    it('use semantic surface and border tokens for force panels', () => {
       renderPage();
       selectBattle('b1');
       const playerForce = screen.getByTestId('player-force');
-      expect(playerForce).toHaveClass('dark:bg-gray-800');
-      expect(playerForce).toHaveClass('dark:border-gray-700');
+      expect(playerForce).toHaveClass('bg-surface-base');
+      expect(playerForce).toHaveClass('border-border-theme-subtle');
     });
   });
 });

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
 import { logger } from '@/utils/logger';
 
 export interface BeforeInstallPromptEvent extends Event {
@@ -109,31 +110,23 @@ export function InstallPrompt({
     <div
       className={`animate-slide-up fixed right-4 bottom-4 left-4 z-50 md:right-4 md:left-auto md:w-96 ${className}`.trim()}
     >
-      <div className="rounded-lg border-2 border-red-500 bg-white p-4 shadow-lg dark:bg-gray-800">
+      <div className="bg-surface-base rounded-lg border-2 border-red-500 p-4 shadow-lg">
         <div className="flex items-start gap-4">
           {/* Icon */}
           <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-red-500">
-            <svg
-              className="h-6 w-6 text-white"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-              />
-            </svg>
+            <AppIcon
+              name="download"
+              size="control"
+              className="text-text-theme-primary"
+            />
           </div>
 
           {/* Content */}
           <div className="min-w-0 flex-1">
-            <h3 className="mb-1 text-lg font-semibold text-gray-900 dark:text-white">
+            <h3 className="text-text-theme-primary mb-1 text-lg font-semibold">
               Install MekStation
             </h3>
-            <p className="mb-3 text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-text-theme-secondary mb-3 text-sm">
               Install the app for offline access and a better experience on your
               device.
             </p>
@@ -148,7 +141,7 @@ export function InstallPrompt({
               </button>
               <button
                 onClick={handleDismiss}
-                className="min-h-[44px] min-w-[44px] rounded-lg bg-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                className="bg-surface-raised text-text-theme-secondary hover:bg-surface-raised min-h-[44px] min-w-[44px] rounded-lg px-4 py-2 text-sm font-medium transition-colors"
                 aria-label="Not now"
               >
                 Not Now

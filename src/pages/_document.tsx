@@ -1,10 +1,16 @@
 import { Html, Head, Main, NextScript } from 'next/document';
 import React from 'react';
 
+import { APPEARANCE_BOOTSTRAP_SCRIPT } from '@/utils/appearanceBootstrap';
+
 export default function Document(): React.ReactElement {
   return (
-    <Html lang="en">
+    <Html lang="en" data-color-scheme="dark">
       <Head>
+        <script
+          id="appearance-bootstrap"
+          dangerouslySetInnerHTML={{ __html: APPEARANCE_BOOTSTRAP_SCRIPT }}
+        />
         {/* Splash Screen - Prevents white flash on load */}
         <style
           dangerouslySetInnerHTML={{
@@ -12,7 +18,7 @@ export default function Document(): React.ReactElement {
           #__splash {
             position: fixed;
             inset: 0;
-            background: #0f172a;
+            background: var(--surface-deep, #09162b);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -30,14 +36,14 @@ export default function Document(): React.ReactElement {
           #__splash-spinner {
             width: 48px;
             height: 48px;
-            border: 3px solid #1e293b;
-            border-top-color: #f59e0b;
+            border: 3px solid var(--surface-raised, #21466c);
+            border-top-color: var(--accent-primary, #f59e0b);
             border-radius: 50%;
             animation: splash-spin 0.8s linear infinite;
           }
           #__splash-text {
             margin-top: 16px;
-            color: #94a3b8;
+            color: var(--text-secondary, #adc4dc);
             font-family: system-ui, -apple-system, sans-serif;
             font-size: 14px;
             letter-spacing: 0.05em;
@@ -65,7 +71,7 @@ export default function Document(): React.ReactElement {
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
 
         {/* Theme Color */}
-        <meta name="theme-color" content="#00bfff" />
+        <meta name="theme-color" content="#09162b" />
 
         {/* PWA Meta Tags */}
         <meta name="application-name" content="MekStation" />

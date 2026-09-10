@@ -116,7 +116,7 @@ export default function NetworkedCommandProofPage(): React.JSX.Element {
 
   if (!isTestEnv) {
     return (
-      <main className="min-h-screen bg-slate-950 p-8 text-slate-100">
+      <main className="bg-surface-deep text-text-theme-primary min-h-screen p-8">
         <h1>Not Available</h1>
         <p>This page is only available in development or E2E mode.</p>
       </main>
@@ -126,9 +126,9 @@ export default function NetworkedCommandProofPage(): React.JSX.Element {
   return (
     <main
       data-testid="networked-command-proof-harness"
-      className="min-h-screen space-y-4 bg-slate-950 p-4 text-slate-100"
+      className="bg-surface-deep text-text-theme-primary min-h-screen space-y-4 p-4"
     >
-      <header className="flex flex-wrap items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 p-3">
+      <header className="border-border-theme-subtle bg-surface-deep flex flex-wrap items-center gap-2 rounded-lg border p-3">
         <span className="text-sm font-semibold">
           Networked Command E2E Proof
         </span>
@@ -152,13 +152,13 @@ export default function NetworkedCommandProofPage(): React.JSX.Element {
           type="button"
           data-testid="network-proof-reset"
           onClick={reset}
-          className="rounded border border-slate-600 px-3 py-1.5 text-sm text-slate-200 hover:bg-slate-800"
+          className="border-border-theme text-text-theme-primary hover:bg-surface-base rounded border px-3 py-1.5 text-sm"
         >
           Reset
         </button>
         <span
           data-testid="network-proof-replay-event-count"
-          className="ml-auto rounded border border-slate-700 px-2 py-1 text-xs text-slate-300"
+          className="border-border-theme-subtle text-text-theme-secondary ml-auto rounded border px-2 py-1 text-xs"
         >
           events:{events.length}
         </span>
@@ -181,13 +181,17 @@ export default function NetworkedCommandProofPage(): React.JSX.Element {
           onApproveHostGmCorrection={approveGmCorrection}
         />
 
-        <aside className="space-y-3 rounded-lg border border-slate-700 bg-slate-900 p-3 text-sm">
+        <aside className="border-border-theme-subtle bg-surface-deep space-y-3 rounded-lg border p-3 text-sm">
           <div>
-            <h2 className="font-semibold text-slate-300">GM Preview</h2>
+            <h2 className="text-text-theme-secondary font-semibold">
+              GM Preview
+            </h2>
             <p data-testid="network-proof-preview-status">{previewText}</p>
           </div>
           <div>
-            <h2 className="font-semibold text-slate-300">Intent Log</h2>
+            <h2 className="text-text-theme-secondary font-semibold">
+              Intent Log
+            </h2>
             <ul data-testid="network-proof-intent-log" className="space-y-1">
               {intentLog.length === 0 ? (
                 <li>No intents submitted.</li>
@@ -207,7 +211,7 @@ export default function NetworkedCommandProofPage(): React.JSX.Element {
 function roleButtonClass(active: boolean): string {
   return active
     ? 'rounded border border-sky-500 bg-sky-600/30 px-3 py-1.5 text-sm text-sky-100'
-    : 'rounded border border-slate-600 px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-800';
+    : 'rounded border border-border-theme px-3 py-1.5 text-sm text-text-theme-secondary hover:bg-surface-base';
 }
 
 function buildAuthoritativeSession(): IGameSession {

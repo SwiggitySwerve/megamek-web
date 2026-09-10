@@ -5,6 +5,8 @@ import { MechLocation } from '@/types/construction';
 import type { BaseArmorLocationProps } from '../shared/ArmorVariantRenderHelpers';
 import type { ResolvedPosition } from '../shared/layout';
 
+import { ArmorCapacityFill } from '../shared/ArmorCapacityFill';
+import { darkenColor } from '../shared/ArmorFills';
 import { ArmorLocationInteractionGroup } from '../shared/ArmorLocationInteractionGroup';
 import { getLocationLabel, hasTorsoRear } from '../shared/MechSilhouette';
 import {
@@ -21,6 +23,9 @@ import {
 type NeonLocationProps = BaseArmorLocationProps;
 
 interface NeonLocationFrameProps {
+  current: number;
+  maximum: number;
+  marker: string;
   position: ResolvedPosition;
   colors: NeonColors;
   isSelected: boolean;
@@ -28,6 +33,9 @@ interface NeonLocationFrameProps {
 }
 
 function NeonLocationFrame({
+  current,
+  maximum,
+  marker,
   position,
   colors,
   isSelected,
@@ -35,15 +43,14 @@ function NeonLocationFrame({
 }: NeonLocationFrameProps): React.ReactElement {
   return (
     <>
-      <rect
-        x={position.x}
-        y={position.y}
-        width={position.width}
-        height={position.height}
-        rx={4}
-        fill={colors.glowColor}
-        fillOpacity={colors.fillOpacity}
-        className="transition-all duration-200"
+      <ArmorCapacityFill
+        position={{ ...position, path: undefined }}
+        current={current}
+        maximum={maximum}
+        marker={marker}
+        color={darkenColor(colors.glowColor, 0.42)}
+        emptyColor="#020b12"
+        radius={4}
       />
 
       <rect
@@ -273,6 +280,9 @@ export function NeonLocation({
       onHover={onHover}
     >
       <NeonLocationFrame
+        current={showRear ? values.current + values.rear : values.current}
+        maximum={values.maximum}
+        marker={`${location}-total`}
         position={position}
         colors={colors}
         isSelected={isSelected}

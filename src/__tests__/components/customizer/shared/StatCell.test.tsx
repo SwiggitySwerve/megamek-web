@@ -20,7 +20,7 @@ describe('StatCell', () => {
   it('should apply default variant styling', () => {
     const { container } = render(<StatCell label="Weight" value={50} />);
 
-    const value = container.querySelector('.text-slate-100');
+    const value = container.querySelector('.text-text-theme-primary');
     expect(value).toBeInTheDocument();
   });
 

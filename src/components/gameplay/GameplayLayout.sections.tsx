@@ -170,7 +170,7 @@ export function RecordSheetBody({
   if (!selectedUnit || !selectedUnitInfo || !selectedUnitFromSession) {
     return (
       <div
-        className="flex h-full items-center justify-center text-gray-500"
+        className="text-text-theme-muted flex h-full items-center justify-center"
         data-testid="no-unit-selected"
       >
         <p>Select a unit to view its status</p>
@@ -231,19 +231,19 @@ export function RecordSheetDrawer({
       />
       <aside
         id="record-sheet-drawer"
-        className="fixed inset-y-0 right-0 z-40 flex w-full max-w-md flex-col bg-white shadow-xl"
+        className="bg-surface-base fixed inset-y-0 right-0 z-40 flex w-full max-w-md flex-col shadow-xl"
         role="dialog"
         aria-label="Unit record sheet"
         data-testid="record-sheet-drawer"
       >
-        <div className="flex items-center justify-between border-b border-gray-200 px-4 py-2">
-          <h2 className="text-sm font-semibold tracking-wide text-gray-600 uppercase">
+        <div className="border-border-theme-subtle flex items-center justify-between border-b px-4 py-2">
+          <h2 className="text-text-theme-muted text-sm font-semibold tracking-wide uppercase">
             Record Sheet
           </h2>
           <button
             type="button"
             onClick={onToggle}
-            className="rounded px-2 py-1 text-sm text-gray-600 hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
+            className="text-text-theme-muted hover:bg-surface-base focus-visible:outline-accent rounded px-2 py-1 text-sm focus-visible:outline focus-visible:outline-2"
             data-testid="record-sheet-drawer-close"
             aria-label="Close record sheet"
           >
@@ -267,10 +267,10 @@ export function HitChancePanel({
 
   return (
     <div
-      className="absolute bottom-4 left-4 rounded-lg bg-gray-900/90 px-4 py-3 text-white shadow-lg"
+      className="bg-surface-deep/90 absolute bottom-4 left-4 rounded-lg px-4 py-3 text-white shadow-lg"
       data-testid="hit-chance-panel"
     >
-      <div className="text-xs tracking-wider text-gray-400 uppercase">
+      <div className="text-text-theme-secondary text-xs tracking-wider uppercase">
         Hit Chance
       </div>
       <div className="text-2xl font-bold text-amber-400">{hitChance}%</div>

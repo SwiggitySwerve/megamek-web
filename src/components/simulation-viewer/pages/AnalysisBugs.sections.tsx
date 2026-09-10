@@ -44,7 +44,7 @@ export const InvariantStatusSection: React.FC<InvariantStatusSectionProps> = ({
   >
     {invariants.length === 0 ? (
       <p
-        className="text-sm text-gray-500 italic dark:text-gray-400"
+        className="text-text-theme-muted text-sm italic"
         data-testid="invariant-empty"
       >
         No invariants configured.
@@ -98,7 +98,7 @@ export const AnomalyAlertsSection: React.FC<AnomalyAlertsSectionProps> = ({
     <button
       type="button"
       onClick={onToggleDismissed}
-      className={`min-h-[44px] rounded-md px-3 py-2 text-sm text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 md:min-h-0 md:py-1 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200 ${FOCUS_RING_CLASSES}`}
+      className={`text-text-theme-secondary hover:bg-surface-raised hover:text-text-theme-primary min-h-[44px] rounded-md px-3 py-2 text-sm transition-colors md:min-h-0 md:py-1 ${FOCUS_RING_CLASSES}`}
       data-testid="toggle-dismissed"
       aria-pressed={showDismissed}
     >
@@ -117,7 +117,7 @@ export const AnomalyAlertsSection: React.FC<AnomalyAlertsSectionProps> = ({
     >
       {visibleAnomalies.length === 0 ? (
         <p
-          className="text-sm text-gray-500 italic dark:text-gray-400"
+          className="text-text-theme-muted text-sm italic"
           data-testid="anomaly-empty"
         >
           No anomalies detected.
@@ -229,7 +229,7 @@ export const ThresholdConfigurationSection: React.FC<
     testId="threshold-section"
     title="Threshold Configuration"
   >
-    <div className="space-y-5 rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+    <div className="border-border-theme-subtle bg-surface-base space-y-5 rounded-lg border p-4">
       {(Object.keys(DETECTOR_LABELS) as Array<keyof IThresholds>).map(
         (detectorKey) => (
           <ThresholdSlider
@@ -245,13 +245,13 @@ export const ThresholdConfigurationSection: React.FC<
       )}
 
       <div
-        className="flex gap-3 border-t border-gray-200 pt-2 dark:border-gray-700"
+        className="border-border-theme-subtle flex gap-3 border-t pt-2"
         data-testid="threshold-actions"
       >
         <button
           type="button"
           onClick={onResetThresholds}
-          className={`min-h-[44px] rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100 md:min-h-0 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 ${FOCUS_RING_CLASSES}`}
+          className={`border-border-theme-subtle text-text-theme-secondary hover:bg-surface-raised min-h-[44px] rounded-md border px-4 py-2 text-sm transition-colors md:min-h-0 ${FOCUS_RING_CLASSES}`}
           data-testid="threshold-reset"
         >
           Reset to Defaults
@@ -259,7 +259,7 @@ export const ThresholdConfigurationSection: React.FC<
         <button
           type="button"
           onClick={onSaveThresholds}
-          className={`min-h-[44px] rounded-md bg-blue-600 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-700 md:min-h-0 dark:bg-blue-500 dark:hover:bg-blue-600 ${FOCUS_RING_CLASSES}`}
+          className={`text-on-accent bg-accent hover:bg-accent-hover min-h-[44px] rounded-md px-4 py-2 text-sm transition-colors md:min-h-0 ${FOCUS_RING_CLASSES}`}
           data-testid="threshold-save"
         >
           Save Thresholds
@@ -267,10 +267,10 @@ export const ThresholdConfigurationSection: React.FC<
       </div>
 
       <div
-        className="border-t border-gray-200 pt-4 dark:border-gray-700"
+        className="border-border-theme-subtle border-t pt-4"
         data-testid="auto-snapshot-config"
       >
-        <h3 className="mb-3 text-sm font-semibold tracking-wide text-gray-700 uppercase dark:text-gray-300">
+        <h3 className="text-text-theme-secondary mb-3 text-sm font-semibold tracking-wide uppercase">
           Auto-Snapshot
         </h3>
         <div className="space-y-2">

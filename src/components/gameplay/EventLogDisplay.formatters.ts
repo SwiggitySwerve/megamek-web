@@ -66,7 +66,7 @@ const ICON_COLOR_BY_ICON: Record<IFormattedEvent['icon'], string> = {
   heat: 'text-yellow-600',
   critical: 'text-purple-600',
   phase: 'text-blue-600',
-  status: 'text-gray-600',
+  status: 'text-text-theme-muted',
 };
 
 export function getEventIcon(type: GameEventType): IFormattedEvent['icon'] {

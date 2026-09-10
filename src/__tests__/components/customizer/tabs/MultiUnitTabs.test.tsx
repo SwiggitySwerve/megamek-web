@@ -77,9 +77,17 @@ jest.mock('@/components/customizer/dialogs/UnsavedChangesDialog', () => ({
 
 jest.mock('@/components/customizer/dialogs/SaveUnitDialog', () => ({
   SaveUnitDialog: ({
+    isOpen,
+    initialChassis,
+    initialVariant,
+    currentUnitId,
     constructionValidation,
     onSave,
   }: {
+    isOpen: boolean;
+    initialChassis: string;
+    initialVariant: string;
+    currentUnitId?: string;
     constructionValidation: {
       isValid: boolean;
       isLoading: boolean;
@@ -87,6 +95,7 @@ jest.mock('@/components/customizer/dialogs/SaveUnitDialog', () => ({
     };
     onSave: (chassis: string, variant: string) => void;
   }) => {
+    if (!isOpen) return null;
     const canSave =
       constructionValidation.isValid &&
       !constructionValidation.isLoading &&
@@ -94,6 +103,9 @@ jest.mock('@/components/customizer/dialogs/SaveUnitDialog', () => ({
     return (
       <button
         data-testid="save-unit-dialog"
+        data-chassis={initialChassis}
+        data-variant={initialVariant}
+        data-unit-id={currentUnitId}
         disabled={!canSave}
         onClick={() => onSave('Test', 'TST-1')}
       >
@@ -104,7 +116,9 @@ jest.mock('@/components/customizer/dialogs/SaveUnitDialog', () => ({
 }));
 
 jest.mock('@/components/customizer/dialogs/UnitLoadDialog', () => ({
-  UnitLoadDialog: () => <div data-testid="unit-load-dialog" />,
+  UnitLoadDialog: ({ isOpen }: { isOpen: boolean }) => (
+    <div data-testid="unit-load-dialog" data-open={isOpen} />
+  ),
 }));
 
 jest.mock('@/components/vault/ExportDialog', () => ({
@@ -191,6 +205,9 @@ describe('MultiUnitTabs', () => {
       result: null,
     });
     mockTabManager = createMockTabManager();
+    Object.assign(mockUseTabManagerStore, {
+      getState: () => mockTabManager,
+    });
     (useRouter as jest.Mock).mockReturnValue(mockRouter);
     mockUseTabManagerStore.mockImplementation(
       (selector: (state: typeof mockTabManager) => unknown) => {
@@ -350,11 +367,76 @@ describe('MultiUnitTabs', () => {
     });
   });
 
+  describe('Library save action', () => {
+    it('opens the active BattleMech save dialog with its current identity', () => {
+      const activeStore = createNewUnitStore({
+        id: 'tab-1',
+        name: 'Atlas AS7-D',
+        tonnage: 100,
+        techBase: TechBase.INNER_SPHERE,
+      });
+      activeStore.setState({ chassis: 'Atlas', model: 'AS7-D' });
+      mockGetUnitStore.mockReturnValue(activeStore);
+
+      renderWithToast(
+        <MultiUnitTabs>
+          <div>Content</div>
+        </MultiUnitTabs>,
+      );
+
+      const saveButton = screen.getByRole('button', {
+        name: 'Save active unit to library',
+      });
+      expect(saveButton).toBeEnabled();
+      fireEvent.click(saveButton);
+
+      expect(mockGetUnitStore).toHaveBeenCalledWith('tab-1');
+      expect(screen.getByTestId('save-unit-dialog')).toHaveAttribute(
+        'data-chassis',
+        'Atlas',
+      );
+      expect(screen.getByTestId('save-unit-dialog')).toHaveAttribute(
+        'data-variant',
+        'AS7-D',
+      );
+      expect(screen.getByTestId('save-unit-dialog')).toHaveAttribute(
+        'data-unit-id',
+        'tab-1',
+      );
+    });
+
+    it('gives unsupported unit families an accessible disabled reason', () => {
+      const vehicleTab = { ...mockTab1, unitType: UnitType.VEHICLE };
+      mockTabManager = createMockTabManager({
+        tabs: [vehicleTab],
+        activeTabId: vehicleTab.id,
+      });
+
+      renderWithToast(
+        <MultiUnitTabs>
+          <div>Content</div>
+        </MultiUnitTabs>,
+      );
+
+      const saveButton = screen.getByRole('button', {
+        name: 'Save active unit to library',
+      });
+      expect(saveButton).toBeDisabled();
+      expect(saveButton).toHaveAccessibleDescription(
+        expect.stringMatching(/not available.*browser draft remains open/i),
+      );
+      expect(saveButton).toHaveAttribute(
+        'title',
+        expect.stringMatching(/not available/i),
+      );
+    });
+  });
+
   // ===========================================================================
   // Tab Selection with lastSubTab Tests
   // ===========================================================================
   describe('Tab Selection with lastSubTab', () => {
-    it('should call selectTab and navigate when clicking a tab', () => {
+    it('navigates before URL synchronization selects the requested unit', () => {
       mockTabManager = createMockTabManager({ tabs: [mockTab1, mockTab2] });
 
       renderWithToast(
@@ -367,8 +449,12 @@ describe('MultiUnitTabs', () => {
       const tab2Button = screen.getByTestId('tab-tab-2');
       fireEvent.click(tab2Button);
 
-      // Should have called selectTab
-      expect(mockTabManager.selectTab).toHaveBeenCalledWith('tab-2');
+      expect(mockRouter.push).toHaveBeenCalledWith(
+        '/customizer/tab-2/preview',
+        undefined,
+        { shallow: true },
+      );
+      expect(mockTabManager.selectTab).not.toHaveBeenCalled();
     });
 
     it('should call getLastSubTab when selecting a tab', () => {
@@ -520,7 +606,7 @@ describe('MultiUnitTabs', () => {
       expect(screen.getByText('Load from Library')).toBeInTheDocument();
     });
 
-    it('should open new tab modal when clicking New Unit in empty state', () => {
+    it('opens the shared Add unit flow from New Unit in the empty state', () => {
       mockTabManager = createMockTabManager({ tabs: [], activeTabId: null });
 
       renderWithToast(
@@ -532,7 +618,11 @@ describe('MultiUnitTabs', () => {
       const newUnitButton = screen.getByText('New Unit');
       fireEvent.click(newUnitButton);
 
-      expect(mockTabManager.openNewTabModal).toHaveBeenCalled();
+      expect(screen.getByTestId('unit-load-dialog')).toHaveAttribute(
+        'data-open',
+        'true',
+      );
+      expect(mockTabManager.openNewTabModal).not.toHaveBeenCalled();
     });
   });
 });

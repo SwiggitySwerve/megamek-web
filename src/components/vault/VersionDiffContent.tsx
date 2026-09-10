@@ -52,7 +52,7 @@ function DiffSummaryBadges({
     additionCount > 0 || deletionCount > 0 || modificationCount > 0;
 
   return (
-    <div className="flex items-center gap-3 border-b border-gray-700/50 pb-4">
+    <div className="border-border-theme/50 flex items-center gap-3 border-b pb-4">
       {additionCount > 0 && (
         <div className="flex items-center gap-1.5 rounded-lg border border-green-500/30 bg-green-500/10 px-3 py-1.5">
           <PlusIcon className="h-3.5 w-3.5 text-green-400" />
@@ -78,7 +78,9 @@ function DiffSummaryBadges({
         </div>
       )}
       {!hasChanges && (
-        <span className="text-sm text-gray-400">No changes detected</span>
+        <span className="text-text-theme-secondary text-sm">
+          No changes detected
+        </span>
       )}
     </div>
   );
@@ -93,7 +95,9 @@ function ChangedFieldsList({
 
   return (
     <div className="space-y-2">
-      <p className="text-sm font-medium text-gray-400">Changed Fields</p>
+      <p className="text-text-theme-secondary text-sm font-medium">
+        Changed Fields
+      </p>
       <div className="flex flex-wrap gap-2">
         {fields.map((field) => (
           <Badge key={field} variant="slate" size="sm">
@@ -278,7 +282,7 @@ export function VersionDiffContent({
   if (fromVersion >= toVersion) {
     return (
       <div className="py-8 text-center">
-        <p className="text-gray-400">
+        <p className="text-text-theme-secondary">
           Select a &quot;From&quot; version that is older than the
           &quot;To&quot; version
         </p>
@@ -290,7 +294,9 @@ export function VersionDiffContent({
     return (
       <div className="flex items-center justify-center py-12">
         <SpinnerIcon className="h-6 w-6 text-violet-400" />
-        <span className="ml-3 text-gray-400">Computing differences...</span>
+        <span className="text-text-theme-secondary ml-3">
+          Computing differences...
+        </span>
       </div>
     );
   }

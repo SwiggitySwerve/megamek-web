@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 
@@ -7,6 +7,8 @@ import { getCanonicalUnitService } from '@/services/units/CanonicalUnitService';
 import { customUnitApiService } from '@/services/units/CustomUnitApiService';
 import { TechBase } from '@/types/enums/TechBase';
 import { WeightClass } from '@/types/enums/WeightClass';
+
+jest.mock('@/utils/logger', () => ({ logger: { error: jest.fn() } }));
 
 // Mock ModalOverlay
 jest.mock('@/components/customizer/dialogs/ModalOverlay', () => ({
@@ -109,6 +111,33 @@ describe('UnitLoadDialog', () => {
 
     expect(screen.getByText(/Loading units/i)).toBeInTheDocument();
   });
+
+  it.each(['loading', 'failed'])(
+    'allows a blank unit while the catalog is %s',
+    async (state) => {
+      (getCanonicalUnitService().getIndex as jest.Mock).mockImplementation(() =>
+        state === 'loading'
+          ? new Promise(() => {})
+          : Promise.reject(new Error('Unavailable')),
+      );
+      const onCreateBlankUnit = jest.fn();
+      render(
+        <UnitLoadDialog
+          {...defaultProps}
+          onCreateBlankUnit={onCreateBlankUnit}
+        />,
+      );
+      if (state === 'failed') await screen.findByRole('alert');
+      expect(
+        screen.getByRole('heading', { name: 'Add unit' }),
+      ).toBeInTheDocument();
+      const button = screen.getByRole('button', { name: 'New blank unit' });
+      expect(button).toBeEnabled();
+      await userEvent.click(button);
+      expect(onCreateBlankUnit).toHaveBeenCalledTimes(1);
+      expect(defaultProps.onLoadUnit).not.toHaveBeenCalled();
+    },
+  );
 
   it('should display units in table', async () => {
     render(<UnitLoadDialog {...defaultProps} />);
@@ -228,5 +257,88 @@ describe('UnitLoadDialog', () => {
     await waitFor(() => {
       expect(screen.getByText(/No units found/i)).toBeInTheDocument();
     });
+  });
+  it('offers a working retry when the catalog request fails', async () => {
+    (getCanonicalUnitService().getIndex as jest.Mock)
+      .mockRejectedValueOnce(new Error('offline'))
+      .mockResolvedValueOnce([mockCanonicalUnit]);
+    const user = userEvent.setup();
+    render(<UnitLoadDialog {...defaultProps} />);
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Could not load the library',
+    );
+    await user.click(
+      screen.getByRole('button', { name: 'Retry loading library' }),
+    );
+    expect(await screen.findByText('Atlas')).toBeVisible();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
+  it('disables repeated load-button actions but permits cancellation and a new selection', async () => {
+    const user = userEvent.setup();
+    const onSelectionChange = jest.fn();
+    const { rerender } = render(
+      <UnitLoadDialog
+        {...defaultProps}
+        onSelectionChange={onSelectionChange}
+      />,
+    );
+    await user.click(await screen.findByText('Atlas'));
+    await user.click(screen.getByRole('button', { name: 'Load Unit' }));
+    expect(defaultProps.onLoadUnit).toHaveBeenCalledTimes(1);
+    rerender(
+      <UnitLoadDialog
+        {...defaultProps}
+        onSelectionChange={onSelectionChange}
+        isLoadingUnit
+      />,
+    );
+    const loading = screen.getByRole('button', { name: 'Loading Unit…' });
+    expect(loading).toBeDisabled();
+    await user.click(loading);
+    expect(defaultProps.onLoadUnit).toHaveBeenCalledTimes(1);
+    onSelectionChange.mockClear();
+    await user.click(screen.getByText('Atlas'));
+    expect(onSelectionChange).not.toHaveBeenCalled();
+    await user.click(screen.getByText('C-1'));
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    await user.click(screen.getByRole('button', { name: 'Cancel' }));
+    expect(defaultProps.onCancel).toHaveBeenCalledTimes(1);
+  });
+
+  it('clears a selection when filtering hides its source', async () => {
+    const user = userEvent.setup();
+    const onSelectionChange = jest.fn();
+    render(
+      <UnitLoadDialog
+        {...defaultProps}
+        onSelectionChange={onSelectionChange}
+      />,
+    );
+    await user.click(await screen.findByText('Atlas'));
+    onSelectionChange.mockClear();
+    await user.selectOptions(screen.getByDisplayValue('All Sources'), 'custom');
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole('button', { name: 'Load Unit' })).toBeDisabled();
+  });
+
+  it('ignores an earlier catalog response after the dialog is reopened', async () => {
+    let finishOld!: (value: unknown) => void;
+    (getCanonicalUnitService().getIndex as jest.Mock)
+      .mockReturnValueOnce(
+        new Promise((resolve) => {
+          finishOld = resolve;
+        }),
+      )
+      .mockResolvedValueOnce([
+        { ...mockCanonicalUnit, chassis: 'New Catalog Atlas' },
+      ]);
+    const { rerender } = render(<UnitLoadDialog {...defaultProps} />);
+    rerender(<UnitLoadDialog {...defaultProps} isOpen={false} />);
+    rerender(<UnitLoadDialog {...defaultProps} />);
+    expect(await screen.findByText('New Catalog Atlas')).toBeVisible();
+    await act(async () => finishOld([mockCanonicalUnit]));
+    expect(screen.queryByText('Atlas')).not.toBeInTheDocument();
+    expect(screen.getByText('New Catalog Atlas')).toBeVisible();
   });
 });

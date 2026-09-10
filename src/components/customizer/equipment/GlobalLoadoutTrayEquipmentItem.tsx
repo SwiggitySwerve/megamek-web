@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { getCategoryColorsLegacy } from '@/utils/colors/equipmentColors';
-
 import { LoadoutEquipmentItem } from './GlobalLoadoutTray.types';
 import {
   buildEquipmentItemView,
@@ -27,13 +25,11 @@ export function GlobalLoadoutTrayEquipmentItem({
   onRemove,
   onContextMenu,
 }: EquipmentItemProps): React.ReactElement {
-  const colors = getCategoryColorsLegacy(item.category);
   const initialView = buildEquipmentItemView({
     item,
     isOmni,
     isDragging: false,
     isSelected,
-    categoryClassName: colors.bg,
   });
   const interactions = useEquipmentItemInteractions({
     canDrag: initialView.canDrag,
@@ -46,7 +42,6 @@ export function GlobalLoadoutTrayEquipmentItem({
     isOmni,
     isDragging: interactions.isDragging,
     isSelected,
-    categoryClassName: colors.bg,
   });
 
   return (
@@ -55,16 +50,25 @@ export function GlobalLoadoutTrayEquipmentItem({
       onDragStart={interactions.handleDragStart}
       onDragEnd={interactions.handleDragEnd}
       className={view.rowClassName}
-      onClick={onSelect}
       onContextMenu={onContextMenu}
       title={view.tooltip}
     >
-      <EquipmentItemSummary item={item} displayName={view.displayName} />
+      <button
+        type="button"
+        onClick={onSelect}
+        aria-label={view.selectAccessibleName}
+        aria-pressed={isSelected}
+        className="focus-visible:ring-accent flex min-h-11 min-w-0 flex-1 items-center rounded-l-md text-left focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset"
+      >
+        <EquipmentItemSummary item={item} displayName={view.displayName} />
+      </button>
 
-      <div className="border-border-theme-subtle/30 ml-1 flex h-7 w-7 flex-shrink-0 items-center justify-center border-l">
+      <div className="border-border-theme-subtle/30 ml-1 flex min-h-11 w-11 flex-shrink-0 items-center justify-center border-l">
         <EquipmentRemoveControl
           isRemovable={item.isRemovable}
           showConfirmRemove={interactions.showConfirmRemove}
+          removeAccessibleName={view.removeAccessibleName}
+          confirmRemoveAccessibleName={view.confirmRemoveAccessibleName}
           onRemoveClick={interactions.handleRemoveClick}
         />
       </div>

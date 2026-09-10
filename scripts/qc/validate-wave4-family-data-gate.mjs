@@ -105,7 +105,15 @@ const familyContracts = [
       },
       {
         path: 'src/components/customizer/tabs/PreviewTab.tsx',
-        tokens: ['handleExportPDF', 'RecordSheetPreviewWithRef'],
+        tokens: ['useRecordSheetToolbarActions', 'RecordSheetPreview'],
+      },
+      {
+        path: 'src/components/customizer/preview/RecordSheetCanvasPreview.tsx',
+        tokens: [
+          'exportUnitRecordSheetPDF',
+          'getRecordSheetService().exportPDF',
+          'printUnitRecordSheet',
+        ],
       },
       {
         path: 'src/components/customizer/tabs/useMultiUnitTabsController.helpers.ts',

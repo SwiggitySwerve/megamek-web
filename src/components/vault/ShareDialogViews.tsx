@@ -35,14 +35,14 @@ export function ShareDialogSuccess({
 }: ShareDialogSuccessProps): React.ReactElement {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="mx-4 w-full max-w-md rounded-lg bg-gray-800 p-6">
+      <div className="bg-surface-base mx-4 w-full max-w-md rounded-lg p-6">
         <h2 className="mb-4 text-xl font-bold text-green-400">
           Share Link Created
         </h2>
 
         <div className="space-y-4">
           <div>
-            <label className="mb-1 block text-sm text-gray-400">
+            <label className="text-text-theme-secondary mb-1 block text-sm">
               Share Link
             </label>
             <div className="flex gap-2">
@@ -50,42 +50,48 @@ export function ShareDialogSuccess({
                 type="text"
                 readOnly
                 value={result.url}
-                className="flex-1 rounded border border-gray-600 bg-gray-700 px-3 py-2 font-mono text-sm text-white"
+                className="border-border-theme-strong bg-surface-raised text-text-theme-primary flex-1 rounded border px-3 py-2 font-mono text-sm"
               />
               <button
                 onClick={onCopy}
-                className="rounded bg-blue-600 px-4 py-2 whitespace-nowrap text-white hover:bg-blue-500"
+                className="bg-accent text-on-accent hover:bg-accent-hover rounded px-4 py-2 whitespace-nowrap"
               >
                 {copied ? 'Copied!' : 'Copy'}
               </button>
             </div>
           </div>
 
-          <div className="rounded-lg bg-gray-700 p-4">
-            <h3 className="mb-2 font-medium text-white">Link Settings</h3>
+          <div className="bg-surface-raised rounded-lg p-4">
+            <h3 className="text-text-theme-primary mb-2 font-medium">
+              Link Settings
+            </h3>
             <dl className="space-y-1 text-sm">
               <div className="flex justify-between">
-                <dt className="text-gray-400">Permission:</dt>
-                <dd className="text-white capitalize">{result.link.level}</dd>
+                <dt className="text-text-theme-secondary">Permission:</dt>
+                <dd className="text-text-theme-primary capitalize">
+                  {result.link.level}
+                </dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-gray-400">Expires:</dt>
-                <dd className="text-white">
+                <dt className="text-text-theme-secondary">Expires:</dt>
+                <dd className="text-text-theme-primary">
                   {result.link.expiresAt
                     ? new Date(result.link.expiresAt).toLocaleString()
                     : 'Never'}
                 </dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-gray-400">Max Uses:</dt>
-                <dd className="text-white">
+                <dt className="text-text-theme-secondary">Max Uses:</dt>
+                <dd className="text-text-theme-primary">
                   {result.link.maxUses ?? 'Unlimited'}
                 </dd>
               </div>
               {result.link.label && (
                 <div className="flex justify-between">
-                  <dt className="text-gray-400">Label:</dt>
-                  <dd className="text-white">{result.link.label}</dd>
+                  <dt className="text-text-theme-secondary">Label:</dt>
+                  <dd className="text-text-theme-primary">
+                    {result.link.label}
+                  </dd>
                 </div>
               )}
             </dl>
@@ -94,13 +100,13 @@ export function ShareDialogSuccess({
           <div className="flex flex-col gap-3">
             <button
               onClick={onCreateAnother}
-              className="w-full rounded bg-gray-600 px-4 py-2 text-white hover:bg-gray-500"
+              className="bg-surface-raised text-text-theme-primary hover:bg-surface-raised w-full rounded px-4 py-2"
             >
               Create Another Link
             </button>
             <button
               onClick={onClose}
-              className="w-full rounded bg-gray-700 px-4 py-2 text-white hover:bg-gray-600"
+              className="bg-surface-raised text-text-theme-primary hover:bg-surface-raised w-full rounded px-4 py-2"
             >
               Close
             </button>
@@ -152,15 +158,17 @@ export function ShareDialogForm({
 }: ShareDialogFormProps): React.ReactElement {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="mx-4 w-full max-w-md rounded-lg bg-gray-800 p-6">
-        <h2 className="mb-4 text-xl font-bold text-white">Share {itemName}</h2>
+      <div className="bg-surface-base mx-4 w-full max-w-md rounded-lg p-6">
+        <h2 className="text-text-theme-primary mb-4 text-xl font-bold">
+          Share {itemName}
+        </h2>
 
         <InlineErrorMessage message={error} variant="dialog" />
 
         <div className="space-y-4">
           {/* Permission Level */}
           <div>
-            <label className="mb-1 block text-sm text-gray-400">
+            <label className="text-text-theme-secondary mb-1 block text-sm">
               Permission Level
             </label>
             <select
@@ -168,7 +176,7 @@ export function ShareDialogForm({
               onChange={(event) =>
                 onLevelChange(event.target.value as PermissionLevel)
               }
-              className="w-full rounded border border-gray-600 bg-gray-700 px-3 py-2 text-white"
+              className="border-border-theme-strong bg-surface-raised text-text-theme-primary w-full rounded border px-3 py-2"
             >
               <option value="read">Read - View and copy content</option>
               <option value="write">Write - View, copy, and edit</option>
@@ -180,7 +188,7 @@ export function ShareDialogForm({
 
           {/* Expiration */}
           <div>
-            <label className="mb-1 block text-sm text-gray-400">
+            <label className="text-text-theme-secondary mb-1 block text-sm">
               Link Expiration
             </label>
             <select
@@ -188,7 +196,7 @@ export function ShareDialogForm({
               onChange={(event) =>
                 onExpiryOptionChange(event.target.value as ExpiryOption)
               }
-              className="w-full rounded border border-gray-600 bg-gray-700 px-3 py-2 text-white"
+              className="border-border-theme-strong bg-surface-raised text-text-theme-primary w-full rounded border px-3 py-2"
             >
               <option value="none">Never expires</option>
               <option value="1hour">1 hour</option>
@@ -202,14 +210,14 @@ export function ShareDialogForm({
                 type="datetime-local"
                 value={customExpiry}
                 onChange={(event) => onCustomExpiryChange(event.target.value)}
-                className="mt-2 w-full rounded border border-gray-600 bg-gray-700 px-3 py-2 text-white"
+                className="border-border-theme-strong bg-surface-raised text-text-theme-primary mt-2 w-full rounded border px-3 py-2"
               />
             )}
           </div>
 
           {/* Max Uses */}
           <div>
-            <label className="mb-1 block text-sm text-gray-400">
+            <label className="text-text-theme-secondary mb-1 block text-sm">
               Maximum Uses
             </label>
             <select
@@ -217,7 +225,7 @@ export function ShareDialogForm({
               onChange={(event) =>
                 onMaxUsesOptionChange(event.target.value as MaxUsesOption)
               }
-              className="w-full rounded border border-gray-600 bg-gray-700 px-3 py-2 text-white"
+              className="border-border-theme-strong bg-surface-raised text-text-theme-primary w-full rounded border px-3 py-2"
             >
               <option value="unlimited">Unlimited</option>
               <option value="1">1 use</option>
@@ -233,7 +241,7 @@ export function ShareDialogForm({
                 onChange={(event) =>
                   onCustomMaxUsesChange(parseInt(event.target.value, 10) || 1)
                 }
-                className="mt-2 w-full rounded border border-gray-600 bg-gray-700 px-3 py-2 text-white"
+                className="border-border-theme-strong bg-surface-raised text-text-theme-primary mt-2 w-full rounded border px-3 py-2"
                 placeholder="Enter max uses"
               />
             )}
@@ -241,7 +249,7 @@ export function ShareDialogForm({
 
           {/* Label */}
           <div>
-            <label className="mb-1 block text-sm text-gray-400">
+            <label className="text-text-theme-secondary mb-1 block text-sm">
               Label (optional)
             </label>
             <input
@@ -249,7 +257,7 @@ export function ShareDialogForm({
               value={label}
               onChange={(event) => onLabelChange(event.target.value)}
               placeholder="e.g., For Discord server"
-              className="w-full rounded border border-gray-600 bg-gray-700 px-3 py-2 text-white placeholder-gray-500"
+              className="border-border-theme-strong bg-surface-raised text-text-theme-primary w-full rounded border px-3 py-2"
             />
           </div>
         </div>
@@ -258,14 +266,14 @@ export function ShareDialogForm({
           <button
             onClick={onClose}
             disabled={creating}
-            className="rounded bg-gray-600 px-4 py-2 text-white hover:bg-gray-500 disabled:opacity-50"
+            className="bg-surface-raised text-text-theme-primary hover:bg-surface-raised rounded px-4 py-2 disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             onClick={onCreate}
             disabled={creating || (expiryOption === 'custom' && !customExpiry)}
-            className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-500 disabled:opacity-50"
+            className="bg-accent text-on-accent hover:bg-accent-hover rounded px-4 py-2 disabled:opacity-50"
           >
             {creating ? 'Creating...' : 'Create Link'}
           </button>

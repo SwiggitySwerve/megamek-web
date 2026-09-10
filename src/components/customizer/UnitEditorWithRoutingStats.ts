@@ -14,15 +14,16 @@ import type { MechConfiguration } from '@/types/unit/BattleMechInterfaces';
 
 import { UnitStats } from '@/components/customizer/shared/UnitInfoBanner';
 import { useEquipmentCalculations } from '@/hooks/useEquipmentCalculations';
+import { useEquipmentRegistry } from '@/hooks/useEquipmentRegistry';
 import { useUnitCalculations } from '@/hooks/useUnitCalculations';
 import { UnitValidationState } from '@/hooks/useUnitValidation';
 import { getCalculationService } from '@/services/construction/CalculationService';
-import {
-  IEditableMech,
-  IArmorAllocation as IEditableArmorAllocation,
-} from '@/services/construction/MechBuilderService';
+import { projectEditableMech } from '@/services/construction/editableMechProjection';
 import { getTotalAllocatedArmor } from '@/stores/unitState';
-import { MechLocation } from '@/types/construction/CriticalSlotAllocation';
+import {
+  getLocationsForConfig,
+  getLocationSlotCount,
+} from '@/types/construction/MechConfigurationSystem';
 import {
   TechBaseMode,
   isEffectivelyMixed,
@@ -34,6 +35,7 @@ import {
   getMovementModifiersFromEquipment,
   type JumpJetType,
 } from '@/utils/construction/movementCalculations';
+import { hasAssignedCriticalSlots } from '@/utils/construction/slotOperations/placement';
 import { logger } from '@/utils/logger';
 
 interface UnitEditorStatsInput {
@@ -69,48 +71,6 @@ interface UnitEditorStatsResult {
   mobileLoadoutStats: MobileLoadoutStats;
 }
 
-const EMPTY_ARMOR_ALLOCATION: IEditableArmorAllocation = {
-  head: 0,
-  centerTorso: 0,
-  centerTorsoRear: 0,
-  leftTorso: 0,
-  leftTorsoRear: 0,
-  rightTorso: 0,
-  rightTorsoRear: 0,
-  leftArm: 0,
-  rightArm: 0,
-  leftLeg: 0,
-  rightLeg: 0,
-};
-
-function toEditableArmorAllocation(
-  armorAllocation: IArmorAllocation,
-): IEditableArmorAllocation {
-  return {
-    head: armorAllocation[MechLocation.HEAD],
-    centerTorso: armorAllocation[MechLocation.CENTER_TORSO],
-    centerTorsoRear: armorAllocation.centerTorsoRear,
-    leftTorso: armorAllocation[MechLocation.LEFT_TORSO],
-    leftTorsoRear: armorAllocation.leftTorsoRear,
-    rightTorso: armorAllocation[MechLocation.RIGHT_TORSO],
-    rightTorsoRear: armorAllocation.rightTorsoRear,
-    leftArm: armorAllocation[MechLocation.LEFT_ARM],
-    rightArm: armorAllocation[MechLocation.RIGHT_ARM],
-    leftLeg: armorAllocation[MechLocation.LEFT_LEG],
-    rightLeg: armorAllocation[MechLocation.RIGHT_LEG],
-  };
-}
-
-function toEditableEquipmentSlots(
-  equipment: readonly IMountedEquipmentInstance[],
-) {
-  return equipment.map((eq) => ({
-    equipmentId: eq.equipmentId,
-    location: eq.location ?? '',
-    slotIndex: eq.slots?.[0] ?? 0,
-  }));
-}
-
 export function useUnitEditorRoutingStats(
   input: UnitEditorStatsInput,
 ): UnitEditorStatsResult {
@@ -139,6 +99,7 @@ export function useUnitEditorRoutingStats(
     validation,
   } = input;
 
+  const { isReady: registryReady } = useEquipmentRegistry();
   const equipmentCalcs = useEquipmentCalculations(equipment);
 
   const allocatedArmorPoints = useMemo(
@@ -182,103 +143,81 @@ export function useUnitEditorRoutingStats(
     tonnage,
     componentSelections,
     armorTonnage,
+    configuration,
+  );
+
+  const editableMech = useMemo(
+    () =>
+      projectEditableMech(
+        {
+          name: unitName,
+          chassis,
+          model,
+          tonnage,
+          configuration,
+          techBase,
+          engineType,
+          engineRating,
+          internalStructureType,
+          gyroType,
+          cockpitType,
+          armorType,
+          armorAllocation,
+          heatSinkType,
+          heatSinkCount,
+          equipment,
+        },
+        calculations.walkMP,
+        'editor',
+      ),
+    [
+      unitName,
+      chassis,
+      model,
+      tonnage,
+      configuration,
+      techBase,
+      engineType,
+      engineRating,
+      internalStructureType,
+      gyroType,
+      cockpitType,
+      armorType,
+      armorAllocation,
+      heatSinkType,
+      heatSinkCount,
+      equipment,
+      calculations.walkMP,
+    ],
   );
 
   const battleValue = useMemo(() => {
     try {
-      const editableMech: IEditableMech = {
-        id: 'banner',
-        chassis: chassis || unitName.split(' ')[0] || 'Unknown',
-        variant: model || unitName.split(' ').slice(1).join(' ') || 'Custom',
-        tonnage,
-        techBase,
-        engineType,
-        engineRating,
-        walkMP: calculations.walkMP,
-        structureType: internalStructureType,
-        gyroType,
-        cockpitType,
-        armorType,
-        armorAllocation: toEditableArmorAllocation(armorAllocation),
-        heatSinkType,
-        heatSinkCount,
-        equipment: toEditableEquipmentSlots(equipment),
-        isDirty: false,
-      };
-
-      return getCalculationService().calculateBattleValue(editableMech);
+      return registryReady
+        ? getCalculationService().calculateBattleValue(editableMech)
+        : 0;
     } catch (error) {
       logger.warn('Failed to calculate BV:', error);
       return 0;
     }
-  }, [
-    unitName,
-    chassis,
-    model,
-    tonnage,
-    techBase,
-    engineType,
-    engineRating,
-    gyroType,
-    internalStructureType,
-    cockpitType,
-    heatSinkType,
-    heatSinkCount,
-    armorType,
-    armorAllocation,
-    equipment,
-    calculations.walkMP,
-  ]);
+  }, [registryReady, editableMech]);
 
   const heatProfile = useMemo(() => {
+    const unavailable = {
+      heatGenerated: 0,
+      heatDissipated: calculations.totalHeatDissipation,
+      netHeat: -calculations.totalHeatDissipation,
+      alphaStrikeHeat: 0,
+    };
     try {
-      const editableMech: IEditableMech = {
-        id: 'heat-calc',
-        chassis: chassis || 'Unknown',
-        variant: model || 'Custom',
-        tonnage,
-        techBase,
-        engineType,
-        engineRating,
-        walkMP: calculations.walkMP,
-        structureType: internalStructureType,
-        gyroType,
-        cockpitType,
-        armorType,
-        armorAllocation: EMPTY_ARMOR_ALLOCATION,
-        heatSinkType,
-        heatSinkCount,
-        equipment: toEditableEquipmentSlots(equipment),
-        isDirty: false,
-      };
-
-      return getCalculationService().calculateHeatProfile(editableMech);
+      return registryReady
+        ? getCalculationService().calculateHeatProfile(editableMech)
+        : unavailable;
     } catch (error) {
       logger.warn('Failed to calculate heat profile:', error);
-      return {
-        heatGenerated: 0,
-        heatDissipated: calculations.totalHeatDissipation,
-        netHeat: -calculations.totalHeatDissipation,
-        alphaStrikeHeat: 0,
-      };
+      return unavailable;
     }
-  }, [
-    chassis,
-    model,
-    tonnage,
-    techBase,
-    engineType,
-    engineRating,
-    gyroType,
-    internalStructureType,
-    cockpitType,
-    heatSinkType,
-    heatSinkCount,
-    armorType,
-    equipment,
-    calculations.walkMP,
-    calculations.totalHeatDissipation,
-  ]);
+  }, [registryReady, editableMech, calculations.totalHeatDissipation]);
 
   const maxRunMP = useMemo(() => {
     const equipmentNames = equipment.map((item) => item.name);
@@ -298,6 +237,10 @@ export function useUnitEditorRoutingStats(
 
   const totalWeight =
     calculations.totalStructuralWeight + equipmentCalcs.totalWeight;
+  const totalSlots = getLocationsForConfig(configuration).reduce(
+    (sum, location) => sum + getLocationSlotCount(location, configuration),
+    0,
+  );
   const totalSlotsUsed =
     calculations.totalSystemSlots + equipmentCalcs.totalSlots;
 
@@ -316,7 +259,7 @@ export function useUnitEditorRoutingStats(
       armorPoints: allocatedArmorPoints,
       maxArmorPoints,
       criticalSlotsUsed: totalSlotsUsed,
-      criticalSlotsTotal: 78,
+      criticalSlotsTotal: totalSlots,
       heatGenerated: heatProfile.heatGenerated,
       heatDissipation: heatProfile.heatDissipated,
       battleValue,
@@ -338,18 +281,21 @@ export function useUnitEditorRoutingStats(
       allocatedArmorPoints,
       maxArmorPoints,
       totalSlotsUsed,
+      totalSlots,
       heatProfile,
       battleValue,
     ],
   );
 
   const mobileLoadoutStats: MobileLoadoutStats = useMemo(() => {
-    const unassignedCount = equipment.filter((e) => !e.location).length;
+    const unassignedCount = equipment.filter(
+      (e) => !hasAssignedCriticalSlots(e),
+    ).length;
     return {
       weightUsed: totalWeight,
       weightMax: tonnage,
       slotsUsed: totalSlotsUsed,
-      slotsMax: 78,
+      slotsMax: totalSlots,
       heatGenerated: heatProfile.heatGenerated,
       heatDissipation: heatProfile.heatDissipated,
       battleValue,
@@ -361,6 +307,7 @@ export function useUnitEditorRoutingStats(
     tonnage,
     totalWeight,
     totalSlotsUsed,
+    totalSlots,
     heatProfile,
     battleValue,
   ]);

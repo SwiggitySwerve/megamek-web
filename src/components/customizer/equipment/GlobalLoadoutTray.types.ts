@@ -28,6 +28,7 @@ export interface AvailableLocation {
   label: string;
   availableSlots: number;
   canFit: boolean;
+  reason?: string;
 }
 
 export interface GlobalLoadoutTrayProps {
@@ -42,6 +43,9 @@ export interface GlobalLoadoutTrayProps {
   onUnassignEquipment?: (instanceId: string) => void;
   onQuickAssign?: (instanceId: string, location: MechLocation) => void;
   availableLocations?: AvailableLocation[];
+  getAvailableLocationsForEquipment?: (
+    instanceId: string,
+  ) => AvailableLocation[];
   isOmni?: boolean;
   className?: string;
 }

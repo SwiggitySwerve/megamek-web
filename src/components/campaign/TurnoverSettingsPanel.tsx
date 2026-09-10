@@ -6,6 +6,7 @@ import type {
 } from '@/types/campaign/Campaign';
 
 import { Card } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 
 interface TurnoverSettingsPanelProps {
   options: ICampaignOptions;
@@ -112,7 +113,8 @@ export const TurnoverSettingsPanel = memo(function TurnoverSettingsPanel({
   return (
     <Card className="p-4" data-testid="turnover-settings-panel">
       <h3 className="text-text-theme-primary mb-3 flex items-center gap-2 text-base font-semibold">
-        <svg
+        <SvgIcon
+          size="control"
           className="h-5 w-5 text-amber-400"
           fill="none"
           stroke="currentColor"
@@ -124,7 +126,7 @@ export const TurnoverSettingsPanel = memo(function TurnoverSettingsPanel({
             strokeWidth={2}
             d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
           />
-        </svg>
+        </SvgIcon>
         Turnover Settings
       </h3>
 

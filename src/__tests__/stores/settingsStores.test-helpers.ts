@@ -316,12 +316,24 @@ describe('useCustomizerSettingsStore', () => {
         'neon-operator',
         'tactical-hud',
         'premium-material',
-        'megamek',
       ] as const;
       variants.forEach((variant) => {
         act(() => result.current.setArmorDiagramVariant(variant));
         expect(result.current.armorDiagramVariant).toBe(variant);
       });
+    });
+
+    it('maps the retired MegaMek preference to Standard', () => {
+      const { result } = renderHook(() => useCustomizerSettingsStore());
+      act(() => result.current.setArmorDiagramVariant('megamek'));
+      expect(result.current.armorDiagramVariant).toBe('clean-tech');
+      act(() => {
+        result.current.initDraftCustomizer();
+        result.current.setDraftArmorDiagramVariant('megamek');
+      });
+      expect(result.current.draftCustomizer?.armorDiagramVariant).toBe(
+        'clean-tech',
+      );
     });
 
     it('setArmorDiagramMode toggles between schematic and silhouette', () => {
@@ -354,10 +366,10 @@ describe('useCustomizerSettingsStore', () => {
       const { result } = renderHook(() => useCustomizerSettingsStore());
       act(() => {
         result.current.initDraftCustomizer();
-        result.current.setDraftArmorDiagramVariant('megamek');
+        result.current.setDraftArmorDiagramVariant('tactical-hud');
       });
       expect(result.current.draftCustomizer?.armorDiagramVariant).toBe(
-        'megamek',
+        'tactical-hud',
       );
       expect(result.current.armorDiagramVariant).toBe('clean-tech');
       expect(result.current.hasUnsavedCustomizer).toBe(true);
@@ -381,11 +393,11 @@ describe('useCustomizerSettingsStore', () => {
       act(() => {
         result.current.initDraftCustomizer();
         result.current.setDraftArmorDiagramMode('schematic');
-        result.current.setDraftArmorDiagramVariant('megamek');
+        result.current.setDraftArmorDiagramVariant('tactical-hud');
         result.current.saveCustomizer();
       });
       expect(result.current.armorDiagramMode).toBe('schematic');
-      expect(result.current.armorDiagramVariant).toBe('megamek');
+      expect(result.current.armorDiagramVariant).toBe('tactical-hud');
       expect(result.current.hasUnsavedCustomizer).toBe(false);
     });
 
@@ -393,7 +405,7 @@ describe('useCustomizerSettingsStore', () => {
       const { result } = renderHook(() => useCustomizerSettingsStore());
       act(() => {
         result.current.initDraftCustomizer();
-        result.current.setDraftArmorDiagramVariant('megamek');
+        result.current.setDraftArmorDiagramVariant('tactical-hud');
         result.current.revertCustomizer();
       });
       expect(result.current.armorDiagramVariant).toBe('clean-tech');
@@ -444,27 +456,27 @@ describe('useCustomizerSettingsStore', () => {
         'clean-tech',
       );
 
-      act(() => result.current.setDraftArmorDiagramVariant('megamek'));
+      act(() => result.current.setDraftArmorDiagramVariant('tactical-hud'));
       expect(result.current.draftCustomizer?.armorDiagramMode).toBe(
         'schematic',
       );
       expect(result.current.draftCustomizer?.armorDiagramVariant).toBe(
-        'megamek',
+        'tactical-hud',
       );
     });
 
     it('saveCustomizer is a no-op when draftCustomizer is null', () => {
       const { result } = renderHook(() => useCustomizerSettingsStore());
-      act(() => result.current.setArmorDiagramVariant('megamek'));
+      act(() => result.current.setArmorDiagramVariant('tactical-hud'));
       act(() => result.current.saveCustomizer());
-      expect(result.current.armorDiagramVariant).toBe('megamek');
+      expect(result.current.armorDiagramVariant).toBe('tactical-hud');
     });
 
     it('resetToDefaults clears draft customizer state', () => {
       const { result } = renderHook(() => useCustomizerSettingsStore());
       act(() => {
         result.current.initDraftCustomizer();
-        result.current.setDraftArmorDiagramVariant('megamek');
+        result.current.setDraftArmorDiagramVariant('tactical-hud');
       });
       expect(result.current.draftCustomizer).not.toBeNull();
       expect(result.current.hasUnsavedCustomizer).toBe(true);
@@ -586,11 +598,11 @@ describe('Cross-slice independence', () => {
     const appearance = renderHook(() => useAppearanceStore());
     const customizer = renderHook(() => useCustomizerSettingsStore());
 
-    act(() => customizer.result.current.setArmorDiagramVariant('megamek'));
+    act(() => customizer.result.current.setArmorDiagramVariant('tactical-hud'));
     expect(appearance.result.current.uiTheme).toBe('default');
 
     act(() => appearance.result.current.setUITheme('neon'));
-    expect(customizer.result.current.armorDiagramVariant).toBe('megamek');
+    expect(customizer.result.current.armorDiagramVariant).toBe('tactical-hud');
     expect(appearance.result.current.uiTheme).toBe('neon');
   });
 });

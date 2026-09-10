@@ -95,12 +95,12 @@ export function LobbyPanel(props: ILobbyPanelProps): React.ReactElement {
   return (
     <div className="space-y-6">
       {/* Match info banner */}
-      <div className="flex items-center justify-between rounded-lg border border-slate-700 bg-slate-900 p-4">
+      <div className="border-border-theme bg-surface-deep flex items-center justify-between rounded-lg border p-4">
         <div>
-          <h2 className="text-lg font-semibold text-slate-100">
+          <h2 className="text-text-theme-primary text-lg font-semibold">
             Lobby — {lobbyState.matchId.slice(0, 8)}
           </h2>
-          <p className="text-xs text-slate-400">
+          <p className="text-text-theme-secondary text-xs">
             Status: {lobbyState.status} · Host:{' '}
             {isHost ? 'you' : lobbyState.hostPlayerId.slice(0, 12)}
           </p>
@@ -116,7 +116,7 @@ export function LobbyPanel(props: ILobbyPanelProps): React.ReactElement {
       <div className="grid gap-4 md:grid-cols-2">
         {Array.from(grouped.entries()).map(([side, sideSeats]) => (
           <div key={side} className="space-y-2">
-            <h3 className="text-sm font-semibold tracking-wide text-slate-300 uppercase">
+            <h3 className="text-text-theme-secondary text-sm font-semibold tracking-wide uppercase">
               {side}
             </h3>
             {sideSeats.map((seat) => {
@@ -160,8 +160,8 @@ export function LobbyPanel(props: ILobbyPanelProps): React.ReactElement {
 
       {/* Host-only controls */}
       {isHost && (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-700 bg-slate-900 p-4">
-          <div className="text-xs text-slate-400">
+        <div className="border-border-theme bg-surface-deep flex flex-wrap items-center justify-between gap-3 rounded-lg border p-4">
+          <div className="text-text-theme-secondary text-xs">
             {launchReady
               ? 'All seats ready — you can launch the match.'
               : 'Waiting for every seat to be filled and ready.'}
@@ -174,7 +174,7 @@ export function LobbyPanel(props: ILobbyPanelProps): React.ReactElement {
               className={`rounded px-4 py-2 text-sm font-medium text-white ${
                 launchReady
                   ? 'bg-emerald-600 hover:bg-emerald-500'
-                  : 'cursor-not-allowed bg-slate-700'
+                  : 'bg-surface-raised cursor-not-allowed'
               }`}
             >
               Launch match

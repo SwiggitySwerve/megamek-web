@@ -5,6 +5,7 @@ import {
   RepairCostBreakdown,
 } from '@/components/repair';
 import { Card } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 
 import { UnitRepairCard } from './RepairBayPage.UnitRepairCard';
 
@@ -73,7 +74,8 @@ export function RepairWorkspace({
           >
             <div className="text-center">
               <div className="bg-surface-deep mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
-                <svg
+                <SvgIcon
+                  size="feature"
                   className="text-text-theme-muted h-8 w-8"
                   fill="none"
                   stroke="currentColor"
@@ -85,7 +87,7 @@ export function RepairWorkspace({
                     strokeWidth={1.5}
                     d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"
                   />
-                </svg>
+                </SvgIcon>
               </div>
               <h3 className="text-text-theme-primary mb-1 text-lg font-semibold">
                 Select a Unit

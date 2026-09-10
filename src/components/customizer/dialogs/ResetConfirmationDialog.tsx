@@ -8,6 +8,8 @@
 
 import React, { useState } from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
+
 import { customizerStyles as cs } from '../styles';
 import { ModalOverlay } from './ModalOverlay';
 
@@ -146,19 +148,7 @@ export function ResetConfirmationDialog({
         <h2 className={cs.dialog.headerTitle}>Reset Configuration</h2>
         {step !== 'progress' && (
           <button onClick={handleClose} className={cs.dialog.closeBtn}>
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <AppIcon name="close" size="control" />
           </button>
         )}
       </div>
@@ -182,7 +172,9 @@ export function ResetConfirmationDialog({
                     : 'border-border-theme hover:border-border-theme-subtle'
                 }`}
               >
-                <div className="font-medium text-white">{option.title}</div>
+                <div className="text-text-theme-primary font-medium">
+                  {option.title}
+                </div>
                 <div className="text-text-theme-secondary mt-1 text-sm">
                   {option.description}
                 </div>
@@ -199,7 +191,7 @@ export function ResetConfirmationDialog({
                   {selectedOption.removes.map((item, i) => (
                     <li
                       key={i}
-                      className="flex items-center gap-2 text-sm text-slate-300"
+                      className="text-text-theme-secondary flex items-center gap-2 text-sm"
                     >
                       <span className="text-red-400">•</span>
                       {item}
@@ -215,7 +207,7 @@ export function ResetConfirmationDialog({
                   {selectedOption.preserves.map((item, i) => (
                     <li
                       key={i}
-                      className="flex items-center gap-2 text-sm text-slate-300"
+                      className="text-text-theme-secondary flex items-center gap-2 text-sm"
                     >
                       <span className="text-green-400">•</span>
                       {item}
@@ -230,8 +222,8 @@ export function ResetConfirmationDialog({
         {/* Step: Confirm */}
         {step === 'confirm' && (
           <div className="py-6 text-center">
-            <div className="mb-4 text-4xl">⚠️</div>
-            <h3 className="mb-2 text-lg font-medium text-white">
+            <AppIcon name="warning" size="feature" aria-hidden="true" />
+            <h3 className="text-text-theme-primary mb-2 text-lg font-medium">
               Are you sure?
             </h3>
             <p className="text-text-theme-secondary">
@@ -264,7 +256,7 @@ export function ResetConfirmationDialog({
           <div className="py-6 text-center">
             {error ? (
               <>
-                <div className="mb-4 text-4xl">❌</div>
+                <AppIcon name="close" size="feature" aria-hidden="true" />
                 <h3 className="mb-2 text-lg font-medium text-red-400">
                   Reset Failed
                 </h3>
@@ -272,7 +264,7 @@ export function ResetConfirmationDialog({
               </>
             ) : (
               <>
-                <div className="mb-4 text-4xl">✅</div>
+                <AppIcon name="check" size="feature" aria-hidden="true" />
                 <h3 className="mb-2 text-lg font-medium text-green-400">
                   Reset Complete
                 </h3>

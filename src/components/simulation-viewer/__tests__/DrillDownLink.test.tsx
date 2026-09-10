@@ -42,7 +42,10 @@ describe('DrillDownLink', () => {
 
       const icon = screen.getByTestId('drill-down-icon');
       expect(icon).toBeInTheDocument();
-      expect(icon).toHaveTextContent('→');
+      expect(icon.firstElementChild).toHaveAttribute(
+        'data-icon-name',
+        'arrow-right',
+      );
     });
 
     it('renders with external-link icon', () => {
@@ -54,7 +57,9 @@ describe('DrillDownLink', () => {
         />,
       );
 
-      expect(screen.getByTestId('drill-down-icon')).toHaveTextContent('↗');
+      expect(
+        screen.getByTestId('drill-down-icon').firstElementChild,
+      ).toHaveAttribute('data-icon-name', 'external-link');
     });
 
     it('renders with chevron-right icon', () => {
@@ -66,7 +71,9 @@ describe('DrillDownLink', () => {
         />,
       );
 
-      expect(screen.getByTestId('drill-down-icon')).toHaveTextContent('›');
+      expect(
+        screen.getByTestId('drill-down-icon').firstElementChild,
+      ).toHaveAttribute('data-icon-name', 'chevron-right');
     });
 
     it('falls back to raw icon string for unknown icons', () => {
@@ -232,7 +239,7 @@ describe('DrillDownLink', () => {
 
       const link = screen.getByTestId('drill-down-link');
       expect(link).toHaveClass('focus:ring-2');
-      expect(link).toHaveClass('focus:ring-blue-500');
+      expect(link).toHaveClass('focus:ring-accent');
       expect(link).toHaveClass('focus:ring-offset-2');
       expect(link).toHaveClass('focus:outline-none');
     });
@@ -258,17 +265,13 @@ describe('DrillDownLink', () => {
     it('has dark mode text color', () => {
       render(<DrillDownLink label="Dark" targetTab="campaign-dashboard" />);
 
-      expect(screen.getByTestId('drill-down-link')).toHaveClass(
-        'dark:text-blue-400',
-      );
+      expect(screen.getByTestId('drill-down-link')).toHaveClass('text-accent');
     });
 
     it('has light mode text color', () => {
       render(<DrillDownLink label="Light" targetTab="campaign-dashboard" />);
 
-      expect(screen.getByTestId('drill-down-link')).toHaveClass(
-        'text-blue-600',
-      );
+      expect(screen.getByTestId('drill-down-link')).toHaveClass('text-accent');
     });
   });
 

@@ -11,6 +11,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
 
 import { Card, Badge, Button } from '@/components/ui';
+import { SvgIcon } from '@/components/ui/SvgIcon';
 import {
   IForce,
   IForceValidation,
@@ -168,7 +169,8 @@ export function ForceBuilder({
                   className="hover:bg-surface-theme-elevated text-text-theme-muted hover:text-text-theme-secondary rounded p-1"
                   title="Edit name"
                 >
-                  <svg
+                  <SvgIcon
+                    size="inline"
                     className="h-4 w-4"
                     fill="none"
                     stroke="currentColor"
@@ -180,7 +182,7 @@ export function ForceBuilder({
                       strokeWidth={2}
                       d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
                     />
-                  </svg>
+                  </SvgIcon>
                 </button>
               )}
             </div>
@@ -231,7 +233,8 @@ export function ForceBuilder({
       {validation && validation.warnings.length > 0 && (
         <div className="rounded-lg border border-amber-600/30 bg-amber-900/20 p-4">
           <div className="mb-2 flex items-center gap-2">
-            <svg
+            <SvgIcon
+              size="control"
               className="h-5 w-5 text-amber-400"
               fill="none"
               stroke="currentColor"
@@ -243,7 +246,7 @@ export function ForceBuilder({
                 strokeWidth={2}
                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
               />
-            </svg>
+            </SvgIcon>
             <span className="font-medium text-amber-400">Warnings</span>
           </div>
           <ul className="space-y-1">
@@ -263,7 +266,8 @@ export function ForceBuilder({
       {validation && validation.errors.length > 0 && (
         <div className="rounded-lg border border-red-600/30 bg-red-900/20 p-4">
           <div className="mb-2 flex items-center gap-2">
-            <svg
+            <SvgIcon
+              size="control"
               className="h-5 w-5 text-red-400"
               fill="none"
               stroke="currentColor"
@@ -275,7 +279,7 @@ export function ForceBuilder({
                 strokeWidth={2}
                 d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
-            </svg>
+            </SvgIcon>
             <span className="font-medium text-red-400">Errors</span>
           </div>
           <ul className="space-y-1">
@@ -306,7 +310,8 @@ export function ForceBuilder({
           </>
         ) : (
           <Button variant="ghost" size="sm" onClick={handleStartSwap}>
-            <svg
+            <SvgIcon
+              size="inline"
               className="mr-1 h-4 w-4"
               fill="none"
               stroke="currentColor"
@@ -318,7 +323,7 @@ export function ForceBuilder({
                 strokeWidth={2}
                 d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
               />
-            </svg>
+            </SvgIcon>
             Swap Slots
           </Button>
         )}

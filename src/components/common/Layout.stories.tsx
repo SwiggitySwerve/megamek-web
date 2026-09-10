@@ -16,12 +16,12 @@ type Story = StoryObj<typeof Layout>;
 
 const MockTopBar = () => (
   <div className="bg-surface-base border-border-theme flex h-12 items-center border-b px-4">
-    <div className="font-bold text-white">MekStation</div>
+    <div className="text-text-theme-primary font-bold">MekStation</div>
     <nav className="ml-8 flex gap-4">
       {['Dashboard', 'Browse', 'Tools'].map((item) => (
         <button
           key={item}
-          className="hover:bg-surface-raised rounded px-3 py-1 text-slate-300"
+          className="hover:bg-surface-raised text-text-theme-secondary rounded px-3 py-1"
         >
           {item}
         </button>
@@ -32,11 +32,13 @@ const MockTopBar = () => (
 
 const MockSecondarySidebar = () => (
   <div className="p-4">
-    <h3 className="mb-4 font-semibold text-white">Filters</h3>
+    <h3 className="text-text-theme-primary mb-4 font-semibold">Filters</h3>
     <div className="space-y-3">
       <div>
-        <label className="text-sm text-slate-400">Weight Class</label>
-        <select className="bg-surface-raised border-border-theme mt-1 w-full rounded border px-2 py-1 text-white">
+        <label className="text-text-theme-secondary text-sm">
+          Weight Class
+        </label>
+        <select className="bg-surface-raised border-border-theme text-text-theme-primary mt-1 w-full rounded border px-2 py-1">
           <option>All</option>
           <option>Light</option>
           <option>Medium</option>
@@ -45,8 +47,8 @@ const MockSecondarySidebar = () => (
         </select>
       </div>
       <div>
-        <label className="text-sm text-slate-400">Tech Base</label>
-        <select className="bg-surface-raised border-border-theme mt-1 w-full rounded border px-2 py-1 text-white">
+        <label className="text-text-theme-secondary text-sm">Tech Base</label>
+        <select className="bg-surface-raised border-border-theme text-text-theme-primary mt-1 w-full rounded border px-2 py-1">
           <option>All</option>
           <option>Inner Sphere</option>
           <option>Clan</option>
@@ -61,15 +63,17 @@ export const Default: Story = {
     title: 'MekStation - Unit Catalog',
     children: (
       <div className="p-6">
-        <h1 className="mb-4 text-2xl font-bold text-white">Unit Catalog</h1>
+        <h1 className="text-text-theme-primary mb-4 text-2xl font-bold">
+          Unit Catalog
+        </h1>
         <div className="grid grid-cols-3 gap-4">
           {['Atlas', 'Timber Wolf', 'Marauder'].map((unit) => (
             <div
               key={unit}
               className="bg-surface-base border-border-theme rounded-lg border p-4"
             >
-              <p className="font-medium text-white">{unit}</p>
-              <p className="text-sm text-slate-400">BattleMech</p>
+              <p className="text-text-theme-primary font-medium">{unit}</p>
+              <p className="text-text-theme-secondary text-sm">BattleMech</p>
             </div>
           ))}
         </div>
@@ -84,8 +88,12 @@ export const WithTopBar: Story = {
     topBarComponent: <MockTopBar />,
     children: (
       <div className="p-6">
-        <h1 className="mb-4 text-2xl font-bold text-white">Main Content</h1>
-        <p className="text-slate-300">Content with top bar navigation.</p>
+        <h1 className="text-text-theme-primary mb-4 text-2xl font-bold">
+          Main Content
+        </h1>
+        <p className="text-text-theme-secondary">
+          Content with top bar navigation.
+        </p>
       </div>
     ),
   },
@@ -98,8 +106,10 @@ export const WithSecondarySidebar: Story = {
     secondarySidebar: <MockSecondarySidebar />,
     children: (
       <div className="p-6">
-        <h1 className="mb-4 text-2xl font-bold text-white">Filtered Results</h1>
-        <p className="text-slate-300">
+        <h1 className="text-text-theme-primary mb-4 text-2xl font-bold">
+          Filtered Results
+        </h1>
+        <p className="text-text-theme-secondary">
           Content with top bar and secondary sidebar for filters.
         </p>
       </div>
@@ -112,10 +122,10 @@ export const NoTopBar: Story = {
     title: 'MekStation - Full Height',
     children: (
       <div className="p-6">
-        <h1 className="mb-4 text-2xl font-bold text-white">
+        <h1 className="text-text-theme-primary mb-4 text-2xl font-bold">
           Full Height Layout
         </h1>
-        <p className="text-slate-300">
+        <p className="text-text-theme-secondary">
           Layout without top bar, using full viewport height.
         </p>
       </div>

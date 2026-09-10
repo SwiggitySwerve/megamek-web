@@ -351,13 +351,9 @@ describe('VersionPreview', () => {
     const onClose = jest.fn();
     render(<VersionPreview {...defaultProps} onClose={onClose} />);
 
-    // Find the X button (close button in header)
-    const closeButtons = screen.getAllByRole('button');
-    const closeButton = closeButtons.find((btn) =>
-      btn.querySelector('svg path[d*="M6 18L18 6"]'),
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Close version preview' }),
     );
-    expect(closeButton).toBeDefined();
-    fireEvent.click(closeButton!);
     expect(onClose).toHaveBeenCalled();
   });
 

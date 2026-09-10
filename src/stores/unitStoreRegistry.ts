@@ -75,6 +75,8 @@ export function createAndRegisterUnit(
   const store = createNewUnitStore(options);
   const state = store.getState();
   unitStores.set(state.id, store);
+  // Persist the initial draft before any editor action is needed.
+  store.setState({ lastModifiedAt: state.lastModifiedAt });
   return store;
 }
 

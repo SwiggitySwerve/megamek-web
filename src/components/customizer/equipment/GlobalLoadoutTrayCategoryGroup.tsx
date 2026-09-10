@@ -1,62 +1,107 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-import { EquipmentCategory } from '@/types/equipment';
-import { getCategoryColorsLegacy } from '@/utils/colors/equipmentColors';
+import { SvgIcon } from '@/components/ui/SvgIcon';
+import { getCategoryIndicatorClass } from '@/utils/colors/equipmentColors';
 
-import { CATEGORY_LABELS } from './equipmentConstants';
 import { trayStyles } from './GlobalLoadoutTray.styles';
 import { LoadoutEquipmentItem } from './GlobalLoadoutTray.types';
-import { GlobalLoadoutTrayEquipmentItem } from './GlobalLoadoutTrayEquipmentItem';
+import { GlobalLoadoutTrayEquipmentGroup } from './GlobalLoadoutTrayEquipmentGroup';
 
 interface CategoryGroupProps {
-  category: EquipmentCategory;
+  title: string;
   items: LoadoutEquipmentItem[];
+  grouping: 'category' | 'location' | 'fixed';
   selectedId?: string | null;
   isOmni?: boolean;
   onSelect: (id: string | null) => void;
   onRemove: (id: string) => void;
-  onContextMenu: (e: React.MouseEvent, item: LoadoutEquipmentItem) => void;
+  onContextMenu: (event: React.MouseEvent, item: LoadoutEquipmentItem) => void;
 }
 
 export function GlobalLoadoutTrayCategoryGroup({
-  category,
+  title,
   items,
+  grouping,
   selectedId,
   isOmni = false,
   onSelect,
   onRemove,
   onContextMenu,
 }: CategoryGroupProps): React.ReactElement {
-  const colors = getCategoryColorsLegacy(category);
-  const label = CATEGORY_LABELS[category] || category;
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(
+    () => new Set(),
+  );
+  const equipmentGroups = new Map<string, LoadoutEquipmentItem[]>();
+
+  for (const item of items) {
+    const location =
+      item.isAllocated && item.location ? item.location : 'unassigned';
+    const groupId = `${item.equipmentId}::${location}`;
+    const groupedItems = equipmentGroups.get(groupId) ?? [];
+    groupedItems.push(item);
+    equipmentGroups.set(groupId, groupedItems);
+  }
+
+  const groupIcon =
+    grouping === 'location'
+      ? 'm12 21s7-4.35 7-11a7 7 0 1 0-14 0c0 6.65 7 11 7 11Zm0-8.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 5Z'
+      : grouping === 'fixed'
+        ? 'M7 11V7a5 5 0 0 1 10 0v4m-9 0h8a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2Z'
+        : 'M4 6h16M4 12h16M4 18h16';
+
+  const toggleEquipmentGroup = (groupId: string) => {
+    setExpandedGroups((current) => {
+      const next = new Set(current);
+      if (next.has(groupId)) {
+        next.delete(groupId);
+      } else {
+        next.add(groupId);
+      }
+      return next;
+    });
+  };
 
   return (
-    <div>
+    <section>
       <div className={trayStyles.categoryRow}>
-        <span className={`${trayStyles.categoryDot} ${colors.bg}`} />
-        <span
-          className={`${trayStyles.text.secondary} text-text-theme-secondary font-medium tracking-wide uppercase`}
+        {grouping === 'category' && items[0] && (
+          <span
+            aria-hidden="true"
+            className={`${trayStyles.categoryDot} ${getCategoryIndicatorClass(items[0].category)}`}
+          />
+        )}
+        <SvgIcon
+          size="inline"
+          aria-hidden="true"
+          className="text-text-theme-secondary"
         >
-          {label}
+          <path d={groupIcon} />
+        </SvgIcon>
+        <span
+          className={`${trayStyles.text.secondary} text-text-theme-secondary min-w-0 flex-1 truncate font-medium tracking-wide uppercase`}
+        >
+          {title}
         </span>
-        <span className={`${trayStyles.text.secondary} text-slate-500`}>
-          ({items.length})
+        <span
+          className={`${trayStyles.text.secondary} text-text-theme-secondary tabular-nums`}
+        >
+          {items.length}
         </span>
       </div>
 
-      {items.map((item) => (
-        <GlobalLoadoutTrayEquipmentItem
-          key={item.instanceId}
-          item={item}
+      {Array.from(equipmentGroups.entries()).map(([groupId, groupItems]) => (
+        <GlobalLoadoutTrayEquipmentGroup
+          key={groupId}
+          items={groupItems}
+          isExpanded={expandedGroups.has(groupId)}
           isOmni={isOmni}
-          isSelected={selectedId === item.instanceId}
-          onSelect={() =>
-            onSelect(selectedId === item.instanceId ? null : item.instanceId)
-          }
-          onRemove={() => onRemove(item.instanceId)}
-          onContextMenu={(e) => onContextMenu(e, item)}
+          selectedId={selectedId}
+          onToggle={() => toggleEquipmentGroup(groupId)}
+          onSelect={onSelect}
+          onRemove={onRemove}
+          onContextMenu={onContextMenu}
         />
       ))}
-    </div>
+    </section>
   );
 }

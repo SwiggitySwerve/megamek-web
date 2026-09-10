@@ -8,14 +8,29 @@
  * @spec c:\Users\wroll\.cursor\plans\mobile_loadout_full-screen_redesign_00a59d27.plan.md
  */
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, {
+  useState,
+  useMemo,
+  useCallback,
+  useId,
+  useRef,
+  useLayoutEffect,
+} from 'react';
 
+import { AppIcon } from '@/components/ui/AppIcon';
 import { useEquipmentFiltering } from '@/hooks/useEquipmentFiltering';
 import { EquipmentCategory } from '@/types/equipment';
+import { isFixedOmniEquipment } from '@/utils/construction/equipmentMutationPolicy';
 
+import { ModalOverlay } from '../dialogs/ModalOverlay';
 import { CategoryFilterBar } from '../equipment/CategoryFilterBar';
 import { MobileEquipmentRow, MobileEquipmentItem } from './MobileEquipmentRow';
 import { MobileLoadoutStats } from './MobileLoadoutHeader';
+import {
+  SectionHeader,
+  StatsSummary,
+  SectionColumnHeaders,
+} from './MobileLoadoutList.parts';
 
 // =============================================================================
 // Types
@@ -27,6 +42,7 @@ interface AvailableLocationForList {
   label: string;
   availableSlots: number;
   canFit: boolean;
+  reason?: string;
 }
 
 interface MobileLoadoutListProps {
@@ -50,144 +66,6 @@ interface MobileLoadoutListProps {
 // Section Header Component
 // =============================================================================
 
-interface SectionHeaderProps {
-  title: string;
-  count: number;
-  isExpanded: boolean;
-  onToggle: () => void;
-  titleColor?: string;
-}
-
-function SectionHeader({
-  title,
-  count,
-  isExpanded,
-  onToggle,
-  titleColor = 'text-white',
-}: SectionHeaderProps) {
-  return (
-    <button
-      onClick={onToggle}
-      className="bg-surface-raised/50 border-border-theme-subtle/50 active:bg-surface-raised flex w-full items-center justify-between border-y px-2 py-1 transition-colors"
-    >
-      <span className={`text-xs font-semibold ${titleColor}`}>{title}</span>
-      <div className="flex items-center gap-1.5">
-        <span className="text-text-theme-secondary text-[10px]">({count})</span>
-        <span
-          className={`text-[10px] text-slate-500 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
-        >
-          ▲
-        </span>
-      </div>
-    </button>
-  );
-}
-
-// =============================================================================
-// Stats Summary Component
-// =============================================================================
-
-interface StatsSummaryProps {
-  stats: MobileLoadoutStats;
-}
-
-function StatsSummary({ stats }: StatsSummaryProps) {
-  const weightOverage = stats.weightUsed > stats.weightMax;
-  const slotsOverage = stats.slotsUsed > stats.slotsMax;
-  const heatNegative = stats.heatGenerated > stats.heatDissipation;
-
-  return (
-    <div className="bg-surface-deep border-border-theme flex items-center justify-around border-b px-3 py-2 text-center">
-      <div>
-        <div className="text-text-theme-secondary text-[10px] uppercase">
-          Weight
-        </div>
-        <div
-          className={`text-sm font-bold ${weightOverage ? 'text-red-400' : 'text-white'}`}
-        >
-          {stats.weightUsed.toFixed(1)}
-          <span className="font-normal text-slate-500">
-            /{stats.weightMax}t
-          </span>
-        </div>
-      </div>
-      <div className="bg-border-theme-subtle h-8 w-px" />
-      <div>
-        <div className="text-text-theme-secondary text-[10px] uppercase">
-          Slots
-        </div>
-        <div
-          className={`text-sm font-bold ${slotsOverage ? 'text-red-400' : 'text-white'}`}
-        >
-          {stats.slotsUsed}
-          <span className="font-normal text-slate-500">/{stats.slotsMax}</span>
-        </div>
-      </div>
-      <div className="bg-border-theme-subtle h-8 w-px" />
-      <div>
-        <div className="text-text-theme-secondary text-[10px] uppercase">
-          Heat
-        </div>
-        <div
-          className={`text-sm font-bold ${heatNegative ? 'text-red-400' : heatNegative ? 'text-amber-400' : 'text-green-400'}`}
-        >
-          {stats.heatGenerated}
-          <span className="font-normal text-slate-500">
-            /{stats.heatDissipation}
-          </span>
-        </div>
-      </div>
-      <div className="bg-border-theme-subtle h-8 w-px" />
-      <div>
-        <div className="text-text-theme-secondary text-[10px] uppercase">
-          BV
-        </div>
-        <div className="text-sm font-bold text-cyan-400">
-          {stats.battleValue.toLocaleString()}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// =============================================================================
-// Section Column Headers Component
-// =============================================================================
-
-function SectionColumnHeaders(): React.ReactElement {
-  return (
-    <div className="bg-surface-raised/30 border-border-theme-subtle/50 text-text-theme-secondary/50 flex items-center border-b px-2 py-1 font-mono text-[8px] tracking-wide uppercase">
-      <div className="mr-1.5 w-1 flex-shrink-0" />
-      <div className="min-w-0 flex-1 text-left font-sans">Name</div>
-      <div className="border-border-theme-subtle/30 w-[28px] flex-shrink-0 border-l text-center">
-        Loc
-      </div>
-      <div className="border-border-theme-subtle/30 w-[44px] flex-shrink-0 border-l text-center">
-        S/M/L
-      </div>
-      <div className="border-border-theme-subtle/30 w-[20px] flex-shrink-0 border-l text-center">
-        H
-      </div>
-      <div className="border-border-theme-subtle/30 w-[20px] flex-shrink-0 border-l text-center">
-        C
-      </div>
-      <div className="border-border-theme-subtle/30 w-[28px] flex-shrink-0 border-l text-center">
-        Wt
-      </div>
-      <div className="border-border-theme-subtle/30 w-[36px] flex-shrink-0 border-l text-center">
-        🔗
-      </div>
-      <div className="border-border-theme-subtle/30 w-[36px] flex-shrink-0 border-l text-center">
-        ✕
-      </div>
-    </div>
-  );
-}
-
-// =============================================================================
-// Main Component
-// =============================================================================
-
 export function MobileLoadoutList({
   equipment,
   stats,
@@ -202,6 +80,23 @@ export function MobileLoadoutList({
   onClose,
   className = '',
 }: MobileLoadoutListProps): React.ReactElement {
+  const headingId = useId();
+  const listRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const pendingFocus = useRef<{ instanceId: string | null } | null>(null);
+  useLayoutEffect(() => {
+    if (!pendingFocus.current) return;
+    const target = Array.from(
+      listRef.current?.querySelectorAll<HTMLButtonElement>(
+        '[data-equipment-select]',
+      ) ?? [],
+    ).find(
+      (button) =>
+        button.dataset.equipmentSelect === pendingFocus.current?.instanceId,
+    );
+    (target ?? closeRef.current)?.focus();
+    pendingFocus.current = null;
+  }, [equipment]);
   const [activeCategory, setActiveCategory] = useState<
     EquipmentCategory | 'ALL'
   >('ALL');
@@ -224,6 +119,15 @@ export function MobileLoadoutList({
     allocated,
   } = useEquipmentFiltering(removableEquipment, activeCategory);
 
+  const handleRemove = (instanceId: string) => {
+    const index = filteredEquipment.findIndex(
+      (item) => item.instanceId === instanceId,
+    );
+    const next = filteredEquipment[index + 1] ?? filteredEquipment[index - 1];
+    pendingFocus.current = { instanceId: next?.instanceId ?? null };
+    onRemoveEquipment(instanceId);
+  };
+
   // Handle equipment selection
   const handleSelect = useCallback(
     (instanceId: string) => {
@@ -235,178 +139,199 @@ export function MobileLoadoutList({
   );
 
   // Handle remove all
-  const removableCount = removableEquipment.length;
+  const removableCount = removableEquipment.filter(
+    (item) =>
+      !isFixedOmniEquipment(isOmni, {
+        isOmniPodMounted: item.isOmniPodMounted ?? true,
+      }),
+  ).length;
   const handleRemoveAll = useCallback(() => {
     if (removableCount === 0) return;
     if (window.confirm(`Remove all ${removableCount} equipment items?`)) {
+      pendingFocus.current = { instanceId: null };
       onRemoveAllEquipment();
     }
   }, [removableCount, onRemoveAllEquipment]);
 
   return (
-    <div
-      className={`bg-surface-deep fixed inset-0 z-50 flex flex-col ${className} `}
-      style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+    <ModalOverlay
+      isOpen
+      fullScreen
+      onClose={onClose}
+      ariaLabelledBy={headingId}
     >
-      {/* Header */}
-      <div className="bg-surface-base border-border-theme flex flex-shrink-0 items-center justify-between border-b px-3 py-2">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={onClose}
-            className="text-text-theme-secondary -ml-1.5 p-1.5 transition-all hover:text-white active:scale-95"
-            aria-label="Close loadout"
-          >
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+      <div
+        ref={listRef}
+        className={`bg-surface-deep flex h-full flex-col ${className}`}
+        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+      >
+        {/* Header */}
+        <div className="bg-surface-base border-border-theme flex flex-shrink-0 items-center justify-between border-b px-3 py-2">
+          <div className="flex items-center gap-2">
+            <button
+              ref={closeRef}
+              onClick={onClose}
+              className="text-text-theme-secondary hover:text-text-theme-primary flex min-h-11 min-w-11 items-center justify-center transition-all active:scale-95"
+              aria-label="Close loadout"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </button>
-          <h2 className="text-base font-bold text-white">Equipment Loadout</h2>
-          <span className="bg-accent rounded-full px-2 py-0.5 text-xs text-white">
-            {removableEquipment.length}
-          </span>
+              <AppIcon name="close" size="control" aria-hidden="true" />
+            </button>
+            <h2
+              id={headingId}
+              className="text-text-theme-primary text-base font-bold"
+            >
+              Equipment Loadout
+            </h2>
+            <span className="bg-accent text-on-accent rounded-full px-2 py-0.5 text-xs">
+              {removableEquipment.length}
+            </span>
+          </div>
+
+          {removableCount > 0 && (
+            <button
+              onClick={handleRemoveAll}
+              className="min-h-11 rounded bg-red-900/40 px-3 py-1.5 text-xs text-red-300 transition-all hover:bg-red-900/60 active:scale-95"
+            >
+              Clear All
+            </button>
+          )}
         </div>
 
-        {removableCount > 0 && (
-          <button
-            onClick={handleRemoveAll}
-            className="rounded bg-red-900/40 px-3 py-1.5 text-xs text-red-300 transition-all hover:bg-red-900/60 active:scale-95"
-          >
-            Clear All
-          </button>
-        )}
-      </div>
+        {/* Stats Summary */}
+        <StatsSummary stats={stats} />
 
-      {/* Stats Summary */}
-      <StatsSummary stats={stats} />
+        {/* Category Filters */}
+        <CategoryFilterBar
+          activeCategory={activeCategory}
+          onSelectCategory={setActiveCategory}
+          showLabels
+        />
 
-      {/* Category Filters */}
-      <CategoryFilterBar
-        activeCategory={activeCategory}
-        onSelectCategory={setActiveCategory}
-        showLabels
-      />
-
-      {/* Equipment List */}
-      <div className="flex-1 overflow-y-auto">
-        {filteredEquipment.length === 0 ? (
-          <div className="flex h-full flex-col items-center justify-center p-8 text-center">
-            <div className="mb-3 text-4xl">⚙️</div>
-            <div className="mb-1 text-lg font-medium text-white">
-              No Equipment
+        {/* Equipment List */}
+        <div className="flex-1 overflow-y-auto">
+          {filteredEquipment.length === 0 ? (
+            <div className="flex h-full flex-col items-center justify-center p-8 text-center">
+              <AppIcon
+                name="settings"
+                size="hero"
+                className="text-text-theme-muted mb-3"
+                aria-hidden="true"
+              />
+              <div className="text-text-theme-primary mb-1 text-lg font-medium">
+                No Equipment
+              </div>
+              <div className="text-text-theme-secondary text-sm">
+                {activeCategory === 'ALL'
+                  ? 'Add equipment from the Equipment tab'
+                  : 'No items in this category'}
+              </div>
             </div>
-            <div className="text-text-theme-secondary text-sm">
-              {activeCategory === 'ALL'
-                ? 'Add equipment from the Equipment tab'
-                : 'No items in this category'}
-            </div>
-          </div>
-        ) : (
-          <>
-            {/* Unassigned Section */}
-            {unassigned.length > 0 && (
-              <>
-                <SectionHeader
-                  title="Unassigned"
-                  count={unassigned.length}
-                  isExpanded={unassignedExpanded}
-                  onToggle={() => setUnassignedExpanded(!unassignedExpanded)}
-                  titleColor="text-amber-400"
-                />
-                {unassignedExpanded && (
-                  <div className="bg-amber-900/10">
-                    <SectionColumnHeaders />
-                    {unassigned.map((item) => (
-                      <MobileEquipmentRow
-                        key={item.instanceId}
-                        item={item}
-                        isOmni={isOmni}
-                        isSelected={selectedEquipmentId === item.instanceId}
-                        onSelect={() => handleSelect(item.instanceId)}
-                        onRemove={() => onRemoveEquipment(item.instanceId)}
-                        onQuickAssign={
-                          onQuickAssign
-                            ? (location) => {
-                                onQuickAssign(item.instanceId, location);
-                                setOpenLocationMenuId(null);
-                              }
-                            : undefined
-                        }
-                        availableLocations={
-                          getAvailableLocations?.(item.instanceId) ?? []
-                        }
-                        isLocationMenuOpen={
-                          openLocationMenuId === item.instanceId
-                        }
-                        onToggleLocationMenu={() =>
-                          setOpenLocationMenuId(
+          ) : (
+            <>
+              {/* Unassigned Section */}
+              {unassigned.length > 0 && (
+                <>
+                  <SectionHeader
+                    title="Unassigned"
+                    count={unassigned.length}
+                    isExpanded={unassignedExpanded}
+                    onToggle={() => setUnassignedExpanded(!unassignedExpanded)}
+                    titleColor="text-amber-400"
+                  />
+                  {unassignedExpanded && (
+                    <div className="bg-amber-900/10">
+                      <SectionColumnHeaders />
+                      {unassigned.map((item) => (
+                        <MobileEquipmentRow
+                          key={item.instanceId}
+                          item={item}
+                          isOmni={isOmni}
+                          isSelected={selectedEquipmentId === item.instanceId}
+                          onSelect={() => handleSelect(item.instanceId)}
+                          onRemove={() => handleRemove(item.instanceId)}
+                          onQuickAssign={
+                            onQuickAssign
+                              ? (location) => {
+                                  pendingFocus.current = {
+                                    instanceId: item.instanceId,
+                                  };
+                                  onQuickAssign(item.instanceId, location);
+                                  setOpenLocationMenuId(null);
+                                }
+                              : undefined
+                          }
+                          availableLocations={
+                            getAvailableLocations?.(item.instanceId) ?? []
+                          }
+                          isLocationMenuOpen={
                             openLocationMenuId === item.instanceId
-                              ? null
-                              : item.instanceId,
-                          )
-                        }
-                      />
-                    ))}
-                  </div>
-                )}
-              </>
-            )}
+                          }
+                          onToggleLocationMenu={() =>
+                            setOpenLocationMenuId(
+                              openLocationMenuId === item.instanceId
+                                ? null
+                                : item.instanceId,
+                            )
+                          }
+                        />
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
 
-            {/* Allocated Section */}
-            {allocated.length > 0 && (
-              <>
-                <SectionHeader
-                  title="Allocated"
-                  count={allocated.length}
-                  isExpanded={allocatedExpanded}
-                  onToggle={() => setAllocatedExpanded(!allocatedExpanded)}
-                  titleColor="text-green-400"
-                />
-                {allocatedExpanded && (
-                  <div className="bg-green-900/10">
-                    <SectionColumnHeaders />
-                    {allocated.map((item) => (
-                      <MobileEquipmentRow
-                        key={item.instanceId}
-                        item={item}
-                        isOmni={isOmni}
-                        isSelected={selectedEquipmentId === item.instanceId}
-                        onSelect={() => handleSelect(item.instanceId)}
-                        onRemove={() => onRemoveEquipment(item.instanceId)}
-                        onUnassign={
-                          onUnassignEquipment
-                            ? () => onUnassignEquipment(item.instanceId)
-                            : undefined
-                        }
-                      />
-                    ))}
-                  </div>
-                )}
-              </>
-            )}
-          </>
-        )}
-      </div>
+              {/* Allocated Section */}
+              {allocated.length > 0 && (
+                <>
+                  <SectionHeader
+                    title="Allocated"
+                    count={allocated.length}
+                    isExpanded={allocatedExpanded}
+                    onToggle={() => setAllocatedExpanded(!allocatedExpanded)}
+                    titleColor="text-green-400"
+                  />
+                  {allocatedExpanded && (
+                    <div className="bg-green-900/10">
+                      <SectionColumnHeaders />
+                      {allocated.map((item) => (
+                        <MobileEquipmentRow
+                          key={item.instanceId}
+                          item={item}
+                          isOmni={isOmni}
+                          isSelected={selectedEquipmentId === item.instanceId}
+                          onSelect={() => handleSelect(item.instanceId)}
+                          onRemove={() => handleRemove(item.instanceId)}
+                          onUnassign={
+                            onUnassignEquipment
+                              ? () => {
+                                  pendingFocus.current = {
+                                    instanceId: item.instanceId,
+                                  };
+                                  onUnassignEquipment(item.instanceId);
+                                }
+                              : undefined
+                          }
+                        />
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+            </>
+          )}
+        </div>
 
-      {/* Footer with close button */}
-      <div className="bg-surface-base border-border-theme flex-shrink-0 border-t px-3 py-3">
-        <button
-          onClick={onClose}
-          className="bg-surface-raised hover:bg-surface-raised/80 w-full rounded-lg py-3 font-medium text-white transition-all active:scale-[0.98]"
-        >
-          Close
-        </button>
+        {/* Footer with close button */}
+        <div className="bg-surface-base border-border-theme flex-shrink-0 border-t px-3 py-3">
+          <button
+            onClick={onClose}
+            className="bg-surface-raised hover:bg-surface-raised/80 text-text-theme-primary min-h-11 w-full rounded-lg py-3 font-medium transition-all active:scale-[0.98]"
+          >
+            Close
+          </button>
+        </div>
       </div>
-    </div>
+    </ModalOverlay>
   );
 }
 

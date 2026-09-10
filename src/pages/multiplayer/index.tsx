@@ -28,6 +28,7 @@ import type { IPlayerToken } from '@/types/multiplayer/Player';
 import { CreateMatchForm } from '@/components/multiplayer/CreateMatchForm';
 import { JoinMatchForm } from '@/components/multiplayer/JoinMatchForm';
 import { MatchBrowser } from '@/components/multiplayer/MatchBrowser';
+import { AppIcon } from '@/components/ui/AppIcon';
 import { decodeTokenFromWire } from '@/types/multiplayer/Player';
 
 // =============================================================================
@@ -208,11 +209,17 @@ export default function MultiplayerHubPage(): React.ReactElement {
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
       <header className="mb-8">
-        <Link href="/" className="text-sm text-slate-400 hover:text-slate-200">
-          ← Back to dashboard
+        <Link
+          href="/"
+          className="text-text-theme-secondary hover:text-text-theme-primary text-sm"
+        >
+          <AppIcon name="arrow-left" size="inline" aria-hidden="true" /> Back to
+          dashboard
         </Link>
-        <h1 className="mt-2 text-3xl font-bold text-slate-100">Multiplayer</h1>
-        <p className="mt-2 text-sm text-slate-400">
+        <h1 className="text-text-theme-primary mt-2 text-3xl font-bold">
+          Multiplayer
+        </h1>
+        <p className="text-text-theme-secondary mt-2 text-sm">
           Host a match or join one with a code. 1v1 through 4v4 + free-for-all
           (up to 8 players).
         </p>
@@ -242,7 +249,7 @@ export default function MultiplayerHubPage(): React.ReactElement {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Vault password"
-            className="mt-3 w-full rounded border border-amber-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 focus:border-amber-500 focus:outline-none"
+            className="bg-surface-deep text-text-theme-primary mt-3 w-full rounded border border-amber-700 px-3 py-2 text-sm focus:border-amber-500 focus:outline-none"
           />
           <button
             type="button"
@@ -252,7 +259,7 @@ export default function MultiplayerHubPage(): React.ReactElement {
               });
             }}
             disabled={busy === 'auth' || password.length === 0}
-            className="mt-2 rounded bg-amber-700 px-3 py-1 text-xs font-medium text-amber-50 hover:bg-amber-600 disabled:cursor-not-allowed disabled:bg-slate-700"
+            className="disabled:bg-surface-raised mt-2 rounded bg-amber-700 px-3 py-1 text-xs font-medium text-amber-50 hover:bg-amber-600 disabled:cursor-not-allowed"
           >
             Mint token
           </button>
@@ -269,13 +276,13 @@ export default function MultiplayerHubPage(): React.ReactElement {
       )}
 
       <div className="grid gap-6 md:grid-cols-2">
-        <section className="rounded-lg border border-slate-700 bg-slate-900 p-6">
+        <section className="border-border-theme bg-surface-deep rounded-lg border p-6">
           <h2 className="mb-4 text-lg font-semibold text-emerald-300">
             Create match
           </h2>
           <CreateMatchForm onSubmit={handleCreate} busy={busy === 'create'} />
         </section>
-        <section className="rounded-lg border border-slate-700 bg-slate-900 p-6">
+        <section className="border-border-theme bg-surface-deep rounded-lg border p-6">
           <h2 className="mb-4 text-lg font-semibold text-cyan-300">
             Join match
           </h2>

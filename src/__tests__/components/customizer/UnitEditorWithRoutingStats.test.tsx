@@ -1,0 +1,68 @@
+import { renderHook } from '@testing-library/react';
+
+import { useUnitEditorRoutingStats } from '@/components/customizer/UnitEditorWithRoutingStats';
+import { useEquipmentRegistry } from '@/hooks/useEquipmentRegistry';
+import { createNewUnitStore } from '@/stores/useUnitStore';
+import { MechConfiguration } from '@/types/construction/MechConfigurationSystem';
+import { TechBase } from '@/types/enums';
+
+jest.mock('@/hooks/useEquipmentRegistry', () => ({
+  useEquipmentRegistry: jest.fn(() => ({ isReady: true })),
+}));
+jest.mock('@/services/construction/CalculationService', () => ({
+  getCalculationService: () => ({
+    calculateBattleValue: () => 2000,
+    calculateHeatProfile: () => ({
+      heatGenerated: 29,
+      heatDissipated: 10,
+      netHeat: 19,
+      alphaStrikeHeat: 29,
+    }),
+  }),
+}));
+
+function input(configuration = MechConfiguration.BIPED) {
+  const state = createNewUnitStore({
+    name: 'Stats unit',
+    tonnage: 50,
+    techBase: TechBase.INNER_SPHERE,
+  }).getState();
+  return {
+    ...state,
+    configuration,
+    unitName: state.name,
+    validation: { status: 'valid' as const, errorCount: 0, warningCount: 0 },
+  };
+}
+
+test.each([
+  [MechConfiguration.BIPED, 78, 31],
+  [MechConfiguration.QUAD, 66, 31],
+  [MechConfiguration.TRIPOD, 84, 35],
+] as const)(
+  'header and mobile totals follow %s configuration',
+  (configuration, total, fixed) => {
+    const values = input(configuration);
+    const { result } = renderHook(() => useUnitEditorRoutingStats(values));
+    expect(result.current.unitStats.criticalSlotsTotal).toBe(total);
+    expect(result.current.mobileLoadoutStats.slotsMax).toBe(total);
+    expect(result.current.unitStats.criticalSlotsUsed).toBe(fixed);
+  },
+);
+
+test('cold-loaded definitions refresh BV and heat without a unit edit', () => {
+  const values = input();
+  jest
+    .mocked(useEquipmentRegistry)
+    .mockReturnValue({ isReady: false, recheckReady: jest.fn() });
+  const { result, rerender } = renderHook(() =>
+    useUnitEditorRoutingStats(values),
+  );
+  expect(result.current.unitStats.battleValue).toBe(0);
+  jest
+    .mocked(useEquipmentRegistry)
+    .mockReturnValue({ isReady: true, recheckReady: jest.fn() });
+  rerender();
+  expect(result.current.unitStats.battleValue).toBe(2000);
+  expect(result.current.unitStats.heatGenerated).toBe(29);
+});
