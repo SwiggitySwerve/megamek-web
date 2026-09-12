@@ -125,6 +125,16 @@ The system SHALL render a live preview of the record sheet in the browser from t
 - **AND** unmount does not commit into a disposed canvas
 - **AND** the toolbar Print and Download PDF controls keep their explicit busy and retry states
 
+
+#### Scenario: Infantry shares scalable and staged preview behavior
+
+- **GIVEN** an Infantry unit displayed in its own customizer store context
+- **WHEN** the user adjusts zoom, changes paper, or switches the active unit while rendering
+- **THEN** the shared manual and fit controls SHALL govern the displayed scale
+- **AND** rendering SHALL use a staging canvas and only the latest request may commit to the visible canvas
+- **AND** an older successful or failed render SHALL NOT overwrite the current unit
+- **AND** print and export SHALL continue to use the Infantry data extractor without requiring a BattleMech store
+
 ### Requirement: Zoom Controls
 
 The system SHALL provide zoom controls in the preview area with Current zoom output, Zoom in, Zoom out, Fit Width, and Fit Page.
