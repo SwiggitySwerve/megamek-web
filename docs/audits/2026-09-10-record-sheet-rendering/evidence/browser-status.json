@@ -1,0 +1,15 @@
+{
+  "name": "browser",
+  "args": [
+    "node_modules/@playwright/test/cli.js",
+    "test",
+    "--config",
+    ".sisyphus/record-sheet-repair-20260910/browser.config.cjs"
+  ],
+  "startedAt": "2026-09-10T23:34:44.945Z",
+  "driverPid": 84312,
+  "running": false,
+  "pid": 54764,
+  "code": 0,
+  "finishedAt": "2026-09-10T23:35:24.400Z"
+}

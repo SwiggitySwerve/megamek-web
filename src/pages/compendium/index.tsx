@@ -42,6 +42,17 @@ export default function CompendiumPage(): React.ReactElement {
       headerActions={headerActions}
       data-testid="compendium-hub"
     >
+      <Link
+        href="/compendium/chassis"
+        className="border-border-theme-subtle bg-surface-base/50 hover:border-accent focus-visible:ring-accent mb-6 block rounded-xl border p-5 focus-visible:ring-2"
+      >
+        <h2 className="text-text-theme-primary text-lg font-semibold">
+          Chassis index
+        </h2>
+        <p className="text-text-theme-secondary mt-1 text-sm">
+          Explore BattleMech chassis, alternate names, and their variants.
+        </p>
+      </Link>
       {/* Hero Feature Cards - Primary Navigation */}
       <section className="mb-12" data-testid="compendium-units-section">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">

@@ -1,0 +1,30 @@
+[
+  {
+    "check": "focused-tests",
+    "exitCode": 0
+  },
+  {
+    "check": "scoped-lint",
+    "exitCode": 0
+  },
+  {
+    "check": "scoped-format",
+    "exitCode": 0
+  },
+  {
+    "check": "strict-openspec-change",
+    "exitCode": 0
+  },
+  {
+    "check": "openspec-ci-contracts",
+    "exitCode": 0
+  },
+  {
+    "check": "repository-typecheck",
+    "exitCode": 0
+  },
+  {
+    "check": "repository-lint",
+    "exitCode": 0
+  }
+]

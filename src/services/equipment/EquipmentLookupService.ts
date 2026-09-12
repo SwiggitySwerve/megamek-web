@@ -220,6 +220,7 @@ export class EquipmentLookupService implements IEquipmentLookupService {
         weight: ammo.weight,
         criticalSlots: ammo.criticalSlots,
         costCBills: ammo.costPerTon,
+        compatibleWeaponIds: ammo.compatibleWeaponIds,
         battleValue: ammo.battleValue,
         introductionYear: ammo.introductionYear,
       });

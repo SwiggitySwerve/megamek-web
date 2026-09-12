@@ -20,6 +20,10 @@ jest.mock('jspdf', () => ({
   })),
 }));
 
+jest.mock('@/services/printing/svgRecordSheetRenderer/canvas', () => ({
+  renderToCanvasHighDPI: jest.fn().mockResolvedValue(undefined),
+}));
+
 // Mock SVGRecordSheetRenderer
 jest.mock('@/services/printing/svgRecordSheetRenderer', () => ({
   SVGRecordSheetRenderer: jest.fn().mockImplementation(() => ({
@@ -347,27 +351,35 @@ describe('RecordSheetService', () => {
         },
       };
 
-      const originalOpen = window.open;
-      window.open = jest.fn().mockReturnValue(mockPrintWindow);
+      const openSpy = jest
+        .spyOn(window, 'open')
+        .mockImplementation(
+          (() => mockPrintWindow) as unknown as typeof window.open,
+        );
 
-      service.print(mockCanvas);
+      try {
+        service.print(mockCanvas);
 
-      expect(window.open).toHaveBeenCalled();
-      expect(mockWrite).toHaveBeenCalled();
-      expect(mockClose).toHaveBeenCalled();
-
-      window.open = originalOpen;
+        expect(window.open).toHaveBeenCalled();
+        expect(mockWrite).toHaveBeenCalled();
+        expect(mockClose).toHaveBeenCalled();
+      } finally {
+        openSpy.mockRestore();
+      }
     });
 
     it('should throw when popup blocked', () => {
-      const originalOpen = window.open;
-      window.open = jest.fn().mockReturnValue(null);
+      const openSpy = jest
+        .spyOn(window, 'open')
+        .mockImplementation((() => null) as unknown as typeof window.open);
 
-      expect(() => service.print(mockCanvas)).toThrow(
-        'Could not open print window',
-      );
-
-      window.open = originalOpen;
+      try {
+        expect(() => service.print(mockCanvas)).toThrow(
+          'Could not open print window',
+        );
+      } finally {
+        openSpy.mockRestore();
+      }
     });
   });
 

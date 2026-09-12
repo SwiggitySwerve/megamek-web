@@ -1,0 +1,30 @@
+{
+  "lane": "critical-worker",
+  "sessionId": "01a08d7d-da02-7a42-b957-655bae9df6d2",
+  "args": [
+    "--cwd",
+    "E:\\Projects\\MekStation",
+    "--resume",
+    "01a08d7d-da02-7a42-b957-655bae9df6d2",
+    "--model",
+    "grok-4.6",
+    "--reasoning-effort",
+    "high",
+    "--no-subagents",
+    "--disable-web-search",
+    "--permission-mode",
+    "auto",
+    "--max-turns",
+    "16",
+    "--output-format",
+    "streaming-json",
+    "--prompt-file",
+    "E:\\Projects\\MekStation\\.sisyphus\\record-sheet-repair-20260910\\critical-worker\\resume-prompt.md"
+  ],
+  "driverPid": 58664,
+  "running": false,
+  "startedAt": "2026-09-10T23:02:58.296Z",
+  "pid": 50284,
+  "code": 0,
+  "finishedAt": "2026-09-10T23:05:03.224Z"
+}

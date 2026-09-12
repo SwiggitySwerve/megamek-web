@@ -13,7 +13,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import { getRecordSheetService } from '@/services/printing/RecordSheetService';
 import { useInfantryStore } from '@/stores/useInfantryStore';
-import { PaperSize, PAPER_DIMENSIONS } from '@/types/printing';
+import { PaperSize } from '@/types/printing';
 
 import { PreviewToolbar } from '../preview/PreviewToolbar';
 import { buildInfantryUnitObject } from './buildInfantryUnitObject';
@@ -108,14 +108,9 @@ export function InfantryPreviewTab({
   }, [unitObject, paperSize]);
 
   const handlePrint = useCallback(async () => {
-    const tempCanvas = document.createElement('canvas');
-    const { width, height } = PAPER_DIMENSIONS[paperSize];
-    tempCanvas.width = width;
-    tempCanvas.height = height;
-
-    const data = getRecordSheetService().extractData(unitObject);
-    await getRecordSheetService().renderPreview(tempCanvas, data, paperSize);
-    getRecordSheetService().print(tempCanvas);
+    const service = getRecordSheetService();
+    const data = service.extractData(unitObject);
+    await service.printRecordSheet(data, paperSize);
   }, [unitObject, paperSize]);
 
   return (

@@ -1,0 +1,22 @@
+{
+  "startedAt": "2026-09-10T05:23:18.114Z",
+  "baseURL": "http://127.0.0.1:4187",
+  "checks": [
+    "Live API preserves the complete bundled catalog",
+    "Live API enforces methods, exact lookup, missing IDs, and repeated parameters",
+    "Chassis index is discoverable from Compendium",
+    "Alias search, keyboard selection, URL reload, and honest preview state"
+  ],
+  "pageErrors": [],
+  "consoleErrors": [],
+  "screenshots": ["chassis-desktop.png", "mad-cat-detail.png", "failure.png"],
+  "counts": {
+    "chassis": 732,
+    "variants": 4225
+  },
+  "passed": false,
+  "failure": "locator.waitFor: Error: strict mode violation: getByRole('heading', { name: 'Atlas AS7-D', exact: true }) resolved to 2 elements:\n    1) <h1 class=\"text-text-theme-primary text-2xl font-bold tracking-wide break-words\">Atlas AS7-D</h1> aka locator('header').filter({ hasText: 'Atlas AS7-D100 tons • INNER' }).getByRole('heading')\n    2) <h1 class=\"text-text-theme-primary mb-2 text-3xl font-bold\">Atlas AS7-D</h1> aka getByRole('heading', { name: 'Atlas AS7-D' }).nth(1)\n\nCall log:\n\u001b[2m  - waiting for getByRole('heading', { name: 'Atlas AS7-D', exact: true }) to be visible\u001b[22m\n\n    at E:\\Projects\\MekStation\\docs\\audits\\2026-09-10-chassis-index\\verify-browser.mjs:68:73",
+  "failureUrl": "http://127.0.0.1:4187/compendium/units/atlas-as7-d",
+  "failureBody": "MekStation\nDashboard\nBrowse\nTools\nGameplay\nHistory\nCompendium\nUnits\nAtlas AS7-D\nAtlas AS7-D\n\n100 tons • INNER SPHERE\n\nAtlas AS7-D\n100 tons\nINNER SPHERE\nBattleMech\nBiped\nEra: STAR LEAGUE\nYear: 2755\nRules: STANDARD\nMovement\nWalk MP\n3\nRun MP\n5\nJump MP\n0\nCore Systems\nEngine\nFUSION\nRating\n300\nGyro\nSTANDARD\nCockpit\nSTANDARD\nStructure\nSTANDARD\nHeat & Armor\nHeat Sinks\n20\nType\nSINGLE\nArmor Type\nSTANDARD\nTotal Armor\n304 pts\nArmor Allocation\nLEFT ARM\n34\nRIGHT ARM\n34\nLEFT TORSO\n32 / 10\nRIGHT TORSO\n32 / 10\nCENTER TORSO\n47 / 14\nHEAD\n9\nLEFT LEG\n41\nRIGHT LEG\n41\nEquipment\nEQUIPMENT\tLOCATION\tNOTES\nmedium-laser\tLEFT_ARM\t\nmedium-laser\tRIGHT_ARM\t\nlrm-20\tLEFT_TORSO\t\nsrm-6\tLEFT_TORSO\t\nac-20\tRIGHT_TORSO\t\nmedium-laser\tCENTER_TORSO\t\nmedium-laser\tCENTER_TORSO\t\nQuirks\nbattle_fists_la\nbattle_fists_ra\ncommand_mech\ndistracting\nimp_com\n\nMekStation",
+  "finishedAt": "2026-09-10T05:26:09.373Z"
+}

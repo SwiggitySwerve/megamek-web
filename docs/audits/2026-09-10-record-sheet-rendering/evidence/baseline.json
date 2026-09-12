@@ -1,0 +1,72 @@
+{
+  "startedAt": "2026-09-10T22:39:56.144Z",
+  "steps": [
+    {
+      "label": "initial",
+      "at": "2026-09-10T22:39:57.647Z",
+      "zoom": "67%",
+      "canvas": {
+        "width": 12240,
+        "height": 15840,
+        "cssWidth": 411.078125,
+        "cssHeight": 532,
+        "estimatedRGBABytes": 775526400
+      }
+    },
+    {
+      "label": "zoom-in-immediate",
+      "at": "2026-09-10T22:39:58.585Z",
+      "zoom": "82%",
+      "canvas": {
+        "width": 12240,
+        "height": 15840,
+        "cssWidth": 502.890625,
+        "cssHeight": 650.796875,
+        "estimatedRGBABytes": 775526400
+      }
+    },
+    {
+      "label": "zoom-in-settled",
+      "at": "2026-09-10T22:40:00.091Z",
+      "zoom": "82%",
+      "canvas": {
+        "width": 12240,
+        "height": 15840,
+        "cssWidth": 502.890625,
+        "cssHeight": 650.796875,
+        "estimatedRGBABytes": 775526400
+      }
+    },
+    {
+      "label": "fit-width-immediate",
+      "at": "2026-09-10T22:40:00.119Z",
+      "zoom": "168%",
+      "canvas": {
+        "width": 12240,
+        "height": 15840,
+        "cssWidth": 1030,
+        "cssHeight": 1332.9375,
+        "estimatedRGBABytes": 775526400
+      }
+    },
+    {
+      "label": "fit-width-settled",
+      "at": "2026-09-10T22:40:01.627Z",
+      "zoom": "168%",
+      "canvas": {
+        "width": 12240,
+        "height": 15840,
+        "cssWidth": 1030,
+        "cssHeight": 1332.9375,
+        "estimatedRGBABytes": 775526400
+      }
+    }
+  ],
+  "errors": [],
+  "pdf": {
+    "filename": "Atlas-AS7-D.pdf",
+    "bytes": 9890758,
+    "durationMs": 2133
+  },
+  "finishedAt": "2026-09-10T22:40:03.854Z"
+}

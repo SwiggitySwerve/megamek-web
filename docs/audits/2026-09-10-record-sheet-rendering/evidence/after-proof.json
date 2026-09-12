@@ -1,0 +1,157 @@
+{
+  "startedAt": "2026-09-10T23:34:58.035Z",
+  "steps": [
+    {
+      "label": "letter-initial",
+      "zoom": "67%",
+      "canvas": {
+        "width": 2448,
+        "height": 3168,
+        "cssWidth": 411.078125,
+        "cssHeight": 532,
+        "estimatedRGBABytes": 31021056
+      },
+      "overflow": false
+    },
+    {
+      "label": "manual-before-resize",
+      "zoom": "82%",
+      "canvas": {
+        "width": 2448,
+        "height": 3168,
+        "cssWidth": 502.890625,
+        "cssHeight": 650.796875,
+        "estimatedRGBABytes": 31021056
+      },
+      "overflow": false
+    },
+    {
+      "label": "manual-after-resize",
+      "zoom": "82%",
+      "canvas": {
+        "width": 2448,
+        "height": 3168,
+        "cssWidth": 502.890625,
+        "cssHeight": 650.796875,
+        "estimatedRGBABytes": 31021056
+      },
+      "overflow": false
+    },
+    {
+      "label": "fit-width",
+      "zoom": "164%",
+      "canvas": {
+        "width": 2448,
+        "height": 3168,
+        "cssWidth": 1002,
+        "cssHeight": 1296.703125,
+        "estimatedRGBABytes": 31021056
+      },
+      "overflow": false
+    },
+    {
+      "label": "fit-width-after-resize",
+      "zoom": "168%",
+      "canvas": {
+        "width": 2448,
+        "height": 3168,
+        "cssWidth": 1030,
+        "cssHeight": 1332.9375,
+        "estimatedRGBABytes": 31021056
+      },
+      "overflow": false
+    },
+    {
+      "label": "letter-ready",
+      "zoom": "67%",
+      "canvas": {
+        "width": 2448,
+        "height": 3168,
+        "cssWidth": 411.078125,
+        "cssHeight": 532,
+        "estimatedRGBABytes": 31021056
+      },
+      "overflow": false
+    },
+    {
+      "label": "letter-print",
+      "rootWidth": "612",
+      "rootHeight": "792",
+      "rootViewBox": "-18 -18 612 792",
+      "name": "Atlas AS7-D",
+      "at": 5270.300000000745
+    },
+    {
+      "label": "a4-ready",
+      "zoom": "63%",
+      "canvas": {
+        "width": 2380,
+        "height": 3368,
+        "cssWidth": 375.9375,
+        "cssHeight": 532,
+        "estimatedRGBABytes": 32063360
+      },
+      "overflow": false
+    },
+    {
+      "label": "a4-print",
+      "rootWidth": "595",
+      "rootHeight": "842",
+      "rootViewBox": "-18 -18 595 842",
+      "name": "Atlas AS7-D",
+      "at": 6888.699999999255
+    },
+    {
+      "label": "mobile-a4",
+      "zoom": "25%",
+      "canvas": {
+        "width": 2380,
+        "height": 3368,
+        "cssWidth": 151.21875,
+        "cssHeight": 214,
+        "estimatedRGBABytes": 32063360
+      },
+      "overflow": false
+    }
+  ],
+  "pdfs": [
+    {
+      "paper": "letter",
+      "bytes": 1111822,
+      "durationMs": 1121,
+      "filename": "Atlas-AS7-D.pdf"
+    },
+    {
+      "paper": "a4",
+      "bytes": 1115745,
+      "durationMs": 993,
+      "filename": "Atlas-AS7-D.pdf"
+    }
+  ],
+  "errors": [],
+  "printError": "Could not open print window. Check popup blocker settings.Retry",
+  "printRetry": true,
+  "printOpens": [
+    {
+      "at": 5164,
+      "active": true,
+      "blocked": false
+    },
+    {
+      "at": 6810.5,
+      "active": true,
+      "blocked": false
+    },
+    {
+      "at": 6981.89999999851,
+      "active": true,
+      "blocked": true
+    },
+    {
+      "at": 7050.199999999255,
+      "active": true,
+      "blocked": false
+    }
+  ],
+  "finishedAt": "2026-09-10T23:35:05.521Z"
+}

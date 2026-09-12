@@ -1,0 +1,10 @@
+{
+  "name": "typecheck-final",
+  "args": ["node_modules/typescript/bin/tsc", "--noEmit"],
+  "startedAt": "2026-09-10T23:32:52.429Z",
+  "driverPid": 77000,
+  "running": false,
+  "pid": 21972,
+  "code": 0,
+  "finishedAt": "2026-09-10T23:33:05.388Z"
+}

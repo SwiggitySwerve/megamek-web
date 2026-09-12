@@ -5,12 +5,6 @@
  * Handles targeting computer recalculation on weapon changes.
  */
 
-import type { IMountedEquipmentInstance } from '@/types/equipment/MountedEquipment';
-
-import {
-  getEquipmentCalculatorService,
-  VARIABLE_EQUIPMENT,
-} from '@/services/equipment/EquipmentCalculatorService';
 import {
   clearMountedEquipment,
   linkMountedAmmo,
@@ -24,58 +18,19 @@ import {
   hasFixedOmniMountConflict,
   isFixedOmniEquipment,
 } from '@/utils/construction/equipmentMutationPolicy';
-import {
-  calculateTargetingComputerWeight,
-  calculateTargetingComputerSlots,
-} from '@/utils/equipment/equipmentListUtils';
-import { calculateDirectFireWeaponTonnage } from '@/utils/equipment/weapons/utilities';
 import { logger } from '@/utils/logger';
 import { generateUnitId } from '@/utils/uuid';
 
 import type { UnitSliceGetFn, UnitSliceSetFn } from './unitSliceTypes';
 
-// =============================================================================
-// Constants
-// =============================================================================
-
-const TARGETING_COMPUTER_IDS = [
-  'targeting-computer',
-  'clan-targeting-computer',
-];
-
-// =============================================================================
-// Helpers
-// =============================================================================
-
-/**
- * Recalculate targeting computer weight/slots based on current equipment.
- * Called when weapons are added or removed.
- */
-function recalculateTargetingComputers(
-  equipment: IMountedEquipmentInstance[],
-): IMountedEquipmentInstance[] {
-  const weaponIds = equipment.map((e) => e.equipmentId);
-  const directFireTonnage = calculateDirectFireWeaponTonnage(weaponIds);
-
-  return equipment.map((item) => {
-    if (TARGETING_COMPUTER_IDS.includes(item.equipmentId)) {
-      const weight = calculateTargetingComputerWeight(
-        directFireTonnage,
-        item.techBase,
-      );
-      const slots = calculateTargetingComputerSlots(
-        directFireTonnage,
-        item.techBase,
-      );
-      return {
-        ...item,
-        weight,
-        criticalSlots: slots,
-      };
-    }
-    return item;
-  });
-}
+import {
+  previewCatalogEquipmentPlacement,
+  type AddEquipmentAtLocationResult,
+} from './catalogEquipmentPlacement';
+import {
+  createCalculatedEquipment,
+  recalculateTargetingComputers,
+} from './unitEquipmentAddition';
 
 // =============================================================================
 // Types
@@ -83,6 +38,10 @@ function recalculateTargetingComputers(
 
 export interface UnitEquipmentActions {
   addEquipment: (item: IEquipmentItem) => string;
+  addEquipmentAtLocation: (
+    item: IEquipmentItem,
+    location: MechLocation,
+  ) => AddEquipmentAtLocationResult;
   removeEquipment: (instanceId: string) => void;
   updateEquipmentLocation: (
     instanceId: string,
@@ -113,64 +72,57 @@ export function createEquipmentSlice(
     addEquipment: (item: IEquipmentItem) => {
       const instanceId = generateUnitId();
       let mountedEquipment = createMountedEquipment(item, instanceId);
-
-      // Handle variable equipment (targeting computers, physical weapons, etc.)
-      if (item.variableEquipmentId) {
-        const state = get();
-
-        if (
-          item.variableEquipmentId ===
-            VARIABLE_EQUIPMENT.TARGETING_COMPUTER_IS ||
-          item.variableEquipmentId ===
-            VARIABLE_EQUIPMENT.TARGETING_COMPUTER_CLAN
-        ) {
-          const weaponIds = state.equipment.map((e) => e.equipmentId);
-          const directFireTonnage = calculateDirectFireWeaponTonnage(weaponIds);
-
-          const weight = calculateTargetingComputerWeight(
-            directFireTonnage,
-            item.techBase,
-          );
-          const slots = calculateTargetingComputerSlots(
-            directFireTonnage,
-            item.techBase,
-          );
-
-          mountedEquipment = {
-            ...mountedEquipment,
-            weight,
-            criticalSlots: slots,
-          };
-        } else {
-          try {
-            const result = getEquipmentCalculatorService().calculateProperties(
-              item.variableEquipmentId,
-              { tonnage: state.tonnage },
-            );
-            mountedEquipment = {
-              ...mountedEquipment,
-              weight: result.weight,
-              criticalSlots: result.criticalSlots,
-            };
-          } catch {
-            logger.warn(
-              `Variable equipment calculation failed for ${item.variableEquipmentId}`,
-            );
-          }
-        }
+      try {
+        mountedEquipment = createCalculatedEquipment(item, instanceId, get());
+      } catch {
+        logger.warn(
+          `Variable equipment calculation failed for ${item.variableEquipmentId}`,
+        );
       }
-
-      set((state) => {
-        const newEquipment = [...state.equipment, mountedEquipment];
-        const updatedEquipment = recalculateTargetingComputers(newEquipment);
-        return {
-          equipment: updatedEquipment,
-          isModified: true,
-          lastModifiedAt: Date.now(),
-        };
-      });
-
+      set((state) => ({
+        equipment: recalculateTargetingComputers([
+          ...state.equipment,
+          mountedEquipment,
+        ]),
+        isModified: true,
+        lastModifiedAt: Date.now(),
+      }));
       return instanceId;
+    },
+
+    addEquipmentAtLocation: (item, location) => {
+      const preview = previewCatalogEquipmentPlacement(item, get());
+      const option = preview.locations.find(
+        (candidate) => candidate.location === location,
+      );
+      if (!preview.equipment || !option?.canFit) {
+        return {
+          success: false,
+          error:
+            preview.error ??
+            option?.reason ??
+            'This location is unavailable for the current unit.',
+        };
+      }
+      const instanceId = generateUnitId();
+      const mountedEquipment = {
+        ...preview.equipment,
+        instanceId,
+        location,
+        slots: Array.from(
+          { length: preview.equipment.criticalSlots },
+          (_, index) => option.start! + index,
+        ),
+      };
+      set((state) => ({
+        equipment: recalculateTargetingComputers([
+          ...state.equipment,
+          mountedEquipment,
+        ]),
+        isModified: true,
+        lastModifiedAt: Date.now(),
+      }));
+      return { success: true, instanceId };
     },
 
     removeEquipment: (instanceId: string) =>

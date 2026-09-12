@@ -1,0 +1,47 @@
+[
+  {
+    "path": "src/types/unit/ChassisIndex.ts",
+    "sha256": "C8440B4DC92308CA42773A72FDB78A86E3A8F90E17532DFA9E392213B0041DAC",
+    "snapshotMatches": true
+  },
+  {
+    "path": "src/services/units/chassis/chassisAliases.ts",
+    "sha256": "391BF44F431FEDAB39874CDCF9695380A10476199430BF9D5798576BD6E6E01F",
+    "snapshotMatches": true
+  },
+  {
+    "path": "src/services/units/chassis/chassisIndex.ts",
+    "sha256": "6D135071EA34622A9908A8DF2A6FD6AEB7C04CA7F3A31DC916CC2861BDB1A2C8",
+    "snapshotMatches": true
+  },
+  {
+    "path": "src/services/units/chassis/chassisIndex.server.ts",
+    "sha256": "578A263B5000218887D53EF3D22FD7167E49E4871F71C919E8EDB29479CFF21D",
+    "snapshotMatches": true
+  },
+  {
+    "path": "src/pages/api/chassis.ts",
+    "sha256": "EB3E5D14630CE481FFCD9FCB0DA5EF27B674F22DB6CF647D791F5048A4D4C246",
+    "snapshotMatches": true
+  },
+  {
+    "path": "src/components/compendium/chassis/ChassisBrowser.tsx",
+    "sha256": "C6B808BEAF08F11B826C80564C85C982343E675951A0DB04C991FBE0D4604F66",
+    "snapshotMatches": true
+  },
+  {
+    "path": "src/components/compendium/chassis/ChassisDetail.tsx",
+    "sha256": "5A61608501DD701E70B0095C28BDF5009D95A44EB7E30CEEFBD555879E1192E5",
+    "snapshotMatches": true
+  },
+  {
+    "path": "src/pages/compendium/chassis.tsx",
+    "sha256": "BAD191538167B3D39657423F61BB712150F2EF454B274AF9F49825E160CCD78A",
+    "snapshotMatches": true
+  },
+  {
+    "path": "src/pages/compendium/index.tsx",
+    "sha256": "201B31158E662B63E30E4739A2881E0822F5ACF7DA7ED28F63A13EC852BC77FD",
+    "snapshotMatches": true
+  }
+]

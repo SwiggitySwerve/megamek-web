@@ -1,0 +1,197 @@
+{
+  "baseline": {
+    "height": {
+      "min": 70,
+      "max": 70,
+      "sample": [70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70]
+    },
+    "maxColumnOffset": 13
+  },
+  "current": {
+    "height": {
+      "min": 46,
+      "max": 46,
+      "sample": [46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46]
+    },
+    "maxColumnOffset": 0,
+    "sortLabels": [
+      {
+        "column": "name",
+        "centerOffset": 0
+      },
+      {
+        "column": "weight",
+        "centerOffset": 0
+      },
+      {
+        "column": "criticalSlots",
+        "centerOffset": 0
+      }
+    ],
+    "addWidth": 44,
+    "addHeight": 44,
+    "glyphWidth": 30,
+    "glyphHeight": 30,
+    "fullyVisibleRows": 10
+  },
+  "checks": {
+    "focused": {
+      "name": "focused",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--selectProjects",
+        "unit",
+        "--runInBand",
+        "--runTestsByPath",
+        "src/__tests__/components/customizer/equipment/EquipmentBrowser.test.tsx",
+        "src/components/customizer/equipment/__tests__/EquipmentCatalogCard.test.tsx",
+        "src/components/customizer/equipment/__tests__/CatalogPlacementDialog.test.tsx",
+        "src/__tests__/components/customizer/tabs/EquipmentTab.test.tsx"
+      ],
+      "startedAt": "2026-09-10T22:28:19.501Z",
+      "driverPid": 82736,
+      "running": false,
+      "pid": 68668,
+      "code": 0,
+      "finishedAt": "2026-09-10T22:28:23.089Z"
+    },
+    "typecheck-final": {
+      "name": "typecheck-final",
+      "args": [
+        "C:/nvm4w/nodejs/node_modules/npm/bin/npm-cli.js",
+        "run",
+        "typecheck"
+      ],
+      "startedAt": "2026-09-10T22:28:23.545Z",
+      "driverPid": 25528,
+      "running": false,
+      "pid": 32016,
+      "code": 0,
+      "finishedAt": "2026-09-10T22:29:16.884Z"
+    },
+    "lint": {
+      "name": "lint",
+      "args": [
+        "C:/nvm4w/nodejs/node_modules/npm/bin/npm-cli.js",
+        "run",
+        "lint"
+      ],
+      "startedAt": "2026-09-10T22:25:00.328Z",
+      "driverPid": 70824,
+      "running": false,
+      "pid": 5244,
+      "code": 0,
+      "finishedAt": "2026-09-10T22:25:01.868Z"
+    },
+    "format": {
+      "name": "format",
+      "args": [
+        "node_modules/oxfmt/bin/oxfmt",
+        "--check",
+        "src/components/customizer/CustomizerWorkbench.module.css",
+        "src/components/customizer/equipment/EquipmentBrowser.tsx",
+        "src/components/customizer/equipment/EquipmentCatalogCard.tsx",
+        "src/components/customizer/equipment/__tests__/EquipmentCatalogCard.test.tsx",
+        "src/__tests__/components/customizer/equipment/EquipmentBrowser.test.tsx",
+        "e2e/customizer-equipment-catalog.spec.ts",
+        "openspec/changes/repair-equipment-catalog/design.md",
+        "openspec/changes/repair-equipment-catalog/specs/equipment-browser/spec.md"
+      ],
+      "startedAt": "2026-09-10T22:28:27.798Z",
+      "driverPid": 69424,
+      "running": false,
+      "pid": 58072,
+      "code": 0,
+      "finishedAt": "2026-09-10T22:28:29.018Z"
+    },
+    "openspec-installed": {
+      "name": "openspec-installed",
+      "args": [
+        "C:/Users/wroll/AppData/Roaming/npm/node_modules/@fission-ai/openspec/bin/openspec.js",
+        "validate",
+        "repair-equipment-catalog",
+        "--strict"
+      ],
+      "startedAt": "2026-09-10T22:26:39.575Z",
+      "driverPid": 79200,
+      "running": false,
+      "pid": 24132,
+      "code": 0,
+      "finishedAt": "2026-09-10T22:26:40.758Z"
+    },
+    "build": {
+      "name": "build",
+      "args": [
+        "C:/nvm4w/nodejs/node_modules/npm/bin/npm-cli.js",
+        "run",
+        "build"
+      ],
+      "startedAt": "2026-09-10T22:24:17.777Z",
+      "driverPid": 42600,
+      "running": false,
+      "pid": 49972,
+      "code": 0,
+      "finishedAt": "2026-09-10T22:28:37.863Z"
+    },
+    "browser": {
+      "name": "browser",
+      "args": [
+        "node_modules/playwright/cli.js",
+        "test",
+        "--config",
+        ".sisyphus/equipment-density-20260910/browser.config.cjs"
+      ],
+      "startedAt": "2026-09-10T22:29:24.586Z",
+      "driverPid": 74836,
+      "running": false,
+      "pid": 48660,
+      "code": 0,
+      "finishedAt": "2026-09-10T22:29:43.588Z"
+    },
+    "measurements": {
+      "name": "measurements",
+      "args": [".sisyphus/equipment-density-20260910/capture-after.cjs"],
+      "startedAt": "2026-09-10T22:29:28.453Z",
+      "driverPid": 55304,
+      "running": false,
+      "pid": 78544,
+      "code": 0,
+      "finishedAt": "2026-09-10T22:29:30.570Z"
+    },
+    "visual": {
+      "name": "visual",
+      "args": [".sisyphus/equipment-density-20260910/capture-clean.cjs"],
+      "startedAt": "2026-09-10T22:31:18.867Z",
+      "driverPid": 67176,
+      "running": false,
+      "pid": 26112,
+      "code": 0,
+      "finishedAt": "2026-09-10T22:31:23.276Z"
+    }
+  },
+  "build": "1789079061725",
+  "sources": {
+    "src/components/customizer/CustomizerWorkbench.module.css": "2beb07e4071c540ea652c16f83f13777c3a6e0a8fd8f6c4ac5b93696f583cf53",
+    "src/components/customizer/equipment/EquipmentBrowser.tsx": "8cb9db439d8ebf579d95acac5e1a0aa9702d3a1c148433fb359877c6d17f3834",
+    "src/components/customizer/equipment/EquipmentCatalogCard.tsx": "e4cbbda635dcef3b24efa441e0b58dcdbdfaa8857fbaf01efa55b50e9c21142e"
+  },
+  "preservation": {
+    "protectedFiles": 76,
+    "changed": [],
+    "checkedAt": "2026-09-10T22:27:25.691Z"
+  },
+  "createdAt": "2026-09-10T22:32:52.053Z",
+  "finalRuntime": {
+    "previewStatus": 200,
+    "buildMatches": true,
+    "testPortReleased": true,
+    "preview": {
+      "pid": 70088,
+      "port": 3611,
+      "build": "1789079061725",
+      "runtime": "E:\\Projects\\MekStation\\.sisyphus\\status-alignment-20260909\\runtime",
+      "startedAt": "2026-09-10T22:29:06.932Z"
+    },
+    "checkedAt": "2026-09-10T22:34:19.560Z"
+  }
+}

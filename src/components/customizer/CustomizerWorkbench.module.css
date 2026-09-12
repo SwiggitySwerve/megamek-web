@@ -63,12 +63,91 @@
   }
 }
 
+.catalogScroll {
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 0%;
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+
+.catalogColumns {
+  grid-template-columns:
+    minmax(0, 1fr) minmax(80px, 0.55fr)
+    56px 48px 40px 44px;
+  align-items: center;
+  justify-items: stretch;
+  column-gap: 0.75rem;
+  box-sizing: border-box;
+  min-height: 44px;
+  padding-inline: 12px;
+  text-align: center;
+}
+
+.catalogHeader {
+  display: none;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  box-sizing: border-box;
+  min-height: 44px;
+  background-color: var(--surface-deep);
+  color: var(--text-secondary);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border-default);
+  /* Match row card side borders so header and value tracks share the same inset. */
+  border-left: 1px solid transparent;
+  border-right: 1px solid transparent;
+}
+
+.catalogSortButton {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+}
+
+.catalogSortLabel {
+  grid-column: 2;
+  justify-self: center;
+  text-align: center;
+}
+
+.catalogSortArrow {
+  grid-column: 3;
+  justify-self: start;
+  display: inline-flex;
+}
+
+.catalogAddHit {
+  width: 2.75rem;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  padding: 0;
+}
+
+.catalogAddGlyph {
+  display: inline-flex;
+  width: 1.875rem;
+  height: 1.875rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  background-color: color-mix(in srgb, var(--surface-raised) 65%, transparent);
+  color: var(--text-primary);
+}
+
 @media (min-width: 1024px) {
   .catalogColumns {
     display: grid;
-    grid-template-columns:
-      minmax(0, 1fr) minmax(80px, 0.55fr)
-      56px 48px 40px 56px;
+  }
+
+  .catalogHeader {
+    display: grid;
   }
 }
 

@@ -19,7 +19,8 @@ jest.mock('jspdf', () => ({
   })),
 }));
 
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 
 import { PreviewTabForType } from '@/components/customizer/tabs/PreviewTabForType';
@@ -32,6 +33,7 @@ import {
   createNewInfantryStore,
   InfantryStoreContext,
 } from '@/stores/useInfantryStore';
+import { PaperSize } from '@/types/printing';
 import { UnitType } from '@/types/unit/BattleMechInterfaces';
 
 import { buildInfantryUnitObject } from '../buildInfantryUnitObject';
@@ -93,5 +95,71 @@ describe('buildInfantryUnitObject — record-sheet dispatch wiring', () => {
     expect(getRecordSheetDispatchKind(unitObject)).toBe('infantry');
     expect(dispatchTargetFromUnit(unitObject).kind).toBe('infantry');
     expect(() => getRecordSheetService().extractData(unitObject)).not.toThrow();
+  });
+});
+
+describe('InfantryPreviewTab print reservation', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('prints through printRecordSheet after synchronous extractData', async () => {
+    const user = userEvent.setup();
+    const service = getRecordSheetService();
+    const originalExtractData = service.extractData.bind(service);
+    const order: string[] = [];
+    const extractedForPrint: unknown[] = [];
+
+    jest.spyOn(service, 'extractData').mockImplementation((unit, abilities) => {
+      const data = originalExtractData(unit, abilities);
+      order.push('extractData');
+      extractedForPrint.push(data);
+      return data;
+    });
+    const printRecordSheet = jest
+      .spyOn(service, 'printRecordSheet')
+      .mockImplementation(async () => {
+        order.push('printRecordSheet');
+      });
+    const renderPreview = jest
+      .spyOn(service, 'renderPreview')
+      .mockResolvedValue(undefined);
+    const print = jest.spyOn(service, 'print').mockImplementation(() => {
+      order.push('print');
+    });
+
+    const store = makeInfantryStore();
+    render(
+      <InfantryStoreContext.Provider value={store}>
+        <InfantryPreviewTab />
+      </InfantryStoreContext.Provider>,
+    );
+
+    order.length = 0;
+    extractedForPrint.length = 0;
+    renderPreview.mockClear();
+    print.mockClear();
+    printRecordSheet.mockClear();
+
+    const createElement = jest.spyOn(document, 'createElement');
+    await user.click(screen.getByRole('button', { name: 'Print' }));
+
+    expect(order).toEqual(['extractData', 'printRecordSheet']);
+    expect(printRecordSheet).toHaveBeenCalledTimes(1);
+    expect(printRecordSheet).toHaveBeenCalledWith(
+      extractedForPrint[0],
+      PaperSize.LETTER,
+    );
+    expect(extractedForPrint[0]).toEqual(
+      expect.objectContaining({
+        unitType: 'infantry',
+        specialAbilities: undefined,
+      }),
+    );
+    expect(renderPreview).not.toHaveBeenCalled();
+    expect(print).not.toHaveBeenCalled();
+    expect(
+      createElement.mock.calls.some((call) => String(call[0]) === 'canvas'),
+    ).toBe(false);
   });
 });

@@ -220,7 +220,11 @@ export const useEquipmentStore = create<EquipmentStoreState>((set, get) => ({
   setEquipment: (equipment) =>
     set({
       equipment,
-      pagination: { ...get().pagination, totalItems: equipment.length },
+      pagination: {
+        ...get().pagination,
+        currentPage: 1,
+        totalItems: equipment.length,
+      },
     }),
 
   setLoading: (loading) => set({ isLoading: loading }),
@@ -229,14 +233,24 @@ export const useEquipmentStore = create<EquipmentStoreState>((set, get) => ({
 
   // Unit context actions
   setUnitContext: (year, techBase, weaponIds = []) =>
-    set((state) => ({
-      unitContext: {
-        unitYear: year,
-        unitTechBase: techBase,
-        unitWeaponIds: weaponIds,
-      },
-      pagination: { ...state.pagination, currentPage: 1 },
-    })),
+    set((state) => {
+      const previous = state.unitContext;
+      if (
+        previous.unitYear === year &&
+        previous.unitTechBase === techBase &&
+        previous.unitWeaponIds.length === weaponIds.length &&
+        previous.unitWeaponIds.every((id, index) => id === weaponIds[index])
+      )
+        return state;
+      return {
+        unitContext: {
+          unitYear: year,
+          unitTechBase: techBase,
+          unitWeaponIds: weaponIds,
+        },
+        pagination: { ...state.pagination, currentPage: 1 },
+      };
+    }),
 
   // Filter actions
   setSearch: (search) =>
@@ -253,21 +267,30 @@ export const useEquipmentStore = create<EquipmentStoreState>((set, get) => ({
 
   setCategoryFilter: (category) =>
     set((state) => ({
-      filters: { ...state.filters, category },
+      filters: {
+        ...state.filters,
+        category,
+        activeCategories: category
+          ? updateEquipmentCategories(new Set(), category, false)
+          : new Set<EquipmentCategory>(),
+        showAllCategories: category === null,
+      },
       pagination: { ...state.pagination, currentPage: 1 },
     })),
 
   selectCategory: (category, isMultiSelect) =>
     set((state) => {
+      const activeCategories = updateEquipmentCategories(
+        state.filters.activeCategories,
+        category,
+        isMultiSelect,
+      );
       return {
         filters: {
           ...state.filters,
-          activeCategories: updateEquipmentCategories(
-            state.filters.activeCategories,
-            category,
-            isMultiSelect,
-          ),
-          showAllCategories: false,
+          category: null,
+          activeCategories,
+          showAllCategories: activeCategories.size === 0,
         },
         pagination: { ...state.pagination, currentPage: 1 },
       };
@@ -277,6 +300,7 @@ export const useEquipmentStore = create<EquipmentStoreState>((set, get) => ({
     set((state) => ({
       filters: {
         ...state.filters,
+        category: null,
         activeCategories: new Set<EquipmentCategory>(),
         showAllCategories: true,
       },

@@ -1,0 +1,30 @@
+{
+  "lane": "preview-worker",
+  "sessionId": "01a08d7d-d9cb-7943-ba6c-571f746250bb",
+  "args": [
+    "--cwd",
+    "E:\\Projects\\MekStation",
+    "--resume",
+    "01a08d7d-d9cb-7943-ba6c-571f746250bb",
+    "--model",
+    "grok-4.6",
+    "--reasoning-effort",
+    "high",
+    "--no-subagents",
+    "--disable-web-search",
+    "--permission-mode",
+    "auto",
+    "--max-turns",
+    "16",
+    "--output-format",
+    "streaming-json",
+    "--prompt-file",
+    "E:\\Projects\\MekStation\\.sisyphus\\record-sheet-repair-20260910\\preview-worker\\resume-prompt.md"
+  ],
+  "driverPid": 28440,
+  "running": false,
+  "startedAt": "2026-09-10T23:11:35.489Z",
+  "pid": 63132,
+  "code": 0,
+  "finishedAt": "2026-09-10T23:17:18.591Z"
+}

@@ -21,6 +21,7 @@
  */
 
 import { getMmDataAssetService } from '@/services/assets/MmDataAssetService';
+import { PaperSize } from '@/types/printing';
 
 import { renderToCanvasHighDPI } from './canvas';
 import { parseSVGTemplate } from './template';
@@ -288,13 +289,14 @@ export class TemplateRecordSheetRenderer {
 
   /**
    * Rasterize the current template document onto a canvas at high DPI.
-   * Delegates to the proven `renderToCanvasHighDPI` mech code path.
+   * Delegates to the shared `renderToCanvasHighDPI` path.
    */
   renderToCanvas = async (
     canvas: HTMLCanvasElement,
     dpiMultiplier: number,
+    paperSize: PaperSize = PaperSize.LETTER,
   ): Promise<void> => {
     const svgString = this.getSVGString();
-    await renderToCanvasHighDPI(svgString, canvas, dpiMultiplier);
+    await renderToCanvasHighDPI(svgString, canvas, dpiMultiplier, paperSize);
   };
 }

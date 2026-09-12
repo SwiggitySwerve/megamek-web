@@ -137,14 +137,13 @@ describe('Slot Content Rendering', () => {
     expect(endoElements[0].attributes['font-weight']).toBe('normal');
   });
 
-  it('should truncate long equipment names with ellipsis', () => {
+  it('should keep the full equipment name and fit it without ellipsis', () => {
     const mockDoc = createMockSvgDoc({
       critAreas: {
         crits_LA: { x: 10, y: 20, width: 94, height: 103 },
       },
     });
 
-    // Very long equipment name that should be truncated
     const longName = 'Extended Range Particle Projection Cannon (ERPPC)';
 
     const criticals: ILocationCriticals[] = [
@@ -164,16 +163,14 @@ describe('Slot Content Rendering', () => {
     renderCriticalSlots(mockDoc, criticals);
 
     const createdElements = getCreatedElements(mockDoc);
-    const contentElements = createdElements.filter(
-      (el) =>
-        el.tagName === 'text' &&
-        el.textContent &&
-        el.textContent.endsWith('..'),
+    const contentEl = createdElements.find(
+      (el) => el.tagName === 'text' && el.textContent === longName,
     );
 
-    expect(contentElements.length).toBe(1);
-    expect(contentElements[0].textContent!.length).toBeLessThan(
-      longName.length,
-    );
+    expect(contentEl).toBeDefined();
+    expect(contentEl!.textContent).not.toMatch(/\.\.$/);
+    expect(
+      parseFloat(contentEl!.attributes['font-size']),
+    ).toBeGreaterThanOrEqual(6);
   });
 });

@@ -10,6 +10,7 @@
 import {
   IMechRecordSheetData,
   INonMechRecordSheetData,
+  PaperSize,
   PREVIEW_DPI_MULTIPLIER,
 } from '@/types/printing';
 
@@ -66,10 +67,12 @@ function assertNeverRecordSheetVariant(data: never): never {
 export class SVGRecordSheetRenderer {
   private readonly core = new TemplateRecordSheetRenderer();
 
-  loadTemplate = async (templatePath: string): Promise<void> => {
+  loadTemplate = async (
+    templatePath: string,
+    paperSize: PaperSize = PaperSize.LETTER,
+  ): Promise<void> => {
     await this.core.loadTemplate(templatePath);
-    // Mech-specific: expand the template viewBox to US-Letter margins.
-    addDocumentMargins(this.core.root);
+    addDocumentMargins(this.core.root, paperSize);
   };
 
   fillTemplate = (data: IMechRecordSheetData): void => {
@@ -138,15 +141,19 @@ export class SVGRecordSheetRenderer {
     return this.core.getSVGString();
   };
 
-  renderToCanvas = async (canvas: HTMLCanvasElement): Promise<void> => {
-    await this.renderToCanvasHighDPI(canvas, PREVIEW_DPI_MULTIPLIER);
+  renderToCanvas = async (
+    canvas: HTMLCanvasElement,
+    paperSize: PaperSize = PaperSize.LETTER,
+  ): Promise<void> => {
+    await this.renderToCanvasHighDPI(canvas, PREVIEW_DPI_MULTIPLIER, paperSize);
   };
 
   renderToCanvasHighDPI = async (
     canvas: HTMLCanvasElement,
     dpiMultiplier: number,
+    paperSize: PaperSize = PaperSize.LETTER,
   ): Promise<void> => {
-    await this.core.renderToCanvas(canvas, dpiMultiplier);
+    await this.core.renderToCanvas(canvas, dpiMultiplier, paperSize);
   };
 }
 

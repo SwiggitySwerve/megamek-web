@@ -10,16 +10,14 @@ import {
   MechConfiguration,
   getLocationsForConfig,
 } from '@/types/construction/MechConfigurationSystem';
-import { isValidLocationForEquipment } from '@/types/equipment/EquipmentPlacement';
 import { canChangeEquipmentMount } from '@/utils/construction/equipmentMutationPolicy';
 import {
   getEquipmentSlotIssues,
   hasAssignedCriticalSlots,
 } from '@/utils/construction/slotOperations/placement';
+import { getEquipmentPlacementOption } from '@/utils/construction/slotOperations/placementOptions';
 
 import type { LocationData } from '../critical-slots';
-
-import { buildAssignableSlots } from './CriticalSlotsTab.slotActions';
 
 export interface CriticalSlotPlacementOption {
   readonly location: MechLocation;
@@ -86,42 +84,17 @@ export function useCriticalSlotPlacement({
   const placementOptions = useMemo(
     () =>
       selectedEquipment
-        ? locations.map((location) => {
-            if (!canChangeEquipmentMount(isOmni, selectedEquipment)) {
-              return {
-                location,
-                canFit: false,
-                reason: 'Fixed OmniMech equipment',
-              };
-            }
-            const starts = buildAssignableSlots({
+        ? locations.map((location) =>
+            getEquipmentPlacementOption(
               selectedEquipment,
+              location,
+              getLocationData(location, selectedEquipment.instanceId)
+                .slots.filter((slot) => slot.type === 'empty')
+                .map((slot) => slot.index),
+              isOmni,
               readOnly,
-              location,
-              getLocationData: (candidateLocation) =>
-                getLocationData(
-                  candidateLocation,
-                  selectedEquipment.instanceId,
-                ),
-              unitIsSuperheavy,
-            });
-            const isAllowed = isValidLocationForEquipment(
-              selectedEquipment.equipmentId,
-              location,
-            );
-            return {
-              location,
-              start: starts[0],
-              canFit:
-                isAllowed &&
-                (selectedEquipment.criticalSlots === 0 || starts.length > 0),
-              reason: !isAllowed
-                ? 'Restricted location'
-                : starts.length === 0 && selectedEquipment.criticalSlots > 0
-                  ? 'No contiguous space'
-                  : undefined,
-            };
-          })
+            ),
+          )
         : [],
     [
       getLocationData,
