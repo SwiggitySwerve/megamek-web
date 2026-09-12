@@ -1,0 +1,32 @@
+{
+  "startedAt": "2026-09-10T05:27:44.347Z",
+  "baseURL": "http://127.0.0.1:4187",
+  "checks": [
+    "Live API preserves the complete bundled catalog",
+    "Live API enforces methods, exact lookup, missing IDs, and repeated parameters",
+    "Chassis index is discoverable from Compendium",
+    "Alias search, keyboard selection, URL reload, and honest preview state",
+    "Canonical variant link opens the real unit detail page",
+    "Multiweight filtering, empty results, and clearing filters",
+    "Mobile list and detail have no horizontal page overflow",
+    "Unknown chassis URL has an explicit recovery state"
+  ],
+  "pageErrors": [],
+  "consoleErrors": [],
+  "screenshots": [
+    "chassis-desktop.png",
+    "mad-cat-detail.png",
+    "chassis-mobile.png",
+    "chassis-mobile-detail.png",
+    "failure.png"
+  ],
+  "counts": {
+    "chassis": 732,
+    "variants": 4225
+  },
+  "passed": false,
+  "failure": "locator.waitFor: Timeout 180000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('alert').filter({ hasText: 'The chassis catalog could not be loaded.' }) to be visible\u001b[22m\n\n    at E:\\Projects\\MekStation\\docs\\audits\\2026-09-10-chassis-index\\verify-browser.mjs:97:97",
+  "failureUrl": "http://127.0.0.1:4187/compendium/chassis",
+  "failureBody": "Compendium\nChassis index\nChassis index\n\nBrowse BattleMech chassis, alternate names, and canonical variants.\n\n732 chassis · 4,225 variants\n\nSearch chassis\nWeight class\nAll classes\nUltralight\nLight\nMedium\nHeavy\nAssault\nSuper Heavy\nClear filters\n\n732 chassis found\n\n'Battle Tripod'\n\n60 t · Heavy\n\n1 variants · Mixed\n\n'Gestalt'\n\n45 t · Medium\n\n1 variants · Inner Sphere\n\n'Harvester Tripod'\n\n90 t · Assault\n\n1 variants · Mixed\n\n'Scout Tripod'\n\n30 t · Light\n\n1 variants · Mixed\n\n'Wing' Wraith\n\n55 t · Medium\n\n4 variants · Inner Sphere / Mixed\n\nAgrotera\n\n50 t · Medium\n\n2 variants · Inner Sphere / Mixed\n\nAkuma\n\n90 t · Assault\n\n5 variants · Inner Sphere\n\nAlbatross\n\n95 t · Assault\n\n9 variants · Inner Sphere / Mixed\n\nAlfar\n\n55 t · Medium\n\n2 variants · Inner Sphere\n\nAlpha Wolf\n\n90 t · Assault\n\n4 variants · Mixed\n\nAmarok\n\n100 t · Assault\n\n3 variants · Clan / Mixed\n\nAnnihilator\n\n100 t · Assault\n\n12 variants · Clan / Inner Sphere / Mixed\n\nAntlion\n\n45 t · Medium\n\n1 variants · Mixed\n\nAnubis\n\n30 t · Light\n\n7 variants · Inner Sphere\n\nAnvil\n\n60 t · Heavy\n\n6 variants · Inner Sphere\n\nAnzu\n\n60 t · Heavy\n\n2 variants · Inner Sphere\n\nApollo\n\n55 t · Medium\n\n5 variants · Inner Sphere\n\nAquagladius\n\n50 t · Medium\n\n3 variants · Inner Sphere\n\nAraÃ±a\n\n40 t · Medium\n\n1 variants · Clan\n\nArbalest\n\n25 t · Light\n\n3 variants · Clan\n\nArbiter\n\n35 t · Light\n\n1 variants · Inner Sphere\n\nArcas\n\n65 t · Heavy\n\n3 variants · Clan\n\nArchangel\n\n100 t · Assault\n\n8 variants · Inner Sphere / Mixed\n\nArcher\n\n70 t · Heavy\n\n27 variants · Clan / Inner Sphere / Mixed\n\nPrevious\nPage 1 of 31\nNext\nHome\nBrowse\nGameplay\nMultiplayer\nSettings",
+  "finishedAt": "2026-09-10T05:32:00.768Z"
+}

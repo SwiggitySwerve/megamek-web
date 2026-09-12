@@ -1,0 +1,24 @@
+{
+  "startedAt": "2026-09-10T05:18:17.860Z",
+  "baseURL": "http://127.0.0.1:4187",
+  "checks": [
+    "Live API preserves the complete bundled catalog",
+    "Live API enforces methods, exact lookup, missing IDs, and repeated parameters",
+    "Chassis index is discoverable from Compendium",
+    "Alias search, keyboard selection, URL reload, and honest preview state"
+  ],
+  "pageErrors": [],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ],
+  "screenshots": ["chassis-desktop.png", "mad-cat-detail.png", "failure.png"],
+  "counts": {
+    "chassis": 732,
+    "variants": 4225
+  },
+  "passed": false,
+  "failure": "locator.waitFor: Timeout 180000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('heading', { name: 'Atlas', exact: true }) to be visible\u001b[22m\n\n    at E:\\Projects\\MekStation\\docs\\audits\\2026-09-10-chassis-index\\verify-browser.mjs:64:67",
+  "failureUrl": "http://127.0.0.1:4187/compendium/chassis?chassis=battlemech%3Aatlas",
+  "failureBody": "MekStation\nDashboard\nBrowse\nTools\nGameplay\nHistory\nCompendium\nChassis index\nChassis\nChassis index\n\nBrowse BattleMech chassis, alternate names, and canonical variants.\n\nThe chassis catalog could not be loaded.\n\nTry again",
+  "finishedAt": "2026-09-10T05:22:34.308Z"
+}

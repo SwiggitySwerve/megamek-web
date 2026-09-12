@@ -19,6 +19,7 @@
     { "path": "/compendium/units", "label": "compendium units" },
     { "path": "/compendium/equipment", "label": "compendium equipment" },
     { "path": "/compendium/rules", "label": "compendium rules" },
+    { "path": "/compendium/chassis", "label": "compendium chassis" },
     { "path": "/units", "label": "custom units" },
     { "path": "/customizer", "label": "customizer" },
     { "path": "/compare", "label": "unit comparison" },
