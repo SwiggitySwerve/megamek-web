@@ -6,9 +6,9 @@
  * crash, and that the infantry unit-object dispatches to the 'infantry'
  * record-sheet kind.
  *
- * @spec openspec/changes/wire-non-mech-customizer-preview/specs/customizer-tabs/spec.md
+ * @spec openspec/specs/customizer-tabs/spec.md
  *        Requirement: Preview Tab — Scenario: Preview tab opens without crashing
- * @spec openspec/changes/wire-non-mech-customizer-preview/specs/multi-unit-tabs/spec.md
+ * @spec openspec/specs/multi-unit-tabs/spec.md
  *        Requirement: Per-Type Preview Wiring
  */
 
@@ -19,7 +19,7 @@ jest.mock('jspdf', () => ({
   })),
 }));
 
-import { render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 
@@ -38,10 +38,19 @@ import { UnitType } from '@/types/unit/BattleMechInterfaces';
 
 import { buildInfantryUnitObject } from '../buildInfantryUnitObject';
 import { InfantryPreviewTab } from '../InfantryPreviewTab';
+import { InfantryRecordSheetPreview } from '../InfantryRecordSheetPreview';
 
 function makeInfantryStore() {
   return createNewInfantryStore({ chassis: 'Test Platoon' });
 }
+
+type PendingInfantryRender = {
+  canvas: HTMLCanvasElement;
+  sequence: number;
+  resolve: () => void;
+};
+
+const pendingInfantryRenders: PendingInfantryRender[] = [];
 
 describe('InfantryPreviewTab — non-mech crash regression gate', () => {
   it('mounts inside the infantry store context without throwing', () => {
@@ -64,6 +73,81 @@ describe('InfantryPreviewTab — non-mech crash regression gate', () => {
         </InfantryStoreContext.Provider>,
       ),
     ).not.toThrow();
+  });
+
+  it('exposes the shared record-sheet zoom controls', () => {
+    const store = makeInfantryStore();
+
+    render(
+      <InfantryStoreContext.Provider value={store}>
+        <InfantryPreviewTab />
+      </InfantryStoreContext.Provider>,
+    );
+
+    expect(screen.getByRole('button', { name: 'Zoom in' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Zoom out' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Fit Width' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Fit Page' }),
+    ).toBeInTheDocument();
+  });
+});
+
+describe('InfantryRecordSheetPreview — latest render wins', () => {
+  afterEach(() => {
+    pendingInfantryRenders.length = 0;
+    jest.restoreAllMocks();
+  });
+
+  it('does not let an older async render overwrite the current unit', async () => {
+    const service = getRecordSheetService();
+    jest.spyOn(service, 'renderPreview').mockImplementation(
+      async (canvas) =>
+        new Promise<void>((resolve) => {
+          const sequence = pendingInfantryRenders.length;
+          pendingInfantryRenders.push({
+            canvas,
+            sequence,
+            resolve: () => {
+              canvas.width = sequence === 0 ? 111 : 222;
+              canvas.height = 50;
+              resolve();
+            },
+          });
+        }),
+    );
+
+    const firstStore = makeInfantryStore();
+    const secondStore = createNewInfantryStore({ chassis: 'Current Platoon' });
+    const { rerender } = render(
+      <InfantryStoreContext.Provider value={firstStore}>
+        <InfantryRecordSheetPreview />
+      </InfantryStoreContext.Provider>,
+    );
+
+    await waitFor(() => expect(pendingInfantryRenders).toHaveLength(1));
+    rerender(
+      <InfantryStoreContext.Provider value={secondStore}>
+        <InfantryRecordSheetPreview />
+      </InfantryStoreContext.Provider>,
+    );
+    await waitFor(() => expect(pendingInfantryRenders).toHaveLength(2));
+
+    await act(async () => {
+      pendingInfantryRenders[1]?.resolve();
+    });
+    await act(async () => {
+      pendingInfantryRenders[0]?.resolve();
+    });
+
+    expect(screen.getByTestId('infantry-record-sheet-canvas')).toHaveProperty(
+      'width',
+      222,
+    );
   });
 });
 
