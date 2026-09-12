@@ -800,18 +800,18 @@ The handler SHALL extend `AbstractUnitTypeHandler<IBattleArmor>`:
 
 ## Implementation Files
 
-| File                                                                | Purpose                               | Lines |
-| ------------------------------------------------------------------- | ------------------------------------- | ----- |
-| `src/types/unit/PersonnelInterfaces.ts`                             | IBattleArmor, enums, type guards      | ~410  |
-| `src/stores/battleArmorState.ts`                                    | State interface, defaults, factory    | ~345  |
-| `src/stores/useBattleArmorStore.ts`                                 | Zustand store factory, context, hooks | ~435  |
-| `src/stores/battleArmorStoreRegistry.ts`                            | Registry for active store instances   | ~224  |
-| `src/services/units/handlers/BattleArmorUnitHandler.ts`             | BLK parsing, validation, calculations | ~547  |
-| `src/components/customizer/battlearmor/BattleArmorCustomizer.tsx`   | Main customizer with tabs             | ~160  |
-| `src/components/customizer/battlearmor/BattleArmorStructureTab.tsx` | Structure/chassis tab UI              | ~288  |
-| `src/components/customizer/battlearmor/BattleArmorSquadTab.tsx`     | Squad/equipment tab UI                | ~245  |
-| `src/components/customizer/battlearmor/BattleArmorDiagram.tsx`      | Squad visual diagram                  | ~84   |
-| `src/services/validation/rules/personnel/PersonnelCategoryRules.ts` | Shared validation rules               | ~203  |
+| File | Purpose |
+| --- | --- |
+| `src/types/unit/PersonnelInterfaces.ts` | IBattleArmor, enums, type guards |
+| `src/stores/battleArmorState.ts` | State interface, defaults, factory |
+| `src/stores/useBattleArmorStore.ts` | Zustand store factory, context, hooks |
+| `src/stores/battleArmorStoreRegistry.ts` | Registry for active store instances |
+| `src/services/units/handlers/BattleArmorUnitHandler.ts` | BLK parsing, validation, calculations |
+| `src/components/customizer/battlearmor/BattleArmorCustomizer.tsx` | Main customizer with tabs |
+| `src/components/customizer/battlearmor/BattleArmorStructureTab.tsx` | Structure/chassis tab UI              |
+| `src/components/customizer/battlearmor/BattleArmorSquadTab.tsx` | Squad/equipment tab UI |
+| `src/components/customizer/battlearmor/BattleArmorDiagram.tsx` | Squad visual diagram |
+| `src/services/validation/rules/personnel/PersonnelCategoryRules.ts` | Shared validation rules               |
 
 ## Known Limitations
 
