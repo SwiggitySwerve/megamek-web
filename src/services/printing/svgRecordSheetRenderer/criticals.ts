@@ -7,6 +7,29 @@ import { ILocationCriticals, IRecordSheetCriticalSlot } from '@/types/printing';
 import { logger } from '@/utils/logger';
 
 import { SVG_NS } from './constants';
+import {
+  ALT_FILL,
+  applyFittedText,
+  BAR_WIDTH,
+  BRACKET_ARM,
+  BRACKET_PAD_RATIO,
+  BRACKET_STROKE,
+  contentMaxWidth,
+  contentX,
+  CRIT_FONT_FAMILY,
+  DIVIDER_STROKE,
+  DIVIDER_WIDTH,
+  EMPTY_FILL,
+  fitCriticalText,
+  gapHeightFor,
+  HEADER_CLEARANCE,
+  numberX,
+  readCritRect,
+  SLOT_FONT_SIZE,
+  slotBandTop,
+  slotBaselineY,
+  TITLE_FONT_SIZE,
+} from './criticalTableHelper';
 
 /**
  * Render critical slots for all locations
@@ -39,126 +62,139 @@ function renderLocationCriticals(
     return;
   }
 
-  // Get the bounding rect dimensions
-  const x = parseFloat(critArea.getAttribute('x') || '0');
-  const y = parseFloat(critArea.getAttribute('y') || '0');
-  const width = parseFloat(critArea.getAttribute('width') || '94');
-  const height = parseFloat(critArea.getAttribute('height') || '103');
+  const rect = readCritRect(critArea);
+  if (!rect) {
+    logger.warn(`Critical area has invalid geometry: ${critAreaId}`);
+    return;
+  }
+
+  const { x, y, width, height } = rect;
+
+  const existing = svgDoc.getElementById(`critSlots_${abbr}`);
+  if (existing?.parentNode) {
+    existing.parentNode.removeChild(existing);
+  }
 
   const group = svgDoc.createElementNS(SVG_NS, 'g');
   group.setAttribute('id', `critSlots_${abbr}`);
   group.setAttribute('class', 'crit-slots');
 
-  // Calculate slot dimensions based on number of slots
   const slotCount = location.slots.length;
-  const gapHeight = slotCount > 6 ? 4 : 0; // Gap between slots 6 and 7 for 12-slot locations
-  const slotHeight = (height - gapHeight) / slotCount;
-  // MegaMekLab uses constant 7px font for ALL critical slot entries (DEFAULT_CRITICAL_SLOT_ENTRY_FONT_SIZE = 7f)
-  const fontSize = 7;
-  const titleFontSize = fontSize * 1.25; // 25% larger for title (MegaMekLab style)
-  const numberWidth = 12; // Width for slot number column
-  const barWidth = 2; // Width of multi-slot indicator bar
-  const barMargin = 1; // Margin between bar and slot number
+  const gapHeight = gapHeightFor(slotCount, height);
+  const slotHeight = slotCount > 0 ? (height - gapHeight) / slotCount : 0;
+  const numX = numberX(x);
+  const textX = contentX(x);
+  const maxTextWidth = contentMaxWidth(rect);
 
-  // Draw location label ABOVE the crit rect (MegaMekLab style)
-  // Position: 7.5% indent from left edge, above the rect with clearance
-  const labelX = x + width * 0.075;
   const labelEl = svgDoc.createElementNS(SVG_NS, 'text');
-  labelEl.setAttribute('x', String(labelX));
-  labelEl.setAttribute('y', String(y - 4)); // Above the crit rect with more clearance
-  labelEl.setAttribute('font-size', `${titleFontSize}px`);
-  labelEl.setAttribute('font-family', 'Times New Roman, Times, serif');
+  labelEl.setAttribute('x', String(textX));
+  labelEl.setAttribute('y', String(y - HEADER_CLEARANCE));
+  labelEl.setAttribute('font-family', CRIT_FONT_FAMILY);
   labelEl.setAttribute('font-weight', 'bold');
   labelEl.setAttribute('fill', '#000000');
-  labelEl.setAttribute('text-anchor', 'start'); // Left-aligned
+  labelEl.setAttribute('text-anchor', 'start');
+  applyFittedText(
+    labelEl,
+    fitCriticalText(location.location, maxTextWidth, TITLE_FONT_SIZE, true),
+  );
   labelEl.textContent = location.location;
   group.appendChild(labelEl);
 
-  // Slots start at the top of the rect
-  const slotsStartY = y;
+  if (slotCount > 0 && Number.isFinite(slotHeight) && slotHeight > 0) {
+    const multiSlotGroups = identifyMultiSlotGroups(location.slots);
 
-  // First pass: identify multi-slot equipment groups
-  const multiSlotGroups = identifyMultiSlotGroups(location.slots);
+    location.slots.forEach((slot, index) => {
+      const bandTop = slotBandTop(y, index, slotHeight, gapHeight, slotCount);
+      const slotY = slotBaselineY(y, index, slotHeight, gapHeight, slotCount);
 
-  location.slots.forEach((slot, index) => {
-    // Calculate Y position with gap after slot 6
-    let slotY: number;
-    if (slotCount > 6 && index >= 6) {
-      slotY = slotsStartY + (index + 0.7) * slotHeight + gapHeight;
-    } else {
-      slotY = slotsStartY + (index + 0.7) * slotHeight;
-    }
-
-    // Slot number (1-6 for each column)
-    const displayNum = (index % 6) + 1;
-    const numEl = svgDoc.createElementNS(SVG_NS, 'text');
-    numEl.setAttribute('x', String(x + barWidth + barMargin + 2));
-    numEl.setAttribute('y', String(slotY));
-    numEl.setAttribute('font-size', `${fontSize}px`);
-    numEl.setAttribute('font-family', 'Times New Roman, Times, serif');
-    numEl.setAttribute('fill', '#000000');
-    numEl.textContent = `${displayNum}.`;
-    group.appendChild(numEl);
-
-    // Slot content
-    const contentEl = svgDoc.createElementNS(SVG_NS, 'text');
-    contentEl.setAttribute('x', String(x + barWidth + barMargin + numberWidth));
-    contentEl.setAttribute('y', String(slotY));
-    contentEl.setAttribute('font-size', `${fontSize}px`);
-    contentEl.setAttribute('font-family', 'Times New Roman, Times, serif');
-
-    // Determine content and styling (MegaMekLab style)
-    let content: string;
-    let fillColor = '#000000';
-    let fontWeight = 'normal';
-
-    if (slot.content && slot.content.trim() !== '') {
-      content = slot.content;
-      // Bold all hittable equipment (weapons, system components, etc.)
-      // Unhittables (Endo Steel, Ferro-Fibrous, TSM) are NOT bolded
-      if (slot.isHittable) {
-        fontWeight = 'bold';
+      if (index % 2 === 1) {
+        const band = svgDoc.createElementNS(SVG_NS, 'rect');
+        band.setAttribute('class', 'crit-slot-band');
+        band.setAttribute('x', String(x));
+        band.setAttribute('y', String(bandTop));
+        band.setAttribute('width', String(width));
+        band.setAttribute('height', String(slotHeight));
+        band.setAttribute('fill', ALT_FILL);
+        band.setAttribute('stroke', 'none');
+        group.appendChild(band);
       }
-    } else if (slot.isRollAgain) {
-      content = 'Roll Again';
-      // Roll Again uses black text, not bold
-      fontWeight = 'normal';
-    } else {
-      content = '-Empty-';
-      fillColor = '#999999';
-    }
 
-    // Truncate long names to fit
-    const maxChars = Math.floor(
-      (width - numberWidth - barWidth - barMargin - 6) / (fontSize * 0.5),
-    );
-    if (content.length > maxChars) {
-      content = content.substring(0, maxChars - 2) + '..';
-    }
+      const displayNum = (index % 6) + 1;
+      const numEl = svgDoc.createElementNS(SVG_NS, 'text');
+      numEl.setAttribute('x', String(numX));
+      numEl.setAttribute('y', String(slotY));
+      numEl.setAttribute('font-size', `${SLOT_FONT_SIZE}px`);
+      numEl.setAttribute('font-family', CRIT_FONT_FAMILY);
+      numEl.setAttribute('font-weight', 'bold');
+      numEl.setAttribute('fill', '#000000');
+      numEl.textContent = `${displayNum}.`;
+      group.appendChild(numEl);
 
-    contentEl.setAttribute('fill', fillColor);
-    contentEl.setAttribute('font-weight', fontWeight);
-    contentEl.textContent = content;
+      const contentEl = svgDoc.createElementNS(SVG_NS, 'text');
+      contentEl.setAttribute('x', String(textX));
+      contentEl.setAttribute('y', String(slotY));
+      contentEl.setAttribute('font-family', CRIT_FONT_FAMILY);
 
-    group.appendChild(contentEl);
-  });
+      let content: string;
+      let fillColor = '#000000';
+      let fontWeight = 'normal';
 
-  // Draw multi-slot indicator bars
-  multiSlotGroups.forEach((groupInfo) => {
-    drawMultiSlotBar({
-      svgDoc,
-      group,
-      x,
-      y: slotsStartY,
-      slotHeight,
-      gapHeight,
-      slotCount,
-      groupInfo,
-      barWidth,
+      if (slot.content && slot.content.trim() !== '') {
+        content = slot.content;
+        if (slot.isHittable) {
+          fontWeight = 'bold';
+        }
+      } else if (slot.isRollAgain) {
+        content = 'Roll Again';
+        fontWeight = 'normal';
+      } else {
+        content = '-Empty-';
+        fillColor = EMPTY_FILL;
+      }
+
+      contentEl.setAttribute('fill', fillColor);
+      contentEl.setAttribute('font-weight', fontWeight);
+      applyFittedText(
+        contentEl,
+        fitCriticalText(
+          content,
+          maxTextWidth,
+          SLOT_FONT_SIZE,
+          fontWeight === 'bold',
+        ),
+      );
+      contentEl.textContent = content;
+      group.appendChild(contentEl);
     });
-  });
 
-  // Insert after the rect element
+    if (slotCount > 6) {
+      const divider = svgDoc.createElementNS(SVG_NS, 'line');
+      const dividerY = y + 6 * slotHeight + gapHeight / 2;
+      divider.setAttribute('class', 'crit-group-divider');
+      divider.setAttribute('x1', String(x + 1));
+      divider.setAttribute('y1', String(dividerY));
+      divider.setAttribute('x2', String(x + width - 1));
+      divider.setAttribute('y2', String(dividerY));
+      divider.setAttribute('stroke', DIVIDER_STROKE);
+      divider.setAttribute('stroke-width', String(DIVIDER_WIDTH));
+      group.appendChild(divider);
+    }
+
+    multiSlotGroups.forEach((groupInfo) => {
+      drawMultiSlotBar({
+        svgDoc,
+        group,
+        x,
+        y,
+        slotHeight,
+        gapHeight,
+        slotCount,
+        groupInfo,
+        barWidth: BAR_WIDTH,
+      });
+    });
+  }
+
   const parent = critArea.parentNode;
   if (parent) {
     parent.insertBefore(group, critArea.nextSibling);
@@ -281,13 +317,11 @@ function drawMultiSlotBar(params: MultiSlotBarParams): void {
   } = params;
   const startSlot = groupInfo.startIndex;
   const endSlot = groupInfo.endIndex;
-  const bracketWidth = 3; // Width of horizontal bracket parts
-  const strokeWidth = 0.72;
+  const bracketWidth = BRACKET_ARM;
+  const strokeWidth = BRACKET_STROKE;
 
-  // Calculate symmetrical padding from slot edges (15% of slot height on each end)
-  const verticalPadding = slotHeight * 0.15;
+  const verticalPadding = slotHeight * BRACKET_PAD_RATIO;
 
-  // Calculate Y positions accounting for the gap
   let barStartY: number;
   let barEndY: number;
 
@@ -305,8 +339,6 @@ function drawMultiSlotBar(params: MultiSlotBarParams): void {
 
   const bracketX = x + barWidth;
 
-  // Single continuous bracket - even when spanning the gap
-  // The bracket height already accounts for the gap via barEndY calculation
   drawBracketPath({
     svgDoc,
     group,
@@ -325,7 +357,6 @@ function drawMultiSlotBar(params: MultiSlotBarParams): void {
 function drawBracketPath(params: BracketPathParams): void {
   const { svgDoc, group, x, y, width, height, strokeWidth } = params;
   const path = svgDoc.createElementNS(SVG_NS, 'path');
-  // Draw bracket: top horizontal, vertical bar, bottom horizontal
   path.setAttribute(
     'd',
     `M ${x} ${y} ` + `h ${-width} ` + `v ${height} ` + `h ${width}`,

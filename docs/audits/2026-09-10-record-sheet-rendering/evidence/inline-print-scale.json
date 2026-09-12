@@ -1,0 +1,22 @@
+[
+  {
+    "file": "battle_armor_default.svg",
+    "intrinsic": {
+      "width": 576,
+      "height": 756
+    },
+    "currentScale": 1,
+    "correctScale": 1.3968253968253967,
+    "expected": 1.396825396825397
+  },
+  {
+    "file": "vehicle_turret_standard.svg",
+    "intrinsic": {
+      "width": 576,
+      "height": 375
+    },
+    "currentScale": 1,
+    "correctScale": 1.4166666666666667,
+    "expected": 1.4166666666666667
+  }
+]

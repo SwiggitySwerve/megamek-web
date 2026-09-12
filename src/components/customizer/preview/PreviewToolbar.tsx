@@ -17,17 +17,33 @@ import { logger } from '@/utils/logger';
 // Types
 // =============================================================================
 
+type ToolbarAction = 'print' | 'export';
+
 interface PreviewToolbarProps {
   /** Callback to export PDF */
   onExportPDF: () => Promise<void>;
   /** Callback to print */
-  onPrint: () => void;
+  onPrint: () => Promise<void>;
   /** Current paper size */
   paperSize: PaperSize;
   /** Callback to change paper size */
   onPaperSizeChange: (size: PaperSize) => void;
   /** CSS class name */
   className?: string;
+}
+
+interface ToolbarActionError {
+  readonly action: ToolbarAction;
+  readonly message: string;
+}
+
+function actionErrorMessage(action: ToolbarAction, error: unknown): string {
+  if (error instanceof Error && error.message.trim() !== '') {
+    return error.message;
+  }
+  return action === 'print'
+    ? 'Failed to open print dialog. Please check popup blocker settings.'
+    : 'Failed to export PDF. Please try again.';
 }
 
 // =============================================================================
@@ -46,30 +62,46 @@ export function PreviewToolbar({
   onPaperSizeChange,
   className = '',
 }: PreviewToolbarProps): React.ReactElement {
-  const [isExporting, setIsExporting] = useState(false);
+  const [pendingAction, setPendingAction] = useState<ToolbarAction | null>(
+    null,
+  );
+  const [actionError, setActionError] = useState<ToolbarActionError | null>(
+    null,
+  );
+  const pendingRef = React.useRef(false);
 
-  const handleExportPDF = useCallback(async () => {
-    setIsExporting(true);
-    try {
-      await onExportPDF();
-    } catch (error) {
-      logger.error('Error exporting PDF:', error);
-      alert('Failed to export PDF. Please try again.');
-    } finally {
-      setIsExporting(false);
-    }
-  }, [onExportPDF]);
+  const runAction = useCallback(
+    async (action: ToolbarAction) => {
+      if (pendingRef.current) return;
+      pendingRef.current = true;
+      setPendingAction(action);
+      setActionError(null);
+      try {
+        if (action === 'print') {
+          await onPrint();
+        } else {
+          await onExportPDF();
+        }
+      } catch (error) {
+        logger.error(
+          action === 'print' ? 'Error printing:' : 'Error exporting PDF:',
+          error,
+        );
+        setActionError({
+          action,
+          message: actionErrorMessage(action, error),
+        });
+      } finally {
+        pendingRef.current = false;
+        setPendingAction(null);
+      }
+    },
+    [onExportPDF, onPrint],
+  );
 
-  const handlePrint = useCallback(() => {
-    try {
-      onPrint();
-    } catch (error) {
-      logger.error('Error printing:', error);
-      alert(
-        'Failed to open print dialog. Please check popup blocker settings.',
-      );
-    }
-  }, [onPrint]);
+  const isBusy = pendingAction !== null;
+  const isPrinting = pendingAction === 'print';
+  const isExporting = pendingAction === 'export';
 
   return (
     <div
@@ -104,6 +136,7 @@ export function PreviewToolbar({
           id="paper-size"
           value={paperSize}
           onChange={(e) => onPaperSizeChange(e.target.value as PaperSize)}
+          disabled={isBusy}
           style={{
             padding: '6px 12px',
             borderRadius: '4px',
@@ -111,7 +144,7 @@ export function PreviewToolbar({
             backgroundColor: 'var(--surface-raised)',
             color: 'var(--text-primary)',
             fontSize: '13px',
-            cursor: 'pointer',
+            cursor: isBusy ? 'not-allowed' : 'pointer',
           }}
         >
           <option value={PaperSize.LETTER}>
@@ -126,7 +159,12 @@ export function PreviewToolbar({
 
       {/* Print Button */}
       <button
-        onClick={handlePrint}
+        type="button"
+        onClick={() => {
+          void runAction('print');
+        }}
+        disabled={isBusy}
+        aria-busy={isPrinting}
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -140,12 +178,15 @@ export function PreviewToolbar({
           color: 'var(--text-primary)',
           fontSize: '13px',
           fontWeight: 500,
-          cursor: 'pointer',
+          cursor: isBusy ? 'not-allowed' : 'pointer',
           transition: 'all 0.15s ease',
+          opacity: isBusy ? 0.7 : 1,
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = 'var(--surface-base)';
-          e.currentTarget.style.borderColor = 'var(--border-strong)';
+          if (!isBusy) {
+            e.currentTarget.style.backgroundColor = 'var(--surface-base)';
+            e.currentTarget.style.borderColor = 'var(--border-strong)';
+          }
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.backgroundColor = 'var(--surface-raised)';
@@ -153,13 +194,17 @@ export function PreviewToolbar({
         }}
       >
         <PrintIcon />
-        Print
+        {isPrinting ? 'Printing...' : 'Print'}
       </button>
 
       {/* Download PDF Button */}
       <button
-        onClick={handleExportPDF}
-        disabled={isExporting}
+        type="button"
+        onClick={() => {
+          void runAction('export');
+        }}
+        disabled={isBusy}
+        aria-busy={isExporting}
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -169,23 +214,23 @@ export function PreviewToolbar({
           whiteSpace: 'nowrap',
           borderRadius: '6px',
           border: 'none',
-          backgroundColor: isExporting
+          backgroundColor: isBusy
             ? 'var(--surface-raised)'
             : 'var(--accent-primary)',
           color: 'var(--text-primary)',
           fontSize: '13px',
           fontWeight: 500,
-          cursor: isExporting ? 'not-allowed' : 'pointer',
+          cursor: isBusy ? 'not-allowed' : 'pointer',
           transition: 'all 0.15s ease',
-          opacity: isExporting ? 0.7 : 1,
+          opacity: isBusy ? 0.7 : 1,
         }}
         onMouseEnter={(e) => {
-          if (!isExporting) {
+          if (!isBusy) {
             e.currentTarget.style.backgroundColor = 'var(--accent-hover)';
           }
         }}
         onMouseLeave={(e) => {
-          if (!isExporting) {
+          if (!isBusy) {
             e.currentTarget.style.backgroundColor = 'var(--accent-primary)';
           }
         }}
@@ -193,6 +238,47 @@ export function PreviewToolbar({
         <DownloadIcon />
         {isExporting ? 'Exporting...' : 'Download PDF'}
       </button>
+
+      {actionError ? (
+        <div
+          role="alert"
+          style={{
+            flexBasis: '100%',
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            gap: '8px',
+            color: 'var(--text-primary)',
+            fontSize: '13px',
+          }}
+        >
+          <span>{actionError.message}</span>
+          <button
+            type="button"
+            onClick={() => {
+              void runAction(actionError.action);
+            }}
+            aria-label={
+              actionError.action === 'print'
+                ? 'Retry print'
+                : 'Retry PDF export'
+            }
+            style={{
+              padding: '8px 16px',
+              minHeight: 44,
+              borderRadius: '6px',
+              border: '1px solid var(--border-default)',
+              backgroundColor: 'var(--surface-raised)',
+              color: 'var(--text-primary)',
+              fontSize: '13px',
+              fontWeight: 500,
+              cursor: 'pointer',
+            }}
+          >
+            Retry
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 }

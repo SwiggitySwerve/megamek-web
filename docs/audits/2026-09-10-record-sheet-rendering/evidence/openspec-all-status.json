@@ -1,0 +1,15 @@
+{
+  "name": "openspec-all",
+  "args": [
+    "C:/Users/wroll/AppData/Roaming/npm/node_modules/@fission-ai/openspec/bin/openspec.js",
+    "validate",
+    "--all",
+    "--strict"
+  ],
+  "startedAt": "2026-09-10T23:24:19.597Z",
+  "driverPid": 23232,
+  "running": false,
+  "pid": 61560,
+  "code": 0,
+  "finishedAt": "2026-09-10T23:24:21.109Z"
+}

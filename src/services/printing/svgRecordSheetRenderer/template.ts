@@ -2,7 +2,10 @@
  * Template loading and document configuration utilities
  */
 
+import { PAPER_DIMENSIONS, PaperSize } from '@/types/printing';
+
 import { SVG_NS } from './constants';
+import { footerTranslateForRoot, readSvgRootSize } from './svgGeometry';
 
 /**
  * Parse an SVG template string into a validated document + root.
@@ -96,30 +99,26 @@ export async function loadSVGTemplate(templatePath: string): Promise<{
 }
 
 /**
- * Add margins around the SVG document for proper spacing on all edges
- * The original template is 576x756, we expand to 612x792 (US Letter) with centered content
+ * Add margins around the SVG document for proper spacing on all edges.
+ * Uses the template's own viewBox/size (US Letter 576x756 or ISO 559x806)
+ * and expands to the requested paper (612x792 or 595x842) without cropping.
  */
-export function addDocumentMargins(svgRoot: SVGSVGElement): void {
-  // Original template dimensions
-  const originalWidth = 576;
-  const originalHeight = 756;
+export function addDocumentMargins(
+  svgRoot: SVGSVGElement,
+  paperSize: PaperSize = PaperSize.LETTER,
+): void {
+  const { width: originalWidth, height: originalHeight } =
+    readSvgRootSize(svgRoot);
+  const { width: targetWidth, height: targetHeight } =
+    PAPER_DIMENSIONS[paperSize];
 
-  // Target dimensions (US Letter in points: 612x792)
-  const targetWidth = 612;
-  const targetHeight = 792;
+  const marginX = (targetWidth - originalWidth) / 2;
+  const marginY = (targetHeight - originalHeight) / 2;
 
-  // Calculate margins (centered)
-  const marginX = (targetWidth - originalWidth) / 2; // 18 points each side
-  const marginY = (targetHeight - originalHeight) / 2; // 18 points top and bottom
-
-  // Set viewBox to add margins: negative offset positions content with margins
-  // viewBox = "minX minY width height"
   svgRoot.setAttribute(
     'viewBox',
     `${-marginX} ${-marginY} ${targetWidth} ${targetHeight}`,
   );
-
-  // Update width/height to target size
   svgRoot.setAttribute('width', String(targetWidth));
   svgRoot.setAttribute('height', String(targetHeight));
 }
@@ -150,8 +149,14 @@ export function fixCopyrightYear(svgDoc: Document): void {
     );
     footerElement.setAttribute('font-size', '7.5px');
     footerElement.setAttribute('font-weight', 'bold');
-    // Position near bottom with margin space (content area ends at 756, margin adds 18 more)
-    footerElement.setAttribute('transform', 'translate(288.0 762.0)');
+    const root = svgDoc.documentElement;
+    if (root instanceof SVGSVGElement) {
+      const { x, y } = footerTranslateForRoot(root);
+      footerElement.setAttribute(
+        'transform',
+        `translate(${x.toFixed(1)} ${y.toFixed(1)})`,
+      );
+    }
   }
 
   const copyrightElement = svgDoc.getElementById('tspanCopyright');

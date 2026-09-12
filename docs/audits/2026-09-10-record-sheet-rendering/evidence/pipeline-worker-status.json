@@ -1,0 +1,30 @@
+{
+  "lane": "pipeline-worker",
+  "sessionId": "01a08d7d-d9fa-75d1-a23d-1ffe134e7bb8",
+  "args": [
+    "--cwd",
+    "E:\\Projects\\MekStation",
+    "--resume",
+    "01a08d7d-d9fa-75d1-a23d-1ffe134e7bb8",
+    "--model",
+    "grok-4.6",
+    "--reasoning-effort",
+    "high",
+    "--no-subagents",
+    "--disable-web-search",
+    "--permission-mode",
+    "auto",
+    "--max-turns",
+    "16",
+    "--output-format",
+    "streaming-json",
+    "--prompt-file",
+    "E:\\Projects\\MekStation\\.sisyphus\\record-sheet-repair-20260910\\pipeline-worker\\resume-prompt.md"
+  ],
+  "driverPid": 42732,
+  "running": false,
+  "startedAt": "2026-09-10T23:26:45.030Z",
+  "pid": 77772,
+  "code": 0,
+  "finishedAt": "2026-09-10T23:30:37.421Z"
+}

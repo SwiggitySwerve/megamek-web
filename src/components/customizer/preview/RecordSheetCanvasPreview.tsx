@@ -9,6 +9,7 @@ import { logger } from '@/utils/logger';
 import type { PreviewToolbarActions } from './PreviewTabFrame';
 
 import { RecordSheetPreviewZoomControls } from './RecordSheetPreviewZoomControls';
+import { useRecordSheetPreviewZoom } from './useRecordSheetPreviewZoom';
 
 interface RenderUnitRecordSheetPreviewInput {
   canvas: HTMLCanvasElement;
@@ -38,14 +39,9 @@ export async function printUnitRecordSheet(
   unitObject: IRecordSheetUnitInput,
   paperSize: PaperSize,
 ): Promise<void> {
-  const tempCanvas = document.createElement('canvas');
-  const { width, height } = PAPER_DIMENSIONS[paperSize];
-  tempCanvas.width = width;
-  tempCanvas.height = height;
-
-  const data = getRecordSheetService().extractData(unitObject);
-  await getRecordSheetService().renderPreview(tempCanvas, data, paperSize);
-  getRecordSheetService().print(tempCanvas);
+  const service = getRecordSheetService();
+  const data = service.extractData(unitObject);
+  await service.printRecordSheet(data, paperSize);
 }
 
 export async function renderUnitRecordSheetPreview({
@@ -81,6 +77,18 @@ export function drawRecordSheetRenderError(
   ctx.fillText('Error rendering record sheet', width / 2, height / 2);
 }
 
+function commitStagedRecordSheetPreview(
+  target: HTMLCanvasElement,
+  staging: HTMLCanvasElement,
+): void {
+  target.width = staging.width;
+  target.height = staging.height;
+  if (staging.width === 0 || staging.height === 0) return;
+  const ctx = target.getContext('2d');
+  if (!ctx) return;
+  ctx.drawImage(staging, 0, 0);
+}
+
 export function useRecordSheetToolbarActions(
   unitObject: IRecordSheetUnitInput,
   paperSize: PaperSize,
@@ -111,22 +119,35 @@ export function useRecordSheetCanvasRenderer({
   errorMessage,
 }: UseRecordSheetCanvasRendererInput): React.RefObject<HTMLCanvasElement | null> {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
-
-  const renderPreview = React.useCallback(async () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    await renderUnitRecordSheetPreview({
-      canvas,
-      unitObject,
-      paperSize,
-      errorMessage,
-    });
-  }, [unitObject, paperSize, errorMessage]);
+  const generationRef = React.useRef(0);
+  const mountedRef = React.useRef(true);
 
   React.useEffect(() => {
-    void renderPreview();
-  }, [renderPreview]);
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
+  React.useEffect(() => {
+    const generation = ++generationRef.current;
+    const staging = document.createElement('canvas');
+
+    void (async () => {
+      await renderUnitRecordSheetPreview({
+        canvas: staging,
+        unitObject,
+        paperSize,
+        errorMessage,
+      });
+      if (!mountedRef.current || generation !== generationRef.current) {
+        return;
+      }
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      commitStagedRecordSheetPreview(canvas, staging);
+    })();
+  }, [errorMessage, paperSize, unitObject]);
 
   return canvasRef;
 }
@@ -136,7 +157,7 @@ interface RecordSheetCanvasPreviewProps {
   testId: string;
   width: number;
   height: number;
-  scale: number;
+  scale?: number;
   className?: string;
 }
 
@@ -145,48 +166,11 @@ export function RecordSheetCanvasPreview({
   testId,
   width,
   height,
-  scale,
+  scale: _scale = 0.8,
   className = '',
 }: RecordSheetCanvasPreviewProps): React.ReactElement {
-  const containerRef = React.useRef<HTMLDivElement>(null);
-  const [zoom, setZoom] = React.useState(scale);
-
-  const fitToWidth = React.useCallback(() => {
-    const container = containerRef.current;
-    if (!container) return;
-    const availableWidth = container.clientWidth - 48;
-    if (availableWidth > 0) setZoom(Math.min(availableWidth / width, 3.0));
-  }, [width]);
-
-  const fitToPage = React.useCallback(() => {
-    const container = containerRef.current;
-    if (!container) return;
-    const availableWidth = container.clientWidth - 48;
-    const availableHeight = container.clientHeight - 48;
-    if (availableWidth <= 0 || availableHeight <= 0) return;
-    setZoom(Math.min(availableWidth / width, availableHeight / height, 3.0));
-  }, [height, width]);
-
-  React.useEffect(() => {
-    fitToPage();
-  }, [fitToPage]);
-
-  React.useEffect(() => {
-    const container = containerRef.current;
-    if (!container || typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(fitToPage);
-    observer.observe(container);
-    return () => observer.disconnect();
-  }, [fitToPage]);
-
-  const zoomIn = React.useCallback(
-    () => setZoom((value) => Math.min(value + 0.15, 3.0)),
-    [],
-  );
-  const zoomOut = React.useCallback(
-    () => setZoom((value) => Math.max(value - 0.15, 0.2)),
-    [],
-  );
+  const { containerRef, zoom, mode, zoomIn, zoomOut, fitToWidth, fitToPage } =
+    useRecordSheetPreviewZoom(width, height);
 
   return (
     <div
@@ -225,6 +209,7 @@ export function RecordSheetCanvasPreview({
       </div>
       <RecordSheetPreviewZoomControls
         zoom={zoom}
+        mode={mode}
         onZoomIn={zoomIn}
         onZoomOut={zoomOut}
         onFitToWidth={fitToWidth}

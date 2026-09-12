@@ -1,0 +1,14 @@
+[
+  {
+    "paper": "letter",
+    "path": "E:\\Projects\\MekStation\\output\\pdf\\mekstation-atlas-letter-2026-09-10.pdf",
+    "bytes": 1111822,
+    "sha256": "e1e674d4f34cb5ef0263c7a77d252231a0432c4870f9bb74d363ad351ecb2a68"
+  },
+  {
+    "paper": "a4",
+    "path": "E:\\Projects\\MekStation\\output\\pdf\\mekstation-atlas-a4-2026-09-10.pdf",
+    "bytes": 1115745,
+    "sha256": "746898d826c86d035c8f0c4d8ce36770f38891920afe0e39e394cded099ea679"
+  }
+]

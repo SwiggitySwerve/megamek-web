@@ -1,0 +1,10 @@
+{
+  "name": "build",
+  "args": ["C:/nvm4w/nodejs/node_modules/npm/bin/npm-cli.js", "run", "build"],
+  "startedAt": "2026-09-10T23:30:07.340Z",
+  "driverPid": 60708,
+  "running": false,
+  "pid": 48240,
+  "code": 0,
+  "finishedAt": "2026-09-10T23:34:02.222Z"
+}

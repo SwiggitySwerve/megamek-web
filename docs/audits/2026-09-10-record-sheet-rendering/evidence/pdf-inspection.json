@@ -1,0 +1,62 @@
+[
+  {
+    "stage": "before",
+    "paper": "letter",
+    "bytes": 9890758,
+    "pages": 1,
+    "pagePoints": [612.0, 792.0],
+    "images": [
+      {
+        "name": "/I0",
+        "width": 12240,
+        "height": 15840,
+        "filter": "/DCTDecode"
+      }
+    ]
+  },
+  {
+    "stage": "before",
+    "paper": "a4",
+    "bytes": 9413888,
+    "pages": 1,
+    "pagePoints": [595.28, 841.89],
+    "images": [
+      {
+        "name": "/I0",
+        "width": 12240,
+        "height": 15840,
+        "filter": "/DCTDecode"
+      }
+    ]
+  },
+  {
+    "stage": "after",
+    "paper": "letter",
+    "bytes": 1111822,
+    "pages": 1,
+    "pagePoints": [612.0, 792.0],
+    "images": [
+      {
+        "name": "/I0",
+        "width": 2448,
+        "height": 3168,
+        "filter": "/FlateDecode"
+      }
+    ]
+  },
+  {
+    "stage": "after",
+    "paper": "a4",
+    "bytes": 1115745,
+    "pages": 1,
+    "pagePoints": [595.28, 841.89],
+    "images": [
+      {
+        "name": "/I0",
+        "width": 2380,
+        "height": 3368,
+        "filter": "/FlateDecode"
+      }
+    ]
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "at": "2026-09-10T23:38:45.355Z",
+  "baselineFiles": 96,
+  "baselineChanged": [],
+  "sourcesChanged": [],
+  "ledgerOriginalEntries": 13,
+  "ledgerPreserved": true,
+  "ledgerAdded": ["repair-record-sheet-rendering"],
+  "preview": {
+    "status": 200,
+    "build": "1789083011905",
+    "runtime": "E:\\Projects\\MekStation\\.sisyphus\\status-alignment-20260909\\runtime"
+  },
+  "testPort3636Released": true
+}

@@ -1,0 +1,24 @@
+[
+  {
+    "paper": "letter",
+    "rootSize": {
+      "width": 816,
+      "height": 1056
+    },
+    "viewBox": "-18 -18 612 792",
+    "scale": 1.3333333333333333,
+    "renderedName": "Atlas AS7-D",
+    "svgCount": 1
+  },
+  {
+    "paper": "a4",
+    "rootSize": {
+      "width": 793.328125,
+      "height": 1122.65625
+    },
+    "viewBox": "-18 -18 595 842",
+    "scale": 1.3333209619952493,
+    "renderedName": "Atlas AS7-D",
+    "svgCount": 1
+  }
+]

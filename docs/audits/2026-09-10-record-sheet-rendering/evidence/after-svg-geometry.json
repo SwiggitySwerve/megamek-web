@@ -1,0 +1,3846 @@
+{
+  "letter": {
+    "root": {
+      "width": "612",
+      "height": "792",
+      "viewBox": "-18 -18 612 792"
+    },
+    "footer": {
+      "transform": "translate(288.0 762.0)",
+      "relativeBottom": 782,
+      "pageHeight": 792,
+      "inside": true
+    },
+    "criticals": [
+      {
+        "id": "critSlots_LA",
+        "area": {
+          "x": 24,
+          "y": 35.25,
+          "width": 94.39700317382812,
+          "height": 103.5
+        },
+        "texts": [
+          {
+            "text": "Left Arm",
+            "bounds": {
+              "x": 38,
+              "y": 20.25,
+              "width": 36.454833984375,
+              "height": 10
+            },
+            "font": "8.75px",
+            "textLength": null
+          },
+          {
+            "text": "1.",
+            "bounds": {
+              "x": 29,
+              "y": 34.985626220703125,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Shoulder",
+            "bounds": {
+              "x": 39,
+              "y": 34.985626220703125,
+              "width": 28.1240234375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "2.",
+            "bounds": {
+              "x": 28,
+              "y": 43.17937469482422,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Upper Arm Actuator",
+            "bounds": {
+              "x": 38,
+              "y": 43.17937469482422,
+              "width": 64.36669921875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "3.",
+            "bounds": {
+              "x": 28,
+              "y": 51.37312316894531,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Lower Arm Actuator",
+            "bounds": {
+              "x": 38,
+              "y": 51.37312316894531,
+              "width": 64.74951171875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "4.",
+            "bounds": {
+              "x": 28,
+              "y": 59.566871643066406,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Hand Actuator",
+            "bounds": {
+              "x": 38,
+              "y": 59.566871643066406,
+              "width": 46.81201171875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "5.",
+            "bounds": {
+              "x": 28,
+              "y": 67.76062774658203,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Heat Sink",
+            "bounds": {
+              "x": 38,
+              "y": 67.76062774658203,
+              "width": 31.86376953125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "6.",
+            "bounds": {
+              "x": 29,
+              "y": 75.95437622070312,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Medium Laser",
+            "bounds": {
+              "x": 38,
+              "y": 75.95437622070312,
+              "width": 46.02587890625,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "1.",
+            "bounds": {
+              "x": 29,
+              "y": 89.32312774658203,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Roll Again",
+            "bounds": {
+              "x": 38,
+              "y": 89.32312774658203,
+              "width": 32.029296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "2.",
+            "bounds": {
+              "x": 28,
+              "y": 97.51687622070312,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Roll Again",
+            "bounds": {
+              "x": 38,
+              "y": 97.51687622070312,
+              "width": 32.029296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "3.",
+            "bounds": {
+              "x": 28,
+              "y": 105.71062469482422,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Roll Again",
+            "bounds": {
+              "x": 38,
+              "y": 105.71062469482422,
+              "width": 32.029296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "4.",
+            "bounds": {
+              "x": 28,
+              "y": 113.90437316894531,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Roll Again",
+            "bounds": {
+              "x": 38,
+              "y": 113.90437316894531,
+              "width": 32.029296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "5.",
+            "bounds": {
+              "x": 28,
+              "y": 122.09812927246094,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Roll Again",
+            "bounds": {
+              "x": 38,
+              "y": 122.09812927246094,
+              "width": 32.029296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "6.",
+            "bounds": {
+              "x": 29,
+              "y": 130.2918701171875,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Roll Again",
+            "bounds": {
+              "x": 38,
+              "y": 130.2918701171875,
+              "width": 32.029296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          }
+        ],
+        "overflow": []
+      },
+      {
+        "id": "critSlots_RA",
+        "area": {
+          "x": 254.7949981689453,
+          "y": 35.25,
+          "width": 94.39700317382812,
+          "height": 103.5
+        },
+        "texts": [
+          {
+            "text": "Right Arm",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 20.25,
+              "width": 41.8125,
+              "height": 10
+            },
+            "font": "8.75px",
+            "textLength": null
+          },
+          {
+            "text": "1.",
+            "bounds": {
+              "x": 259.7950134277344,
+              "y": 34.985626220703125,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Shoulder",
+            "bounds": {
+              "x": 269.7950134277344,
+              "y": 34.985626220703125,
+              "width": 28.1240234375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "2.",
+            "bounds": {
+              "x": 258.7950134277344,
+              "y": 43.17937469482422,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Upper Arm Actuator",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 43.17937469482422,
+              "width": 64.36669921875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "3.",
+            "bounds": {
+              "x": 258.7950134277344,
+              "y": 51.37312316894531,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Lower Arm Actuator",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 51.37312316894531,
+              "width": 64.74951171875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "4.",
+            "bounds": {
+              "x": 258.7950134277344,
+              "y": 59.566871643066406,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Hand Actuator",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 59.566871643066406,
+              "width": 46.81201171875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "5.",
+            "bounds": {
+              "x": 258.7950134277344,
+              "y": 67.76062774658203,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Heat Sink",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 67.76062774658203,
+              "width": 31.86376953125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "6.",
+            "bounds": {
+              "x": 259.7950134277344,
+              "y": 75.95437622070312,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Medium Laser",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 75.95437622070312,
+              "width": 46.02587890625,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "1.",
+            "bounds": {
+              "x": 259.7950134277344,
+              "y": 89.32312774658203,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Roll Again",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 89.32312774658203,
+              "width": 32.029296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "2.",
+            "bounds": {
+              "x": 258.7950134277344,
+              "y": 97.51687622070312,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Roll Again",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 97.51687622070312,
+              "width": 32.029296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "3.",
+            "bounds": {
+              "x": 258.7950134277344,
+              "y": 105.71062469482422,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Roll Again",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 105.71062469482422,
+              "width": 32.029296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "4.",
+            "bounds": {
+              "x": 258.7950134277344,
+              "y": 113.90437316894531,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Roll Again",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 113.90437316894531,
+              "width": 32.029296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "5.",
+            "bounds": {
+              "x": 258.7950134277344,
+              "y": 122.09812927246094,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Roll Again",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 122.09812927246094,
+              "width": 32.029296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "6.",
+            "bounds": {
+              "x": 259.7950134277344,
+              "y": 130.2918701171875,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Roll Again",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 130.2918701171875,
+              "width": 32.029296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          }
+        ],
+        "overflow": []
+      },
+      {
+        "id": "critSlots_LT",
+        "area": {
+          "x": 24,
+          "y": 168.76499938964844,
+          "width": 94.39700317382812,
+          "height": 103.5
+        },
+        "texts": [
+          {
+            "text": "Left Torso",
+            "bounds": {
+              "x": 38,
+              "y": 153.76499938964844,
+              "width": 40.273681640625,
+              "height": 10
+            },
+            "font": "8.75px",
+            "textLength": null
+          },
+          {
+            "text": "1.",
+            "bounds": {
+              "x": 29,
+              "y": 168.50062561035156,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Heat Sink",
+            "bounds": {
+              "x": 38,
+              "y": 168.50062561035156,
+              "width": 31.86376953125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "2.",
+            "bounds": {
+              "x": 28,
+              "y": 176.6943817138672,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "LRM 20",
+            "bounds": {
+              "x": 38,
+              "y": 176.6943817138672,
+              "width": 26.5810546875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "3.",
+            "bounds": {
+              "x": 28,
+              "y": 184.88812255859375,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "LRM 20",
+            "bounds": {
+              "x": 38,
+              "y": 184.88812255859375,
+              "width": 26.5810546875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "4.",
+            "bounds": {
+              "x": 28,
+              "y": 193.08187866210938,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "LRM 20",
+            "bounds": {
+              "x": 38,
+              "y": 193.08187866210938,
+              "width": 26.5810546875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "5.",
+            "bounds": {
+              "x": 28,
+              "y": 201.27561950683594,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "LRM 20",
+            "bounds": {
+              "x": 38,
+              "y": 201.27561950683594,
+              "width": 26.5810546875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "6.",
+            "bounds": {
+              "x": 29,
+              "y": 209.46937561035156,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "LRM 20",
+            "bounds": {
+              "x": 38,
+              "y": 209.46937561035156,
+              "width": 26.5810546875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "1.",
+            "bounds": {
+              "x": 29,
+              "y": 222.83811950683594,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "SRM 6",
+            "bounds": {
+              "x": 39,
+              "y": 222.83811950683594,
+              "width": 21.30517578125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "2.",
+            "bounds": {
+              "x": 28,
+              "y": 231.03187561035156,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "SRM 6",
+            "bounds": {
+              "x": 39,
+              "y": 231.03187561035156,
+              "width": 21.30517578125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "3.",
+            "bounds": {
+              "x": 28,
+              "y": 239.2256317138672,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "LRM 20 Ammo",
+            "bounds": {
+              "x": 38,
+              "y": 239.2256317138672,
+              "width": 48.162109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "4.",
+            "bounds": {
+              "x": 28,
+              "y": 247.41937255859375,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "LRM 20 Ammo",
+            "bounds": {
+              "x": 38,
+              "y": 247.41937255859375,
+              "width": 48.162109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "5.",
+            "bounds": {
+              "x": 28,
+              "y": 255.61312866210938,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "SRM 6 Ammo",
+            "bounds": {
+              "x": 39,
+              "y": 255.61312866210938,
+              "width": 42.88623046875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "6.",
+            "bounds": {
+              "x": 29,
+              "y": 263.806884765625,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Roll Again",
+            "bounds": {
+              "x": 38,
+              "y": 263.806884765625,
+              "width": 32.029296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          }
+        ],
+        "overflow": []
+      },
+      {
+        "id": "critSlots_RT",
+        "area": {
+          "x": 254.7949981689453,
+          "y": 168.76499938964844,
+          "width": 94.39700317382812,
+          "height": 103.5
+        },
+        "texts": [
+          {
+            "text": "Right Torso",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 153.76499938964844,
+              "width": 45.63134765625,
+              "height": 10
+            },
+            "font": "8.75px",
+            "textLength": null
+          },
+          {
+            "text": "1.",
+            "bounds": {
+              "x": 259.7950134277344,
+              "y": 168.50062561035156,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "AC/20",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 168.50062561035156,
+              "width": 20.55517578125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "2.",
+            "bounds": {
+              "x": 258.7950134277344,
+              "y": 176.6943817138672,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "AC/20",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 176.6943817138672,
+              "width": 20.55517578125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "3.",
+            "bounds": {
+              "x": 258.7950134277344,
+              "y": 184.88812255859375,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "AC/20",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 184.88812255859375,
+              "width": 20.55517578125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "4.",
+            "bounds": {
+              "x": 258.7950134277344,
+              "y": 193.08187866210938,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "AC/20",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 193.08187866210938,
+              "width": 20.55517578125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "5.",
+            "bounds": {
+              "x": 258.7950134277344,
+              "y": 201.27561950683594,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "AC/20",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 201.27561950683594,
+              "width": 20.55517578125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "6.",
+            "bounds": {
+              "x": 259.7950134277344,
+              "y": 209.46937561035156,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "AC/20",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 209.46937561035156,
+              "width": 20.55517578125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "1.",
+            "bounds": {
+              "x": 259.7950134277344,
+              "y": 222.83811950683594,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "AC/20",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 222.83811950683594,
+              "width": 20.55517578125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "2.",
+            "bounds": {
+              "x": 258.7950134277344,
+              "y": 231.03187561035156,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "AC/20",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 231.03187561035156,
+              "width": 20.55517578125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "3.",
+            "bounds": {
+              "x": 258.7950134277344,
+              "y": 239.2256317138672,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "AC/20",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 239.2256317138672,
+              "width": 20.55517578125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "4.",
+            "bounds": {
+              "x": 258.7950134277344,
+              "y": 247.41937255859375,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "AC/20",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 247.41937255859375,
+              "width": 20.55517578125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "5.",
+            "bounds": {
+              "x": 258.7950134277344,
+              "y": 255.61312866210938,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "AC/20 Ammo",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 255.61312866210938,
+              "width": 42.13623046875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "6.",
+            "bounds": {
+              "x": 259.7950134277344,
+              "y": 263.806884765625,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "AC/20 Ammo",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 263.806884765625,
+              "width": 42.13623046875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          }
+        ],
+        "overflow": []
+      },
+      {
+        "id": "critSlots_LL",
+        "area": {
+          "x": 24,
+          "y": 302.2799987792969,
+          "width": 94.39700317382812,
+          "height": 50.025001525878906
+        },
+        "texts": [
+          {
+            "text": "Left Leg",
+            "bounds": {
+              "x": 38,
+              "y": 287.2799987792969,
+              "width": 33.454833984375,
+              "height": 10
+            },
+            "font": "8.75px",
+            "textLength": null
+          },
+          {
+            "text": "1.",
+            "bounds": {
+              "x": 29,
+              "y": 302.1162414550781,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Hip",
+            "bounds": {
+              "x": 38,
+              "y": 302.1162414550781,
+              "width": 12.3896484375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "2.",
+            "bounds": {
+              "x": 28,
+              "y": 310.4537353515625,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Upper Leg Actuator",
+            "bounds": {
+              "x": 38,
+              "y": 310.4537353515625,
+              "width": 62.03564453125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "3.",
+            "bounds": {
+              "x": 28,
+              "y": 318.791259765625,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Lower Leg Actuator",
+            "bounds": {
+              "x": 38,
+              "y": 318.791259765625,
+              "width": 62.41845703125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "4.",
+            "bounds": {
+              "x": 28,
+              "y": 327.1287536621094,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Foot Actuator",
+            "bounds": {
+              "x": 38,
+              "y": 327.1287536621094,
+              "width": 43.68798828125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "5.",
+            "bounds": {
+              "x": 28,
+              "y": 335.46624755859375,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Heat Sink",
+            "bounds": {
+              "x": 38,
+              "y": 335.46624755859375,
+              "width": 31.86376953125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "6.",
+            "bounds": {
+              "x": 29,
+              "y": 343.8037414550781,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Heat Sink",
+            "bounds": {
+              "x": 38,
+              "y": 343.8037414550781,
+              "width": 31.86376953125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          }
+        ],
+        "overflow": []
+      },
+      {
+        "id": "critSlots_RL",
+        "area": {
+          "x": 254.7949981689453,
+          "y": 302.2799987792969,
+          "width": 94.39700317382812,
+          "height": 50.025001525878906
+        },
+        "texts": [
+          {
+            "text": "Right Leg",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 287.2799987792969,
+              "width": 38.8125,
+              "height": 10
+            },
+            "font": "8.75px",
+            "textLength": null
+          },
+          {
+            "text": "1.",
+            "bounds": {
+              "x": 259.7950134277344,
+              "y": 302.1162414550781,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Hip",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 302.1162414550781,
+              "width": 12.3896484375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "2.",
+            "bounds": {
+              "x": 258.7950134277344,
+              "y": 310.4537353515625,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Upper Leg Actuator",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 310.4537353515625,
+              "width": 62.03564453125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "3.",
+            "bounds": {
+              "x": 258.7950134277344,
+              "y": 318.791259765625,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Lower Leg Actuator",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 318.791259765625,
+              "width": 62.41845703125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "4.",
+            "bounds": {
+              "x": 258.7950134277344,
+              "y": 327.1287536621094,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Foot Actuator",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 327.1287536621094,
+              "width": 43.68798828125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "5.",
+            "bounds": {
+              "x": 258.7950134277344,
+              "y": 335.46624755859375,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Heat Sink",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 335.46624755859375,
+              "width": 31.86376953125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "6.",
+            "bounds": {
+              "x": 259.7950134277344,
+              "y": 343.8037414550781,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Heat Sink",
+            "bounds": {
+              "x": 268.7950134277344,
+              "y": 343.8037414550781,
+              "width": 31.86376953125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          }
+        ],
+        "overflow": []
+      },
+      {
+        "id": "critSlots_HD",
+        "area": {
+          "x": 139.39700317382812,
+          "y": 24.899999618530273,
+          "width": 94.39700317382812,
+          "height": 50.025001525878906
+        },
+        "texts": [
+          {
+            "text": "Head",
+            "bounds": {
+              "x": 153.39700317382812,
+              "y": 9.899999618530273,
+              "width": 22.064697265625,
+              "height": 10
+            },
+            "font": "8.75px",
+            "textLength": null
+          },
+          {
+            "text": "1.",
+            "bounds": {
+              "x": 144.39700317382812,
+              "y": 24.736249923706055,
+              "width": 5.5,
+              "height": 8.000001907348633
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Life Support",
+            "bounds": {
+              "x": 153.39700317382812,
+              "y": 24.736249923706055,
+              "width": 39.98095703125,
+              "height": 8.000001907348633
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "2.",
+            "bounds": {
+              "x": 143.39700317382812,
+              "y": 33.07374954223633,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Sensors",
+            "bounds": {
+              "x": 154.39700317382812,
+              "y": 33.07374954223633,
+              "width": 23.22412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "3.",
+            "bounds": {
+              "x": 143.39700317382812,
+              "y": 41.411251068115234,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Cockpit",
+            "bounds": {
+              "x": 154.39700317382812,
+              "y": 41.411251068115234,
+              "width": 24.39306640625,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "4.",
+            "bounds": {
+              "x": 143.39700317382812,
+              "y": 49.74875259399414,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Heat Sink",
+            "bounds": {
+              "x": 153.39700317382812,
+              "y": 49.74875259399414,
+              "width": 31.86376953125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "5.",
+            "bounds": {
+              "x": 143.39700317382812,
+              "y": 58.08625030517578,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Sensors",
+            "bounds": {
+              "x": 154.39700317382812,
+              "y": 58.08625030517578,
+              "width": 23.22412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "6.",
+            "bounds": {
+              "x": 144.39700317382812,
+              "y": 66.42375183105469,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Life Support",
+            "bounds": {
+              "x": 153.39700317382812,
+              "y": 66.42375183105469,
+              "width": 39.98095703125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          }
+        ],
+        "overflow": []
+      },
+      {
+        "id": "critSlots_CT",
+        "area": {
+          "x": 139.39700317382812,
+          "y": 99.07499694824219,
+          "width": 94.39700317382812,
+          "height": 103.5
+        },
+        "texts": [
+          {
+            "text": "Center Torso",
+            "bounds": {
+              "x": 154.39700317382812,
+              "y": 84.07499694824219,
+              "width": 49.3182373046875,
+              "height": 10
+            },
+            "font": "8.75px",
+            "textLength": null
+          },
+          {
+            "text": "1.",
+            "bounds": {
+              "x": 144.39700317382812,
+              "y": 98.81062316894531,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Fusion Engine",
+            "bounds": {
+              "x": 153.39700317382812,
+              "y": 98.81062316894531,
+              "width": 44.880859375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "2.",
+            "bounds": {
+              "x": 143.39700317382812,
+              "y": 107.0043716430664,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Fusion Engine",
+            "bounds": {
+              "x": 153.39700317382812,
+              "y": 107.0043716430664,
+              "width": 44.880859375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "3.",
+            "bounds": {
+              "x": 143.39700317382812,
+              "y": 115.1981201171875,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Fusion Engine",
+            "bounds": {
+              "x": 153.39700317382812,
+              "y": 115.1981201171875,
+              "width": 44.880859375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "4.",
+            "bounds": {
+              "x": 143.39700317382812,
+              "y": 123.39187622070312,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Gyro",
+            "bounds": {
+              "x": 154.39700317382812,
+              "y": 123.39187622070312,
+              "width": 15.92529296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "5.",
+            "bounds": {
+              "x": 143.39700317382812,
+              "y": 131.5856170654297,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Gyro",
+            "bounds": {
+              "x": 154.39700317382812,
+              "y": 131.5856170654297,
+              "width": 15.92529296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "6.",
+            "bounds": {
+              "x": 144.39700317382812,
+              "y": 139.7793731689453,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Gyro",
+            "bounds": {
+              "x": 154.39700317382812,
+              "y": 139.7793731689453,
+              "width": 15.92529296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "1.",
+            "bounds": {
+              "x": 144.39700317382812,
+              "y": 153.1481170654297,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Gyro",
+            "bounds": {
+              "x": 154.39700317382812,
+              "y": 153.1481170654297,
+              "width": 15.92529296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "2.",
+            "bounds": {
+              "x": 143.39700317382812,
+              "y": 161.3418731689453,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Fusion Engine",
+            "bounds": {
+              "x": 153.39700317382812,
+              "y": 161.3418731689453,
+              "width": 44.880859375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "3.",
+            "bounds": {
+              "x": 143.39700317382812,
+              "y": 169.53562927246094,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Fusion Engine",
+            "bounds": {
+              "x": 153.39700317382812,
+              "y": 169.53562927246094,
+              "width": 44.880859375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "4.",
+            "bounds": {
+              "x": 143.39700317382812,
+              "y": 177.7293701171875,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Fusion Engine",
+            "bounds": {
+              "x": 153.39700317382812,
+              "y": 177.7293701171875,
+              "width": 44.880859375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "5.",
+            "bounds": {
+              "x": 143.39700317382812,
+              "y": 185.92312622070312,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Medium Laser",
+            "bounds": {
+              "x": 153.39700317382812,
+              "y": 185.92312622070312,
+              "width": 46.02587890625,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "6.",
+            "bounds": {
+              "x": 144.39700317382812,
+              "y": 194.1168670654297,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Medium Laser",
+            "bounds": {
+              "x": 153.39700317382812,
+              "y": 194.1168670654297,
+              "width": 46.02587890625,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          }
+        ],
+        "overflow": []
+      }
+    ],
+    "overflows": [],
+    "pageView": {
+      "x": -18,
+      "y": -18,
+      "width": 612,
+      "height": 792
+    }
+  },
+  "a4": {
+    "root": {
+      "width": "595",
+      "height": "842",
+      "viewBox": "-18 -18 595 842"
+    },
+    "footer": {
+      "transform": "translate(279.5 812.0)",
+      "relativeBottom": 832,
+      "pageHeight": 842,
+      "inside": true
+    },
+    "criticals": [
+      {
+        "id": "critSlots_LA",
+        "area": {
+          "x": 24,
+          "y": 36.5,
+          "width": 90.61799621582031,
+          "height": 111
+        },
+        "texts": [
+          {
+            "text": "Left Arm",
+            "bounds": {
+              "x": 38,
+              "y": 21.5,
+              "width": 36.454833984375,
+              "height": 10
+            },
+            "font": "8.75px",
+            "textLength": null
+          },
+          {
+            "text": "1.",
+            "bounds": {
+              "x": 29,
+              "y": 36.651248931884766,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Shoulder",
+            "bounds": {
+              "x": 39,
+              "y": 36.651248931884766,
+              "width": 28.1240234375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "2.",
+            "bounds": {
+              "x": 28,
+              "y": 45.438751220703125,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Upper Arm Actuator",
+            "bounds": {
+              "x": 38,
+              "y": 45.438751220703125,
+              "width": 64.36669921875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "3.",
+            "bounds": {
+              "x": 28,
+              "y": 54.22624969482422,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Lower Arm Actuator",
+            "bounds": {
+              "x": 38,
+              "y": 54.22624969482422,
+              "width": 64.74951171875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "4.",
+            "bounds": {
+              "x": 28,
+              "y": 63.01374816894531,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Hand Actuator",
+            "bounds": {
+              "x": 38,
+              "y": 63.01374816894531,
+              "width": 46.81201171875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "5.",
+            "bounds": {
+              "x": 28,
+              "y": 71.8012466430664,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Heat Sink",
+            "bounds": {
+              "x": 38,
+              "y": 71.8012466430664,
+              "width": 31.86376953125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "6.",
+            "bounds": {
+              "x": 29,
+              "y": 80.58875274658203,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Medium Laser",
+            "bounds": {
+              "x": 38,
+              "y": 80.58875274658203,
+              "width": 46.02587890625,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "1.",
+            "bounds": {
+              "x": 29,
+              "y": 94.9262466430664,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Roll Again",
+            "bounds": {
+              "x": 38,
+              "y": 94.9262466430664,
+              "width": 32.029296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "2.",
+            "bounds": {
+              "x": 28,
+              "y": 103.71375274658203,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Roll Again",
+            "bounds": {
+              "x": 38,
+              "y": 103.71375274658203,
+              "width": 32.029296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "3.",
+            "bounds": {
+              "x": 28,
+              "y": 112.50125122070312,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Roll Again",
+            "bounds": {
+              "x": 38,
+              "y": 112.50125122070312,
+              "width": 32.029296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "4.",
+            "bounds": {
+              "x": 28,
+              "y": 121.28874969482422,
+              "width": 6.5,
+              "height": 8.000007629394531
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Roll Again",
+            "bounds": {
+              "x": 38,
+              "y": 121.28874969482422,
+              "width": 32.029296875,
+              "height": 8.000007629394531
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "5.",
+            "bounds": {
+              "x": 28,
+              "y": 130.0762481689453,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Roll Again",
+            "bounds": {
+              "x": 38,
+              "y": 130.0762481689453,
+              "width": 32.029296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "6.",
+            "bounds": {
+              "x": 29,
+              "y": 138.86375427246094,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Roll Again",
+            "bounds": {
+              "x": 38,
+              "y": 138.86375427246094,
+              "width": 32.029296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          }
+        ],
+        "overflow": []
+      },
+      {
+        "id": "critSlots_RA",
+        "area": {
+          "x": 247.23500061035156,
+          "y": 36.5,
+          "width": 90.61799621582031,
+          "height": 111
+        },
+        "texts": [
+          {
+            "text": "Right Arm",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 21.5,
+              "width": 41.8125,
+              "height": 10
+            },
+            "font": "8.75px",
+            "textLength": null
+          },
+          {
+            "text": "1.",
+            "bounds": {
+              "x": 252.23500061035156,
+              "y": 36.651248931884766,
+              "width": 5.4999847412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Shoulder",
+            "bounds": {
+              "x": 262.2349853515625,
+              "y": 36.651248931884766,
+              "width": 28.1240234375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "2.",
+            "bounds": {
+              "x": 251.23500061035156,
+              "y": 45.438751220703125,
+              "width": 6.4999847412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Upper Arm Actuator",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 45.438751220703125,
+              "width": 64.36669921875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "3.",
+            "bounds": {
+              "x": 251.23500061035156,
+              "y": 54.22624969482422,
+              "width": 6.4999847412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Lower Arm Actuator",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 54.22624969482422,
+              "width": 64.74951171875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "4.",
+            "bounds": {
+              "x": 251.23500061035156,
+              "y": 63.01374816894531,
+              "width": 6.4999847412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Hand Actuator",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 63.01374816894531,
+              "width": 46.81201171875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "5.",
+            "bounds": {
+              "x": 251.23500061035156,
+              "y": 71.8012466430664,
+              "width": 6.4999847412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Heat Sink",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 71.8012466430664,
+              "width": 31.86376953125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "6.",
+            "bounds": {
+              "x": 252.23500061035156,
+              "y": 80.58875274658203,
+              "width": 5.4999847412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Medium Laser",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 80.58875274658203,
+              "width": 46.02587890625,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "1.",
+            "bounds": {
+              "x": 252.23500061035156,
+              "y": 94.9262466430664,
+              "width": 5.4999847412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Roll Again",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 94.9262466430664,
+              "width": 32.029296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "2.",
+            "bounds": {
+              "x": 251.23500061035156,
+              "y": 103.71375274658203,
+              "width": 6.4999847412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Roll Again",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 103.71375274658203,
+              "width": 32.029296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "3.",
+            "bounds": {
+              "x": 251.23500061035156,
+              "y": 112.50125122070312,
+              "width": 6.4999847412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Roll Again",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 112.50125122070312,
+              "width": 32.029296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "4.",
+            "bounds": {
+              "x": 251.23500061035156,
+              "y": 121.28874969482422,
+              "width": 6.4999847412109375,
+              "height": 8.000007629394531
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Roll Again",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 121.28874969482422,
+              "width": 32.029296875,
+              "height": 8.000007629394531
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "5.",
+            "bounds": {
+              "x": 251.23500061035156,
+              "y": 130.0762481689453,
+              "width": 6.4999847412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Roll Again",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 130.0762481689453,
+              "width": 32.029296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "6.",
+            "bounds": {
+              "x": 252.23500061035156,
+              "y": 138.86375427246094,
+              "width": 5.4999847412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Roll Again",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 138.86375427246094,
+              "width": 32.029296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          }
+        ],
+        "overflow": []
+      },
+      {
+        "id": "critSlots_LT",
+        "area": {
+          "x": 24,
+          "y": 179.69000244140625,
+          "width": 90.61799621582031,
+          "height": 111
+        },
+        "texts": [
+          {
+            "text": "Left Torso",
+            "bounds": {
+              "x": 38,
+              "y": 164.69000244140625,
+              "width": 40.273681640625,
+              "height": 10
+            },
+            "font": "8.75px",
+            "textLength": null
+          },
+          {
+            "text": "1.",
+            "bounds": {
+              "x": 29,
+              "y": 179.84124755859375,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Heat Sink",
+            "bounds": {
+              "x": 38,
+              "y": 179.84124755859375,
+              "width": 31.86376953125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "2.",
+            "bounds": {
+              "x": 28,
+              "y": 188.62875366210938,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "LRM 20",
+            "bounds": {
+              "x": 38,
+              "y": 188.62875366210938,
+              "width": 26.5810546875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "3.",
+            "bounds": {
+              "x": 28,
+              "y": 197.41624450683594,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "LRM 20",
+            "bounds": {
+              "x": 38,
+              "y": 197.41624450683594,
+              "width": 26.5810546875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "4.",
+            "bounds": {
+              "x": 28,
+              "y": 206.20375061035156,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "LRM 20",
+            "bounds": {
+              "x": 38,
+              "y": 206.20375061035156,
+              "width": 26.5810546875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "5.",
+            "bounds": {
+              "x": 28,
+              "y": 214.9912567138672,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "LRM 20",
+            "bounds": {
+              "x": 38,
+              "y": 214.9912567138672,
+              "width": 26.5810546875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "6.",
+            "bounds": {
+              "x": 29,
+              "y": 223.77874755859375,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "LRM 20",
+            "bounds": {
+              "x": 38,
+              "y": 223.77874755859375,
+              "width": 26.5810546875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "1.",
+            "bounds": {
+              "x": 29,
+              "y": 238.1162567138672,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "SRM 6",
+            "bounds": {
+              "x": 39,
+              "y": 238.1162567138672,
+              "width": 21.30517578125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "2.",
+            "bounds": {
+              "x": 28,
+              "y": 246.90374755859375,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "SRM 6",
+            "bounds": {
+              "x": 39,
+              "y": 246.90374755859375,
+              "width": 21.30517578125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "3.",
+            "bounds": {
+              "x": 28,
+              "y": 255.69125366210938,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "LRM 20 Ammo",
+            "bounds": {
+              "x": 38,
+              "y": 255.69125366210938,
+              "width": 48.162109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "4.",
+            "bounds": {
+              "x": 28,
+              "y": 264.478759765625,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "LRM 20 Ammo",
+            "bounds": {
+              "x": 38,
+              "y": 264.478759765625,
+              "width": 48.162109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "5.",
+            "bounds": {
+              "x": 28,
+              "y": 273.2662353515625,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "SRM 6 Ammo",
+            "bounds": {
+              "x": 39,
+              "y": 273.2662353515625,
+              "width": 42.88623046875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "6.",
+            "bounds": {
+              "x": 29,
+              "y": 282.0537414550781,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Roll Again",
+            "bounds": {
+              "x": 38,
+              "y": 282.0537414550781,
+              "width": 32.029296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          }
+        ],
+        "overflow": []
+      },
+      {
+        "id": "critSlots_RT",
+        "area": {
+          "x": 247.23500061035156,
+          "y": 179.69000244140625,
+          "width": 90.61799621582031,
+          "height": 111
+        },
+        "texts": [
+          {
+            "text": "Right Torso",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 164.69000244140625,
+              "width": 45.63134765625,
+              "height": 10
+            },
+            "font": "8.75px",
+            "textLength": null
+          },
+          {
+            "text": "1.",
+            "bounds": {
+              "x": 252.23500061035156,
+              "y": 179.84124755859375,
+              "width": 5.4999847412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "AC/20",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 179.84124755859375,
+              "width": 20.55517578125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "2.",
+            "bounds": {
+              "x": 251.23500061035156,
+              "y": 188.62875366210938,
+              "width": 6.4999847412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "AC/20",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 188.62875366210938,
+              "width": 20.55517578125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "3.",
+            "bounds": {
+              "x": 251.23500061035156,
+              "y": 197.41624450683594,
+              "width": 6.4999847412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "AC/20",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 197.41624450683594,
+              "width": 20.55517578125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "4.",
+            "bounds": {
+              "x": 251.23500061035156,
+              "y": 206.20375061035156,
+              "width": 6.4999847412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "AC/20",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 206.20375061035156,
+              "width": 20.55517578125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "5.",
+            "bounds": {
+              "x": 251.23500061035156,
+              "y": 214.9912567138672,
+              "width": 6.4999847412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "AC/20",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 214.9912567138672,
+              "width": 20.55517578125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "6.",
+            "bounds": {
+              "x": 252.23500061035156,
+              "y": 223.77874755859375,
+              "width": 5.4999847412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "AC/20",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 223.77874755859375,
+              "width": 20.55517578125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "1.",
+            "bounds": {
+              "x": 252.23500061035156,
+              "y": 238.1162567138672,
+              "width": 5.4999847412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "AC/20",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 238.1162567138672,
+              "width": 20.55517578125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "2.",
+            "bounds": {
+              "x": 251.23500061035156,
+              "y": 246.90374755859375,
+              "width": 6.4999847412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "AC/20",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 246.90374755859375,
+              "width": 20.55517578125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "3.",
+            "bounds": {
+              "x": 251.23500061035156,
+              "y": 255.69125366210938,
+              "width": 6.4999847412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "AC/20",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 255.69125366210938,
+              "width": 20.55517578125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "4.",
+            "bounds": {
+              "x": 251.23500061035156,
+              "y": 264.478759765625,
+              "width": 6.4999847412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "AC/20",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 264.478759765625,
+              "width": 20.55517578125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "5.",
+            "bounds": {
+              "x": 251.23500061035156,
+              "y": 273.2662353515625,
+              "width": 6.4999847412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "AC/20 Ammo",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 273.2662353515625,
+              "width": 42.13623046875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "6.",
+            "bounds": {
+              "x": 252.23500061035156,
+              "y": 282.0537414550781,
+              "width": 5.4999847412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "AC/20 Ammo",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 282.0537414550781,
+              "width": 42.13623046875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          }
+        ],
+        "overflow": []
+      },
+      {
+        "id": "critSlots_LL",
+        "area": {
+          "x": 24,
+          "y": 322.8800048828125,
+          "width": 90.61799621582031,
+          "height": 53.650001525878906
+        },
+        "texts": [
+          {
+            "text": "Left Leg",
+            "bounds": {
+              "x": 38,
+              "y": 307.8800048828125,
+              "width": 33.454833984375,
+              "height": 10
+            },
+            "font": "8.75px",
+            "textLength": null
+          },
+          {
+            "text": "1.",
+            "bounds": {
+              "x": 29,
+              "y": 323.13916015625,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Hip",
+            "bounds": {
+              "x": 38,
+              "y": 323.13916015625,
+              "width": 12.3896484375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "2.",
+            "bounds": {
+              "x": 28,
+              "y": 332.0808410644531,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Upper Leg Actuator",
+            "bounds": {
+              "x": 38,
+              "y": 332.0808410644531,
+              "width": 62.03564453125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "3.",
+            "bounds": {
+              "x": 28,
+              "y": 341.0224914550781,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Lower Leg Actuator",
+            "bounds": {
+              "x": 38,
+              "y": 341.0224914550781,
+              "width": 62.41845703125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "4.",
+            "bounds": {
+              "x": 28,
+              "y": 349.96417236328125,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Foot Actuator",
+            "bounds": {
+              "x": 38,
+              "y": 349.96417236328125,
+              "width": 43.68798828125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "5.",
+            "bounds": {
+              "x": 28,
+              "y": 358.90582275390625,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Heat Sink",
+            "bounds": {
+              "x": 38,
+              "y": 358.90582275390625,
+              "width": 31.86376953125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "6.",
+            "bounds": {
+              "x": 29,
+              "y": 367.8475036621094,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Heat Sink",
+            "bounds": {
+              "x": 38,
+              "y": 367.8475036621094,
+              "width": 31.86376953125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          }
+        ],
+        "overflow": []
+      },
+      {
+        "id": "critSlots_RL",
+        "area": {
+          "x": 247.23500061035156,
+          "y": 322.8800048828125,
+          "width": 90.61799621582031,
+          "height": 53.650001525878906
+        },
+        "texts": [
+          {
+            "text": "Right Leg",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 307.8800048828125,
+              "width": 38.8125,
+              "height": 10
+            },
+            "font": "8.75px",
+            "textLength": null
+          },
+          {
+            "text": "1.",
+            "bounds": {
+              "x": 252.23500061035156,
+              "y": 323.13916015625,
+              "width": 5.4999847412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Hip",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 323.13916015625,
+              "width": 12.3896484375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "2.",
+            "bounds": {
+              "x": 251.23500061035156,
+              "y": 332.0808410644531,
+              "width": 6.4999847412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Upper Leg Actuator",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 332.0808410644531,
+              "width": 62.03564453125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "3.",
+            "bounds": {
+              "x": 251.23500061035156,
+              "y": 341.0224914550781,
+              "width": 6.4999847412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Lower Leg Actuator",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 341.0224914550781,
+              "width": 62.41845703125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "4.",
+            "bounds": {
+              "x": 251.23500061035156,
+              "y": 349.96417236328125,
+              "width": 6.4999847412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Foot Actuator",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 349.96417236328125,
+              "width": 43.68798828125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "5.",
+            "bounds": {
+              "x": 251.23500061035156,
+              "y": 358.90582275390625,
+              "width": 6.4999847412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Heat Sink",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 358.90582275390625,
+              "width": 31.86376953125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "6.",
+            "bounds": {
+              "x": 252.23500061035156,
+              "y": 367.8475036621094,
+              "width": 5.4999847412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Heat Sink",
+            "bounds": {
+              "x": 261.2349853515625,
+              "y": 367.8475036621094,
+              "width": 31.86376953125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          }
+        ],
+        "overflow": []
+      },
+      {
+        "id": "critSlots_HD",
+        "area": {
+          "x": 135.6179962158203,
+          "y": 25.399999618530273,
+          "width": 90.61799621582031,
+          "height": 53.650001525878906
+        },
+        "texts": [
+          {
+            "text": "Head",
+            "bounds": {
+              "x": 149.6179962158203,
+              "y": 10.399999618530273,
+              "width": 22.064697265625,
+              "height": 10
+            },
+            "font": "8.75px",
+            "textLength": null
+          },
+          {
+            "text": "1.",
+            "bounds": {
+              "x": 140.6179962158203,
+              "y": 25.65916633605957,
+              "width": 5.5,
+              "height": 7.999998092651367
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Life Support",
+            "bounds": {
+              "x": 149.6179962158203,
+              "y": 25.65916633605957,
+              "width": 39.98095703125,
+              "height": 7.999998092651367
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "2.",
+            "bounds": {
+              "x": 139.6179962158203,
+              "y": 34.600833892822266,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Sensors",
+            "bounds": {
+              "x": 150.6179962158203,
+              "y": 34.600833892822266,
+              "width": 23.22412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "3.",
+            "bounds": {
+              "x": 139.6179962158203,
+              "y": 43.54249954223633,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Cockpit",
+            "bounds": {
+              "x": 150.6179962158203,
+              "y": 43.54249954223633,
+              "width": 24.39306640625,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "4.",
+            "bounds": {
+              "x": 139.6179962158203,
+              "y": 52.484169006347656,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Heat Sink",
+            "bounds": {
+              "x": 149.6179962158203,
+              "y": 52.484169006347656,
+              "width": 31.86376953125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "5.",
+            "bounds": {
+              "x": 139.6179962158203,
+              "y": 61.42583465576172,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Sensors",
+            "bounds": {
+              "x": 150.6179962158203,
+              "y": 61.42583465576172,
+              "width": 23.22412109375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "6.",
+            "bounds": {
+              "x": 140.6179962158203,
+              "y": 70.36750030517578,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Life Support",
+            "bounds": {
+              "x": 149.6179962158203,
+              "y": 70.36750030517578,
+              "width": 39.98095703125,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          }
+        ],
+        "overflow": []
+      },
+      {
+        "id": "critSlots_CT",
+        "area": {
+          "x": 135.6179962158203,
+          "y": 104.94999694824219,
+          "width": 90.61799621582031,
+          "height": 111
+        },
+        "texts": [
+          {
+            "text": "Center Torso",
+            "bounds": {
+              "x": 150.6179962158203,
+              "y": 89.94999694824219,
+              "width": 49.3182373046875,
+              "height": 10
+            },
+            "font": "8.75px",
+            "textLength": null
+          },
+          {
+            "text": "1.",
+            "bounds": {
+              "x": 140.6179962158203,
+              "y": 105.10124969482422,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Fusion Engine",
+            "bounds": {
+              "x": 149.6179962158203,
+              "y": 105.10124969482422,
+              "width": 44.880859375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "2.",
+            "bounds": {
+              "x": 139.6179962158203,
+              "y": 113.88874816894531,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Fusion Engine",
+            "bounds": {
+              "x": 149.6179962158203,
+              "y": 113.88874816894531,
+              "width": 44.880859375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "3.",
+            "bounds": {
+              "x": 139.6179962158203,
+              "y": 122.67625427246094,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Fusion Engine",
+            "bounds": {
+              "x": 149.6179962158203,
+              "y": 122.67625427246094,
+              "width": 44.880859375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "4.",
+            "bounds": {
+              "x": 139.6179962158203,
+              "y": 131.4637451171875,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Gyro",
+            "bounds": {
+              "x": 150.6179962158203,
+              "y": 131.4637451171875,
+              "width": 15.92529296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "5.",
+            "bounds": {
+              "x": 139.6179962158203,
+              "y": 140.25125122070312,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Gyro",
+            "bounds": {
+              "x": 150.6179962158203,
+              "y": 140.25125122070312,
+              "width": 15.92529296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "6.",
+            "bounds": {
+              "x": 140.6179962158203,
+              "y": 149.03875732421875,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Gyro",
+            "bounds": {
+              "x": 150.6179962158203,
+              "y": 149.03875732421875,
+              "width": 15.92529296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "1.",
+            "bounds": {
+              "x": 140.6179962158203,
+              "y": 163.37625122070312,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Gyro",
+            "bounds": {
+              "x": 150.6179962158203,
+              "y": 163.37625122070312,
+              "width": 15.92529296875,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "2.",
+            "bounds": {
+              "x": 139.6179962158203,
+              "y": 172.16375732421875,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Fusion Engine",
+            "bounds": {
+              "x": 149.6179962158203,
+              "y": 172.16375732421875,
+              "width": 44.880859375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "3.",
+            "bounds": {
+              "x": 139.6179962158203,
+              "y": 180.9512481689453,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Fusion Engine",
+            "bounds": {
+              "x": 149.6179962158203,
+              "y": 180.9512481689453,
+              "width": 44.880859375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "4.",
+            "bounds": {
+              "x": 139.6179962158203,
+              "y": 189.73875427246094,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Fusion Engine",
+            "bounds": {
+              "x": 149.6179962158203,
+              "y": 189.73875427246094,
+              "width": 44.880859375,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "5.",
+            "bounds": {
+              "x": 139.6179962158203,
+              "y": 198.5262451171875,
+              "width": 6.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Medium Laser",
+            "bounds": {
+              "x": 149.6179962158203,
+              "y": 198.5262451171875,
+              "width": 46.02587890625,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "6.",
+            "bounds": {
+              "x": 140.6179962158203,
+              "y": 207.31375122070312,
+              "width": 5.5,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          },
+          {
+            "text": "Medium Laser",
+            "bounds": {
+              "x": 149.6179962158203,
+              "y": 207.31375122070312,
+              "width": 46.02587890625,
+              "height": 8
+            },
+            "font": "7px",
+            "textLength": null
+          }
+        ],
+        "overflow": []
+      }
+    ],
+    "overflows": [],
+    "pageView": {
+      "x": -18,
+      "y": -18,
+      "width": 595,
+      "height": 842
+    }
+  }
+}

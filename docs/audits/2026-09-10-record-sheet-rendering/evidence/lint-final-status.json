@@ -1,0 +1,10 @@
+{
+  "name": "lint-final",
+  "args": ["node_modules/oxlint/bin/oxlint"],
+  "startedAt": "2026-09-10T23:31:46.611Z",
+  "driverPid": 64932,
+  "running": false,
+  "pid": 64788,
+  "code": 0,
+  "finishedAt": "2026-09-10T23:31:47.135Z"
+}

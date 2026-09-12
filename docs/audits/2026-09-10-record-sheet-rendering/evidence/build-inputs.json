@@ -1,0 +1,23 @@
+{
+  "at": "2026-09-10T23:29:44.988Z",
+  "head": "c8780618e53da41d5b7d70921a6bc2b29d2bb27d",
+  "branch": "main",
+  "hashes": {
+    "src/components/customizer/infantry/InfantryPreviewTab.tsx": "0e5617f86580afc5491e0e89e7a0cee64d7fe25bb97a76049f493266f01564be",
+    "src/components/customizer/preview/PreviewToolbar.tsx": "a7d4f1df105656ecc722a5c4086c706af0e3be76dc029ac611ee2b0b04022947",
+    "src/components/customizer/preview/RecordSheetCanvasPreview.tsx": "0b79ff57ab9bd9bbd299af3bcee16786e242f316be2421ed6760ced5e88ab994",
+    "src/components/customizer/preview/RecordSheetPreview.tsx": "ce048ec27954dd8b4756a2a998ee12bb3cde0a0a502793d43bed8b36bb62f9b1",
+    "src/components/customizer/preview/RecordSheetPreviewZoomControls.tsx": "f7c5879f5e66ce1e28cfd8da942f75f1f6e5fa6c016e00d82beb43e4f044d4f3",
+    "src/components/customizer/preview/recordSheetPreviewZoom.ts": "aaf85ca32d50538dd8600d712fb845ae0c4fe62eaf1fa0fc91695434406f09c7",
+    "src/components/customizer/preview/useRecordSheetPreviewZoom.ts": "c1e17ccfaee274de2d2a26c5b8a728d2811e5aed1737a60675ba0ea617641c72",
+    "src/services/printing/RecordSheetService.ts": "4641f9162c9ccb05e0bdcfb47ea80836bb896329183db93ee5ddb0685ac6bff2",
+    "src/services/printing/svgRecordSheetRenderer/canvas.ts": "abc30251397f4c2f5c0b53fa25663d4ecd8936300d3738dc0a6c06610d56d243",
+    "src/services/printing/svgRecordSheetRenderer/criticalTableHelper.ts": "e03146c978c7dd17bf2f783f8618a004515d9c109398135603d5916dc39eca9e",
+    "src/services/printing/svgRecordSheetRenderer/criticals.ts": "ac41c7acfe484d900c25690bd4e9d334309d9701ade59cf80613c7682aeec3a4",
+    "src/services/printing/svgRecordSheetRenderer/renderer.ts": "d07fc05e2c7dcd80f91008e3e5f25ad922c046dc9a282b9c4c752067052419bf",
+    "src/services/printing/svgRecordSheetRenderer/svgGeometry.ts": "efbc34e7cf725216efd6646e2d350449632871e319333d0ed16be13c99f19b80",
+    "src/services/printing/svgRecordSheetRenderer/template.ts": "432b1b4a53c0373a0ed08c7e04754bbcbfcccd6f8c7603a3f11221acd3d2a711",
+    "src/services/printing/svgRecordSheetRenderer/templateRecordSheetRenderer.ts": "93b4d49a7c8e29614985b0108075ec1d4398179a22dcaa23bf2af1e998bb8046",
+    "src/types/printing/RecordSheetTypes.ts": "98d71b671113a50c145789c6817ad72b14d37dbbd77a022be86e22d7b395a787"
+  }
+}

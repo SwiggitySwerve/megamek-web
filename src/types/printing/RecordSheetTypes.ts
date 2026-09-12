@@ -33,18 +33,17 @@ export const PAPER_DIMENSIONS: Record<
 };
 
 /**
- * DPI multiplier for PDF export (3x = 216 DPI, 4x = 288 DPI)
- * Higher values produce sharper text and lines but larger file sizes.
- * 3x provides a good balance between quality and file size.
+ * DPI multiplier for PDF export (4x = 288 DPI).
+ * Bounded to keep Letter at 2448×3168 and A4 at 2380×3368.
+ * 20x produced a 12240×15840 canvas (~775MB RGBA) and is not permitted.
  */
-export const PDF_DPI_MULTIPLIER = 20;
+export const PDF_DPI_MULTIPLIER = 4;
 
 /**
- * DPI multiplier for in-app preview rendering.
- * Must be high enough to support zooming without blur.
- * 4x ensures crisp text up to 200% zoom on standard displays.
+ * DPI multiplier for in-app preview rendering (4x = 288 DPI).
+ * Matches PDF rasterization so zoom up to 300% stays sharp without a 20x buffer.
  */
-export const PREVIEW_DPI_MULTIPLIER = 20;
+export const PREVIEW_DPI_MULTIPLIER = 4;
 
 /**
  * Record sheet header data

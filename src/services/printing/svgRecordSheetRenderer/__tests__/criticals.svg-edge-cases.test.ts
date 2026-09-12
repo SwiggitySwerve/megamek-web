@@ -87,8 +87,13 @@ describe('SVG Element Creation', () => {
       expect(el.attributes['font-family']).toBe(
         'Times New Roman, Times, serif',
       );
-      // Font size should be 7px for content or 8.75px (7 * 1.25) for title
-      expect(['7px', '8.75px']).toContain(el.attributes['font-size']);
+      const size = parseFloat(el.attributes['font-size']);
+      if (el.textContent === 'Head') {
+        expect(size).toBe(8.75);
+      } else {
+        expect(size).toBeGreaterThanOrEqual(6);
+        expect(size).toBeLessThanOrEqual(7.5);
+      }
     });
   });
 });

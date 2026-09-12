@@ -1,0 +1,17 @@
+{
+  "name": "printing-tests-final",
+  "args": [
+    "node_modules/jest/bin/jest.js",
+    "--selectProjects",
+    "unit",
+    "--runInBand",
+    "--testPathPattern",
+    "printing|PreviewTab|RecordSheetCanvasPreview|PreviewToolbar|RecordSheetPreviewValidationBanner"
+  ],
+  "startedAt": "2026-09-10T23:30:27.231Z",
+  "driverPid": 84556,
+  "running": false,
+  "pid": 46576,
+  "code": 0,
+  "finishedAt": "2026-09-10T23:30:38.844Z"
+}

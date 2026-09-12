@@ -3,8 +3,11 @@ import React from 'react';
 import { Button } from '@/components/ui/Button';
 import { SvgIcon } from '@/components/ui/SvgIcon';
 
+import type { RecordSheetPreviewZoomMode } from './recordSheetPreviewZoom';
+
 interface RecordSheetPreviewZoomControlsProps {
   readonly zoom: number;
+  readonly mode: RecordSheetPreviewZoomMode;
   readonly onZoomIn: () => void;
   readonly onZoomOut: () => void;
   readonly onFitToWidth: () => void;
@@ -13,6 +16,7 @@ interface RecordSheetPreviewZoomControlsProps {
 
 export function RecordSheetPreviewZoomControls({
   zoom,
+  mode,
   onZoomIn,
   onZoomOut,
   onFitToWidth,
@@ -66,7 +70,8 @@ export function RecordSheetPreviewZoomControls({
         variant="ghost"
         size="sm"
         onClick={onFitToWidth}
-        className="px-3 text-xs"
+        aria-pressed={mode === 'fit-width'}
+        className="min-w-11 px-3 text-xs"
       >
         Fit Width
       </Button>
@@ -75,7 +80,8 @@ export function RecordSheetPreviewZoomControls({
         variant="ghost"
         size="sm"
         onClick={onFitToPage}
-        className="px-3 text-xs"
+        aria-pressed={mode === 'fit-page'}
+        className="min-w-11 px-3 text-xs"
       >
         Fit Page
       </Button>

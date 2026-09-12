@@ -21,6 +21,7 @@ import {
   PaperSize,
   PAPER_DIMENSIONS,
   PDF_DPI_MULTIPLIER,
+  PREVIEW_DPI_MULTIPLIER,
   IPDFExportOptions,
 } from '@/types/printing';
 
@@ -55,19 +56,9 @@ import {
   isTemplatedUnit,
   renderTemplated,
 } from './svgRecordSheetRenderer/renderTemplated';
+import { readSvgRootSize } from './svgRecordSheetRenderer/svgGeometry';
 
 export type { IUnitConfig };
-
-/**
- * Render a non-mech SVG string to a canvas using the shared high-DPI helper.
- */
-async function renderSVGStringToCanvas(
-  svgString: string,
-  canvas: HTMLCanvasElement,
-  dpiMultiplier: number,
-): Promise<void> {
-  await renderToCanvasHighDPI(svgString, canvas, dpiMultiplier);
-}
 
 /**
  * Lazily import the `jsPDF` constructor.
@@ -80,6 +71,124 @@ async function renderSVGStringToCanvas(
 async function getJsPDFConstructor(): Promise<typeof import('jspdf').jsPDF> {
   const { jsPDF } = await import('jspdf');
   return jsPDF;
+}
+
+async function waitForPrintWindowReady(windowDoc: Document): Promise<void> {
+  const fonts = (
+    windowDoc as Document & { fonts?: { ready?: Promise<unknown> } }
+  ).fonts;
+  if (fonts && typeof fonts.ready?.then === 'function') {
+    await fonts.ready;
+  }
+
+  const images = Array.from(windowDoc.images ?? []);
+  await Promise.all(
+    images.map((image) => {
+      if (image.complete) {
+        return Promise.resolve();
+      }
+      return new Promise<void>((resolve) => {
+        image.addEventListener('load', () => resolve(), { once: true });
+        image.addEventListener('error', () => resolve(), { once: true });
+      });
+    }),
+  );
+}
+
+function rootHasValidViewBox(svgRoot: Element): boolean {
+  const value = svgRoot.getAttribute('viewBox');
+  if (!value) {
+    return false;
+  }
+  const parts = value
+    .trim()
+    .split(/[\s,]+/)
+    .map(Number);
+  return (
+    parts.length === 4 &&
+    Number.isFinite(parts[0]) &&
+    Number.isFinite(parts[1]) &&
+    parts[2] > 0 &&
+    parts[3] > 0
+  );
+}
+
+/**
+ * Inline print CSS sizes the root SVG to the selected paper. Without a root
+ * viewBox, user units stay at 1:1 and the sheet does not scale. Add
+ * `0 0 width height` only when missing; leave existing viewBoxes untouched
+ * (including negative-margin mech origins).
+ */
+function ensurePrintSvgViewBox(svgString: string): string {
+  if (typeof DOMParser === 'undefined') {
+    return svgString;
+  }
+  const doc = new DOMParser().parseFromString(svgString, 'image/svg+xml');
+  if (doc.querySelector('parsererror')) {
+    return svgString;
+  }
+  const root = doc.documentElement;
+  if (!root || root.localName.toLowerCase() !== 'svg') {
+    return svgString;
+  }
+  if (rootHasValidViewBox(root)) {
+    return svgString;
+  }
+  const size = readSvgRootSize(root as unknown as SVGSVGElement);
+  root.setAttribute('viewBox', `0 0 ${size.width} ${size.height}`);
+  return new XMLSerializer().serializeToString(doc);
+}
+
+function buildPrintDocumentHtml(
+  svgString: string,
+  paperSize: PaperSize,
+): string {
+  const { width, height } = PAPER_DIMENSIONS[paperSize];
+  const printSvg = ensurePrintSvgViewBox(svgString);
+  return `<!DOCTYPE html>
+<html>
+  <head>
+    <title>Record Sheet</title>
+    <style>
+      @page { size: ${width}pt ${height}pt; margin: 0; }
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: ${width}pt;
+        height: ${height}pt;
+      }
+      body > svg,
+      body > img {
+        display: block;
+        width: ${width}pt;
+        height: ${height}pt;
+      }
+    </style>
+  </head>
+  <body>
+    ${printSvg}
+  </body>
+</html>`;
+}
+
+/**
+ * Browser print-popup surface. `window.open` is overloaded by Electron to
+ * return `BrowserWindowProxy`, which lacks afterprint / addEventListener.
+ * The MekStation customizer print path is a real browser Window.
+ */
+interface BrowserPrintWindow {
+  readonly document?: Document;
+  close(): void;
+  print(): void;
+  addEventListener(
+    type: 'afterprint',
+    listener: EventListener,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+}
+
+function openBrowserPrintWindow(): BrowserPrintWindow | null {
+  return window.open('', '_blank') as unknown as BrowserPrintWindow | null;
 }
 
 type ExtractRecordSheetData = {
@@ -208,22 +317,20 @@ export class RecordSheetService {
   // ── Rendering ────────────────────────────────────────────────────────────
 
   /**
-   * Render a preview of any unit type to a canvas.
-   *
-   * Mechs use the MegaMek SVG template pipeline; all other types use the
-   * per-type string-based SVG renderer rendered via the canvas helper.
+   * Render a preview of any unit type to a canvas from the shared SVG.
    */
   renderPreview = async (
     canvas: HTMLCanvasElement,
     data: IRecordSheetData,
     paperSize: PaperSize = PaperSize.LETTER,
   ): Promise<void> => {
-    if (data.unitType === 'mech') {
-      await this.renderMechPreview(canvas, data, paperSize);
-      return;
-    }
-    const svgString = await this.buildNonMechSVG(data, paperSize);
-    await renderSVGStringToCanvas(svgString, canvas, 1);
+    const svgString = await this.getSVGString(data, paperSize);
+    await renderToCanvasHighDPI(
+      svgString,
+      canvas,
+      PREVIEW_DPI_MULTIPLIER,
+      paperSize,
+    );
   };
 
   /**
@@ -245,8 +352,7 @@ export class RecordSheetService {
   /**
    * Export to PDF and trigger a browser download.
    *
-   * For non-mech units the per-type SVG is rasterised to canvas then embedded
-   * in the PDF at letter / A4 dimensions.
+   * Rasterizes the shared SVG at bounded 4x and embeds a lossless PNG.
    */
   exportPDF = async (
     data: IRecordSheetData,
@@ -257,21 +363,14 @@ export class RecordSheetService {
   ): Promise<void> => {
     const { paperSize, filename } = options;
     const { width, height } = PAPER_DIMENSIONS[paperSize];
-
-    if (data.unitType === 'mech') {
-      await this.exportMechPDF(data, options);
-      return;
-    }
-
-    // Non-mech: render SVG string → canvas → PDF
     const canvas = document.createElement('canvas');
-    const scaledWidth = width * PDF_DPI_MULTIPLIER;
-    const scaledHeight = height * PDF_DPI_MULTIPLIER;
-    canvas.width = scaledWidth;
-    canvas.height = scaledHeight;
-
-    const svgString = await this.buildNonMechSVG(data, paperSize);
-    await renderSVGStringToCanvas(svgString, canvas, PDF_DPI_MULTIPLIER);
+    const svgString = await this.getSVGString(data, paperSize);
+    await renderToCanvasHighDPI(
+      svgString,
+      canvas,
+      PDF_DPI_MULTIPLIER,
+      paperSize,
+    );
 
     const PDF = await getJsPDFConstructor();
     const pdf = new PDF({
@@ -280,8 +379,8 @@ export class RecordSheetService {
       format: paperSize === PaperSize.A4 ? 'a4' : 'letter',
     });
 
-    const imgData = canvas.toDataURL('image/jpeg', 0.95);
-    pdf.addImage(imgData, 'JPEG', 0, 0, width, height);
+    const imgData = canvas.toDataURL('image/png');
+    pdf.addImage(imgData, 'PNG', 0, 0, width, height, undefined, 'FAST');
 
     const pdfFilename =
       filename ||
@@ -289,28 +388,7 @@ export class RecordSheetService {
     pdf.save(pdfFilename);
   };
 
-  // ── Internal mech helpers (preserve existing behaviour exactly) ───────────
-
-  private async renderMechPreview(
-    canvas: HTMLCanvasElement,
-    data: IMechRecordSheetData,
-    paperSize: PaperSize,
-  ): Promise<void> {
-    const templates =
-      paperSize === PaperSize.A4 ? SVG_TEMPLATES_A4 : SVG_TEMPLATES;
-    const templatePath = templates[data.mechType] || templates.biped;
-
-    const renderer = new SVGRecordSheetRenderer();
-    await renderer.loadTemplate(templatePath);
-    renderer.fillTemplate(data);
-    await renderer.fillArmorPips(data.armor, data.mechType);
-    await renderer.fillStructurePips(
-      data.structure,
-      data.header.tonnage,
-      data.mechType,
-    );
-    await renderer.renderToCanvas(canvas);
-  }
+  // ── Internal SVG builders ────────────────────────────────────────────────
 
   private async getMechSVGString(
     data: IMechRecordSheetData,
@@ -321,7 +399,7 @@ export class RecordSheetService {
     const templatePath = templates[data.mechType] || templates.biped;
 
     const renderer = new SVGRecordSheetRenderer();
-    await renderer.loadTemplate(templatePath);
+    await renderer.loadTemplate(templatePath, paperSize);
     renderer.fillTemplate(data);
     await renderer.fillArmorPips(data.armor, data.mechType);
     await renderer.fillStructurePips(
@@ -330,50 +408,6 @@ export class RecordSheetService {
       data.mechType,
     );
     return renderer.getSVGString();
-  }
-
-  private async exportMechPDF(
-    data: IMechRecordSheetData,
-    options: IPDFExportOptions,
-  ): Promise<void> {
-    const { paperSize, filename } = options;
-    const { width, height } = PAPER_DIMENSIONS[paperSize];
-
-    const canvas = document.createElement('canvas');
-    const scaledWidth = width * PDF_DPI_MULTIPLIER;
-    const scaledHeight = height * PDF_DPI_MULTIPLIER;
-    canvas.width = scaledWidth;
-    canvas.height = scaledHeight;
-
-    const templates =
-      paperSize === PaperSize.A4 ? SVG_TEMPLATES_A4 : SVG_TEMPLATES;
-    const templatePath = templates[data.mechType] || templates.biped;
-
-    const renderer = new SVGRecordSheetRenderer();
-    await renderer.loadTemplate(templatePath);
-    renderer.fillTemplate(data);
-    await renderer.fillArmorPips(data.armor, data.mechType);
-    await renderer.fillStructurePips(
-      data.structure,
-      data.header.tonnage,
-      data.mechType,
-    );
-    await renderer.renderToCanvasHighDPI(canvas, PDF_DPI_MULTIPLIER);
-
-    const PDF = await getJsPDFConstructor();
-    const pdf = new PDF({
-      orientation: 'portrait',
-      unit: 'pt',
-      format: paperSize === PaperSize.A4 ? 'a4' : 'letter',
-    });
-
-    const imgData = canvas.toDataURL('image/jpeg', 0.95);
-    pdf.addImage(imgData, 'JPEG', 0, 0, width, height);
-
-    const pdfFilename =
-      filename ||
-      `${data.header.chassis}-${data.header.model}.pdf`.replace(/\s+/g, '-');
-    pdf.save(pdfFilename);
   }
 
   /**
@@ -396,10 +430,58 @@ export class RecordSheetService {
     return renderRecordSheetSVG(data);
   }
 
-  // ── Print helper (unchanged) ─────────────────────────────────────────────
+  // ── Print helpers ────────────────────────────────────────────────────────
 
   /**
-   * Print record sheet using browser print dialog.
+   * Print a record sheet from the shared SVG at the selected paper size.
+   * Opens the popup synchronously before the first await so popup blockers
+   * do not discard a window reserved after rasterization.
+   */
+  printRecordSheet = async (
+    data: IRecordSheetData,
+    paperSize: PaperSize,
+  ): Promise<void> => {
+    const printWindow = openBrowserPrintWindow();
+    if (!printWindow) {
+      throw new Error(
+        'Could not open print window. Check popup blocker settings.',
+      );
+    }
+
+    const windowDoc = printWindow.document;
+    if (!windowDoc) {
+      printWindow.close();
+      throw new Error('Print window does not have document access');
+    }
+
+    let closed = false;
+    const closeOwned = (): void => {
+      if (closed) {
+        return;
+      }
+      closed = true;
+      printWindow.close();
+    };
+
+    try {
+      const svgString = await this.getSVGString(data, paperSize);
+      if (typeof windowDoc.open === 'function') {
+        windowDoc.open();
+      }
+      windowDoc.write(buildPrintDocumentHtml(svgString, paperSize));
+      windowDoc.close();
+      await waitForPrintWindowReady(windowDoc);
+
+      printWindow.addEventListener('afterprint', closeOwned, { once: true });
+      printWindow.print();
+    } catch (error) {
+      closeOwned();
+      throw error;
+    }
+  };
+
+  /**
+   * Print record sheet using browser print dialog from an existing canvas.
    */
   print = (canvas: HTMLCanvasElement): void => {
     const dataUrl = canvas.toDataURL('image/png');

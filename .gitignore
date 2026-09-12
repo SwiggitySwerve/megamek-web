@@ -245,3 +245,6 @@ swarm-output.json
 
 # jest failure snapshots (test-failed/ variant observed 2026-08-28)
 **/__snapshots__/test-failed/
+
+# Local record-sheet PDF samples written by preview/export verification runs
+output/

@@ -1,0 +1,91 @@
+{
+  "startedAt": "2026-09-10T22:44:51.465Z",
+  "steps": [
+    {
+      "label": "initial",
+      "at": "2026-09-10T22:44:53.954Z",
+      "zoom": "67%",
+      "canvas": {
+        "width": 12240,
+        "height": 15840,
+        "cssWidth": 411.078125,
+        "cssHeight": 532,
+        "estimatedRGBABytes": 775526400
+      }
+    },
+    {
+      "label": "zoom-in-immediate",
+      "at": "2026-09-10T22:44:54.875Z",
+      "zoom": "82%",
+      "canvas": {
+        "width": 12240,
+        "height": 15840,
+        "cssWidth": 502.890625,
+        "cssHeight": 650.796875,
+        "estimatedRGBABytes": 775526400
+      }
+    },
+    {
+      "label": "zoom-in-settled",
+      "at": "2026-09-10T22:44:56.382Z",
+      "zoom": "82%",
+      "canvas": {
+        "width": 12240,
+        "height": 15840,
+        "cssWidth": 502.890625,
+        "cssHeight": 650.796875,
+        "estimatedRGBABytes": 775526400
+      }
+    },
+    {
+      "label": "zoom-after-viewport-resize",
+      "at": "2026-09-10T22:44:56.544Z",
+      "zoom": "67%",
+      "canvas": {
+        "width": 12240,
+        "height": 15840,
+        "cssWidth": 411.078125,
+        "cssHeight": 532,
+        "estimatedRGBABytes": 775526400
+      }
+    },
+    {
+      "label": "fit-width-immediate",
+      "at": "2026-09-10T22:44:56.691Z",
+      "zoom": "164%",
+      "canvas": {
+        "width": 12240,
+        "height": 15840,
+        "cssWidth": 1002,
+        "cssHeight": 1296.703125,
+        "estimatedRGBABytes": 775526400
+      }
+    },
+    {
+      "label": "fit-width-settled",
+      "at": "2026-09-10T22:44:58.198Z",
+      "zoom": "164%",
+      "canvas": {
+        "width": 12240,
+        "height": 15840,
+        "cssWidth": 1002,
+        "cssHeight": 1296.703125,
+        "estimatedRGBABytes": 775526400
+      }
+    },
+    {
+      "label": "fit-width-after-viewport-resize",
+      "at": "2026-09-10T22:44:58.361Z",
+      "zoom": "67%",
+      "canvas": {
+        "width": 12240,
+        "height": 15840,
+        "cssWidth": 411.078125,
+        "cssHeight": 532,
+        "estimatedRGBABytes": 775526400
+      }
+    }
+  ],
+  "errors": [],
+  "finishedAt": "2026-09-10T22:44:58.468Z"
+}

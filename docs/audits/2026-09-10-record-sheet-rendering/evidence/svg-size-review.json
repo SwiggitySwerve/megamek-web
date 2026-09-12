@@ -1,0 +1,442 @@
+[
+  {
+    "file": "templates_us/battle_armor_default.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 576,
+      "height": 756
+    }
+  },
+  {
+    "file": "templates_us/conventional_infantry_default.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 576,
+      "height": 756
+    }
+  },
+  {
+    "file": "templates_us/conventional_infantry_tables.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 576,
+      "height": 756
+    }
+  },
+  {
+    "file": "templates_us/fighter_aerospace_default.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 576,
+      "height": 756
+    }
+  },
+  {
+    "file": "templates_us/fighter_conventional_default.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 576,
+      "height": 756
+    }
+  },
+  {
+    "file": "templates_us/mek_biped_default.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 576,
+      "height": 756
+    }
+  },
+  {
+    "file": "templates_us/mek_biped_toheat.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 576,
+      "height": 756
+    }
+  },
+  {
+    "file": "templates_us/mek_lam_default.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 576,
+      "height": 756
+    }
+  },
+  {
+    "file": "templates_us/mek_lam_toheat.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 576,
+      "height": 756
+    }
+  },
+  {
+    "file": "templates_us/mek_quadvee_default.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 576,
+      "height": 756
+    }
+  },
+  {
+    "file": "templates_us/mek_quadvee_toheat.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 576,
+      "height": 756
+    }
+  },
+  {
+    "file": "templates_us/mek_quad_default.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 576,
+      "height": 756
+    }
+  },
+  {
+    "file": "templates_us/mek_quad_toheat.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 576,
+      "height": 756
+    }
+  },
+  {
+    "file": "templates_us/mek_tripod_default.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 576,
+      "height": 756
+    }
+  },
+  {
+    "file": "templates_us/mek_tripod_toheat.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 576,
+      "height": 756
+    }
+  },
+  {
+    "file": "templates_us/vehicle_dualturret_standard.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 576,
+      "height": 375
+    }
+  },
+  {
+    "file": "templates_us/vehicle_noturret_standard.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 576,
+      "height": 375
+    }
+  },
+  {
+    "file": "templates_us/vehicle_turret_standard.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 576,
+      "height": 375
+    }
+  },
+  {
+    "file": "templates_us/vtol_noturret_standard.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 576,
+      "height": 375
+    }
+  },
+  {
+    "file": "templates_us/vtol_turret_standard.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 576,
+      "height": 375
+    }
+  },
+  {
+    "file": "templates_iso/battle_armor_default.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 559,
+      "height": 806
+    }
+  },
+  {
+    "file": "templates_iso/conventional_infantry_default.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 559,
+      "height": 806
+    }
+  },
+  {
+    "file": "templates_iso/conventional_infantry_tables.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 559,
+      "height": 806
+    }
+  },
+  {
+    "file": "templates_iso/fighter_aerospace_default.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 559,
+      "height": 806
+    }
+  },
+  {
+    "file": "templates_iso/fighter_conventional_default.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 559,
+      "height": 806
+    }
+  },
+  {
+    "file": "templates_iso/mek_biped_default.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 559,
+      "height": 806
+    }
+  },
+  {
+    "file": "templates_iso/mek_biped_toheat.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 559,
+      "height": 806
+    }
+  },
+  {
+    "file": "templates_iso/mek_lam_default.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 559,
+      "height": 806
+    }
+  },
+  {
+    "file": "templates_iso/mek_lam_toheat.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 559,
+      "height": 806
+    }
+  },
+  {
+    "file": "templates_iso/mek_quadvee_default.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 559,
+      "height": 806
+    }
+  },
+  {
+    "file": "templates_iso/mek_quadvee_toheat.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 559,
+      "height": 806
+    }
+  },
+  {
+    "file": "templates_iso/mek_quad_default.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 559,
+      "height": 806
+    }
+  },
+  {
+    "file": "templates_iso/mek_quad_toheat.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 559,
+      "height": 806
+    }
+  },
+  {
+    "file": "templates_iso/mek_tripod_default.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 559,
+      "height": 806
+    }
+  },
+  {
+    "file": "templates_iso/mek_tripod_toheat.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 559,
+      "height": 806
+    }
+  },
+  {
+    "file": "templates_iso/vehicle_dualturret_standard.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 559,
+      "height": 400
+    }
+  },
+  {
+    "file": "templates_iso/vehicle_noturret_standard.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 559,
+      "height": 400
+    }
+  },
+  {
+    "file": "templates_iso/vehicle_turret_standard.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 559,
+      "height": 400
+    }
+  },
+  {
+    "file": "templates_iso/vtol_noturret_standard.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 559,
+      "height": 400
+    }
+  },
+  {
+    "file": "templates_iso/vtol_turret_standard.svg",
+    "actual": {
+      "width": 69,
+      "height": 69
+    },
+    "expected": {
+      "width": 559,
+      "height": 400
+    }
+  }
+]
