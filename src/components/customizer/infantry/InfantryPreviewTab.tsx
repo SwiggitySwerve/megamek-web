@@ -5,17 +5,17 @@
  * builds an `IInfantryRecordSheetUnitInput` object, and wires the Download-PDF
  * / Print toolbar actions to `RecordSheetService`.
  *
- * @spec openspec/changes/wire-non-mech-customizer-preview/specs/record-sheet-export/spec.md
+ * @spec openspec/specs/record-sheet-export/spec.md
  *        Requirement: Customizer Non-Mech Preview And Export Path
  */
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
-import { getRecordSheetService } from '@/services/printing/RecordSheetService';
 import { useInfantryStore } from '@/stores/useInfantryStore';
 import { PaperSize } from '@/types/printing';
 
-import { PreviewToolbar } from '../preview/PreviewToolbar';
+import { PreviewTabFrame } from '../preview/PreviewTabFrame';
+import { useRecordSheetToolbarActions } from '../preview/RecordSheetCanvasPreview';
 import { buildInfantryUnitObject } from './buildInfantryUnitObject';
 import { InfantryRecordSheetPreview } from './InfantryRecordSheetPreview';
 
@@ -99,41 +99,19 @@ export function InfantryPreviewTab({
     ],
   );
 
-  const handleExportPDF = useCallback(async () => {
-    const data = getRecordSheetService().extractData(unitObject);
-    await getRecordSheetService().exportPDF(data, {
-      paperSize,
-      includePilotData: false,
-    });
-  }, [unitObject, paperSize]);
-
-  const handlePrint = useCallback(async () => {
-    const service = getRecordSheetService();
-    const data = service.extractData(unitObject);
-    await service.printRecordSheet(data, paperSize);
-  }, [unitObject, paperSize]);
+  const toolbarActions = useRecordSheetToolbarActions(
+    unitObject,
+    paperSize,
+    setPaperSize,
+  );
 
   return (
-    <div
-      className={`preview-tab ${className}`}
-      data-testid="infantry-preview-tab"
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        backgroundColor: '#1a1a2e',
-      }}
+    <PreviewTabFrame
+      className={className}
+      testId="infantry-preview-tab"
+      toolbarActions={toolbarActions}
     >
-      <PreviewToolbar
-        onExportPDF={handleExportPDF}
-        onPrint={handlePrint}
-        paperSize={paperSize}
-        onPaperSizeChange={setPaperSize}
-      />
-
-      <div style={{ flex: 1, overflow: 'auto' }}>
-        <InfantryRecordSheetPreview paperSize={paperSize} scale={0.75} />
-      </div>
-    </div>
+      <InfantryRecordSheetPreview paperSize={paperSize} />
+    </PreviewTabFrame>
   );
 }
