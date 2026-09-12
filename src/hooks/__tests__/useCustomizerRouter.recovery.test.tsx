@@ -32,9 +32,63 @@ describe('customizer route recovery', () => {
     expect(result.current).toMatchObject({
       unitId: UNIT_ID,
       tabId: 'structure',
+      hasExplicitTab: true,
       isValid: true,
       isIndex: false,
       isReady: true,
+    });
+  });
+
+  it('distinguishes an omitted tab from an explicit Structure tab', () => {
+    window.history.replaceState(
+      {},
+      '',
+      '/customizer/' + UNIT_ID + '/structure',
+    );
+    mockRouter({
+      query: { slug: [UNIT_ID, 'structure'] },
+      asPath: '/customizer/' + UNIT_ID + '/structure',
+      isReady: true,
+    });
+    const explicit = renderHook(() => useCustomizerRouter());
+    expect(explicit.result.current.hasExplicitTab).toBe(true);
+
+    window.history.replaceState({}, '', '/customizer/' + UNIT_ID);
+    mockRouter({
+      query: { slug: [UNIT_ID] },
+      asPath: '/customizer/' + UNIT_ID,
+      isReady: true,
+    });
+    const omitted = renderHook(() => useCustomizerRouter());
+    expect(omitted.result.current.hasExplicitTab).toBe(false);
+
+    window.history.replaceState({}, '', '/customizer/' + UNIT_ID + '/armor');
+    mockRouter({
+      query: { slug: [UNIT_ID, 'armor'] },
+      asPath: '/customizer/' + UNIT_ID + '/armor',
+      isReady: true,
+    });
+    const explicitNonDefault = renderHook(() => useCustomizerRouter());
+    expect(explicitNonDefault.result.current).toMatchObject({
+      tabId: 'armor',
+      hasExplicitTab: true,
+    });
+
+    window.history.replaceState(
+      {},
+      '',
+      '/customizer/' + UNIT_ID + '/not-a-tab',
+    );
+    mockRouter({
+      query: { slug: [UNIT_ID, 'not-a-tab'] },
+      asPath: '/customizer/' + UNIT_ID + '/not-a-tab',
+      isReady: true,
+    });
+    const invalid = renderHook(() => useCustomizerRouter());
+    expect(invalid.result.current).toMatchObject({
+      tabId: 'structure',
+      hasExplicitTab: false,
+      isValid: true,
     });
   });
 

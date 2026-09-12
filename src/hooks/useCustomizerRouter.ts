@@ -66,6 +66,8 @@ export interface CustomizerRouteParams {
   unitId: string | null;
   /** Tab ID from URL */
   tabId: CustomizerTabId;
+  /** Whether the URL explicitly supplied a valid tab segment */
+  hasExplicitTab: boolean;
   /** Whether the route is valid */
   isValid: boolean;
   /** Whether we're on the index page (no unit specified) */
@@ -250,6 +252,7 @@ export function useCustomizerRouter(
       return {
         unitId: null,
         tabId: DEFAULT_TAB,
+        hasExplicitTab: false,
         isValid: true,
         isIndex: true,
         isReady,
@@ -259,6 +262,7 @@ export function useCustomizerRouter(
     // /customizer/[unitId] or /customizer/[unitId]/[tabId]
     const rawUnitId = routeSlug[0];
     const rawTabId = routeSlug[1];
+    const hasExplicitTab = rawTabId !== undefined && isValidTabId(rawTabId);
 
     const unitId = parseUnitId(rawUnitId);
     const tabId = parseTabId(rawTabId);
@@ -268,6 +272,7 @@ export function useCustomizerRouter(
       return {
         unitId: null,
         tabId: DEFAULT_TAB,
+        hasExplicitTab,
         isValid: false,
         isIndex: false,
         isReady,
@@ -277,6 +282,7 @@ export function useCustomizerRouter(
     return {
       unitId,
       tabId,
+      hasExplicitTab,
       isValid: true,
       isIndex: false,
       isReady,

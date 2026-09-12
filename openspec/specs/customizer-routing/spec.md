@@ -2,7 +2,7 @@
 
 **Status**: Active
 **Version**: 1.0
-**Last Updated**: 2026-02-13
+**Last Updated**: 2026-09-12
 **Dependencies**: customizer-tabs
 **Affects**: unit-customizer
 
@@ -36,11 +36,14 @@ The Customizer Routing subsystem provides URL-based navigation for the unit cust
 ### Key Concepts
 
 - **Shallow Routing**: All customizer navigation uses Next.js shallow routing (`{ shallow: true }`), which updates the URL without triggering a full page reload or data fetching
-- **Tab ID**: One of 8 valid customizer tab identifiers (overview, structure, armor, weapons, equipment, criticals, fluff, preview)
+- **Tab ID**: One of 8 accepted route identifiers, including the legacy weapons route (overview, structure, armor, weapons, equipment, criticals, fluff, preview)
 - **Unit ID**: A UUID v4 identifier for a unit in the customizer
 - **Route Params**: Parsed URL parameters including unit ID, tab ID, validity flags, and index page detection
 
 ---
+
+The route parser exposes whether a valid tab segment was explicitly supplied. Explicit tabs, including Structure, take precedence over stored last-subtab state; omission retains stored/default restoration. Invalid-tab and campaign routing retain their existing fallback and query behavior.
+
 ## Requirements
 ### Requirement: URL Structure
 
@@ -89,6 +92,8 @@ The system SHALL support three URL patterns for customizer navigation:
 ### Requirement: Tab ID Validation
 
 The system SHALL validate tab IDs against a fixed set of 8 valid identifiers and default to 'structure' for invalid values.
+
+The accepted route set SHALL remain distinct from visible navigation. BattleMechs expose Overview, Structure, Armor, Equipment, Critical Slots, Preview, and Fluff. The legacy weapons route is accepted by the parser and currently renders a placeholder; it SHALL NOT be advertised as a visible eighth tab.
 
 **Rationale**: Prevents broken URLs from causing errors and ensures consistent fallback behavior.
 
@@ -336,6 +341,25 @@ The customizer SHALL support campaign-origin edit sessions that preserve campaig
 - **WHEN** a player saves or cancels a campaign-origin customizer session
 - **THEN** the app SHALL return to the originating readiness or stable context and SHALL refresh deployment validation against canonical campaign state
 
+
+### Requirement: Explicit Customizer Tab Precedence
+
+The route-backed customizer SHALL distinguish an explicitly supplied valid tab from an omitted tab. Every explicit valid tab, including Structure, SHALL take precedence over the selected unit's persisted last subtab. An omitted tab SHALL retain the existing stored-subtab or default restoration behavior. Invalid tab handling and campaign routing SHALL remain compatible.
+
+#### Scenario: Explicit Structure overrides a saved Preview tab
+
+- **GIVEN** a persisted unit whose last subtab is Preview
+- **WHEN** the user opens its explicit Structure URL and refreshes
+- **THEN** Structure SHALL remain selected after store hydration
+- **AND** the selected unit SHALL retain its identity and edits
+
+#### Scenario: Omitted tab restores the saved subtab
+
+- **GIVEN** a persisted unit whose last subtab is Preview
+- **WHEN** the user opens its unit URL without a tab segment
+- **THEN** the existing persisted-subtab restoration SHALL select Preview
+- **AND** a unit with no valid saved subtab SHALL use the established default
+
 ## Data Model Requirements
 
 ### Required Types
@@ -383,10 +407,14 @@ interface CustomizerRouteParams {
   readonly unitId: string | null;
   /** Tab ID from URL (defaults to 'structure' if invalid) */
   readonly tabId: CustomizerTabId;
+  /** Whether a valid tab was explicitly supplied in the URL */
+  readonly hasExplicitTab: boolean;
   /** Whether the route is valid (false if unit ID is invalid) */
   readonly isValid: boolean;
   /** Whether we're on the index page (no unit specified) */
   readonly isIndex: boolean;
+  /** Whether the route is ready for URL/store synchronization */
+  readonly isReady: boolean;
 }
 
 /**
@@ -428,6 +456,8 @@ interface UseCustomizerRouterOptions {
 | ---------------- | ----------------- | -------- | ------------------------------------------------ | ------------------------------------------------------------------------------- | ----------- |
 | `unitId`         | `string \| null`  | Yes      | Unit UUID from URL                               | Valid UUID v4 or null                                                           | null        |
 | `tabId`          | `CustomizerTabId` | Yes      | Tab ID from URL                                  | overview, structure, armor, weapons, equipment, criticals, fluff, preview       | 'structure' |
+| `hasExplicitTab` | `boolean` | Yes | Valid explicit route tab; false for omitted or invalid tab | true or false | false |
+| `isReady` | `boolean` | Yes | Concrete route parsed; gates URL/store synchronization | true or false | N/A |
 | `isValid`        | `boolean`         | Yes      | Whether the route is valid                       | true if unit ID is valid UUID or null (index page), false if unit ID is invalid | N/A         |
 | `isIndex`        | `boolean`         | Yes      | Whether we're on the index page                  | true if no unit specified in URL, false otherwise                               | N/A         |
 | `fallbackUnitId` | `string \| null`  | No       | Fallback unit ID for tab navigation without unit | Valid UUID v4 or null                                                           | null        |
@@ -450,7 +480,7 @@ interface UseCustomizerRouterOptions {
 
 ### Depends On
 
-- **customizer-tabs**: Defines the 8 valid tab IDs and their rendering logic
+- **customizer-tabs**: Defines the seven visible BattleMech tabs and type-specific rendering; this routing spec retains legacy route compatibility
 - **uuid**: Provides UUID v4 validation via `isValidUnitId` function
 - **Next.js Router**: Provides `useRouter` hook for navigation and URL parsing
 
@@ -618,7 +648,7 @@ router.replace(
 
 ### Related Documentation
 
-- **customizer-tabs spec**: Defines the 8 valid tab IDs and tab rendering
+- **customizer-tabs spec**: Defines visible tab sets and per-type rendering
 - **unit-services spec**: Defines unit data loading and persistence
 - **uuid utilities**: Provides `isValidUnitId` for UUID v4 validation
 - **Next.js Routing**: [Shallow Routing documentation](https://nextjs.org/docs/routing/shallow-routing)

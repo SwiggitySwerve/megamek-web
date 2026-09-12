@@ -342,3 +342,52 @@ test('save, reload and restore history retain exact library versions and undo on
     ).toBe(true);
   }
 });
+
+test('explicit Structure URL overrides a saved Preview tab while omitted tabs restore it @customizer', async ({
+  page,
+}) => {
+  await load(page, 'Atlas', 'AS7-D', true);
+  const before = await draft(page);
+  const unitId = new URL(page.url()).pathname.split('/')[2];
+  await page.getByRole('tab', { name: 'Preview', exact: true }).click();
+  await expect
+    .poll(() =>
+      page.evaluate((id) => {
+        const stored = JSON.parse(
+          localStorage.getItem('megamek-tab-manager')!,
+        ).state;
+        return stored.tabs.find(
+          (tab: { id: string; lastSubTab?: string }) => tab.id === id,
+        )?.lastSubTab;
+      }, unitId),
+    )
+    .toBe('preview');
+  await page.goto(`/customizer/${unitId}/structure`);
+  const structure = page.getByRole('tab', { name: 'Structure', exact: true });
+  await expect(structure).toHaveAttribute('aria-selected', 'true');
+  await expect(
+    page.getByRole('combobox', { name: 'Engine', exact: true }),
+  ).toHaveValue(before.engineType);
+  await page.reload();
+  await expect(structure).toHaveAttribute('aria-selected', 'true');
+  expect((await draft(page)).equipment).toEqual(before.equipment);
+  await page.getByRole('tab', { name: 'Preview', exact: true }).click();
+  await expect
+    .poll(() =>
+      page.evaluate((id) => {
+        const stored = JSON.parse(
+          localStorage.getItem('megamek-tab-manager')!,
+        ).state;
+        return stored.tabs.find(
+          (tab: { id: string; lastSubTab?: string }) => tab.id === id,
+        )?.lastSubTab;
+      }, unitId),
+    )
+    .toBe('preview');
+  await page.goto(`/customizer/${unitId}`);
+  await expect(
+    page.getByRole('tab', { name: 'Preview', exact: true }),
+  ).toHaveAttribute('aria-selected', 'true');
+  expect(new URL(page.url()).pathname.split('/')[2]).toBe(unitId);
+  expect((await draft(page)).engineType).toBe(before.engineType);
+});
