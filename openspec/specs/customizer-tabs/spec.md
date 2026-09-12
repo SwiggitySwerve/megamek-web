@@ -20,7 +20,8 @@ The customizer SHALL provide a tabbed navigation interface with seven tabs: Over
 #### Scenario: Tab state persistence
 
 - **WHEN** user selects a tab and refreshes the page
-- **THEN** the previously selected tab is restored from localStorage
+- **THEN** the route-backed editor SHALL restore the selected tab from its URL
+- **AND** persisted unit/tab state SHALL restore the remembered valid tab when the URL omits its tab segment, without replacing an explicit valid URL selection including Structure
 
 ---
 

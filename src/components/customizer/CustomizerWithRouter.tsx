@@ -95,10 +95,9 @@ function resolveDefaultTab(storedSubTab: StoredSubTab): CustomizerTabId {
 function resolveEffectiveTabId(
   routerTabId: CustomizerTabId,
   storedSubTab: StoredSubTab,
+  hasExplicitTab: boolean,
 ): CustomizerTabId {
-  return routerTabId !== 'structure'
-    ? routerTabId
-    : resolveDefaultTab(storedSubTab);
+  return hasExplicitTab ? routerTabId : resolveDefaultTab(storedSubTab);
 }
 
 function findActiveTab(
@@ -286,6 +285,7 @@ export default function CustomizerWithRouter(): React.ReactElement {
   // Extract stable values from router to avoid dependency on router object
   const routerUnitId = router.unitId;
   const routerTabId = router.tabId;
+  const routerHasExplicitTab = router.hasExplicitTab;
   const routerIsValid = router.isValid;
   const routerIsIndex = router.isIndex;
   const routerIsReady = router.isReady;
@@ -316,8 +316,12 @@ export default function CustomizerWithRouter(): React.ReactElement {
   const storedSubTab = effectiveUnitId
     ? getLastSubTab(effectiveUnitId)
     : undefined;
-  // Use stored sub-tab only when URL has default 'structure' (meaning no explicit tab in URL)
-  const effectiveTabId = resolveEffectiveTabId(routerTabId, storedSubTab);
+  // Restore stored sub-tabs only when the URL omitted its tab segment.
+  const effectiveTabId = resolveEffectiveTabId(
+    routerTabId,
+    storedSubTab,
+    routerHasExplicitTab,
+  );
   const activeTab = useActiveTab(tabs, activeTabId);
 
   useAutoSaveIndicator(
