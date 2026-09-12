@@ -33,6 +33,21 @@ const NESTED_LOGO_ISO = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
   </svg>
 </svg>`;
 
+const US_TEMPLATE = path.join(
+  process.cwd(),
+  'public/record-sheets/templates_us/mek_biped_default.svg',
+);
+const ISO_TEMPLATE = path.join(
+  process.cwd(),
+  'public/record-sheets/templates_iso/mek_biped_default.svg',
+);
+
+// Real templates are fetched assets (gitignored, `npm run fetch:assets`). The
+// CI unit shards run on a bare checkout without them, so gate the two
+// read-from-disk cases on presence: they run locally, skip there. The inline
+// fixtures above always run and carry the same regression.
+const itIfAsset = (file: string) => (fs.existsSync(file) ? it : it.skip);
+
 describe('parseSvgViewBox', () => {
   it('uses root width/height when a nested logo viewBox is present and the root has none', () => {
     expect(parseSvgViewBox(NESTED_LOGO_SHEET)).toEqual({
@@ -48,24 +63,22 @@ describe('parseSvgViewBox', () => {
     });
   });
 
-  it('reads a real US template root, not the nested logo viewBox', () => {
-    const file = path.join(
-      process.cwd(),
-      'public/record-sheets/templates_us/mek_biped_default.svg',
-    );
-    const svg = fs.readFileSync(file, 'utf8');
-    expect(svg).toContain('viewBox="2.125 -70.896 69 69"');
-    expect(parseSvgViewBox(svg)).toEqual({ width: 576, height: 756 });
-  });
+  itIfAsset(US_TEMPLATE)(
+    'reads a real US template root, not the nested logo viewBox',
+    () => {
+      const svg = fs.readFileSync(US_TEMPLATE, 'utf8');
+      expect(svg).toContain('viewBox="2.125 -70.896 69 69"');
+      expect(parseSvgViewBox(svg)).toEqual({ width: 576, height: 756 });
+    },
+  );
 
-  it('reads a real ISO template root, not the nested logo viewBox', () => {
-    const file = path.join(
-      process.cwd(),
-      'public/record-sheets/templates_iso/mek_biped_default.svg',
-    );
-    const svg = fs.readFileSync(file, 'utf8');
-    expect(parseSvgViewBox(svg)).toEqual({ width: 559, height: 806 });
-  });
+  itIfAsset(ISO_TEMPLATE)(
+    'reads a real ISO template root, not the nested logo viewBox',
+    () => {
+      const svg = fs.readFileSync(ISO_TEMPLATE, 'utf8');
+      expect(parseSvgViewBox(svg)).toEqual({ width: 559, height: 806 });
+    },
+  );
 });
 
 describe('readSvgRootSize', () => {
