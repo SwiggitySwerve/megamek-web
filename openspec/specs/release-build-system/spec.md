@@ -55,6 +55,31 @@ Desktop release artifacts SHALL include a bundled Next.js standalone server with
 
 ---
 
+### Requirement: Standalone hydration destination safety
+
+Standalone hydration SHALL validate its output destinations before writing configuration, copying runtime files, or removing existing output directories.
+
+#### Scenario: An output path aliases a shared dependency directory
+
+- **GIVEN** a hydration destination or an existing path component below the checkout root is a symbolic link or directory junction
+- **WHEN** standalone hydration validates its destinations
+- **THEN** hydration SHALL fail with a path-bearing diagnostic before any output write or removal
+- **AND** shared source files and existing output configuration SHALL remain unchanged
+
+#### Scenario: Output containment and source identity
+
+- **WHEN** a hydration destination escapes its declared output boundary or resolves to its source directory
+- **THEN** hydration SHALL reject that destination before any write or removal
+
+#### Scenario: Ordinary physical output
+
+- **GIVEN** distinct physical source and standalone output directories within the checkout
+- **WHEN** hydration completes
+- **THEN** the standalone output SHALL contain the required runtime dependencies, public assets, source tree and static files
+- **AND** source dependency files SHALL remain unchanged
+
+---
+
 ### Requirement: Packaged desktop persistence paths
 
 Packaged desktop builds SHALL store SQLite data in a per-user writable location and MUST NOT write application data under the packaged resources directory.
