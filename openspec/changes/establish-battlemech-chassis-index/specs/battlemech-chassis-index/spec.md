@@ -8,7 +8,7 @@ The system SHALL derive one chassis entry per exact catalog chassis name from th
 
 - **WHEN** the chassis index is built from a valid bundled catalog
 - **THEN** every canonical unit ID occurs in exactly one chassis entry
-- **AND** variant technology base, weight, introduction year, and rules level remain intact
+- **AND** variant tech base, weight, introduction year, and rules level remain intact
 
 #### Scenario: Identity ambiguity
 
