@@ -1,5 +1,6 @@
 import { TechBase } from '@/types/enums/TechBase';
 import { EquipmentCategory, IEquipmentItem } from '@/types/equipment';
+import { createAmmoWeaponMatcher } from '@/utils/equipment/ammunitionCompatibility';
 
 import type {
   EquipmentFilters,
@@ -8,9 +9,10 @@ import type {
   UnitContext,
 } from './useEquipmentStore';
 
-const OTHER_COMBINED_CATEGORIES: readonly EquipmentCategory[] = [
+export const CATALOG_OTHER_CATEGORIES: readonly EquipmentCategory[] = [
   EquipmentCategory.MISC_EQUIPMENT,
-  EquipmentCategory.ELECTRONICS,
+  EquipmentCategory.MOVEMENT,
+  EquipmentCategory.STRUCTURAL,
 ];
 
 export function updateEquipmentCategories(
@@ -40,6 +42,14 @@ export function filterEquipment(
   unitContext: UnitContext,
   sort: SortState,
 ): IEquipmentItem[] {
+  const matchesMountedWeapon = createAmmoWeaponMatcher(
+    unitContext.unitWeaponIds,
+    equipment,
+  );
+  const hasUnitContext =
+    unitContext.unitYear !== null ||
+    unitContext.unitTechBase !== null ||
+    unitContext.unitWeaponIds.length > 0;
   return equipment
     .filter((item) => matchesSearch(item, filters.search))
     .filter((item) => matchesTechBase(item, filters.techBase))
@@ -47,7 +57,13 @@ export function filterEquipment(
     .filter((item) => matchesPrototypeFilter(item, filters.hidePrototype))
     .filter((item) => matchesOneShotFilter(item, filters.hideOneShot))
     .filter((item) => matchesAvailability(item, filters, unitContext))
-    .filter((item) => matchesAmmoWeaponFilter(item, filters, unitContext))
+    .filter(
+      (item) =>
+        !filters.hideAmmoWithoutWeapon ||
+        !hasUnitContext ||
+        item.category !== EquipmentCategory.AMMUNITION ||
+        matchesMountedWeapon(item),
+    )
     .filter((item) => matchesNumericFilters(item, filters))
     .sort((first, second) => compareEquipment(first, second, sort));
 }
@@ -57,7 +73,7 @@ function exclusiveEquipmentCategories(
 ): Set<EquipmentCategory> {
   return new Set(
     category === EquipmentCategory.MISC_EQUIPMENT
-      ? OTHER_COMBINED_CATEGORIES
+      ? CATALOG_OTHER_CATEGORIES
       : [category],
   );
 }
@@ -66,7 +82,7 @@ function toggleOtherEquipmentCategories(
   categories: Set<EquipmentCategory>,
 ): void {
   const isOtherActive = categories.has(EquipmentCategory.MISC_EQUIPMENT);
-  for (const category of OTHER_COMBINED_CATEGORIES) {
+  for (const category of CATALOG_OTHER_CATEGORIES) {
     if (isOtherActive) {
       categories.delete(category);
     } else {
@@ -90,15 +106,19 @@ function matchesCategory(
   item: IEquipmentItem,
   filters: EquipmentFilters,
 ): boolean {
-  if (filters.category && item.category !== filters.category) return false;
-  if (filters.showAllCategories || filters.activeCategories.size === 0) {
+  const categories = filters.category
+    ? exclusiveEquipmentCategories(filters.category)
+    : filters.activeCategories;
+  if (
+    !filters.category &&
+    (filters.showAllCategories || categories.size === 0)
+  ) {
     return true;
   }
   return (
-    filters.activeCategories.has(item.category) ||
-    item.additionalCategories?.some((category) =>
-      filters.activeCategories.has(category),
-    ) === true
+    categories.has(item.category) ||
+    item.additionalCategories?.some((category) => categories.has(category)) ===
+      true
   );
 }
 
@@ -117,7 +137,7 @@ function matchesOneShotFilter(
   item: IEquipmentItem,
   hideOneShot: boolean,
 ): boolean {
-  return !hideOneShot || !item.name.toLowerCase().includes('one-shot');
+  return !hideOneShot || !/(?:one[ -]shot|\((?:i-)?os\))/i.test(item.name);
 }
 
 function matchesAvailability(
@@ -135,36 +155,6 @@ function matchesAvailability(
   return (
     unitContext.unitTechBase === null ||
     item.techBase === unitContext.unitTechBase
-  );
-}
-
-function matchesAmmoWeaponFilter(
-  item: IEquipmentItem,
-  filters: EquipmentFilters,
-  unitContext: UnitContext,
-): boolean {
-  if (
-    !filters.hideAmmoWithoutWeapon ||
-    unitContext.unitWeaponIds.length === 0 ||
-    item.category !== EquipmentCategory.AMMUNITION
-  ) {
-    return true;
-  }
-
-  const normalizedAmmoName = item.name.toLowerCase().replace(/-/g, '/');
-  return unitContext.unitWeaponIds.some((weaponId) =>
-    ammoMatchesWeapon(normalizedAmmoName, weaponId),
-  );
-}
-
-function ammoMatchesWeapon(
-  normalizedAmmoName: string,
-  weaponId: string,
-): boolean {
-  const normalizedWeaponId = weaponId.toLowerCase().replace(/-/g, '/');
-  return (
-    normalizedAmmoName.includes(normalizedWeaponId) ||
-    normalizedAmmoName.includes(normalizedWeaponId.replace('/', ''))
   );
 }
 

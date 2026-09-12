@@ -48,6 +48,9 @@ describe('CompactFilterBar', () => {
         screen.getByRole('button', { name: 'Physical' }),
       ).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Ammo' })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Electronics' }),
+      ).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Other' })).toBeInTheDocument();
     });
 

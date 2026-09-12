@@ -23,6 +23,8 @@ export interface IEquipmentItem {
    * Used for dual-purpose equipment like AMS (weapon + defensive).
    */
   readonly additionalCategories?: readonly EquipmentCategory[];
+  /** Declared compatible weapon IDs for ammunition; imports may omit them. */
+  readonly compatibleWeaponIds?: readonly string[];
   readonly techBase: TechBase;
   readonly rulesLevel: RulesLevel;
   readonly weight: number;

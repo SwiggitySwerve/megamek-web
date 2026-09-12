@@ -176,6 +176,7 @@ const labels: Partial<Record<keyof UnitActions, string>> = {
   clearAllArmor: 'Clear armor',
   setLocationArmor: 'Change armor allocation',
   addEquipment: 'Add equipment',
+  addEquipmentAtLocation: 'Add and place equipment',
   removeEquipment: 'Remove equipment',
   updateEquipmentLocation: 'Place equipment',
   bulkUpdateEquipmentLocations: 'Place equipment',

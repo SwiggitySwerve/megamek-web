@@ -1,0 +1,101 @@
+{
+  "date": "2026-09-10",
+  "head": "c8780618e53da41d5b7d70921a6bc2b29d2bb27d",
+  "build": "1789075502145",
+  "focused": {
+    "suites": 9,
+    "tests": 182,
+    "failed": 0
+  },
+  "browser": {
+    "startTime": "2026-09-10T21:44:47.533Z",
+    "duration": 32643.578,
+    "expected": 5,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "stable": {
+    "passedSuites": 2662,
+    "failedSuites": 1,
+    "passedTests": 35134,
+    "failedTests": 1,
+    "skippedTests": 16,
+    "passedSnapshots": 8,
+    "remainingFailure": "Existing /compendium/chassis route absent from app-shell coverage manifest",
+    "evidence": ".sisyphus\\equipment-catalog-20260910\\qc-route-failure.json"
+  },
+  "typecheck": "pass",
+  "lint": {
+    "exitCode": 0,
+    "warnings": 84,
+    "errors": 0
+  },
+  "format": {
+    "owned": "pass",
+    "repository": "13 unrelated protected model-library/chassis audit files remain unformatted"
+  },
+  "strictOpenSpec": {
+    "change": "pass",
+    "allExitCode": 0
+  },
+  "grok": {
+    "model": "grok-4.6",
+    "effort": "high",
+    "parallelWorkers": 3,
+    "productFindings": [],
+    "onlyChange": "Native-option browser assertion; product files unchanged",
+    "reports": [
+      "filter-worker-report.md",
+      "placement-worker-report.md",
+      "browser-worker-report.md"
+    ]
+  },
+  "preservation": {
+    "unchangedOtherFiles": 41,
+    "ledgerPreviousContentsExact": true,
+    "noStageCommitOrPush": true
+  },
+  "preview": {
+    "pid": 74920,
+    "port": 3611,
+    "build": "1789075502145",
+    "runtime": "E:\\Projects\\MekStation\\.sisyphus\\status-alignment-20260909\\runtime",
+    "startedAt": "2026-09-10T21:33:11.435Z"
+  },
+  "sourceHashes": {
+    "openspec/active-change-ledger.json": "c50dd27af6c66ce1295a6619a1c44b1a877be2668164dc3a3545924e4a8ae10c",
+    "src/__tests__/components/customizer/equipment/CompactFilterBar.test.tsx": "2b2fd8c041983fa5d80acb3ada1cd63cf35828665e0cedb4c06c68558461c53e",
+    "src/__tests__/service/equipment/EquipmentLookupService.test-helpers.ts": "4d6e8492ae198645ed78dc3f3264de83c853796b9b062a4315d1f820cd69a9e4",
+    "src/components/customizer/CustomizerWorkbench.module.css": "4edf1068cdb50f1d9059168bfd24505130476e1dc5fc3c3ae6896a8fdd29f60f",
+    "src/components/customizer/equipment/CompactFilterBar.tsx": "059bd9def72711a22a1704c5b20531deaa775038dbdb5b99b6ef9ae37d605133",
+    "src/components/customizer/equipment/EquipmentBrowser.tsx": "b0474e879b9883c29320f70f262ea6cf549374ef80cdc83f527e6435322fec53",
+    "src/components/customizer/equipment/EquipmentCatalogCard.tsx": "c31ab74d999ab0b9f46165b3dde55edecb2231ba7463e9ae0529294c1fe26149",
+    "src/components/customizer/tabs/CriticalSlotsTab.placement.ts": "cf42ec03bdfcac6979553a66c3a034016aecc0f7ccbc3271a8c45d80a5ee783b",
+    "src/components/customizer/tabs/EquipmentTab.tsx": "c3e2860dfb15f499746ac3542d930421f35a49611ad37d44dde67b6d82dc0fc7",
+    "src/hooks/__tests__/useEquipmentBrowser.test.ts": "176ce3779fd392cbb2e17b1fd685a20f63294896c7873b18ea627a818e978954",
+    "src/hooks/useEquipmentBrowser.ts": "d8dbc3b057ce32cdb4a4ef4b7a64fe68ca6b2932570d710b880d236c23187552",
+    "src/services/equipment/EquipmentLookupService.ts": "b76fc24376c6f6d75bafabb2e1acc7728f40d895eca44a83c3fa7b8fd6d8ce1f",
+    "src/stores/unit/unitEditHistory.ts": "cb9665f6cbbc4a7e68e7565264acb8ac5c596b481e3d09716d14df9e4a0c6f37",
+    "src/stores/unit/useUnitEquipmentStore.ts": "3be73dd74ce38ac3cf6c6c248bb503c39aa06e4b1572b12ffc37de6540016ce8",
+    "src/stores/unitState.ts": "1ea7413f047b9f9e5d56874c43c2625f3d4dc1dfb5fc2e31670aaf941792c63c",
+    "src/stores/useEquipmentStore.filters.ts": "1ad606e3f3f122d3899cbd1462e590e958c19d553e43853d1a033757398097b8",
+    "src/stores/useEquipmentStore.ts": "ccd37a7e68e768c0936502ed13b62bc7d98711f2990f414d0806aa0eae410d3d",
+    "src/types/equipment/EquipmentItem.ts": "ef1a1708140e5ec107e490b720beb8d006288ccaa7657d2f273166d572d27f35",
+    "openspec/changes/repair-equipment-catalog/.openspec.yaml": "2a52e9c6669beaf79129adb7d7843db88cd99fe4e3a1ece75baa3dfc41ded489",
+    "openspec/changes/repair-equipment-catalog/design.md": "a0edd86f1acfab8643dc711aee7e3ee307191ca8ca36b8710c3b4d5eeeb620bb",
+    "openspec/changes/repair-equipment-catalog/proposal.md": "6c4f52a6eb633c1db86303e3449c68202b8e4c6b9a7d6d4bc22ee6eb8156799d",
+    "openspec/changes/repair-equipment-catalog/specs/equipment-browser/spec.md": "0bb35660c556c9a45c6f6270a68431cb72124ffc5bb59a2a3833142600c0feb5",
+    "openspec/changes/repair-equipment-catalog/tasks.md": "ba44840807a1e28bf56244e659263b64bc15fb5712e59f85ee4b0d7c58dbdb00",
+    "src/__tests__/stores/equipmentCatalogFilters.test.ts": "d600d32d4c63bf96376edf0c2a615005036add86f884c3894667f89c163127b8",
+    "src/components/customizer/equipment/CatalogPlacementDialog.tsx": "9d352943740a3cfc963221dca2f411237dd8e42e809df06aa138098c75ee3440",
+    "src/components/customizer/equipment/__tests__/CatalogPlacementDialog.test.tsx": "fecf1bddf4ae032d0693e48c4cd04922ec12154d3fef8cc1206774ed342b7e14",
+    "src/hooks/__tests__/useEquipmentBrowser.catalog.test.tsx": "64ad7408593f37f7849c24e5808d2b1872ac64559c4162b26e5b823581a265e5",
+    "src/stores/unit/__tests__/catalogEquipmentPlacement.test.ts": "90549d1a88e5914366174a69625fb6f894807ca85a9095408e95d0ab7136e03d",
+    "src/stores/unit/catalogEquipmentPlacement.ts": "eb9c54fb0fa46797a536a3cc412a35290014bb25003715a822dc301fa6d02eec",
+    "src/stores/unit/unitEquipmentAddition.ts": "4bdbc747299b4e5b17ab3f9779c923a0b6fadf0659ca82aa9075bdc701b7b638",
+    "src/utils/construction/slotOperations/placementOptions.ts": "fab681489be9c38efdcc59c857a7b51353de5efbbc665e069760c1c4c19ca66e",
+    "src/utils/equipment/ammunitionCompatibility.ts": "fbd1b017c70246ee2714a298a0d36c73bbb3483e89470e8c978e3a69529b1892",
+    "e2e/customizer-equipment-catalog.spec.ts": "86ceead6b05c90de87f13bfd4caa500f0ff7bc522e87fe51db794bb38ffdca18"
+  }
+}

@@ -1,0 +1,221 @@
+{
+  "config": {
+    "configFile": "E:\\Projects\\MekStation\\.sisyphus\\equipment-density-20260910\\browser.config.cjs",
+    "rootDir": "E:/Projects/MekStation/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      ["line", null],
+      [
+        "json",
+        {
+          "outputFile": "E:\\Projects\\MekStation\\.sisyphus\\equipment-density-20260910\\browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "E:/Projects/MekStation/.sisyphus/equipment-density-20260910/browser-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "E:/Projects/MekStation/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "customizer-equipment-catalog.spec.ts",
+          "customizer-equipment-workbench.spec.ts"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.57.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "customizer-equipment-catalog.spec.ts",
+      "file": "customizer-equipment-catalog.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "electronics and compatible ammo update without changing unrelated filters @customizer",
+          "ok": true,
+          "tags": ["customizer"],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3061,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-10T22:29:26.030Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a4f167b833cb17c337e6-d2038693c3a7dcccda5a",
+          "file": "customizer-equipment-catalog.spec.ts",
+          "line": 134,
+          "column": 5
+        },
+        {
+          "title": "add and place cancels cleanly and persists with one undo on desktop and mobile @customizer",
+          "ok": true,
+          "tags": ["customizer"],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2854,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-10T22:29:29.211Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a4f167b833cb17c337e6-0e563ab3774dfc2d59a1",
+          "file": "customizer-equipment-catalog.spec.ts",
+          "line": 183,
+          "column": 5
+        },
+        {
+          "title": "catalog rows stay dense and column-aligned on desktop and mobile @customizer",
+          "ok": true,
+          "tags": ["customizer"],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4489,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-10T22:29:32.074Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a4f167b833cb17c337e6-85c8732195dc06789b42",
+          "file": "customizer-equipment-catalog.spec.ts",
+          "line": 281,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "customizer-equipment-workbench.spec.ts",
+      "file": "customizer-equipment-workbench.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "catalog copies mount, move and persist independently @customizer",
+          "ok": true,
+          "tags": ["customizer"],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6897,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-10T22:29:36.574Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b80dee158a542e5ed198-b3fe27b01224e1bfec7d",
+          "file": "customizer-equipment-workbench.spec.ts",
+          "line": 17,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-10T22:29:25.344Z",
+    "duration": 18231.148,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

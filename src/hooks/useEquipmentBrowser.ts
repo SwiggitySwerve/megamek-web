@@ -20,6 +20,7 @@ import { UnitStoreContext } from '@/stores/useUnitStore';
 import { VehicleStoreContext } from '@/stores/useVehicleStore';
 import { TechBase } from '@/types/enums/TechBase';
 import { EquipmentCategory, IEquipmentItem } from '@/types/equipment';
+import { isWeaponCategory } from '@/utils/equipment/ammunitionCompatibility';
 
 /**
  * Equipment browser state and actions
@@ -100,7 +101,7 @@ export interface EquipmentBrowserState {
  *
  * Returns null values when no context is available - this is expected behavior.
  */
-function useUnitContextValues(): {
+function useUnitContextValues(catalog: readonly IEquipmentItem[]): {
   year: number | null;
   techBase: TechBase | null;
   weaponIds: readonly string[];
@@ -129,7 +130,15 @@ function useUnitContextValues(): {
         year: state.year,
         techBase: state.techBase,
         weaponIds: state.equipment
-          .filter((eq) => !eq.equipmentId.toLowerCase().includes('ammo'))
+          .filter((eq) =>
+            'category' in eq
+              ? isWeaponCategory(eq.category)
+              : catalog.some(
+                  (item) =>
+                    item.id === eq.equipmentId &&
+                    isWeaponCategory(item.category),
+                ),
+          )
           .map((eq) => eq.equipmentId),
       };
     };
@@ -146,7 +155,7 @@ function useUnitContextValues(): {
       previous = state;
       setValues(project());
     });
-  }, [unitStore, vehicleStore]);
+  }, [unitStore, vehicleStore, catalog]);
 
   return values;
 }
@@ -159,6 +168,7 @@ export function useEquipmentBrowser(): EquipmentBrowserState {
   const isLoading = useEquipmentSelector((state) => state.isLoading);
   const error = useEquipmentSelector((state) => state.error);
   const filters = useEquipmentSelector((state) => state.filters);
+  const unitContext = useEquipmentSelector((state) => state.unitContext);
   const pagination = useEquipmentSelector((state) => state.pagination);
   const sort = useEquipmentSelector((state) => state.sort);
   const setEquipment = useEquipmentSelector((state) => state.setEquipment);
@@ -195,16 +205,13 @@ export function useEquipmentBrowser(): EquipmentBrowserState {
   const getFilteredEquipment = useEquipmentSelector(
     (state) => state.getFilteredEquipment,
   );
-  const getPaginatedEquipment = useEquipmentSelector(
-    (state) => state.getPaginatedEquipment,
-  );
 
   // Get unit year, tech base, and weapon IDs from unit store context (if available)
   const {
     year: unitYear,
     techBase: unitTechBase,
     weaponIds: unitWeaponIds,
-  } = useUnitContextValues();
+  } = useUnitContextValues(equipment);
 
   // Sync unit context with equipment store when unit changes
   useEffect(() => {
@@ -235,40 +242,20 @@ export function useEquipmentBrowser(): EquipmentBrowserState {
     }
   }, [setEquipment, setLoading, setError]);
 
-  // Memoized filtered and paginated equipment
-  // Include filter values in dependencies to trigger re-computation when filters change
+  // Read the same subscribed context that the store's filter computation uses.
   const filteredEquipment = useMemo(
     () => getFilteredEquipment(),
+    // The stable store getter reads these subscribed values internally.
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-    [
-      getFilteredEquipment,
-      equipment,
-      filters.search,
-      filters.techBase,
-      filters.category,
-      filters.activeCategories,
-      filters.showAllCategories,
-      filters.hidePrototype,
-      filters.hideOneShot,
-      filters.hideUnavailable,
-      filters.hideAmmoWithoutWeapon,
-      sort.column,
-      sort.direction,
-      // Unit context affects filtering when hideUnavailable or hideAmmoWithoutWeapon is true
-      unitYear,
-      unitTechBase,
-      unitWeaponIds,
-    ],
+    [getFilteredEquipment, equipment, filters, sort, unitContext],
   );
   const paginatedEquipment = useMemo(
-    () => getPaginatedEquipment(),
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-    [
-      getPaginatedEquipment,
-      filteredEquipment,
-      pagination.currentPage,
-      pagination.pageSize,
-    ],
+    () =>
+      filteredEquipment.slice(
+        (pagination.currentPage - 1) * pagination.pageSize,
+        pagination.currentPage * pagination.pageSize,
+      ),
+    [filteredEquipment, pagination.currentPage, pagination.pageSize],
   );
 
   // Total pages calculation
@@ -280,7 +267,7 @@ export function useEquipmentBrowser(): EquipmentBrowserState {
   // Pagination helpers
   const goToFirstPage = useCallback(() => setPage(1), [setPage]);
   const goToLastPage = useCallback(
-    () => setPage(totalPages),
+    () => setPage(Math.max(1, totalPages)),
     [setPage, totalPages],
   );
   const goToPreviousPage = useCallback(
@@ -288,7 +275,8 @@ export function useEquipmentBrowser(): EquipmentBrowserState {
     [setPage, pagination.currentPage],
   );
   const goToNextPage = useCallback(
-    () => setPage(Math.min(totalPages, pagination.currentPage + 1)),
+    () =>
+      setPage(Math.min(Math.max(1, totalPages), pagination.currentPage + 1)),
     [setPage, pagination.currentPage, totalPages],
   );
 

@@ -13,6 +13,7 @@ import { EquipmentCatalogCard } from './EquipmentCatalogCard';
 
 export interface EquipmentBrowserProps {
   onAddEquipment: (equipment: IEquipmentItem) => void;
+  onAddAndPlace?: (equipment: IEquipmentItem) => void;
   className?: string;
   readOnly?: boolean;
   addHint?: string;
@@ -20,6 +21,7 @@ export interface EquipmentBrowserProps {
 
 export function EquipmentBrowser({
   onAddEquipment,
+  onAddAndPlace,
   className = '',
   readOnly = false,
   addHint = 'Added to the unit.',
@@ -52,6 +54,7 @@ export function EquipmentBrowser({
   const sortButton = (
     column: SortColumn,
     label: string,
+    catalogColumn?: 'name' | 'weight' | 'criticalSlots',
   ): React.ReactElement => (
     <Button
       key={column}
@@ -60,10 +63,11 @@ export function EquipmentBrowser({
       aria-pressed={sortColumn === column}
       aria-label={`Sort by ${column === 'weight' ? 'weight' : label.toLowerCase()}${sortColumn === column ? `, ${sortDirection === 'asc' ? 'ascending' : 'descending'}` : ''}`}
       onClick={() => browser.setSort(column)}
-      className={`!px-0 !text-xs ${column === 'name' ? '!justify-start' : '!justify-end'}`}
+      {...(catalogColumn ? { 'data-catalog-column': catalogColumn } : {})}
+      className={`!grid !px-0 !text-xs ${workbenchStyles.catalogSortButton}`}
     >
-      {label}
-      <span aria-hidden="true">
+      <span className={workbenchStyles.catalogSortLabel}>{label}</span>
+      <span aria-hidden="true" className={workbenchStyles.catalogSortArrow}>
         {sortColumn === column ? (
           sortDirection === 'asc' ? (
             <AppIcon name="arrow-up" size="inline" aria-hidden="true" />
@@ -138,27 +142,27 @@ export function EquipmentBrowser({
         }
       />
       <div
-        className={`${workbenchStyles.catalogColumns} border-border-theme text-text-theme-secondary hidden h-11 shrink-0 items-center gap-3 border-b px-3 text-[10px] tracking-wide uppercase lg:grid`}
-        aria-label="Sort equipment columns"
-      >
-        {sortButton('name', 'Name')}
-        <span>Type</span>
-        {sortButton('weight', 'Tons')}
-        {sortButton('criticalSlots', 'Slots')}
-        <span className="text-right">Heat</span>
-        <span />
-      </div>
-      <div
-        className="bg-surface-deep min-h-0 flex-1 overflow-auto px-3"
+        className={`bg-surface-deep ${workbenchStyles.catalogScroll}`}
         aria-busy={isLoading}
         data-testid="equipment-catalog-scroll"
       >
+        <div
+          className={`${workbenchStyles.catalogColumns} ${workbenchStyles.catalogHeader}`}
+          aria-label="Sort equipment columns"
+        >
+          {sortButton('name', 'Name', 'name')}
+          <span data-catalog-column="category">Type</span>
+          {sortButton('weight', 'Tons', 'weight')}
+          {sortButton('criticalSlots', 'Slots', 'criticalSlots')}
+          <span data-catalog-column="heat">Heat</span>
+          <span data-catalog-column="actions" />
+        </div>
         {isLoading ? (
           <p className="text-text-theme-secondary p-6 text-center">
             Loading equipment...
           </p>
         ) : paginatedEquipment.length === 0 ? (
-          <div className="py-8 text-center">
+          <div className="px-3 py-8 text-center">
             <p className="text-text-theme-primary font-medium">
               No equipment found
             </p>
@@ -168,29 +172,30 @@ export function EquipmentBrowser({
             <Button onClick={browser.clearFilters}>Clear filters</Button>
           </div>
         ) : (
-          <div>
-            <ul className="space-y-1">
-              {paginatedEquipment.map((equipment) => {
-                const entryKey = JSON.stringify([
-                  equipment.id,
-                  equipment.category,
-                  equipment.techBase,
-                ]);
-                return (
-                  <EquipmentCatalogCard
-                    key={entryKey}
-                    equipment={equipment}
-                    expanded={selectedId === entryKey}
-                    readOnly={readOnly}
-                    onInspect={() =>
-                      setSelectedId(selectedId === entryKey ? null : entryKey)
-                    }
-                    onAdd={() => add(equipment)}
-                  />
-                );
-              })}
-            </ul>
-          </div>
+          <ul className="space-y-1">
+            {paginatedEquipment.map((equipment) => {
+              const entryKey = JSON.stringify([
+                equipment.id,
+                equipment.category,
+                equipment.techBase,
+              ]);
+              return (
+                <EquipmentCatalogCard
+                  key={entryKey}
+                  equipment={equipment}
+                  expanded={selectedId === entryKey}
+                  readOnly={readOnly}
+                  onInspect={() =>
+                    setSelectedId(selectedId === entryKey ? null : entryKey)
+                  }
+                  onAdd={() => add(equipment)}
+                  onAddAndPlace={
+                    onAddAndPlace ? () => onAddAndPlace(equipment) : undefined
+                  }
+                />
+              );
+            })}
+          </ul>
         )}
       </div>
       <div

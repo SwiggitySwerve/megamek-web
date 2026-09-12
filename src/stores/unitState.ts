@@ -42,6 +42,8 @@ import {
 import { JumpJetType } from '@/utils/construction/movementCalculations';
 import { generateUnitId as generateUUID } from '@/utils/uuid';
 
+import type { AddEquipmentAtLocationResult } from './unit/catalogEquipmentPlacement';
+
 // =============================================================================
 // Armor Allocation Types
 // =============================================================================
@@ -416,6 +418,10 @@ export interface UnitActions {
 
   // Equipment
   addEquipment: (item: IEquipmentItem) => string;
+  addEquipmentAtLocation: (
+    item: IEquipmentItem,
+    location: MechLocation,
+  ) => AddEquipmentAtLocationResult;
   removeEquipment: (instanceId: string) => void;
   updateEquipmentLocation: (
     instanceId: string,

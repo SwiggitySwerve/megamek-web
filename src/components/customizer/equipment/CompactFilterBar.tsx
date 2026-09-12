@@ -8,6 +8,7 @@ import React, { useCallback } from 'react';
 import { AppIcon } from '@/components/ui/AppIcon';
 import { Button } from '@/components/ui/Button';
 import { SvgIcon } from '@/components/ui/SvgIcon';
+import { CATALOG_OTHER_CATEGORIES } from '@/stores/useEquipmentStore.filters';
 import { EquipmentCategory } from '@/types/equipment';
 import { getCategorySlotClasses } from '@/utils/colors/equipmentColors';
 
@@ -56,12 +57,8 @@ const CATEGORY_CONFIGS: CategoryConfig[] = [
     label: 'Physical',
   },
   { category: EquipmentCategory.AMMUNITION, label: 'Ammo' },
+  { category: EquipmentCategory.ELECTRONICS, label: 'Electronics' },
   { category: EquipmentCategory.MISC_EQUIPMENT, label: 'Other' },
-];
-
-const OTHER_COMBINED_CATEGORIES: readonly EquipmentCategory[] = [
-  EquipmentCategory.MISC_EQUIPMENT,
-  EquipmentCategory.ELECTRONICS,
 ];
 
 export function CompactFilterBar({
@@ -156,7 +153,7 @@ export function CompactFilterBar({
           }
         >
           <p className="text-text-theme-secondary mb-2 text-xs">
-            Hide these equipment types:
+            Hide equipment matching these conditions:
           </p>
           <div className="flex flex-col gap-1">
             {toggles.map(({ label, active, toggle }) => (
@@ -199,8 +196,9 @@ export function CompactFilterBar({
             Clear filters
           </Button>
           <p className="text-text-theme-secondary mt-3 text-xs">
-            Inspect equipment, add a copy, then choose its placement. Ctrl-click
-            or Command-click categories to combine them.
+            Ammo without weapon hides ammunition that has no compatible weapon
+            on this unit. Electronics has its own category. Ctrl-click or
+            Command-click categories to combine them.
           </p>
         </EquipmentControlPopover>
         {sortControls && (
@@ -226,9 +224,9 @@ export function CompactFilterBar({
           className="hidden lg:block"
         >
           <p className="text-text-theme-secondary text-sm">
-            Inspect equipment, add a copy, then choose its placement in the
-            loadout or Critical Slots. Sort using the column headings.
-            Ctrl-click or Command-click categories to combine them.
+            Add a copy unassigned, or use Add + place to choose a legal
+            location. Sort using the column headings. Ctrl-click or
+            Command-click categories to combine them.
           </p>
         </EquipmentControlPopover>
       </div>
@@ -251,7 +249,7 @@ export function CompactFilterBar({
           const isActive =
             showAll ||
             (category === EquipmentCategory.MISC_EQUIPMENT
-              ? OTHER_COMBINED_CATEGORIES.some((candidate) =>
+              ? CATALOG_OTHER_CATEGORIES.some((candidate) =>
                   activeCategories.has(candidate),
                 )
               : activeCategories.has(category));

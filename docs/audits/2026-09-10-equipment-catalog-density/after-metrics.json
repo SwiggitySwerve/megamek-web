@@ -1,0 +1,1457 @@
+{
+  "startedAt": "2026-09-10T22:29:28.836Z",
+  "baseURL": "http://localhost:3635",
+  "viewport": {
+    "width": 1318,
+    "height": 912
+  },
+  "isolated": true,
+  "profile": "playwright-chromium-ephemeral-context",
+  "screenshots": [
+    "E:\\Projects\\MekStation\\.sisyphus\\equipment-density-20260910\\after-desktop-1318x912.png",
+    "E:\\Projects\\MekStation\\.sisyphus\\equipment-density-20260910\\after-catalog-clip-1318x912.png"
+  ],
+  "metrics": {
+    "headerKids": [
+      {
+        "index": 0,
+        "text": "Name",
+        "x": 13,
+        "y": 310,
+        "width": 512.25,
+        "height": 44,
+        "centerX": 269.125,
+        "centerY": 332
+      },
+      {
+        "index": 1,
+        "text": "Type",
+        "x": 537.25,
+        "y": 324.5,
+        "width": 281.75,
+        "height": 15,
+        "centerX": 678.125,
+        "centerY": 332
+      },
+      {
+        "index": 2,
+        "text": "Tons",
+        "x": 831,
+        "y": 310,
+        "width": 56,
+        "height": 44,
+        "centerX": 859,
+        "centerY": 332
+      },
+      {
+        "index": 3,
+        "text": "Slots",
+        "x": 899,
+        "y": 310,
+        "width": 48,
+        "height": 44,
+        "centerX": 923,
+        "centerY": 332
+      },
+      {
+        "index": 4,
+        "text": "Heat",
+        "x": 959,
+        "y": 324.5,
+        "width": 40,
+        "height": 15,
+        "centerX": 979,
+        "centerY": 332
+      },
+      {
+        "index": 5,
+        "text": "",
+        "x": 1011,
+        "y": 332,
+        "width": 44,
+        "height": 0,
+        "centerX": 1033,
+        "centerY": 332
+      }
+    ],
+    "rowMetrics": [
+      {
+        "rowIndex": 0,
+        "height": 46,
+        "width": 1068,
+        "y": 355,
+        "kids": [
+          {
+            "index": 0,
+            "text": "AC/10Ballistic Weapon · Inner Sphere12 t · 7 critical slots · View details",
+            "x": 13,
+            "y": 356,
+            "width": 512.25,
+            "height": 44,
+            "centerX": 269.125,
+            "centerY": 378
+          },
+          {
+            "index": 1,
+            "text": "Ballistic Weapon",
+            "x": 537.25,
+            "y": 370,
+            "width": 281.75,
+            "height": 16,
+            "centerX": 678.125,
+            "centerY": 378
+          },
+          {
+            "index": 2,
+            "text": "12",
+            "x": 831,
+            "y": 370,
+            "width": 56,
+            "height": 16,
+            "centerX": 859,
+            "centerY": 378
+          },
+          {
+            "index": 3,
+            "text": "7",
+            "x": 899,
+            "y": 370,
+            "width": 48,
+            "height": 16,
+            "centerX": 923,
+            "centerY": 378
+          },
+          {
+            "index": 4,
+            "text": "3",
+            "x": 959,
+            "y": 370,
+            "width": 40,
+            "height": 16,
+            "centerX": 979,
+            "centerY": 378
+          },
+          {
+            "index": 5,
+            "text": "",
+            "x": 1011,
+            "y": 356,
+            "width": 44,
+            "height": 44,
+            "centerX": 1033,
+            "centerY": 378
+          }
+        ]
+      },
+      {
+        "rowIndex": 1,
+        "height": 46,
+        "width": 1068,
+        "y": 405,
+        "kids": [
+          {
+            "index": 0,
+            "text": "AC/10 AmmoAmmunition · Inner Sphere1 t · 1 critical slot · View details",
+            "x": 13,
+            "y": 406,
+            "width": 512.25,
+            "height": 44,
+            "centerX": 269.125,
+            "centerY": 428
+          },
+          {
+            "index": 1,
+            "text": "Ammunition",
+            "x": 537.25,
+            "y": 420,
+            "width": 281.75,
+            "height": 16,
+            "centerX": 678.125,
+            "centerY": 428
+          },
+          {
+            "index": 2,
+            "text": "1",
+            "x": 831,
+            "y": 420,
+            "width": 56,
+            "height": 16,
+            "centerX": 859,
+            "centerY": 428
+          },
+          {
+            "index": 3,
+            "text": "1",
+            "x": 899,
+            "y": 420,
+            "width": 48,
+            "height": 16,
+            "centerX": 923,
+            "centerY": 428
+          },
+          {
+            "index": 4,
+            "text": "—",
+            "x": 959,
+            "y": 420,
+            "width": 40,
+            "height": 16,
+            "centerX": 979,
+            "centerY": 428
+          },
+          {
+            "index": 5,
+            "text": "",
+            "x": 1011,
+            "y": 406,
+            "width": 44,
+            "height": 44,
+            "centerX": 1033,
+            "centerY": 428
+          }
+        ]
+      },
+      {
+        "rowIndex": 2,
+        "height": 46,
+        "width": 1068,
+        "y": 455,
+        "kids": [
+          {
+            "index": 0,
+            "text": "AC/15 AmmoAmmunition · Inner Sphere1 t · 1 critical slot · View details",
+            "x": 13,
+            "y": 456,
+            "width": 512.25,
+            "height": 44,
+            "centerX": 269.125,
+            "centerY": 478
+          },
+          {
+            "index": 1,
+            "text": "Ammunition",
+            "x": 537.25,
+            "y": 470,
+            "width": 281.75,
+            "height": 16,
+            "centerX": 678.125,
+            "centerY": 478
+          },
+          {
+            "index": 2,
+            "text": "1",
+            "x": 831,
+            "y": 470,
+            "width": 56,
+            "height": 16,
+            "centerX": 859,
+            "centerY": 478
+          },
+          {
+            "index": 3,
+            "text": "1",
+            "x": 899,
+            "y": 470,
+            "width": 48,
+            "height": 16,
+            "centerX": 923,
+            "centerY": 478
+          },
+          {
+            "index": 4,
+            "text": "—",
+            "x": 959,
+            "y": 470,
+            "width": 40,
+            "height": 16,
+            "centerX": 979,
+            "centerY": 478
+          },
+          {
+            "index": 5,
+            "text": "",
+            "x": 1011,
+            "y": 456,
+            "width": 44,
+            "height": 44,
+            "centerX": 1033,
+            "centerY": 478
+          }
+        ]
+      },
+      {
+        "rowIndex": 3,
+        "height": 46,
+        "width": 1068,
+        "y": 505,
+        "kids": [
+          {
+            "index": 0,
+            "text": "AC/2Ballistic Weapon · Inner Sphere6 t · 1 critical slot · View details",
+            "x": 13,
+            "y": 506,
+            "width": 512.25,
+            "height": 44,
+            "centerX": 269.125,
+            "centerY": 528
+          },
+          {
+            "index": 1,
+            "text": "Ballistic Weapon",
+            "x": 537.25,
+            "y": 520,
+            "width": 281.75,
+            "height": 16,
+            "centerX": 678.125,
+            "centerY": 528
+          },
+          {
+            "index": 2,
+            "text": "6",
+            "x": 831,
+            "y": 520,
+            "width": 56,
+            "height": 16,
+            "centerX": 859,
+            "centerY": 528
+          },
+          {
+            "index": 3,
+            "text": "1",
+            "x": 899,
+            "y": 520,
+            "width": 48,
+            "height": 16,
+            "centerX": 923,
+            "centerY": 528
+          },
+          {
+            "index": 4,
+            "text": "1",
+            "x": 959,
+            "y": 520,
+            "width": 40,
+            "height": 16,
+            "centerX": 979,
+            "centerY": 528
+          },
+          {
+            "index": 5,
+            "text": "",
+            "x": 1011,
+            "y": 506,
+            "width": 44,
+            "height": 44,
+            "centerX": 1033,
+            "centerY": 528
+          }
+        ]
+      },
+      {
+        "rowIndex": 4,
+        "height": 46,
+        "width": 1068,
+        "y": 555,
+        "kids": [
+          {
+            "index": 0,
+            "text": "AC/2 AmmoAmmunition · Inner Sphere1 t · 1 critical slot · View details",
+            "x": 13,
+            "y": 556,
+            "width": 512.25,
+            "height": 44,
+            "centerX": 269.125,
+            "centerY": 578
+          },
+          {
+            "index": 1,
+            "text": "Ammunition",
+            "x": 537.25,
+            "y": 570,
+            "width": 281.75,
+            "height": 16,
+            "centerX": 678.125,
+            "centerY": 578
+          },
+          {
+            "index": 2,
+            "text": "1",
+            "x": 831,
+            "y": 570,
+            "width": 56,
+            "height": 16,
+            "centerX": 859,
+            "centerY": 578
+          },
+          {
+            "index": 3,
+            "text": "1",
+            "x": 899,
+            "y": 570,
+            "width": 48,
+            "height": 16,
+            "centerX": 923,
+            "centerY": 578
+          },
+          {
+            "index": 4,
+            "text": "—",
+            "x": 959,
+            "y": 570,
+            "width": 40,
+            "height": 16,
+            "centerX": 979,
+            "centerY": 578
+          },
+          {
+            "index": 5,
+            "text": "",
+            "x": 1011,
+            "y": 556,
+            "width": 44,
+            "height": 44,
+            "centerX": 1033,
+            "centerY": 578
+          }
+        ]
+      },
+      {
+        "rowIndex": 5,
+        "height": 46,
+        "width": 1068,
+        "y": 605,
+        "kids": [
+          {
+            "index": 0,
+            "text": "AC/20Ballistic Weapon · Inner Sphere14 t · 10 critical slots · View details",
+            "x": 13,
+            "y": 606,
+            "width": 512.25,
+            "height": 44,
+            "centerX": 269.125,
+            "centerY": 628
+          },
+          {
+            "index": 1,
+            "text": "Ballistic Weapon",
+            "x": 537.25,
+            "y": 620,
+            "width": 281.75,
+            "height": 16,
+            "centerX": 678.125,
+            "centerY": 628
+          },
+          {
+            "index": 2,
+            "text": "14",
+            "x": 831,
+            "y": 620,
+            "width": 56,
+            "height": 16,
+            "centerX": 859,
+            "centerY": 628
+          },
+          {
+            "index": 3,
+            "text": "10",
+            "x": 899,
+            "y": 620,
+            "width": 48,
+            "height": 16,
+            "centerX": 923,
+            "centerY": 628
+          },
+          {
+            "index": 4,
+            "text": "7",
+            "x": 959,
+            "y": 620,
+            "width": 40,
+            "height": 16,
+            "centerX": 979,
+            "centerY": 628
+          },
+          {
+            "index": 5,
+            "text": "",
+            "x": 1011,
+            "y": 606,
+            "width": 44,
+            "height": 44,
+            "centerX": 1033,
+            "centerY": 628
+          }
+        ]
+      },
+      {
+        "rowIndex": 6,
+        "height": 46,
+        "width": 1068,
+        "y": 655,
+        "kids": [
+          {
+            "index": 0,
+            "text": "AC/20 AmmoAmmunition · Inner Sphere1 t · 1 critical slot · View details",
+            "x": 13,
+            "y": 656,
+            "width": 512.25,
+            "height": 44,
+            "centerX": 269.125,
+            "centerY": 678
+          },
+          {
+            "index": 1,
+            "text": "Ammunition",
+            "x": 537.25,
+            "y": 670,
+            "width": 281.75,
+            "height": 16,
+            "centerX": 678.125,
+            "centerY": 678
+          },
+          {
+            "index": 2,
+            "text": "1",
+            "x": 831,
+            "y": 670,
+            "width": 56,
+            "height": 16,
+            "centerX": 859,
+            "centerY": 678
+          },
+          {
+            "index": 3,
+            "text": "1",
+            "x": 899,
+            "y": 670,
+            "width": 48,
+            "height": 16,
+            "centerX": 923,
+            "centerY": 678
+          },
+          {
+            "index": 4,
+            "text": "—",
+            "x": 959,
+            "y": 670,
+            "width": 40,
+            "height": 16,
+            "centerX": 979,
+            "centerY": 678
+          },
+          {
+            "index": 5,
+            "text": "",
+            "x": 1011,
+            "y": 656,
+            "width": 44,
+            "height": 44,
+            "centerX": 1033,
+            "centerY": 678
+          }
+        ]
+      },
+      {
+        "rowIndex": 7,
+        "height": 46,
+        "width": 1068,
+        "y": 705,
+        "kids": [
+          {
+            "index": 0,
+            "text": "AC/5Ballistic Weapon · Inner Sphere8 t · 4 critical slots · View details",
+            "x": 13,
+            "y": 706,
+            "width": 512.25,
+            "height": 44,
+            "centerX": 269.125,
+            "centerY": 728
+          },
+          {
+            "index": 1,
+            "text": "Ballistic Weapon",
+            "x": 537.25,
+            "y": 720,
+            "width": 281.75,
+            "height": 16,
+            "centerX": 678.125,
+            "centerY": 728
+          },
+          {
+            "index": 2,
+            "text": "8",
+            "x": 831,
+            "y": 720,
+            "width": 56,
+            "height": 16,
+            "centerX": 859,
+            "centerY": 728
+          },
+          {
+            "index": 3,
+            "text": "4",
+            "x": 899,
+            "y": 720,
+            "width": 48,
+            "height": 16,
+            "centerX": 923,
+            "centerY": 728
+          },
+          {
+            "index": 4,
+            "text": "1",
+            "x": 959,
+            "y": 720,
+            "width": 40,
+            "height": 16,
+            "centerX": 979,
+            "centerY": 728
+          },
+          {
+            "index": 5,
+            "text": "",
+            "x": 1011,
+            "y": 706,
+            "width": 44,
+            "height": 44,
+            "centerX": 1033,
+            "centerY": 728
+          }
+        ]
+      },
+      {
+        "rowIndex": 8,
+        "height": 46,
+        "width": 1068,
+        "y": 755,
+        "kids": [
+          {
+            "index": 0,
+            "text": "AC/5 AmmoAmmunition · Inner Sphere1 t · 1 critical slot · View details",
+            "x": 13,
+            "y": 756,
+            "width": 512.25,
+            "height": 44,
+            "centerX": 269.125,
+            "centerY": 778
+          },
+          {
+            "index": 1,
+            "text": "Ammunition",
+            "x": 537.25,
+            "y": 770,
+            "width": 281.75,
+            "height": 16,
+            "centerX": 678.125,
+            "centerY": 778
+          },
+          {
+            "index": 2,
+            "text": "1",
+            "x": 831,
+            "y": 770,
+            "width": 56,
+            "height": 16,
+            "centerX": 859,
+            "centerY": 778
+          },
+          {
+            "index": 3,
+            "text": "1",
+            "x": 899,
+            "y": 770,
+            "width": 48,
+            "height": 16,
+            "centerX": 923,
+            "centerY": 778
+          },
+          {
+            "index": 4,
+            "text": "—",
+            "x": 959,
+            "y": 770,
+            "width": 40,
+            "height": 16,
+            "centerX": 979,
+            "centerY": 778
+          },
+          {
+            "index": 5,
+            "text": "",
+            "x": 1011,
+            "y": 756,
+            "width": 44,
+            "height": 44,
+            "centerX": 1033,
+            "centerY": 778
+          }
+        ]
+      },
+      {
+        "rowIndex": 9,
+        "height": 46,
+        "width": 1068,
+        "y": 805,
+        "kids": [
+          {
+            "index": 0,
+            "text": "Active ProbeElectronics · Inner Sphere1 t · 1 critical slot · View details",
+            "x": 13,
+            "y": 806,
+            "width": 512.25,
+            "height": 44,
+            "centerX": 269.125,
+            "centerY": 828
+          },
+          {
+            "index": 1,
+            "text": "Electronics",
+            "x": 537.25,
+            "y": 820,
+            "width": 281.75,
+            "height": 16,
+            "centerX": 678.125,
+            "centerY": 828
+          },
+          {
+            "index": 2,
+            "text": "1",
+            "x": 831,
+            "y": 820,
+            "width": 56,
+            "height": 16,
+            "centerX": 859,
+            "centerY": 828
+          },
+          {
+            "index": 3,
+            "text": "1",
+            "x": 899,
+            "y": 820,
+            "width": 48,
+            "height": 16,
+            "centerX": 923,
+            "centerY": 828
+          },
+          {
+            "index": 4,
+            "text": "—",
+            "x": 959,
+            "y": 820,
+            "width": 40,
+            "height": 16,
+            "centerX": 979,
+            "centerY": 828
+          },
+          {
+            "index": 5,
+            "text": "",
+            "x": 1011,
+            "y": 806,
+            "width": 44,
+            "height": 44,
+            "centerX": 1033,
+            "centerY": 828
+          }
+        ]
+      },
+      {
+        "rowIndex": 10,
+        "height": 46,
+        "width": 1068,
+        "y": 855,
+        "kids": [
+          {
+            "index": 0,
+            "text": "Active Probe (Beagle)Electronics · Inner Sphere1.5 t · 2 critical slots · View d",
+            "x": 13,
+            "y": 856,
+            "width": 512.25,
+            "height": 44,
+            "centerX": 269.125,
+            "centerY": 878
+          },
+          {
+            "index": 1,
+            "text": "Electronics",
+            "x": 537.25,
+            "y": 870,
+            "width": 281.75,
+            "height": 16,
+            "centerX": 678.125,
+            "centerY": 878
+          },
+          {
+            "index": 2,
+            "text": "1.5",
+            "x": 831,
+            "y": 870,
+            "width": 56,
+            "height": 16,
+            "centerX": 859,
+            "centerY": 878
+          },
+          {
+            "index": 3,
+            "text": "2",
+            "x": 899,
+            "y": 870,
+            "width": 48,
+            "height": 16,
+            "centerX": 923,
+            "centerY": 878
+          },
+          {
+            "index": 4,
+            "text": "—",
+            "x": 959,
+            "y": 870,
+            "width": 40,
+            "height": 16,
+            "centerX": 979,
+            "centerY": 878
+          },
+          {
+            "index": 5,
+            "text": "",
+            "x": 1011,
+            "y": 856,
+            "width": 44,
+            "height": 44,
+            "centerX": 1033,
+            "centerY": 878
+          }
+        ]
+      },
+      {
+        "rowIndex": 11,
+        "height": 46,
+        "width": 1068,
+        "y": 905,
+        "kids": [
+          {
+            "index": 0,
+            "text": "Active Probe (Beagle) PrototypeElectronics · Inner Sphere2 t · 3 critical slots ",
+            "x": 13,
+            "y": 906,
+            "width": 512.25,
+            "height": 44,
+            "centerX": 269.125,
+            "centerY": 928
+          },
+          {
+            "index": 1,
+            "text": "Electronics",
+            "x": 537.25,
+            "y": 920,
+            "width": 281.75,
+            "height": 16,
+            "centerX": 678.125,
+            "centerY": 928
+          },
+          {
+            "index": 2,
+            "text": "2",
+            "x": 831,
+            "y": 920,
+            "width": 56,
+            "height": 16,
+            "centerX": 859,
+            "centerY": 928
+          },
+          {
+            "index": 3,
+            "text": "3",
+            "x": 899,
+            "y": 920,
+            "width": 48,
+            "height": 16,
+            "centerX": 923,
+            "centerY": 928
+          },
+          {
+            "index": 4,
+            "text": "—",
+            "x": 959,
+            "y": 920,
+            "width": 40,
+            "height": 16,
+            "centerX": 979,
+            "centerY": 928
+          },
+          {
+            "index": 5,
+            "text": "",
+            "x": 1011,
+            "y": 906,
+            "width": 44,
+            "height": 44,
+            "centerX": 1033,
+            "centerY": 928
+          }
+        ]
+      }
+    ],
+    "deltas": [
+      [
+        {
+          "index": 0,
+          "headerText": "Name",
+          "cellText": "AC/10Ballistic Weapon · Inner Sphere12 t · 7 critical slots · View details",
+          "dx": 0,
+          "dy": 46
+        },
+        {
+          "index": 1,
+          "headerText": "Type",
+          "cellText": "Ballistic Weapon",
+          "dx": 0,
+          "dy": 46
+        },
+        {
+          "index": 2,
+          "headerText": "Tons",
+          "cellText": "12",
+          "dx": 0,
+          "dy": 46
+        },
+        {
+          "index": 3,
+          "headerText": "Slots",
+          "cellText": "7",
+          "dx": 0,
+          "dy": 46
+        },
+        {
+          "index": 4,
+          "headerText": "Heat",
+          "cellText": "3",
+          "dx": 0,
+          "dy": 46
+        },
+        {
+          "index": 5,
+          "headerText": "",
+          "cellText": "",
+          "dx": 0,
+          "dy": 46
+        }
+      ],
+      [
+        {
+          "index": 0,
+          "headerText": "Name",
+          "cellText": "AC/10 AmmoAmmunition · Inner Sphere1 t · 1 critical slot · View details",
+          "dx": 0,
+          "dy": 96
+        },
+        {
+          "index": 1,
+          "headerText": "Type",
+          "cellText": "Ammunition",
+          "dx": 0,
+          "dy": 96
+        },
+        {
+          "index": 2,
+          "headerText": "Tons",
+          "cellText": "1",
+          "dx": 0,
+          "dy": 96
+        },
+        {
+          "index": 3,
+          "headerText": "Slots",
+          "cellText": "1",
+          "dx": 0,
+          "dy": 96
+        },
+        {
+          "index": 4,
+          "headerText": "Heat",
+          "cellText": "—",
+          "dx": 0,
+          "dy": 96
+        },
+        {
+          "index": 5,
+          "headerText": "",
+          "cellText": "",
+          "dx": 0,
+          "dy": 96
+        }
+      ],
+      [
+        {
+          "index": 0,
+          "headerText": "Name",
+          "cellText": "AC/15 AmmoAmmunition · Inner Sphere1 t · 1 critical slot · View details",
+          "dx": 0,
+          "dy": 146
+        },
+        {
+          "index": 1,
+          "headerText": "Type",
+          "cellText": "Ammunition",
+          "dx": 0,
+          "dy": 146
+        },
+        {
+          "index": 2,
+          "headerText": "Tons",
+          "cellText": "1",
+          "dx": 0,
+          "dy": 146
+        },
+        {
+          "index": 3,
+          "headerText": "Slots",
+          "cellText": "1",
+          "dx": 0,
+          "dy": 146
+        },
+        {
+          "index": 4,
+          "headerText": "Heat",
+          "cellText": "—",
+          "dx": 0,
+          "dy": 146
+        },
+        {
+          "index": 5,
+          "headerText": "",
+          "cellText": "",
+          "dx": 0,
+          "dy": 146
+        }
+      ],
+      [
+        {
+          "index": 0,
+          "headerText": "Name",
+          "cellText": "AC/2Ballistic Weapon · Inner Sphere6 t · 1 critical slot · View details",
+          "dx": 0,
+          "dy": 196
+        },
+        {
+          "index": 1,
+          "headerText": "Type",
+          "cellText": "Ballistic Weapon",
+          "dx": 0,
+          "dy": 196
+        },
+        {
+          "index": 2,
+          "headerText": "Tons",
+          "cellText": "6",
+          "dx": 0,
+          "dy": 196
+        },
+        {
+          "index": 3,
+          "headerText": "Slots",
+          "cellText": "1",
+          "dx": 0,
+          "dy": 196
+        },
+        {
+          "index": 4,
+          "headerText": "Heat",
+          "cellText": "1",
+          "dx": 0,
+          "dy": 196
+        },
+        {
+          "index": 5,
+          "headerText": "",
+          "cellText": "",
+          "dx": 0,
+          "dy": 196
+        }
+      ],
+      [
+        {
+          "index": 0,
+          "headerText": "Name",
+          "cellText": "AC/2 AmmoAmmunition · Inner Sphere1 t · 1 critical slot · View details",
+          "dx": 0,
+          "dy": 246
+        },
+        {
+          "index": 1,
+          "headerText": "Type",
+          "cellText": "Ammunition",
+          "dx": 0,
+          "dy": 246
+        },
+        {
+          "index": 2,
+          "headerText": "Tons",
+          "cellText": "1",
+          "dx": 0,
+          "dy": 246
+        },
+        {
+          "index": 3,
+          "headerText": "Slots",
+          "cellText": "1",
+          "dx": 0,
+          "dy": 246
+        },
+        {
+          "index": 4,
+          "headerText": "Heat",
+          "cellText": "—",
+          "dx": 0,
+          "dy": 246
+        },
+        {
+          "index": 5,
+          "headerText": "",
+          "cellText": "",
+          "dx": 0,
+          "dy": 246
+        }
+      ],
+      [
+        {
+          "index": 0,
+          "headerText": "Name",
+          "cellText": "AC/20Ballistic Weapon · Inner Sphere14 t · 10 critical slots · View details",
+          "dx": 0,
+          "dy": 296
+        },
+        {
+          "index": 1,
+          "headerText": "Type",
+          "cellText": "Ballistic Weapon",
+          "dx": 0,
+          "dy": 296
+        },
+        {
+          "index": 2,
+          "headerText": "Tons",
+          "cellText": "14",
+          "dx": 0,
+          "dy": 296
+        },
+        {
+          "index": 3,
+          "headerText": "Slots",
+          "cellText": "10",
+          "dx": 0,
+          "dy": 296
+        },
+        {
+          "index": 4,
+          "headerText": "Heat",
+          "cellText": "7",
+          "dx": 0,
+          "dy": 296
+        },
+        {
+          "index": 5,
+          "headerText": "",
+          "cellText": "",
+          "dx": 0,
+          "dy": 296
+        }
+      ],
+      [
+        {
+          "index": 0,
+          "headerText": "Name",
+          "cellText": "AC/20 AmmoAmmunition · Inner Sphere1 t · 1 critical slot · View details",
+          "dx": 0,
+          "dy": 346
+        },
+        {
+          "index": 1,
+          "headerText": "Type",
+          "cellText": "Ammunition",
+          "dx": 0,
+          "dy": 346
+        },
+        {
+          "index": 2,
+          "headerText": "Tons",
+          "cellText": "1",
+          "dx": 0,
+          "dy": 346
+        },
+        {
+          "index": 3,
+          "headerText": "Slots",
+          "cellText": "1",
+          "dx": 0,
+          "dy": 346
+        },
+        {
+          "index": 4,
+          "headerText": "Heat",
+          "cellText": "—",
+          "dx": 0,
+          "dy": 346
+        },
+        {
+          "index": 5,
+          "headerText": "",
+          "cellText": "",
+          "dx": 0,
+          "dy": 346
+        }
+      ],
+      [
+        {
+          "index": 0,
+          "headerText": "Name",
+          "cellText": "AC/5Ballistic Weapon · Inner Sphere8 t · 4 critical slots · View details",
+          "dx": 0,
+          "dy": 396
+        },
+        {
+          "index": 1,
+          "headerText": "Type",
+          "cellText": "Ballistic Weapon",
+          "dx": 0,
+          "dy": 396
+        },
+        {
+          "index": 2,
+          "headerText": "Tons",
+          "cellText": "8",
+          "dx": 0,
+          "dy": 396
+        },
+        {
+          "index": 3,
+          "headerText": "Slots",
+          "cellText": "4",
+          "dx": 0,
+          "dy": 396
+        },
+        {
+          "index": 4,
+          "headerText": "Heat",
+          "cellText": "1",
+          "dx": 0,
+          "dy": 396
+        },
+        {
+          "index": 5,
+          "headerText": "",
+          "cellText": "",
+          "dx": 0,
+          "dy": 396
+        }
+      ],
+      [
+        {
+          "index": 0,
+          "headerText": "Name",
+          "cellText": "AC/5 AmmoAmmunition · Inner Sphere1 t · 1 critical slot · View details",
+          "dx": 0,
+          "dy": 446
+        },
+        {
+          "index": 1,
+          "headerText": "Type",
+          "cellText": "Ammunition",
+          "dx": 0,
+          "dy": 446
+        },
+        {
+          "index": 2,
+          "headerText": "Tons",
+          "cellText": "1",
+          "dx": 0,
+          "dy": 446
+        },
+        {
+          "index": 3,
+          "headerText": "Slots",
+          "cellText": "1",
+          "dx": 0,
+          "dy": 446
+        },
+        {
+          "index": 4,
+          "headerText": "Heat",
+          "cellText": "—",
+          "dx": 0,
+          "dy": 446
+        },
+        {
+          "index": 5,
+          "headerText": "",
+          "cellText": "",
+          "dx": 0,
+          "dy": 446
+        }
+      ],
+      [
+        {
+          "index": 0,
+          "headerText": "Name",
+          "cellText": "Active ProbeElectronics · Inner Sphere1 t · 1 critical slot · View details",
+          "dx": 0,
+          "dy": 496
+        },
+        {
+          "index": 1,
+          "headerText": "Type",
+          "cellText": "Electronics",
+          "dx": 0,
+          "dy": 496
+        },
+        {
+          "index": 2,
+          "headerText": "Tons",
+          "cellText": "1",
+          "dx": 0,
+          "dy": 496
+        },
+        {
+          "index": 3,
+          "headerText": "Slots",
+          "cellText": "1",
+          "dx": 0,
+          "dy": 496
+        },
+        {
+          "index": 4,
+          "headerText": "Heat",
+          "cellText": "—",
+          "dx": 0,
+          "dy": 496
+        },
+        {
+          "index": 5,
+          "headerText": "",
+          "cellText": "",
+          "dx": 0,
+          "dy": 496
+        }
+      ],
+      [
+        {
+          "index": 0,
+          "headerText": "Name",
+          "cellText": "Active Probe (Beagle)Electronics · Inner Sphere1.5 t · 2 critical slots · View d",
+          "dx": 0,
+          "dy": 546
+        },
+        {
+          "index": 1,
+          "headerText": "Type",
+          "cellText": "Electronics",
+          "dx": 0,
+          "dy": 546
+        },
+        {
+          "index": 2,
+          "headerText": "Tons",
+          "cellText": "1.5",
+          "dx": 0,
+          "dy": 546
+        },
+        {
+          "index": 3,
+          "headerText": "Slots",
+          "cellText": "2",
+          "dx": 0,
+          "dy": 546
+        },
+        {
+          "index": 4,
+          "headerText": "Heat",
+          "cellText": "—",
+          "dx": 0,
+          "dy": 546
+        },
+        {
+          "index": 5,
+          "headerText": "",
+          "cellText": "",
+          "dx": 0,
+          "dy": 546
+        }
+      ],
+      [
+        {
+          "index": 0,
+          "headerText": "Name",
+          "cellText": "Active Probe (Beagle) PrototypeElectronics · Inner Sphere2 t · 3 critical slots ",
+          "dx": 0,
+          "dy": 596
+        },
+        {
+          "index": 1,
+          "headerText": "Type",
+          "cellText": "Electronics",
+          "dx": 0,
+          "dy": 596
+        },
+        {
+          "index": 2,
+          "headerText": "Tons",
+          "cellText": "2",
+          "dx": 0,
+          "dy": 596
+        },
+        {
+          "index": 3,
+          "headerText": "Slots",
+          "cellText": "3",
+          "dx": 0,
+          "dy": 596
+        },
+        {
+          "index": 4,
+          "headerText": "Heat",
+          "cellText": "—",
+          "dx": 0,
+          "dy": 596
+        },
+        {
+          "index": 5,
+          "headerText": "",
+          "cellText": "",
+          "dx": 0,
+          "dy": 596
+        }
+      ]
+    ],
+    "rowHeights": [46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46],
+    "scrollWidth": 1318,
+    "innerWidth": 1318,
+    "overflow": false
+  },
+  "controlGeometry": {
+    "sortLabels": [
+      {
+        "column": "name",
+        "centerOffset": 0
+      },
+      {
+        "column": "weight",
+        "centerOffset": 0
+      },
+      {
+        "column": "criticalSlots",
+        "centerOffset": 0
+      }
+    ],
+    "addWidth": 44,
+    "addHeight": 44,
+    "glyphWidth": 30,
+    "glyphHeight": 30,
+    "fullyVisibleRows": 10
+  },
+  "rowHeight": {
+    "min": 46,
+    "max": 46,
+    "sample": [46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46]
+  },
+  "finishedAt": "2026-09-10T22:29:30.516Z"
+}

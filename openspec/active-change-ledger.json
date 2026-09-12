@@ -65,6 +65,13 @@
       "status": "in-progress",
       "reason": "User-requested next customizer improvements: visible draft/library state, saved history and per-unit editing recovery. Excludes model and combat work.",
       "lastReviewed": "2026-09-10"
+    },
+    {
+      "name": "repair-equipment-catalog",
+      "status": "in-progress",
+      "reason": "User-requested independent Electronics filtering, reliable mounted-weapon ammo choices, translucent catalog rows and optional Add and place with existing placement and edit-history authority.",
+      "lastReviewed": "2026-09-10"
     }
+
   ]
 }

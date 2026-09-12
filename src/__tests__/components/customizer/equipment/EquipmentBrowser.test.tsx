@@ -149,8 +149,7 @@ describe('EquipmentBrowser', () => {
 
     render(<EquipmentBrowser onAddEquipment={onAddEquipment} />);
 
-    const addButtons = screen.getAllByText('Add');
-    await user.click(addButtons[0]);
+    await user.click(screen.getByRole('button', { name: 'Add Medium Laser' }));
 
     expect(onAddEquipment).toHaveBeenCalledWith(mockEquipment[0]);
   });

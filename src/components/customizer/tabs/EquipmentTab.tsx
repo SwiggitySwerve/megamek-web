@@ -8,11 +8,12 @@
  * @spec openspec/specs/equipment-browser/spec.md
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { useUnitStore } from '@/stores/useUnitStore';
 import { IEquipmentItem } from '@/types/equipment';
 
+import { CatalogPlacementDialog } from '../equipment/CatalogPlacementDialog';
 import { EquipmentBrowser } from '../equipment/EquipmentBrowser';
 
 interface EquipmentTabProps {
@@ -26,11 +27,21 @@ export function EquipmentTab({
 }: EquipmentTabProps): React.ReactElement {
   const unitId = useUnitStore((s) => s.id);
   const addEquipment = useUnitStore((s) => s.addEquipment);
+  const [placement, setPlacement] = useState<{
+    unitId: string;
+    equipment: IEquipmentItem;
+  } | null>(null);
+  const [placementMessage, setPlacementMessage] = useState('');
+  useEffect(() => {
+    setPlacement(null);
+    setPlacementMessage('');
+  }, [unitId]);
 
   const handleAddEquipment = useCallback(
     (item: IEquipmentItem) => {
       if (readOnly) return;
       addEquipment(item);
+      setPlacementMessage('');
     },
     [addEquipment, readOnly],
   );
@@ -42,9 +53,35 @@ export function EquipmentTab({
         readOnly={readOnly}
         addHint="Added unassigned. Choose a location in Critical Slots."
         onAddEquipment={handleAddEquipment}
+        onAddAndPlace={(equipment) => {
+          if (!readOnly) {
+            setPlacement({ unitId, equipment });
+            setPlacementMessage('');
+          }
+        }}
         className="min-h-0 flex-1"
       />
 
+      {placement && placement.unitId === unitId && (
+        <CatalogPlacementDialog
+          key={`${unitId}:${placement.equipment.id}`}
+          equipment={placement.equipment}
+          readOnly={readOnly}
+          onClose={() => setPlacement(null)}
+          onPlaced={(message) => {
+            setPlacement(null);
+            setPlacementMessage(message);
+          }}
+        />
+      )}
+      {placementMessage && (
+        <p
+          role="status"
+          className="text-text-theme-secondary shrink-0 px-3 py-2 text-xs"
+        >
+          {placementMessage}
+        </p>
+      )}
       {readOnly && (
         <div className="rounded-lg border border-blue-700 bg-blue-900/30 p-3 text-xs text-blue-300">
           This unit is in read-only mode. Changes cannot be made.

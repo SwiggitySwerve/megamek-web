@@ -445,9 +445,9 @@ describe('useEquipmentBrowser', () => {
       expect(result.current.filteredEquipment).toEqual(filteredList);
     });
 
-    it('should return paginated equipment from store', () => {
+    it('should paginate the same filtered equipment used for the total', () => {
       const paginatedList = [mockEquipmentList[0]];
-      mockStoreState.getPaginatedEquipment = jest.fn(() => paginatedList);
+      mockStoreState.pagination.pageSize = 1;
 
       const { result } = renderHook(() => useEquipmentBrowser());
 

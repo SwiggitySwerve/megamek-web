@@ -327,6 +327,14 @@ describe('getAllWeapons', () => {
 // getAllAmmunition
 // ============================================================================
 describe('getAllAmmunition', () => {
+  it('retains declared ammo compatibility in the unified JSON catalog', () => {
+    const item = service
+      .getAllEquipment()
+      .find((candidate) => candidate.id === 'ac-10-ammo');
+    expect(service.getDataSource()).toBe('json');
+    expect(item?.compatibleWeaponIds).toEqual(['ac-10']);
+  });
+
   it('should return ammunition only', () => {
     const ammo = service.getAllAmmunition();
     expect(ammo.length).toBeGreaterThan(0);
